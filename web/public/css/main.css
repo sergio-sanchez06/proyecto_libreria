@@ -1,0 +1,108 @@
+/*
+ * servidor/public/css/main.css
+ * Estilos globales y diseño de layout (Header y Footer)
+ */
+
+/* === 1. RESET BÁSICO Y VARIABLES === */
+:root {
+    --color-primary: #3498db; /* Azul */
+    --color-secondary: #2ecc71; /* Verde */
+    --color-accent: #e74c3c; /* Rojo para alertas o errores */
+    --color-dark: #2c3e50; /* Texto principal */
+    --color-light: #ecf0f1; /* Fondo claro */
+    --color-background: #ffffff; /* Fondo de la página */
+    --max-width: 1200px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: var(--color-light);
+    color: var(--color-dark);
+}
+
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+
+/* === 2. ESTILO DEL LAYOUT (HEADER Y FOOTER) === */
+
+.main-header {
+    background: var(--color-dark);
+    color: var(--color-light);
+    padding: 15px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.main-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.8em;
+    color: var(--color-primary);
+    margin: 0;
+}
+
+.main-nav a {
+    color: var(--color-light);
+    text-decoration: none;
+    padding: 8px 15px;
+    margin-left: 5px;
+    transition: background-color 0.3s;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.main-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.main-nav .separator {
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 5px;
+}
+
+/* Clases específicas para enlaces de autenticación y admin */
+.nav-auth {
+    background-color: var(--color-primary);
+    color: white !important;
+}
+
+.nav-auth:hover {
+    background-color: #2980b9;
+}
+
+.nav-admin {
+    background-color: var(--color-secondary);
+    color: var(--color-dark) !important;
+}
+
+/* Contenido Principal */
+.content-wrapper {
+    padding: 40px 0;
+    min-height: calc(100vh - 120px); /* Asegura que el footer esté abajo */
+}
+
+/* Footer */
+.main-footer {
+    background: var(--color-dark);
+    color: var(--color-light);
+    text-align: center;
+    padding: 15px 0;
+    margin-top: 20px;
+}
