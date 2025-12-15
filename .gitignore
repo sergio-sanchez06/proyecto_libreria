@@ -1,0 +1,17 @@
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.svg
+*.webp
+*.tiff
+*.env
+*.sql
+*.vscode
+
+.env
+.env.local
+.env.*.local
+.env.*
+/node_modules
