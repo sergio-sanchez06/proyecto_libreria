@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <title>Administrador de librerias</title>
+</head>
+
+<body>
+    <header>
+        <h1>Administrador de librerias</h1>
+        <nav>
+            <ul>
+                <li><a href="/libros">Libros</a></li>
+                <li><a href="/usuarios">Usuarios</a></li>
+                <li><a href="/autores">Autores</a></li>
+                <li><a href="/generos">Generos</a></li>
+                <li><a href="/editoriales">Editoriales</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Libros</h2>
+            <ul>
+                <% libros.forEach(libro=> { %>
+                    <li>
+                        <%= libro.titulo %>
+                    </li>
+                    <% }) %>
+            </ul>
+        </section>
+        <section>
+            <h2>Usuarios</h2>
+            <ul>
+                <% usuarios.forEach(usuario=> { %>
+                    <li>
+                        <%= usuario.nombre %>
+                    </li>
+                    <% }) %>
+            </ul>
+        </section>
+        <section>
+            <h2>Autores</h2>
+            <ul>
+                <% autores.forEach(autor=> { %>
+                    <li>
+                        <%= autor.nombre %>
+                    </li>
+                    <% }) %>
+            </ul>
+        </section>
+        <section>
+            <h2>Generos</h2>
+            <ul>
+                <% generos.forEach(genero=> { %>
+                    <li>
+                        <%= genero.nombre %>
+                    </li>
+                    <% }) %>
+            </ul>
+        </section>
+        <section>
+            <h2>Editoriales</h2>
+            <ul>
+                <% editoriales.forEach(editorial=> { %>
+                    <li>
+                        <%= editorial.nombre %>
+                    </li>
+                    <% }) %>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Libreria</p>
+    </footer>
+
+</body>
+
+</html>
