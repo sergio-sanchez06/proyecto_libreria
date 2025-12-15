@@ -1,0 +1,61 @@
+<%- include('partials/header.ejs') %>
+
+<main class="main-content">
+    <div class="container">
+        <h2>📚 Inventario Actual de Libros</h2>
+        
+        <section class="book-list-section">
+            
+            <% if (typeof error !== 'undefined' && error) { %>
+                <p class="placeholder-text" style="color: red;">🚨 ERROR: <%= error %></p>
+            <% } else if (libros.length === 0) { %>
+                <p class="placeholder-text">No se encontraron libros en la base de datos.</p>
+            <% } else { %>
+
+                <% libros.forEach(libro => { %>
+
+                    <div class="book-item">
+                        <span class="book-id"><%= libro.id %></span>
+                        <span class="book-title"><%= libro.titulo %></span>
+                        <span class="book-author"><%= libro.autor %></span>
+                        
+                        <span class="book-year">Año: <%= libro.anio_publicacion %></span>
+                        <span class="book-isbn">ISBN: <%= libro.isbn %></span>
+                        <span class="book-creation-date">
+                            Registro: <%= libro.fecha_creacion.toLocaleDateString() %> 
+                        </span>
+                        
+                        <span class="book-availability-status">
+                            <% if (libro.copias_disponibles > 0) { %>
+                                Quedan: <strong><%= libro.copias_disponibles %></strong>
+                            <% } else { %>
+                                <strong style="color: red;">AGOTADO</strong>
+                            <% } %>
+                        </span>
+
+                        <div class="actions">
+                            <% if (libro.copias_disponibles > 0) { %>
+                                <form action="/prestar/<%= libro.id %>" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn-success">Tomar Prestado</button>
+                                </form>
+                            <% } else { %>
+                                <button class="btn-disabled" disabled>No Disponible</button>
+                            <% } %>
+
+                            <% if (libro.copias_disponibles < libro.cantidad_total) { %>
+                                <form action="/devolver/<%= libro.id %>" method="POST" style="display: inline; margin-left: 10px;">
+                                    <button type="submit" class="btn-warning">Devolver</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                    
+                <% }); %>
+            
+            <% } %>
+        
+        </section>
+    </div>
+</main>
+
+<%- include('partials/footer.ejs') %>
