@@ -1,4 +1,4 @@
-export class Review {
+export default class Review {
   constructor({
     id,
     book_id,

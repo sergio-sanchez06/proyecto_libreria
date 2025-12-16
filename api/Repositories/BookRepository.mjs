@@ -1,5 +1,5 @@
-import Book from "../models/BookModel";
-import pool from "../config/db";
+import Book from "../models/BookModel.mjs";
+import pool from "../config/database.mjs";
 
 async function createBook(book) {
   const client = await pool.connect();
@@ -70,7 +70,22 @@ async function updateBook(book) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "UPDATE books SET title = $1, isbn = $2, price = $3, stock = $4, releashed_year = $5, format = $6, language = $7, pages = $8, synopsis = $9, cover_url = $10, publisher_id = $11 WHERE id = $12 RETURNING *",
+      `UPDATE books 
+       SET 
+         title = COALESCE($1, title),
+         isbn = COALESCE($2, isbn),
+         price = COALESCE($3, price),
+         stock = COALESCE($4, stock),
+         releashed_year = COALESCE($5, releashed_year),
+         format = COALESCE($6, format),
+         language = COALESCE($7, language),
+         pages = COALESCE($8, pages),
+         synopsis = COALESCE($9, synopsis),
+         cover_url = COALESCE($10, cover_url),
+         publisher_id = COALESCE($11, publisher_id),
+         updated_at = NOW()
+       WHERE id = $12 
+       RETURNING *`,
       [
         book.title,
         book.isbn,

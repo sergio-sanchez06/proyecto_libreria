@@ -1,5 +1,5 @@
-import pool from "../config/database";
-import GenreModel from "../models/genreModel";
+import pool from "../config/database.mjs";
+import GenreModel from "../models/GenreModel.mjs";
 
 async function createGenre(genre) {
   const client = await pool.connect();
@@ -38,11 +38,20 @@ async function getGenreById(id) {
 
 async function getGenreByName(name) {
   const client = await pool.connect();
+  console.log("Tipo de dato de nombre: " +typeof name);
   try {
     await client.query("BEGIN");
     const result = await client.query("SELECT * FROM genres WHERE name = $1", [
       name,
     ]);
+    console.log("Buscando nombre", name);
+
+    if (result) {
+      console.log("Encontrado", result.rows[0]);
+    } else {
+      console.log("No encontrado");
+    }
+
     await client.query("COMMIT");
     return new GenreModel(result.rows[0]);
   } catch (error) {
@@ -73,7 +82,12 @@ async function updateGenre(genre) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "UPDATE genres SET name = $1 WHERE id = $2 RETURNING *",
+      `UPDATE genres 
+       SET 
+         name = COALESCE($1, name),
+         updated_at = NOW()
+       WHERE id = $2 
+       RETURNING *`,
       [genre.name, genre.id]
     );
     await client.query("COMMIT");

@@ -1,4 +1,4 @@
-export class BookGenre {
+export default class BookGenre {
   constructor({ id, book_id, genre_id, created_at, updated_at } = {}) {
     this.id = id;
     this.book_id = book_id;

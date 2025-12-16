@@ -1,4 +1,4 @@
-export class Order {
+export default class Order {
   constructor({ id, user_id, total, status, created_at, updated_at } = {}) {
     this.id = id;
     this.user_id = user_id;

@@ -1,6 +1,7 @@
-import RepoBook from "../Repositories/BookRepository";
+import RepoBook from "../Repositories/BookRepository.mjs";
 
-async function createBook(req, res) { // Controlador de creación de libro
+async function createBook(req, res) {
+  // Controlador de creación de libro
   try {
     const book = await RepoBook.createBook(req.body);
     res.status(201).json(book);
@@ -10,7 +11,8 @@ async function createBook(req, res) { // Controlador de creación de libro
   }
 }
 
-async function getBookById(req, res) { // Controlador de obtención de libro por ID
+async function getBookById(req, res) {
+  // Controlador de obtención de libro por ID
   try {
     const book = await RepoBook.getBookById(req.params.id);
     res.status(200).json(book);
@@ -20,7 +22,8 @@ async function getBookById(req, res) { // Controlador de obtención de libro por
   }
 }
 
-async function getBookByTitle(req, res) { // Controlador de obtención de libro por título
+async function getBookByTitle(req, res) {
+  // Controlador de obtención de libro por título
   try {
     const book = await RepoBook.getBookByTitle(req.params.title);
     res.status(200).json(book);
@@ -30,9 +33,11 @@ async function getBookByTitle(req, res) { // Controlador de obtención de libro 
   }
 }
 
-async function updateBook(req, res) { // Controlador de actualización de libro
+async function updateBook(req, res) {
+  // Controlador de actualización de libro
   try {
-    const book = await RepoBook.updateBook(req.body);
+    const update_data = { id: req.params.id, ...req.body }; // Crea un objeto que añade el id al resto de parámetros del body
+    const book = await RepoBook.updateBook(update_data);
     res.status(200).json(book);
   } catch (error) {
     console.error(error);
@@ -40,7 +45,8 @@ async function updateBook(req, res) { // Controlador de actualización de libro
   }
 }
 
-async function deleteBook(req, res) { // Controlador de eliminación de libro
+async function deleteBook(req, res) {
+  // Controlador de eliminación de libro
   try {
     await RepoBook.deleteBook(req.params.id);
     res.status(204).send();
@@ -50,7 +56,8 @@ async function deleteBook(req, res) { // Controlador de eliminación de libro
   }
 }
 
-async function getAllBooks(req, res) { // Controlador de obtención de todos los libros
+async function getAllBooks(req, res) {
+  // Controlador de obtención de todos los libros
   try {
     const books = await RepoBook.getAllBooks();
     res.status(200).json(books);

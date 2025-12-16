@@ -1,5 +1,5 @@
-import Order from "../models/OrderModel";
-import pool from "../config/db";
+import Order from "../models/OrderModel.mjs";
+import pool from "../config/database.mjs";
 
 async function createOrder(order) {
   const client = await pool.connect();
@@ -62,7 +62,14 @@ async function updateOrder(order) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "UPDATE books SET user_id = $1, total = $2, status = $3 WHERE id = $4 RETURNING *",
+      `UPDATE orders 
+       SET 
+         user_id = COALESCE($1, user_id),
+         total = COALESCE($2, total),
+         status = COALESCE($3, status),
+         updated_at = NOW()
+       WHERE id = $4 
+       RETURNING *`,
       [order.user_id, order.total, order.status, order.id]
     );
     await client.query("COMMIT");

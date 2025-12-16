@@ -1,5 +1,5 @@
 import pool from "../config/database.mjs";
-import BookGenreModel from "../models/BookGenreModel";
+import BookGenreModel from "../models/BookGenreModel.mjs";
 
 async function createBookGenre(bookGenre) {
     const client = await pool.connect();

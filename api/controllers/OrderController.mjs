@@ -1,4 +1,4 @@
-import OrderRepository from "../Repositories/OrderRepository";
+import OrderRepository from "../Repositories/OrderRepository.mjs";
 
 async function createOrder(req, res) {
   try {
@@ -32,7 +32,8 @@ async function getOrdersByUser(req, res) {
 
 async function updateOrder(req, res) {
   try {
-    const order = await OrderRepository.updateOrder(req.body);
+    const update_data = { id: req.params.id, ...req.body }; // Crea un objeto que añade el id al resto de parámetros del body
+    const order = await OrderRepository.updateOrder(update_data);
     res.status(200).json(order);
   } catch (error) {
     console.error(error);

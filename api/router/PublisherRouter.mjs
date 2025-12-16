@@ -1,13 +1,13 @@
 import express from "express";
-
+import PublisherController from "../controllers/PublisherController.mjs";
 const router = express.Router();
 
-router.post("/", createPublisher);
-router.get("/:id", getPublisherById);
-router.get("/name/:name", getPublisherByName);
-router.get("/country/:country", getPublisherByCountry);
-router.get("/", getAllPublishers);
-router.put("/:id", updatePublisher);
-router.delete("/:id", deletePublisher);
+router.post("/", PublisherController.createPublisher);
+router.get("/:id", PublisherController.getPublisherById);
+router.get("/name/:name", PublisherController.getPublisherByName);
+router.get("/country/:country", PublisherController.getPublisherByCountry);
+router.get("/", PublisherController.getAllPublishers);
+router.put("/:id", PublisherController.updatePublisher);
+router.delete("/:id", PublisherController.deletePublisher);
 
 export default router;

@@ -1,4 +1,4 @@
-import GenreRepository from "../Repositories/GenreRepository";
+import GenreRepository from "../Repositories/GenreRepository.mjs";
 
 async function createGenre(req, res) {
   try {
@@ -22,6 +22,10 @@ async function getGenreById(req, res) {
 
 async function getGenreByName(req, res) {
   try {
+    console.log(
+      "Tipo de dato de nombre: " + typeof req.params.name + req.params.name
+    );
+
     const genre = await GenreRepository.getGenreByName(req.params.name);
     res.status(200).json(genre);
   } catch (error) {
@@ -42,7 +46,8 @@ async function getAllGenres(req, res) {
 
 async function updateGenre(req, res) {
   try {
-    const genre = await GenreRepository.updateGenre(req.body);
+    const update_data = { id: req.params.id, ...req.body }; // Crea un objeto que añade el id al resto de parámetros del body
+    const genre = await GenreRepository.updateGenre(update_data);
     res.status(200).json(genre);
   } catch (error) {
     console.error(error);

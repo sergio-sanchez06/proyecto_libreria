@@ -10,6 +10,7 @@
 *.sql
 *.vscode
 
+*.json
 .env
 .env.local
 .env.*.local

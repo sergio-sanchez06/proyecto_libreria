@@ -1,5 +1,5 @@
-import PublisherModel from "../models/publisherModel";
-import pool from "../config/database";
+import PublisherModel from "../models/publisherModel.mjs";
+import pool from "../config/database.mjs";
 
 async function createPublisher(publisher) {
   const client = await pool.connect();
@@ -59,7 +59,13 @@ async function updatePublisher(publisher) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "UPDATE publishers SET name = $1, country = $2 WHERE id = $3 RETURNING *",
+      `UPDATE publishers 
+       SET 
+         name = COALESCE($1, name),
+         country = COALESCE($2, country),
+         updated_at = NOW()
+       WHERE id = $3 
+       RETURNING *`,
       [publisher.name, publisher.country, publisher.id]
     );
     await client.query("COMMIT");

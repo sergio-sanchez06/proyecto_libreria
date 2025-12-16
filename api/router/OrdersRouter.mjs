@@ -1,4 +1,5 @@
-import OrderController from "../controllers/OrderController";
+import OrderController from "../controllers/OrderController.mjs";
+import express from "express";
 
 const router = express.Router();
 
