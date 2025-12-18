@@ -30,7 +30,6 @@ async function getUserById(req, res) {
 async function updateUser(req, res) {
     try {
         const update_data = { id: req.params.id, ...req.body };
-        // Aquí podrías añadir lógica de hashing de password si fuera necesario
         const user = await UserRepository.updateUser(update_data);
         const { password, ...safeData } = user;
         res.status(200).json(safeData);
