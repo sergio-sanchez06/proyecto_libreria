@@ -7,6 +7,10 @@ import publisherRouter from "./router/PublisherRouter.mjs";
 import orderRouter from "./router/OrdersRouter.mjs";
 import authRouter from "./router/AuthRouter.mjs";
 import userRouter from "./router/UserRouter.mjs";
+import bookAuthorRouter from "./router/BookAuthorRouter.mjs";
+// import userRouter from "./router/UserRouter.mjs";
+
+
 
 const port = 3000;
 const app = express();
@@ -14,6 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use
 app.use("/books", bookRouter);
 app.use("/authors", authorRouter);
 app.use("/genres", genreRouter);
@@ -21,6 +26,8 @@ app.use("/publishers", publisherRouter);
 app.use("/orders", orderRouter);
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
+
+app.use("/bookAuthor", bookAuthorRouter)
 
 // app.use(
 //   "/api/orders",
