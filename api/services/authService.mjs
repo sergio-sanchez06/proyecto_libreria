@@ -1,25 +1,32 @@
 import admin from "../config/firebase.mjs";
-import pool from "../config/database.mjs";
+import UserRepository from "../Repositories/UserRepository.mjs";
 
-export const verifyTokenAndSyncUser = async (token) => {
-  try {
-    const decoded = await admin.auth().verifyIdToken(token);
-    const { uid, email, name } = decoded;
+async function registerWithEmailPassword(user) {
+  const userRecord = await admin.auth().createUser({
+    email: user.email,
+    password: user.password,
+    displayName: user.name,
+  });
+  return await UserRepository.upsertFromFirebase({
+    firebase_uid: userRecord.uid,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    default_address: user.default_address,
+    optional_address: user.optional_address,
+  });
+}
 
-    const { rows } = await pool.query(
-      `
-        
-        INSERT INTO users (firebase_uid, email, name, default_address, optional_address)
-        VALUES ($1, $2, $3, $4, $5)
-        ON CONFLICT (firebase_uid) DO UPDATE SET email = EXCLUDED.email, name = EXCLUDED.name
-        RETURNING *;
-        
-    `,
-      [uid, email, name || "Usuario", "Dirección predeterminada", null]
-    );
+async function verifyTokenAndGetUser(idToken) {
+  const decoded = await admin.auth().verifyIdToken(idToken);
+  return await UserRepository.upsertFromFirebase({
+    firebase_uid: decoded.uid,
+    email: decoded.email,
+    name: decoded.name || decoded.displayName || "Usuario",
+  });
+}
 
-    return rows[0];
-  } catch (error) {
-    throw new Error("Error al verificar el token");
-  }
+export default {
+  registerWithEmailPassword,
+  verifyTokenAndGetUser,
 };
