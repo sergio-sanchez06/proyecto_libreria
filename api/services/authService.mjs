@@ -17,7 +17,7 @@ async function registerWithEmailPassword(user) {
   });
 }
 
-export const verifyTokenAndGetUser = async (idToken) => {
+async function verifyTokenAndGetUser(idToken) {
   if (!idToken || typeof idToken !== "string") {
     throw new Error("Token requerido y debe ser string");
   }
@@ -31,7 +31,8 @@ export const verifyTokenAndGetUser = async (idToken) => {
 
     const firebase_uid = decodedToken.uid;
     const email = decodedToken.email;
-    const name = decodedToken.name || decodedToken.displayName || "Usuario Anónimo";
+    const name =
+      decodedToken.name || decodedToken.displayName || "Usuario Anónimo";
 
     // Sincronizar en Supabase
     const user = await UserRepository.upsertFromFirebase({
@@ -55,7 +56,7 @@ export const verifyTokenAndGetUser = async (idToken) => {
       throw new Error("Error en autenticación");
     }
   }
-};
+}
 
 export default {
   registerWithEmailPassword,

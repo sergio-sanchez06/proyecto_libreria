@@ -1,5 +1,7 @@
 import pool from "../config/database.mjs";
 import BookAuthorModel from "../models/bookAuthorModel.mjs";
+import authorModel from "../models/authorModel.mjs";
+import bookModel from "../models/bookModel.mjs";
 
 // 1. Crear asociación (No suele requerir transacción si es una sola consulta)
 async function createBookAuthor(bookAuthor) {
@@ -11,32 +13,92 @@ async function createBookAuthor(bookAuthor) {
 }
 
 async function getBooksByAuthorName(authorName) {
-
-  const client = await pool.connect()
+  const client = await pool.connect();
 
   try {
+    const result = await client.query(
+      `SELECT 
+        b.id, b.title, b.isbn, b.price, b.stock, b.releashed_year,
+        b.format, b.language, b.synopsis, b.pages, b.cover_url,
+        b.created_at, b.updated_at,
+        p.name AS publisher_name,
+        json_agg(DISTINCT jsonb_build_object(
+          'name', g.name
+        )) FILTER (WHERE g.id IS NOT NULL) AS genres
+      FROM public.books b
+      INNER JOIN public.book_authors ba ON b.id = ba.book_id
+      INNER JOIN public.authors a ON ba.author_id = a.id
+      LEFT JOIN public.publishers p ON b.publisher_id = p.id
+      LEFT JOIN public.book_genres bg ON b.id = bg.book_id
+      LEFT JOIN public.genres g ON bg.genre_id = g.id
+      WHERE a.name ILIKE $1  -- ILIKE para búsqueda insensible a mayúsculas
+      GROUP BY b.id, p.name
+      ORDER BY b.releashed_year DESC
+      `,
+      [`%${authorName}%`]
+    );
 
-    const result = await client.query(`SELECT ba.* 
-      from books b join book_authors ba on b.id = ba.book_id
-      join authors a on ba.author_id = a.id
-      where a.name = $1
-                    `, [authorName])
+    // Sacar toda la información de los generos de libro en formato json
+    // const result = await client.query(
+    //   `SELECT
+    //     b.id, b.title, b.isbn, b.price, b.stock, b.releashed_year,
+    //     b.format, b.language, b.synopsis, b.pages, b.cover_url,
+    //     b.created_at, b.updated_at,
+    //     p.name AS publisher_name,
+    //     json_agg(DISTINCT jsonb_build_object(
+    //       'id', g.id,
+    //       'name', g.name
+    //     )) FILTER (WHERE g.id IS NOT NULL) AS genres
+    //   FROM public.books b
+    //   INNER JOIN public.book_authors ba ON b.id = ba.book_id
+    //   INNER JOIN public.authors a ON ba.author_id = a.id
+    //   LEFT JOIN public.publishers p ON b.publisher_id = p.id
+    //   LEFT JOIN public.book_genres bg ON b.id = bg.book_id
+    //   LEFT JOIN public.genres g ON bg.genre_id = g.id
+    //   WHERE a.name ILIKE $1  -- ILIKE para búsqueda insensible a mayúsculas
+    //   GROUP BY b.id, p.name
+    //   ORDER BY b.releashed_year DESC
+    //   `,
+    //   [`%${authorName}%`]
+    // );
 
-    console.log(result.rows)
+    console.log(result.rows);
 
-    return result.rows.map((row) => new BookAuthorModel(row))
-
+    return result.rows.map((row) => ({
+      ...row,
+      genres: row.genres || [],
+    }));
   } catch (err) {
-
-    console.log(err)
-    return "Fallo al recueperar los libros del autor"
+    console.log(err);
+    return "Fallo al recueperar los libros del autor";
+  } finally {
+    client.release();
   }
-  finally {
+}
 
-    client.release()
+async function getAuthorsByBook(bookTitle) {
+  const client = await pool.connect();
 
+  try {
+    const result = await client.query(
+      `SELECT 
+        a.id, a.name, a.country, a.photo_url, a.created_at, a.updated_at
+      FROM public.authors a
+      INNER JOIN public.book_authors ba ON a.id = ba.author_id
+      INNER JOIN public.books b ON ba.book_id = b.id
+      WHERE b.title ILIKE $1
+      GROUP BY a.id
+      ORDER BY a.name ASC
+      `,
+      [`%${bookTitle}%`]
+    );
+    return result.rows.map((row) => new authorModel(row));
+  } catch (err) {
+    console.log(err);
+    return "Fallo al recueperar los autores del libro";
+  } finally {
+    client.release();
   }
-
 }
 
 // 2. Obtener por clave compuesta (book_id Y author_id)
@@ -83,6 +145,7 @@ async function deleteBookAuthor(bookId, authorId) {
 export default {
   createBookAuthor,
   getBooksByAuthorName,
+  getAuthorsByBook,
   getBookAuthor,
   updateBookAuthor,
   deleteBookAuthor,
