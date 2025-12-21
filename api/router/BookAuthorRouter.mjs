@@ -7,8 +7,8 @@ router.post("/", BookAuthorController.assignAuthorToBook);
 
 router.get("/book/:bookId", BookAuthorController.getAuthorsByBook);
 
-router.get("/author/:authorId", BookAuthorController.getBooksByAuthor);
+router.get("/author/:authorName", BookAuthorController.getBooksByAuthor);
 
-router.delete("/bookId/:authorId", BookAuthorController.removeAuthorFromBook);
+router.delete("/:bookId/:authorId", BookAuthorController.removeAuthorFromBook);
 
 export default router;

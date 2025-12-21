@@ -63,10 +63,11 @@ async function updatePublisher(publisher) {
        SET 
          name = COALESCE($1, name),
          country = COALESCE($2, country),
+         website = COALESCE($3, website),
          updated_at = NOW()
-       WHERE id = $3 
+       WHERE id = $4 
        RETURNING *`,
-      [publisher.name, publisher.country, publisher.id]
+      [publisher.name, publisher.country, publisher.website, publisher.id]
     );
     await client.query("COMMIT");
     return result.rows[0];

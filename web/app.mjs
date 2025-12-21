@@ -1,42 +1,43 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
-import session from 'express-session';
+import express from "express";
+import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import authRoutes from './routes/authRoutes.mjs';
-import bookRoutes from './routes/bookRoutes.mjs';
-import userRoutes from './routes/userRoutes.mjs';
-import adminRoutes from './routes/adminRoutes.mjs';
+import authRouter from "./routes/authRouter.mjs";
+// importa otros routers si los tienes (authorRouter, genreRouter, etc.)
 
-dotenv.config();
+const port = 3001;
 
+// Obtener __dirname en ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = process.env.PORT || 3000;
 const app = express();
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// Middlewares globales
+app.use(cors());
+app.use(express.json());                    // Para peticiones JSON
+app.use(express.urlencoded({ extended: true })); // Para form-urlencoded (Thunder Client)
 
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'CLAVE_SECRETA_POR_DEFECTO',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }
-}));
+// ¡¡¡SERVIR ARCHIVOS ESTÁTICOS DE LA CARPETA PUBLIC!!!
+// La carpeta public debe estar al mismo nivel que api/ (o ajusta la ruta si es diferente)
+app.use(express.static(path.join(__dirname, "../public")));
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// Rutas API
+app.use("/auth", authRouter);
+app.use("/users", userRouter);
+app.use("/books", bookRouter);
+// app.use("/authors", authorRouter);
+// app.use("/genres", genreRouter);
+// etc.
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Ruta catch-all para que cualquier URL no-API sirva index.html (ideal para SPA)
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public", "index.html"));
+});
 
-app.use('/', authRoutes);
-app.use('/', bookRoutes);
-app.use('/cuenta', userRoutes);
-app.use('/admin', adminRoutes);
-
-app.listen(PORT, () => {
-    console.log(`Servidor Web listo en http://localhost:${PORT}`);
+app.listen(port, () => {
+    console.log(`Servidor corriendo en http://localhost:${port}`);
+    console.log(`Web estática servida desde la carpeta public`);
+    console.log(`Prueba el login en: http://localhost:${port}/login.html`);
 });

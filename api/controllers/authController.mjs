@@ -1,40 +1,22 @@
-import { verifyTokenAndSyncUser } from "../services/authService.mjs";
+import AuthService from "../services/authService.mjs";
 
-async function login(req, res) {
-  // Controlador de login
-  const { token } = req.body;
-
-  if (!token) {
-    return res.status(400).json({ message: "Token no proporcionado" });
-  }
-
+export const register = async (req, res) => {
+  // Funcion para registrar usuarios
   try {
-    const user = await verifyTokenAndSyncUser(token);
-    return res.status(200).json({ message: "Login correcto", user });
+    const user = await AuthService.registerWithEmailPassword(req.body);
+    res.status(201).json({ message: "Registro exitoso", user: user });
   } catch (error) {
-    return res.status(401).json({ message: "Token no válido" });
+    res.status(400).json({ message: error.message });
   }
-}
+};
 
-async function register(req, res) {
-  // Controlador de registro
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res
-      .status(400)
-      .json({ message: "Email y password son obligatorios" });
-  }
-
+export const login = async (req, res) => {
+  // Funcion para iniciar sesion
   try {
-    const user = await verifyTokenAndSyncUser(token);
-    return res.status(200).json({ message: "Login correcto", user });
+    const { idToken } = req.body;
+    const user = await AuthService.verifyTokenAndGetUser(idToken);
+    res.json({ message: "Login exitoso", user: user.toJSON() });
   } catch (error) {
-    return res.status(401).json({ message: "Token no válido" });
+    res.status(401).json({ message: "Token inválido" });
   }
-}
-
-export default {
-  login,
-  register,
 };
