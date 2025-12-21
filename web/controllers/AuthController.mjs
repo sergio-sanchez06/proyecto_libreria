@@ -48,21 +48,58 @@ class AuthController {
 
             return { success: true, user: data.user };
     } catch (error) {
-        console.error("Error al cargar el login:", error);
-        res.status(500).send("Error al cargar la página");
+            throw new Error(error.message || "Error al iniciar sesión");
+        }
     }
-};
 
-export const getRegister = (req, res) => {
-    try {
-        res.render('register', { title: 'Registro de Usuario' });
+    async register({ email, password, name, default_address, optional_address }) {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await userCredential.user.updateProfile({ displayName: name });
+
+            const idToken = await userCredential.user.getIdToken();
+
+            const response = await fetch(`${this.apiUrl}/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email,
+                    password,
+                    name,
+                    default_address,
+                    optional_address,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Error en registro");
+            }
+
+            localStorage.setItem("user", JSON.stringify(data.user));
+            localStorage.setItem("idToken", idToken);
+
+            return { success: true, user: data.user };
     } catch (error) {
-        console.error("Error al cargar el registro:", error);
-        res.status(500).send("Error al cargar la página");
+            throw new Error(error.message || "Error al registrar");
+        }
     }
-};
 
-export default {
-    getLogin,
-    getRegister
-};
+    async logout() {
+        await signOut(auth);
+        localStorage.removeItem("user");
+        localStorage.removeItem("idToken");
+    }
+
+    getCurrentUser() {
+        const user = localStorage.getItem("user");
+        return user ? JSON.parse(user) : null;
+    }
+
+    isLoggedIn() {
+        return !!this.getCurrentUser();
+    }
+}
+
+export default new AuthController();
