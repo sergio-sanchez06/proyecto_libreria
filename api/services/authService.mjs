@@ -23,29 +23,21 @@ async function verifyTokenAndGetUser(idToken) {
   }
 
   try {
-    // Verificar el token con Firebase Admin SDK
     const decodedToken = await admin.auth().verifyIdToken(idToken);
 
-    // Log para depuración (quítalo en producción si quieres)
     console.log("Token verificado correctamente para:", decodedToken.email);
 
     const firebase_uid = decodedToken.uid;
-    const email = decodedToken.email;
-    const name =
-      decodedToken.name || decodedToken.displayName || "Usuario Anónimo";
+    const user = await UserRepository.getUserByFirebaseUid(firebase_uid);
 
-    // Sincronizar en Supabase
-    const user = await UserRepository.upsertFromFirebase({
-      firebase_uid,
-      email,
-      name,
-    });
+    if (!user) {
+      throw new Error("Usuario no encontrado. Regístrate primero.");
+    }
 
     return user;
   } catch (error) {
     console.error("Error verificando ID token:", error.code, error.message);
 
-    // Mensajes más específicos para el frontend
     if (error.code === "auth/id-token-expired") {
       throw new Error("Token expirado");
     } else if (error.code === "auth/argument-error") {

@@ -35,6 +35,19 @@ async function upsertFromFirebase({
   }
 }
 
+async function getUserByFirebaseUid(firebase_uid) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      "SELECT * FROM public.users WHERE firebase_uid = $1",
+      [firebase_uid]
+    );
+    return result.rows.length ? new UserModel(result.rows[0]) : null;
+  } finally {
+    client.release();
+  }
+}
+
 async function getById(id) {
   const client = await pool.connect();
   try {
@@ -140,6 +153,7 @@ async function deleteUser(id) {
 export default {
   upsertFromFirebase,
   getById,
+  getUserByFirebaseUid,
   getUserByEmail,
   getAllUsers,
   updateProfile,

@@ -17,13 +17,12 @@ export const login = async (req, res) => {
     if (!idToken) return res.status(400).json({ message: "Token requerido" });
 
     const user = await AuthService.verifyTokenAndGetUser(idToken);
-
     res.status(200).json({
       message: "Login exitoso",
       user,
     });
   } catch (error) {
-    console.error("Error completo en login:", error);
-    res.status(401).json({ message: error.message || "Error en el login" });
+    console.error("Error en login:", error);
+    res.status(401).json({ message: error.message || "Token inválido" });
   }
 };
