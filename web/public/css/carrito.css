@@ -1,0 +1,92 @@
+/* Contenedor principal en dos columnas */
+.carrito-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    padding: 0 20px;
+}
+
+.items-carrito, .resumen-pedido {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+/* Estilos de la tabla */
+.tabla-carrito {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabla-carrito th {
+    text-align: left;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    color: #666;
+}
+
+.tabla-carrito td {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.producto-celda {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.producto-celda img {
+    border-radius: 4px;
+}
+
+/* Resumen del pedido */
+.resumen-pedido h3 {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.fila-resumen {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.total {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #4a148c; /* Morado oscuro */
+}
+
+/* Botones */
+.btn-eliminar {
+    background: #ffeded;
+    color: #ff4d4d;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-finalizar {
+    width: 100%;
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background 0.3s;
+}
+
+.btn-finalizar:hover {
+    background: #219150;
+}

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Librería</title>
+<<<<<<< Updated upstream
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -121,8 +121,17 @@
             text-decoration: underline;
         }
     </style>
+=======
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/forms.css">
+>>>>>>> Stashed changes
 </head>
+<body class="form-page">
+    <header>
+        <h1>Librería</h1>
+    </header>
 
+<<<<<<< Updated upstream
 <body>
     <div class="login-container">
         <div class="logo">📚</div>
@@ -200,9 +209,45 @@ ${JSON.stringify(data.user, null, 2)}
                 }
             } catch (error) {
                 messageDiv.innerHTML = `<div class="error">${error.message}</div>`;
+=======
+    <main class="form-container">
+        <div class="form-card">
+            <h1>Iniciar Sesión</h1>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="tu@email.com" required />
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" placeholder="••••••••" required />
+            </div>
+            
+            <button id="loginBtn" class="btn-guardar">Entrar</button>
+            
+            <p id="message"></p>
+            <div style="margin-top: 20px; text-align: center;">
+                <a href="register.html" style="color: #6a1b9a; text-decoration: none;">¿No tienes cuenta? Regístrate</a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { login } from "../js/auth.mjs";
+        document.getElementById("loginBtn").addEventListener("click", async () => {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const messageArea = document.getElementById("message");
+
+            try {
+                await login(email, password);
+                alert("¡Login exitoso!");
+                // OJO: Sergio puso /dashboard.html, pero tu catálogo es inicio.html
+                window.location.href = "inicio.html"; 
+            } catch (error) {
+                messageArea.innerText = error.message;
+>>>>>>> Stashed changes
             }
         });
     </script>
 </body>
-
 </html>

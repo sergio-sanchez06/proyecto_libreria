@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Carrito - Librería</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/carrito.css">
+</head>
+<body>
+    <header>
+        <h1>Librería</h1>
+        <nav>
+            <a href="inicio.html" style="color: white; text-decoration: none;">Seguir Comprando</a>
+        </nav>
+    </header>
+
+    <main class="carrito-container">
+        <section class="items-carrito">
+            <h2>Tu Cesta</h2>
+            <table class="tabla-carrito">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="lista-carrito">
+                    <tr>
+                        <td class="producto-celda">
+                            <img src="https://via.placeholder.com/50x75" alt="Portada">
+                            <span>Don Quijote de la Mancha</span>
+                        </td>
+                        <td>1</td>
+                        <td>20.00€</td>
+                        <td>20.00€</td>
+                        <td><button class="btn-eliminar">×</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="resumen-pedido">
+            <h3>Resumen</h3>
+            <div class="fila-resumen">
+                <span>Subtotal:</span>
+                <span>20.00€</span>
+            </div>
+            <div class="fila-resumen">
+                <span>Envío:</span>
+                <span>Gratis</span>
+            </div>
+            <hr>
+            <div class="fila-resumen total">
+                <span>Total:</span>
+                <span>20.00€</span>
+            </div>
+            <button class="btn-finalizar">Finalizar Compra</button>
+        </section>
+    </main>
+</body>
+</html>
