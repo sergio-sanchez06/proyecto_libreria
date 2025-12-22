@@ -1,108 +1,92 @@
-/*
- * servidor/public/css/main.css
- * Estilos globales y diseño de layout (Header y Footer)
- */
-
-/* === 1. RESET BÁSICO Y VARIABLES === */
-:root {
-    --color-primary: #3498db; /* Azul */
-    --color-secondary: #2ecc71; /* Verde */
-    --color-accent: #e74c3c; /* Rojo para alertas o errores */
-    --color-dark: #2c3e50; /* Texto principal */
-    --color-light: #ecf0f1; /* Fondo claro */
-    --color-background: #ffffff; /* Fondo de la página */
-    --max-width: 1200px;
-}
-
-* {
-    box-sizing: border-box;
+/* Estilos Generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
     margin: 0;
     padding: 0;
+    color: #333;
 }
 
-body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    background-color: var(--color-light);
-    color: var(--color-dark);
-}
-
-.container {
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-
-/* === 2. ESTILO DEL LAYOUT (HEADER Y FOOTER) === */
-
-.main-header {
-    background: var(--color-dark);
-    color: var(--color-light);
-    padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.main-header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.logo {
-    font-size: 1.8em;
-    color: var(--color-primary);
-    margin: 0;
-}
-
-.main-nav a {
-    color: var(--color-light);
-    text-decoration: none;
-    padding: 8px 15px;
-    margin-left: 5px;
-    transition: background-color 0.3s;
-    border-radius: 4px;
-    font-weight: 500;
-}
-
-.main-nav a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.main-nav .separator {
-    color: rgba(255, 255, 255, 0.5);
-    margin: 0 5px;
-}
-
-/* Clases específicas para enlaces de autenticación y admin */
-.nav-auth {
-    background-color: var(--color-primary);
-    color: white !important;
-}
-
-.nav-auth:hover {
-    background-color: #2980b9;
-}
-
-.nav-admin {
-    background-color: var(--color-secondary);
-    color: var(--color-dark) !important;
-}
-
-/* Contenido Principal */
-.content-wrapper {
-    padding: 40px 0;
-    min-height: calc(100vh - 120px); /* Asegura que el footer esté abajo */
-}
-
-/* Footer */
-.main-footer {
-    background: var(--color-dark);
-    color: var(--color-light);
+header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
     text-align: center;
-    padding: 15px 0;
-    margin-top: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Contenedor del Catálogo */
+#contenedor-libros {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 25px;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Tarjeta de cada Libro */
+.libro-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: none !important; /* Quitamos el borde feo que pusimos antes */
+}
+
+.libro-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.libro-card img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+}
+
+.libro-card-info {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.libro-card h3 {
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    color: #2d3436;
+}
+
+.libro-card p {
+    font-size: 0.9rem;
+    color: #636e72;
+    margin-bottom: 5px;
+}
+
+.precio {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #764ba2;
+    margin-top: 10px;
+}
+
+.btn-detalles {
+    background-color: #667eea;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 15px;
+    transition: background 0.2s;
+}
+
+.btn-detalles:hover {
+    background-color: #764ba2;
 }

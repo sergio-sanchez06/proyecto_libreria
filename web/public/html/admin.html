@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración - Librería</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <header>
+        <h1>Panel Administrativo</h1>
+        <nav>
+            <a href="inicio.html" style="color: white; text-decoration: none;">Ver Tienda</a>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+        <div class="admin-header">
+            <h2>Gestión de Inventario</h2>
+            <button class="btn-nuevo" onclick="window.location.href='nuevo-libro.html'">+ Añadir Nuevo Libro</button>
+        </div>
+
+        <table class="tabla-admin">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-libros">
+                <tr>
+                    <td>1</td>
+                    <td>Ejemplo de Libro</td>
+                    <td>Autor de Prueba</td>
+                    <td>25.00€</td>
+                    <td>
+                        <button class="btn-edit">Editar</button>
+                        <button class="btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </main>
+</body>
+</html>
