@@ -5,9 +5,9 @@ const router = express.Router();
 
 router.post("/", BookGenreController.addGenreToBook);
 
-router.get("/book/:bookId", BookGenreController.getGenresByBook);
+router.get("/genre/:genreName", BookGenreController.getBooksGenresByGenre);
 
-router.get("/genre/:genreId", BookGenreController.getBooksByGenre);
+router.get("/book/:bookTitle", BookGenreController.getBookGenresByBook);
 
 router.delete("/:bookId/:genreId", BookGenreController.removeGenreFromBook);
 

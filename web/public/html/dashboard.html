@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Librería</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .profile {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .profile p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .profile strong {
+            color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #c0392b;
+        }
+
+        #message {
+            color: red;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Bienvenido a tu Dashboard</h1>
+
+        <div class="profile" id="profile">
+            <p><strong>Nombre:</strong> <span id="name"></span></p>
+            <p><strong>Email:</strong> <span id="email"></span></p>
+            <p><strong>Rol:</strong> <span id="role"></span></p>
+            <p><strong>Dirección principal:</strong> <span id="default_address"></span></p>
+            <p><strong>Dirección opcional:</strong> <span id="optional_address"></span></p>
+        </div>
+
+        <button id="logoutBtn">Cerrar Sesión</button>
+        <p id="message"></p>
+    </div>
+
+    <script type="module">
+        import { logout, getCurrentUser } from "/js/auth.mjs";
+
+        const user = getCurrentUser();
+        if (!user) {
+            window.location.href = "/login.html";
+        } else {
+            document.getElementById("name").textContent = user.name || "No definido";
+            document.getElementById("email").textContent = user.email;
+            document.getElementById("role").textContent = user.role || "CLIENT";
+            document.getElementById("default_address").textContent = user.default_address || "Pendiente de completar";
+            document.getElementById("optional_address").textContent = user.optional_address || "Ninguna";
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            try {
+                await logout();
+                window.location.href = "/login.html";
+            } catch (error) {
+                document.getElementById("message").textContent = "Error al cerrar sesión";
+            }
+        });
+    </script>
+</body>
+
+</html>
