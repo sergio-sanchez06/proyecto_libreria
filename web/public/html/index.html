@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Librería</title>
-    <script type="module" src="js/router.js"></script>
+    <script type="module" src="../controllers/authController.mjs"></script>
 </head>
 
 <body>
     <div id="app">
         <h1>Bienvenido al Dashboard</h1>
         <p>Estás autenticado!</p>
-        <button onclick="AuthController.logout(); router.navigateTo('/login')">Cerrar Sesión</button>
+<button onclick="authController.logout(); location.reload()">Cerrar Sesión</button>
     </div>
 </body>
 

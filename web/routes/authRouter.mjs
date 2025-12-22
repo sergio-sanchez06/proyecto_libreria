@@ -1,4 +1,3 @@
-// web/js/router.js
 import AuthController from "../controllers/authController.mjs";
 
 class Router {
@@ -53,4 +52,13 @@ class Router {
     }
 }
 
-export default new Router();
+// 1. Creamos la instancia
+const router = new Router();
+
+// 2. HACEMOS EL PUENTE: Exportamos a la ventana global (window) 
+// para que el botón del HTML pueda ver las funciones
+window.router = router;
+window.authController = AuthController; 
+
+// 3. Exportamos para que otros archivos JS puedan usarlo si quieren
+export default router;

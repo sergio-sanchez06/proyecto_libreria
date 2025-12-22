@@ -47,7 +47,7 @@ class AuthController {
             localStorage.setItem("idToken", idToken);
 
             return { success: true, user: data.user };
-        } catch (error) {
+    } catch (error) {
             throw new Error(error.message || "Error al iniciar sesión");
         }
     }
@@ -81,7 +81,7 @@ class AuthController {
             localStorage.setItem("idToken", idToken);
 
             return { success: true, user: data.user };
-        } catch (error) {
+    } catch (error) {
             throw new Error(error.message || "Error al registrar");
         }
     }
