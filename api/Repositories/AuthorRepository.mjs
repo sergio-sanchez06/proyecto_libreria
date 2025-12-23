@@ -6,8 +6,8 @@ async function createAuthor(author) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "INSERT INTO authors (name, country, photo_url) VALUES ($1, $2, $3) RETURNING *",
-      [author.name, author.country, author.photo_url]
+      "INSERT INTO authors (name, country, photo_url, biography) VALUES ($1, $2, $3, $4) RETURNING *",
+      [author.name, author.country, author.photo_url, author.biography]
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -83,10 +83,17 @@ async function updateAuthor(author) {
          name = COALESCE($1, name),
          country = COALESCE($2, country),
          photo_url = COALESCE($3, photo_url),
+         biography = COALESCE($4, biography),
          updated_at = NOW()
-       WHERE id = $4 
+       WHERE id = $5 
        RETURNING *`,
-      [author.name, author.country, author.photo_url, author.id]
+      [
+        author.name,
+        author.country,
+        author.photo_url,
+        author.biography,
+        author.id,
+      ]
     );
 
     if (result) {

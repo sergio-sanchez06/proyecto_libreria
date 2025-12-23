@@ -5,7 +5,9 @@ const router = express.Router();
 
 router.post("/", BookAuthorController.assignAuthorToBook);
 
-router.get("/book/:bookTitle", BookAuthorController.getAuthorsByBook);
+router.get("/book/title/:bookTitle", BookAuthorController.getAuthorsByBook);
+
+router.get("/book/id/:bookId", BookAuthorController.getAuthorsByBookId);
 
 router.get("/author/:authorName", BookAuthorController.getBooksByAuthor);
 

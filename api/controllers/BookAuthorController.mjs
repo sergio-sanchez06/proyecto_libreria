@@ -38,6 +38,19 @@ async function getBooksByAuthor(req, res) {
   }
 }
 
+async function getAuthorsByBookId(req, res) {
+  try {
+    const authors = await BookAuthorRepository.getAuthorsByBookId(
+      req.params.bookId
+    );
+    console.log(authors);
+    res.status(200).json(authors);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los autores del libro" });
+  }
+}
+
 async function updateBookAuthor(req, res) {
   try {
     const oldIds = {
@@ -113,6 +126,7 @@ export default {
   getBooksByAuthor,
   updateBookAuthor,
   removeAuthorFromBook,
+  getAuthorsByBookId,
   countBooksByAuthor,
   countBooksByAuthors,
 };

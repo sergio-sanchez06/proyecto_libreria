@@ -1,30 +1,27 @@
+// web/routes/webRoutes.mjs
 import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import homeController from "../controllers/homeController.mjs";
+import authorController from "../controllers/authorController.mjs";
 
 const router = express.Router();
 
-// Ruta principal (dashboard)
-router.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/html/index.html"));
-});
+// Ruta principal (inicio)
+router.get("/", homeController.getBooksAndAuthors);
 
-// Ruta de login
+// Ruta detalle del libro
+router.get("/book/:id", homeController.getBookById);
+
+// Ruta login (vista)
 router.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/html/login.html"));
+  res.render("login");
 });
 
-// Ruta de registro
+// Ruta register (vista)
 router.get("/register", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/html/register.html"));
+  res.render("register");
 });
 
-// Ruta protegida (ej: dashboard) - opcional, si quieres redirigir desde frontend
-router.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/html/dashboard.html"));
-});
+// Ruta detalle del autor
+router.get("/author/:id", authorController.getAuthorById);
 
 export default router;

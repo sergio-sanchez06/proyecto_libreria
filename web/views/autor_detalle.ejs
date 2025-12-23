@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= author.name %> - Autor
+    </title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .author-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+
+        .author-header img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 5px solid white;
+            margin-bottom: 20px;
+        }
+
+        .author-header h1 {
+            font-size: 2.8rem;
+            margin: 0;
+        }
+
+        .author-info {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .books-section h2 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .book-card {
+            transition: transform 0.2s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .book-card img {
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .back-link {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5">
+        <!-- Cabecera del autor -->
+        <div class="author-header">
+            <img src="<%= author.photo_url || '/images/default-author.jpg' %>" alt="<%= author.name %>">
+            <h1>
+                <%= author.name %>
+            </h1>
+            <% if (author.country) { %>
+                <p class="lead">
+                    <%= author.country %>
+                </p>
+                <% } %>
+                    <p class="lead">
+                        <%= author.book_count %>
+                            <%= author.book_count===1 ? 'libro' : 'libros' %> publicado<%= author.book_count===1 ? ''
+                                    : 's' %>
+                    </p>
+        </div>
+
+        <!-- Información adicional (opcional) -->
+        <div class="author-info">
+            <% if (author.biography) { %>
+                <p>
+                    <%= author.biography %>
+                </p>
+                <% } else { %>
+                    <p class="text-muted">No hay biografía disponible.</p>
+                    <% } %>
+        </div>
+
+        <!-- Libros del autor -->
+        <section class="books-section">
+            <h2 class="text-center">Libros de <%= author.name %>
+            </h2>
+
+            <% if (books && books.length> 0) { %>
+                <div class="row justify-content-center">
+                    <% books.forEach(book=> { %>
+                        <div class="col-md-3 mb-4">
+                            <div class="card h-100 shadow-sm book-card">
+                                <img src="<%= book.cover_url || '/images/default-cover.jpg' %>" class="card-img-top"
+                                    alt="<%= book.title %>">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title text-truncate">
+                                        <%= book.title %>
+                                    </h5>
+                                    <p class="card-text text-muted small">Año: <%= book.releashed_year || "Desconocido"
+                                            %>
+                                    </p>
+                                    <p class="card-text fw-bold text-primary mt-auto">
+                                        <%= book.price %>€
+                                    </p>
+                                    <a href="/book/<%= book.id %>" class="btn btn-primary btn-sm mt-2">Ver detalles</a>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+                <% } else { %>
+                    <p class="text-center text-muted">Este autor no tiene libros registrados aún.</p>
+                    <% } %>
+        </section>
+
+        <!-- Volver al inicio -->
+        <div class="back-link">
+            <a href="/">← Volver al inicio</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

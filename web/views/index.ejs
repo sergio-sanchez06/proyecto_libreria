@@ -1,61 +1,186 @@
-<%- include('partials/header.ejs') %>
+<!DOCTYPE html>
+<html lang="es">
 
-<main class="main-content">
-    <div class="container">
-        <h2>📚 Inventario Actual de Libros</h2>
-        
-        <section class="book-list-section">
-            
-            <% if (typeof error !== 'undefined' && error) { %>
-                <p class="placeholder-text" style="color: red;">🚨 ERROR: <%= error %></p>
-            <% } else if (libros.length === 0) { %>
-                <p class="placeholder-text">No se encontraron libros en la base de datos.</p>
-            <% } else { %>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Librería - Inicio</title>
 
-                <% libros.forEach(libro => { %>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
-                    <div class="book-item">
-                        <span class="book-id"><%= libro.id %></span>
-                        <span class="book-title"><%= libro.titulo %></span>
-                        <span class="book-author"><%= libro.autor %></span>
-                        
-                        <span class="book-year">Año: <%= libro.anio_publicacion %></span>
-                        <span class="book-isbn">ISBN: <%= libro.isbn %></span>
-                        <span class="book-creation-date">
-                            Registro: <%= libro.fecha_creacion.toLocaleDateString() %> 
-                        </span>
-                        
-                        <span class="book-availability-status">
-                            <% if (libro.copias_disponibles > 0) { %>
-                                Quedan: <strong><%= libro.copias_disponibles %></strong>
-                            <% } else { %>
-                                <strong style="color: red;">AGOTADO</strong>
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .section-title {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .book-card img {
+            height: 280px;
+            object-fit: cover;
+        }
+
+        .author-card img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #667eea;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+        }
+
+        .login-links {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .login-links a {
+            font-size: 1.2rem;
+            margin: 0 15px;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .login-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5">
+        <!-- Header -->
+        <header>
+            <h1>Bienvenido a Nuestra Librería</h1>
+            <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
+        </header>
+
+        <!-- Libros Destacados -->
+        <section class="mb-5">
+            <h2 class="section-title text-center">Libros Destacados</h2>
+
+            <% if (books && books.length> 0) { %>
+                <div id="booksCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner" id="carouselInner">
+                        <% const booksPerSlide=4; for (let i=0; i < books.length; i +=booksPerSlide) { const
+                            group=books.slice(i, i + booksPerSlide); const isActive=i===0 ? "active" : "" ; %>
+                            <div class="carousel-item <%= isActive %>">
+                                <div class="row justify-content-center">
+                                    <% group.forEach(book=> { %>
+                                        <div class="col-md-3 mb-4">
+                                            <div class="card h-100 shadow-sm book-card">
+                                                <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
+                                                    class="card-img-top" alt="<%= book.title %>">
+                                                <div class="card-body d-flex flex-column">
+                                                    <h5 class="card-title text-truncate">
+                                                        <%= book.title %>
+                                                    </h5>
+                                                    <p class="card-text text-muted small">
+                                                        Autor: <%= book.author_name || "Desconocido" %>
+                                                    </p>
+                                                    <p class="card-text fw-bold text-primary mt-auto">
+                                                        <%= book.price %>€
+                                                    </p>
+                                                    <a href="/book/<%= book.id %>" class="btn btn-primary btn-sm mt-2">
+                                                        Ver detalles
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                                </div>
+                            </div>
                             <% } %>
-                        </span>
-
-                        <div class="actions">
-                            <% if (libro.copias_disponibles > 0) { %>
-                                <form action="/prestar/<%= libro.id %>" method="POST" style="display: inline;">
-                                    <button type="submit" class="btn-success">Tomar Prestado</button>
-                                </form>
-                            <% } else { %>
-                                <button class="btn-disabled" disabled>No Disponible</button>
-                            <% } %>
-
-                            <% if (libro.copias_disponibles < libro.cantidad_total) { %>
-                                <form action="/devolver/<%= libro.id %>" method="POST" style="display: inline; margin-left: 10px;">
-                                    <button type="submit" class="btn-warning">Devolver</button>
-                                </form>
-                            <% } %>
-                        </div>
                     </div>
-                    
-                <% }); %>
-            
-            <% } %>
-        
-        </section>
-    </div>
-</main>
 
-<%- include('partials/footer.ejs') %>
+                    <!-- Controles del carrusel -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#booksCarousel"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#booksCarousel"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
+                </div>
+                <% } else { %>
+                    <p class="text-center text-muted">No hay libros destacados en este momento.</p>
+                    <% } %>
+        </section>
+
+        <!-- Autores Destacados -->
+        <section class="mb-5">
+            <h2 class="section-title text-center">Autores Destacados</h2>
+
+            <% if (authors && authors.length> 0) { %>
+                <div class="row justify-content-center">
+                    <% authors.forEach(author=> { %>
+
+                        <% const countData=bookAuthors.find(item=> Number(item.author_id) === Number(author.id));
+                            const totalLibros = countData ? Number(countData.count_books) : 0; %>
+
+                            <div class="col-md-3 mb-4">
+                                <div class="card author-card text-center shadow-sm">
+                                    <div class="card-body">
+                                        <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
+                                            alt="<%= author.name %>">
+                                        <h5 class="mt-3">
+                                            <%= author.name %>
+                                        </h5>
+                                        <p class="text-muted small">
+                                            <%= author.country || "País desconocido" %>
+                                        </p>
+                                        <span class="badge bg-secondary">Libros: <%= totalLibros %></span>
+                                        <a href="/author/<%= author.id %>" class="btn btn-primary btn-sm mt-2">
+                                            Ver detalles
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                </div>
+                <% } else { %>
+                    <p class="text-center text-muted">No hay autores destacados en este momento.</p>
+                    <% } %>
+        </section>
+
+        <!-- Enlaces de login -->
+        <div class="login-links">
+            <a href="/login">Iniciar sesión</a> |
+            <a href="/register">Registrarse</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -165,6 +165,23 @@ async function updateBookAuthor(oldIds, newIds) {
   }
 }
 
+async function getAuthorsByBookId(bookId) {
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      "SELECT a.* FROM book_authors ba join authors a on ba.author_id = a.id WHERE ba.book_id = $1",
+      [bookId]
+    );
+    return result.rows.map((row) => new authorModel(row));
+  } catch (err) {
+    console.log(err);
+    return "Fallo al recueperar los libros del autor";
+  } finally {
+    client.release();
+  }
+}
+
 // 4. Eliminar por clave compuesta
 async function deleteBookAuthor(bookId, authorId) {
   const result = await pool.query(
@@ -179,6 +196,7 @@ export default {
   getBooksByAuthorName,
   getAuthorsByBook,
   getBookAuthor,
+  getAuthorsByBookId,
   updateBookAuthor,
   countBooksByAuthor,
   countBooksByAuthors,
