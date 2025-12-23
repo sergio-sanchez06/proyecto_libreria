@@ -59,6 +59,27 @@ async function updateAuthor(req, res) {
   }
 }
 
+async function updatePhoto(req, res) {
+  try {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ error: "No se ha subido ningún archivo" });
+    }
+
+    // Guardamos la ruta que será accesible desde la web
+    const photoUrl = `/uploads/authors/${req.file.filename}`;
+
+    // Llamas a tu repositorio para guardar esta URL en la base de datos
+    const updatedAuthor = await RepoAuthor.updatePhoto(id, photoUrl);
+
+    res.status(200).json(updatedAuthor);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar la foto" });
+  }
+}
+
 async function deleteAuthor(req, res) {
   // Controlador de eliminación de autor
   try {
@@ -87,6 +108,7 @@ export default {
   getAuthorByName,
   getAuthorByCountry,
   updateAuthor,
+  updatePhoto,
   deleteAuthor,
   getAllAuthors,
 };

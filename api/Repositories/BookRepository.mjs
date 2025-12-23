@@ -1,5 +1,6 @@
 import Book from "../models/BookModel.mjs";
 import pool from "../config/database.mjs";
+import axios from "axios";
 
 async function createBook(book) {
   const client = await pool.connect();
@@ -125,6 +126,84 @@ async function deleteBook(id) {
   }
 }
 
+async function updateAllCovers() {
+  const client = await pool.connect();
+  try {
+    // 1. Obtener todos los libros que no tienen portada o tienen una vacía
+    const { rows: books } = await client.query(
+      "SELECT id, isbn FROM books WHERE cover_url IS NULL OR cover_url = ''"
+    );
+
+    console.log(`Se encontraron ${books.length} libros para actualizar.`);
+
+    const updatedBooks = [];
+
+    // 2. Recorrer cada libro y buscar su portada en Google
+    for (const book of books) {
+      if (book.isbn) {
+        try {
+          // Reutilizamos la lógica de buscar en Google (puedes extraerla a una función aparte)
+          const { data } = await axios.get(
+            `https://www.googleapis.com/books/v1/volumes?q=isbn:${book.isbn}`
+          );
+
+          if (data.totalItems > 0 && data.items[0].volumeInfo.imageLinks) {
+            const url = data.items[0].volumeInfo.imageLinks.thumbnail.replace(
+              "http://",
+              "https://"
+            );
+
+            // 3. Actualizar este libro específico en la BBDD
+            const updateRes = await client.query(
+              "UPDATE books SET cover_url = $1 WHERE id = $2 RETURNING *",
+              [url, book.id]
+            );
+
+            updatedBooks.push(updateRes.rows[0]);
+            console.log(`Portada actualizada para ID: ${book.id}`);
+          }
+
+          // Opcional: Pequeña pausa para no saturar la API de Google (Rate Limiting)
+          await new Promise((resolve) => setTimeout(resolve, 200));
+        } catch (err) {
+          console.error(`Error con el libro ${book.id}: ${err.message}`);
+        }
+      }
+    }
+    return updatedBooks;
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function getBookByFeatures(features) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      `
+      SELECT b.id, b.title, b.cover_url, b.price, a.name AS author_name
+      FROM public.books b
+      INNER JOIN public.book_authors ba ON b.id = ba.book_id
+      INNER JOIN public.authors a ON ba.author_id = a.id
+      ORDER BY b.created_at DESC
+      LIMIT $1
+      `,
+      [5]
+    );
+    await client.query("COMMIT");
+    return result.rows.map((book) => new Book(book));
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.log(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 async function getAllBooks() {
   const client = await pool.connect();
   try {
@@ -147,5 +226,7 @@ export default {
   getBookByTitle,
   updateBook,
   deleteBook,
+  updateAllCovers,
+  getBookByFeatures,
   getAllBooks,
 };

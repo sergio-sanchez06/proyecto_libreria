@@ -1,4 +1,3 @@
-// web/app.mjs
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -17,6 +16,4 @@ app.use("/", webRoutes);
 const port = 3001;
 app.listen(port, () => {
   console.log(`Web corriendo en http://localhost:${port}`);
-  console.log(`Login: http://localhost:${port}/login`);
-  console.log(`Dashboard: http://localhost:${port}/`);
 });

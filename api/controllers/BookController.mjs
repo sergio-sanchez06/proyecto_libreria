@@ -56,6 +56,28 @@ async function deleteBook(req, res) {
   }
 }
 
+async function getBookByFeatures(req, res) {
+  // Controlador de obtención de libro por características
+  try {
+    const book = await RepoBook.getBookByFeatures(req.params.features);
+    res.status(200).json(book);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener el libro" });
+  }
+}
+
+async function updateAllCovers(req, res) {
+  try {
+    const updatedBooks = await RepoBook.updateAllCovers();
+
+    res.status(200).json(updatedBooks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al actualizar la portada" });
+  }
+}
+
 async function getAllBooks(req, res) {
   // Controlador de obtención de todos los libros
   try {
@@ -73,5 +95,7 @@ export default {
   getBookByTitle,
   updateBook,
   deleteBook,
+  getBookByFeatures,
+  updateAllCovers,
   getAllBooks,
 };

@@ -1,7 +1,6 @@
 import pool from "../config/database.mjs";
 import BookAuthorModel from "../models/bookAuthorModel.mjs";
 import authorModel from "../models/authorModel.mjs";
-import bookModel from "../models/bookModel.mjs";
 
 // 1. Crear asociación (No suele requerir transacción si es una sola consulta)
 async function createBookAuthor(bookAuthor) {
@@ -101,6 +100,39 @@ async function getAuthorsByBook(bookTitle) {
   }
 }
 
+async function countBooksByAuthors() {
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      "SELECT author_id,COUNT(*) as count_books FROM book_authors group by author_id"
+    );
+    return result.rows;
+  } catch (err) {
+    console.log(err);
+    return "Fallo al recueperar los libros del autor";
+  } finally {
+    client.release();
+  }
+}
+
+async function countBooksByAuthor(authorId) {
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      "SELECT COUNT(*) FROM book_authors WHERE author_id = $1 order by book_id",
+      [authorId]
+    );
+    return result.rows;
+  } catch (err) {
+    console.log(err);
+    return "Fallo al recueperar los libros del autor";
+  } finally {
+    client.release();
+  }
+}
+
 // 2. Obtener por clave compuesta (book_id Y author_id)
 async function getBookAuthor(bookId, authorId) {
   const result = await pool.query(
@@ -148,5 +180,7 @@ export default {
   getAuthorsByBook,
   getBookAuthor,
   updateBookAuthor,
+  countBooksByAuthor,
+  countBooksByAuthors,
   deleteBookAuthor,
 };

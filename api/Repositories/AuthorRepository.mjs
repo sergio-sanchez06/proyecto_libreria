@@ -138,6 +138,24 @@ async function getAllAuthors() {
   }
 }
 
+async function updatePhoto(id, photoUrl) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      "UPDATE authors SET photo_url = $2 WHERE id = $1 RETURNING *",
+      [id, photoUrl]
+    );
+    await client.query("COMMIT");
+    return result.rows[0];
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createAuthor,
   getAuthorById,
@@ -146,4 +164,5 @@ export default {
   updateAuthor,
   deleteAuthor,
   getAllAuthors,
+  updatePhoto,
 };

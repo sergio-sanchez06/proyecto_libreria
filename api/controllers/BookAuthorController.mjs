@@ -85,10 +85,34 @@ async function removeAuthorFromBook(req, res) {
   }
 }
 
+async function countBooksByAuthors(req, res) {
+  try {
+    const count = await BookAuthorRepository.countBooksByAuthors();
+    res.status(200).json(count);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al contar los libros del autor" });
+  }
+}
+
+async function countBooksByAuthor(req, res) {
+  try {
+    const count = await BookAuthorRepository.countBooksByAuthor(
+      req.params.authorId
+    );
+    res.status(200).json(count);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al contar los libros del autor" });
+  }
+}
+
 export default {
   assignAuthorToBook,
   getAuthorsByBook,
   getBooksByAuthor,
   updateBookAuthor,
   removeAuthorFromBook,
+  countBooksByAuthor,
+  countBooksByAuthors,
 };

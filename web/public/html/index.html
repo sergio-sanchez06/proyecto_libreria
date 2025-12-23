@@ -4,16 +4,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Librería</title>
-    <script type="module" src="js/router.js"></script>
+    <title>Librería - Inicio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: #667eea;
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-top: 50px;
+        }
+
+        /* Estilos para que las cards del carrusel se vean bien */
+        .carousel-item .card {
+            margin: 10px;
+            height: 100%;
+        }
+
+        .card img {
+            height: 250px;
+            object-fit: cover;
+        }
+
+        /* Ajuste de flechas del carrusel para fondos claros */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            padding: 20px;
+        }
+
+        /* Grid para autores (se mantiene igual) */
+        .grid-authors {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card-author {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="app">
-        <h1>Bienvenido al Dashboard</h1>
-        <p>Estás autenticado!</p>
-        <button onclick="AuthController.logout(); router.navigateTo('/login')">Cerrar Sesión</button>
+    <div class="container">
+        <header>
+            <h1>Bienvenido a Nuestra Librería</h1>
+            <p>Descubre los mejores libros y autores</p>
+        </header>
+
+        <div class="section">
+            <h2 class="text-center mb-4">Libros Destacados</h2>
+            <div id="bookCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner" id="carouselContent">
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#bookCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#bookCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="text-center mb-4">Autores Destacados</h2>
+            <div class="grid-authors" id="featuredAuthors"></div>
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="/login.html" class="text-decoration-none">Iniciar sesión</a> |
+            <a href="/register.html" class="text-decoration-none">Registrarse</a>
+        </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="module">
+
+        const API_URL = "http://localhost:3000";
+
+        // --- CARGAR LIBROS EN CARRUSEL (4 por slide) ---
+        async function loadFeaturedBooks() {
+            try {
+                const response = await fetch("http://localhost:3000/books");
+                const books = await response.json();
+                const carouselInner = document.getElementById("carouselContent");
+                carouselInner.innerHTML = "";
+
+                // Agrupamos de 4 en 4
+                for (let i = 0; i < books.length; i += 4) {
+                    const group = books.slice(i, i + 4);
+
+                    const carouselItem = document.createElement("div");
+                    carouselItem.className = `carousel-item ${i === 0 ? "active" : ""}`;
+
+                    let rowHTML = '<div class="row px-5">'; // px-5 para no chocar con flechas
+                    group.forEach(book => {
+                        rowHTML += `
+                            <div class="col-md-3">
+                                <div class="card shadow-sm">
+                                    <img src="${book.cover_url || '/images/default-cover.jpg'}" class="card-img-top" alt="${book.title}">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-truncate">${book.title}</h5>
+                                        <p class="card-text small text-muted">Autor: ${book.author_name || 'Desconocido'}</p>
+                                        <p class="card-text fw-bold text-primary">${book.price}€</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    rowHTML += '</div>';
+
+                    carouselItem.innerHTML = rowHTML;
+                    carouselInner.appendChild(carouselItem);
+                }
+            } catch (error) {
+                console.error("Error cargando libros:", error);
+            }
+        }
+
+        // --- CARGAR AUTORES ---
+        async function loadFeaturedAuthors() {
+            try {
+                const responseAuthors = await fetch("http://localhost:3000/authors");
+                const authors = await responseAuthors.json();
+
+                const responseCounts = await fetch("http://localhost:3000/bookAuthor/count");
+
+                // Validación para evitar el error del SyntaxError (HTML en vez de JSON)
+                const contentType = responseCounts.headers.get("content-type");
+                if (!contentType || !contentType.includes("application/json")) {
+                    console.error("Servidor no devolvió JSON en conteo.");
+                    return;
+                }
+
+                const books_authors = await responseCounts.json();
+                const grid = document.getElementById("featuredAuthors");
+                grid.innerHTML = "";
+
+                authors.forEach(author => {
+                    const countData = books_authors.find(item => String(item.author_id) === String(author.id));
+                    const totalLibros = countData ? countData.count_books : 0;
+
+                    const imagenSrc = author.photo_url ? author.photo_url : '/uploads/authors/generica.jpg';
+
+                    const card = document.createElement("div");
+                    card.className = "card-author";
+                    card.innerHTML = `
+                        <img src="${imagenSrc}" alt="${author.name}" 
+                             style="width: 100%; height: 150px; object-fit: cover; border-radius: 50%;">
+                        <h3 class="mt-2 h5">${author.name}</h3>
+                        <p class="small text-muted mb-1">${author.country || ''}</p>
+                        <span class="badge bg-secondary">Libros: ${totalLibros}</span>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Error cargando autores:", error);
+            }
+        }
+
+        loadFeaturedBooks();
+        loadFeaturedAuthors();
+    </script>
 </body>
 
 </html>

@@ -11,4 +11,8 @@ router.get("/author/:authorName", BookAuthorController.getBooksByAuthor);
 
 router.delete("/:bookId/:authorId", BookAuthorController.removeAuthorFromBook);
 
+router.get("/count", BookAuthorController.countBooksByAuthors);
+
+router.get("/count/:authorId", BookAuthorController.countBooksByAuthor);
+
 export default router;
