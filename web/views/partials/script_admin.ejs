@@ -1,0 +1,19 @@
+<script>
+    async function deleteBook(id) {
+        if (!confirm('¿Estás seguro de borrar este libro?')) return;
+
+        try {
+            const response = await fetch(`http://localhost:4000/api/books/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert("Libro borrado");
+                location.reload(); 
+            }
+        } catch (err) {
+            alert("Error al borrar");
+        }
+    }
+
+</script>

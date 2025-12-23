@@ -1,0 +1,25 @@
+<script>
+    async function loadBooks() {
+        try {
+            const response = await fetch('http://localhost:4000/api/books');
+            const books = await response.json();
+            
+            const container = document.getElementById('books-container');
+            if (container && books.length > 0) {
+                container.innerHTML = books.map(book => `
+                    <div class="book-card">
+                        <h3>${book.title}</h3>
+                        <p>Precio: ${book.price}€</p>
+                        <a href="/libro/${book.id}">Ver detalle</a>
+                    </div>
+                `).join('');
+            }
+        } catch (err) {
+            console.error("Error cargando libros:", err);
+        }
+    }
+
+    if (document.getElementById('books-container')) {
+        loadBooks();
+    }
+</script>
