@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= publisher.name %> - Editorial
+    </title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .publisher-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 70px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin-bottom: 50px;
+        }
+
+        .publisher-header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .publisher-header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+
+        .publisher-info {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px;
+        }
+
+        .publisher-info h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .publisher-info a {
+            color: #667eea;
+            text-decoration: underline;
+        }
+
+        .books-title {
+            margin-top: 50px;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+
+        .book-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .book-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .book-card img {
+            height: 280px;
+            object-fit: cover;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .no-books {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            margin: 40px 0;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .back-link a {
+            font-size: 1.2rem;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5">
+        <!-- Cabecera de la editorial -->
+        <div class="publisher-header">
+            <h1>
+                <%= publisher.name || "Editorial sin nombre" %>
+            </h1>
+            <% if (publisher.country) { %>
+                <p>
+                    <%= publisher.country %>
+                </p>
+                <% } %>
+                    <p>
+                        <%= publisher.book_count %>
+                            <%= publisher.book_count===1 ? 'libro publicado' : 'libros publicados' %>
+                    </p>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="publisher-info">
+            <h3>Información de la Editorial</h3>
+            <% if (publisher.website) { %>
+                <p><strong>Sitio web:</strong> <a href="<%= publisher.website %>" target="_blank">
+                        <%= publisher.website %>
+                    </a></p>
+                <% } else { %>
+                    <p><strong>Sitio web:</strong> No disponible</p>
+                    <% } %>
+
+                        <% if (publisher.descripcion) { %>
+                            <p><strong>Descripción:</strong>
+                                <%= publisher.descripcion %>
+                            </p>
+                            <% } %>
+
+                                <% if (publisher.image_url) { %>
+                                    <p><strong>Imagen:</strong> <img src="<%= publisher.image_url %>"
+                                            alt="<%= publisher.name %>" class="img-fluid">
+                                    </p>
+                                    <% } %>
+        </div>
+
+        <!-- Libros de la editorial -->
+        <h2 class="books-title">Libros publicados por <%= publisher.name %>
+        </h2>
+
+        <% if (books && books.length> 0) { %>
+            <div class="row justify-content-center">
+                <% books.forEach(book=> { %>
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100 shadow-sm book-card">
+                            <img src="<%= book.cover_url || '/images/default-cover.jpg' %>" class="card-img-top"
+                                alt="<%= book.title %>">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-truncate">
+                                    <%= book.title %>
+                                </h5>
+                                <p class="card-text small">
+                                    Año: <%= book.releashed_year || "Desconocido" %>
+                                </p>
+                                <p class="card-text fw-bold text-primary mt-auto">
+                                    <%= book.price %>€
+                                </p>
+                                <a href="/book/<%= book.id %>" class="btn btn-primary btn-sm mt-3">
+                                    Ver detalles del libro
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+            <% } else { %>
+                <p class="no-books">Esta editorial aún no tiene libros registrados en nuestra librería.</p>
+                <% } %>
+
+                    <!-- Volver al inicio -->
+                    <div class="back-link">
+                        <a href="/">← Volver al inicio</a>
+                    </div>
+    </div>
+
+    <!-- Bootstrap JS (para efectos si los añades) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

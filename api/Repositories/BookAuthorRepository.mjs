@@ -1,6 +1,7 @@
 import pool from "../config/database.mjs";
 import BookAuthorModel from "../models/bookAuthorModel.mjs";
 import authorModel from "../models/authorModel.mjs";
+import bookModel from "../models/BookModel.mjs";
 
 // 1. Crear asociación (No suele requerir transacción si es una sola consulta)
 async function createBookAuthor(bookAuthor) {
@@ -191,6 +192,66 @@ async function deleteBookAuthor(bookId, authorId) {
   return result.rowCount > 0;
 }
 
+async function getBookAuthors() {
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(`
+      SELECT 
+        ba.book_id,
+        ba.author_id,
+        -- Campos del libro
+        b.id AS book_id,
+        b.title AS book_title,
+        b.isbn AS book_isbn,
+        b.price AS book_price,
+        b.stock AS book_stock,
+        b.pages AS book_pages,
+        b.cover_url AS book_cover_url,
+        b.synopsis AS book_synopsis,
+        b.releashed_year AS book_released_year,
+        -- Campos del autor
+        a.id AS author_id,
+        a.name AS author_name,
+        a.country AS author_country,
+        a.photo_url AS author_photo_url
+      FROM book_authors ba
+      JOIN books b ON ba.book_id = b.id
+      JOIN authors a ON ba.author_id = a.id
+    `);
+
+    return result.rows.map(
+      (row) =>
+        new BookAuthorModel({
+          book_id: row.book_id,
+          author_id: row.author_id,
+          book: new bookModel({
+            id: row.book_id,
+            title: row.book_title,
+            isbn: row.book_isbn,
+            price: row.book_price,
+            stock: row.book_stock,
+            pages: row.book_pages,
+            cover_url: row.book_cover_url,
+            synopsis: row.book_synopsis,
+            released_year: row.book_released_year,
+          }),
+          author: new authorModel({
+            id: row.author_id,
+            name: row.author_name,
+            country: row.author_country,
+            photo_url: row.author_photo_url,
+          }),
+        })
+    );
+  } catch (err) {
+    console.error("Error al recuperar book_authors:", err);
+    throw new Error("Fallo al recuperar los libros del autor");
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createBookAuthor,
   getBooksByAuthorName,
@@ -201,4 +262,5 @@ export default {
   countBooksByAuthor,
   countBooksByAuthors,
   deleteBookAuthor,
+  getBookAuthors,
 };

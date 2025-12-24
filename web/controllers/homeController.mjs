@@ -8,20 +8,54 @@ const apiClient = axios.create({
   },
 });
 
-async function getBooksAndAuthors(req, res) {
+async function getBooksAndAuthors(req, res, next) {
   try {
-    const response = await apiClient.get("/books");
-    const authorsResponse = await apiClient.get("/authors");
-    const responseBookAuthors = await apiClient.get("/bookAuthor/count");
-    const books = response.data;
-    const authors = authorsResponse.data;
+    // const response = await apiClient.get("/books");
+    // const authorsResponse = await apiClient.get("/authors");
+    const responseBooks = await apiClient.get("/books");
+    const responseAuthors = await apiClient.get("/authors");
+    const responseBookAuthors = await apiClient.get("/bookAuthor");
+    const responseBooksAuthorCount = await apiClient.get("/bookAuthor/count");
+
+    console.log(responseBookAuthors.data);
+
+    const booksAuthorsCount = responseBooksAuthorCount.data;
+    const books = responseBooks.data;
+    const authors = responseAuthors.data;
     const bookAuthors = responseBookAuthors.data;
-    console.log(bookAuthors);
-    res.render("index", { books, authors, bookAuthors });
+    res.locals.bookAuthors = bookAuthors;
+    res.locals.bookAuthorsCount = booksAuthorsCount;
+    res.locals.books = books;
+    res.locals.authors = authors;
+    next();
   } catch (error) {
+    res.locals.bookAuthors = [];
+    res.locals.books = [];
+    res.locals.authors = [];
     console.error("Error cargando libros destacados:", error);
-    res.render("index", { books: [] });
+    next();
   }
+}
+
+async function getBooksByPublisherId(req, res, next) {
+  try {
+    const response = await apiClient.get(`/books/publisher/${req.params.id}`);
+    const books = response.data;
+    res.locals.books = books;
+    next();
+  } catch (error) {
+    res.locals.books = [];
+    console.error("Error cargando libros por editorial:", error);
+    next();
+  }
+}
+
+async function index(req, res) {
+  res.render("index", {
+    books: res.locals.books,
+    authors: res.locals.authors,
+    bookAuthors: res.locals.bookAuthors,
+  });
 }
 
 async function getBookById(req, res) {
@@ -44,7 +78,17 @@ async function getBookById(req, res) {
   }
 }
 
+async function publisher(req, res) {
+  res.render("publisher_detalle", {
+    publisher: res.locals.publisher,
+    books: res.locals.books,
+  });
+}
+
 export default {
   getBooksAndAuthors,
   getBookById,
+  index,
+  getBooksByPublisherId,
+  publisher,
 };

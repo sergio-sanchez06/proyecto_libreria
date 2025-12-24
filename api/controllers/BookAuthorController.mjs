@@ -120,6 +120,18 @@ async function countBooksByAuthor(req, res) {
   }
 }
 
+async function getBookAuthors(req, res) {
+  try {
+    const bookAuthors = await BookAuthorRepository.getBookAuthors();
+    res.status(200).json(bookAuthors);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener los autores de los libros" });
+  }
+}
+
 export default {
   assignAuthorToBook,
   getAuthorsByBook,
@@ -129,4 +141,5 @@ export default {
   getAuthorsByBookId,
   countBooksByAuthor,
   countBooksByAuthors,
+  getBookAuthors,
 };

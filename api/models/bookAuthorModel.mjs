@@ -1,9 +1,12 @@
+import Book from "./BookModel.mjs";
+import Author from "./authorModel.mjs";
+
 export default class BookAuthor {
   constructor({
     book_id,
     author_id,
-    book = null,
-    author = null,
+    book = new Book(),
+    author = new Author(),
     created_at,
     update_at,
   } = {}) {

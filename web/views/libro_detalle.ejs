@@ -75,6 +75,9 @@
                     <p><strong>Sinopsis:</strong>
                         <%= book.synopsis || "No disponible" %>
                     </p>
+                    <p><strong>Editorial:</strong>
+                        <%= book.publisher || "Desconocido" %>
+                    </p>
                     <p><strong>Géneros:</strong>
                         <% if (genres && genres.length> 0) { %>
                             <div class="d-flex flex-wrap gap-2">

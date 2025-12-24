@@ -36,9 +36,10 @@ async function getBookById(id) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const result = await client.query("SELECT * FROM books WHERE id = $1", [
-      id,
-    ]);
+    const result = await client.query(
+      "SELECT b.* FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.id = $1",
+      [id]
+    );
     await client.query("COMMIT");
     return new Book(result.rows[0]);
   } catch (error) {
@@ -53,9 +54,10 @@ async function getBookByTitle(title) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const result = await client.query("SELECT * FROM books WHERE title = $1", [
-      title,
-    ]);
+    const result = await client.query(
+      "SELECT b.* FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.title = $1",
+      [title]
+    );
     await client.query("COMMIT");
     return new Book(result.rows[0]);
   } catch (error) {
@@ -118,6 +120,24 @@ async function deleteBook(id) {
     await client.query("BEGIN");
     await client.query("DELETE FROM books where id = $1", [id]);
     await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function getBooksByPublisherId(publisher_id) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      "SELECT * FROM books WHERE publisher_id = $1",
+      [publisher_id]
+    );
+    await client.query("COMMIT");
+    return result.rows.map((book) => new Book(book));
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
@@ -229,4 +249,5 @@ export default {
   updateAllCovers,
   getBookByFeatures,
   getAllBooks,
+  getBooksByPublisherId,
 };
