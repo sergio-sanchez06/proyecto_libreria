@@ -51,6 +51,10 @@ async function updateAuthor(req, res) {
   try {
     const update_data = { id: req.params.id, ...req.body }; // Crea un objeto que añade el id al resto de parámetros del body
 
+    if (req.file) {
+      update_data.photo_url = `/uploads/authors/${req.file.filename}`;
+    }
+
     const author = await AuthorRepository.updateAuthor(update_data);
     res.status(200).json(author);
   } catch (error) {

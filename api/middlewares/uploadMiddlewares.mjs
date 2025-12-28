@@ -1,43 +1,31 @@
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 
-// Configuración de almacenamiento
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    // Creamos la ruta relativa a la raíz del proyecto
-    const route = "public/img/authors/";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-    // Verificamos si la carpeta existe, si no, la creamos
-    if (!fs.existsSync(route)) {
-      fs.mkdirSync(route, { recursive: true });
-    }
-    cb(null, route);
-  },
-  filename: function (req, file, cb) {
-    // Nombre: idDelAutor-timestamp.extensión
-    const authorId = req.params.id || "new";
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(
-      null,
-      `author-${authorId}-${uniqueSuffix}${path.extname(file.originalname)}`
-    );
-  },
-});
+const WEB_UPLOADS_PATH = path.join(__dirname, "../../web/public/uploads");
 
-// Filtro para aceptar solo imágenes
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image/")) {
-    cb(null, true);
-  } else {
-    cb(new Error("Solo se permiten imágenes"), false);
-  }
+const folders = {
+  author_photo: path.join(WEB_UPLOADS_PATH, "authors"),
+  cover: path.join(WEB_UPLOADS_PATH, "covers"),
+  publisher_logo: path.join(WEB_UPLOADS_PATH, "publishers"),
 };
 
-const uploadAuthorPhoto = multer({
-  storage: storage,
-  fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Límite de 5MB
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const folder =
+      folders[file.fieldname] || path.join(WEB_UPLOADS_PATH, "others");
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder, { recursive: true });
+    }
+    cb(null, folder);
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
 });
-
-export default uploadAuthorPhoto;
+const uploadImage = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
+export default uploadImage;

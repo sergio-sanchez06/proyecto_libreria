@@ -142,10 +142,23 @@
                     <% } %>
         </section>
 
-        <!-- Volver al inicio -->
-        <div class="back-link">
-            <a href="/">← Volver al inicio</a>
-        </div>
+        <% if(user && user.role==="ADMIN" ) { %>
+
+            <div class="back-link">
+                <a href="/author/edit/<%= author.id %>">Editar autor</a>
+            </div>
+
+            <div class="back-link">
+                <a href="/author/delete/<%= author.id %>">Eliminar autor</a>
+            </div>
+
+            <% } else { %>
+
+                <!-- Volver al inicio -->
+                <div class="back-link">
+                    <a href="/">← Volver al inicio</a>
+                </div>
+                <% } %>
     </div>
 
     <!-- Bootstrap JS -->

@@ -1,12 +1,61 @@
-<%- include('layout/header') %> <main class="container">
-    <form id="loginForm">
-        <h1>Entrar</h1>
-        <input type="email" id="loginEmail" placeholder="Correo" required>
-        <input type="password" id="loginPassword" placeholder="Contraseña" required>
-        <button type="submit" class="btn">Ingresar</button>
-    </form>
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <h1 class="card-title text-center mb-4">Iniciar Sesión</h1>
+
+                    <form id="loginForm" action="/login" method="POST">
+                        <input type="hidden" name="idToken" id="idToken">
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" id="password" class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
 
-<%- include('partials/scripts') %> 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-<%- include('layout/footer') %>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAvh7UG5-wdn7JR408JDgKcvcNpkmH4Kf8",
+        authDomain: "libreria-ed6c0.firebaseapp.com",
+        projectId: "libreria-ed6c0",
+        storageBucket: "libreria-ed6c0.firebasestorage.app",
+        messagingSenderId: "140935488654",
+        appId: "1:140935488654:web:4dd044759584b563d415df"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const idToken = await userCredential.user.getIdToken();
+
+            document.getElementById("idToken").value = idToken;
+            e.target.submit(); // envía el formulario con idToken
+        } catch (error) {
+            alert(error.message || "Error en autenticación");
+        }
+    });
+</script>

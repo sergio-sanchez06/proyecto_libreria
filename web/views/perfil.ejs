@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de usuario <%= user.name %>
+    </title>
+</head>
+
+<body>
+    <h1>Perfil de usuario <%= user.name %>
+    </h1>
+    <p>Email: <%= user.email %>
+    </p>
+    <p>Rol: <%= user.role %>
+    </p>
+    <p>Fecha de creación: <%= user.created_at %>
+    </p>
+    <p>Fecha de actualización: <%= user.updated_at %>
+    </p>
+    <p>Dirección por defecto: <%= user.default_address %>
+    </p>
+    <p>Dirección opcional: <%= user.optional_address %>
+    </p>
+    <a href="/logout">Cerrar sesión</a>
+    <a href="/profile">Perfil</a>
+    <a href="/mis-compras">Mis compras</a>
+    <a href="/mis-reseñas">Mis reseñas</a>
+    <a href="/mis-direcciones">Mis direcciones</a>
+    <a href="/mis-preferencias">Mis preferencias</a>
+    <a href="/">Volver a la página principal</a>
+</body>
+
+</html>

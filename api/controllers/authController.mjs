@@ -17,6 +17,7 @@ export const login = async (req, res) => {
     if (!idToken) return res.status(400).json({ message: "Token requerido" });
 
     const user = await AuthService.verifyTokenAndGetUser(idToken);
+    console.log("Inicio de sesion exitoso para:", user.email);
     res.status(200).json({
       message: "Login exitoso",
       user,

@@ -2,7 +2,6 @@ import axios from "axios";
 
 const apiClient = axios.create({
   baseURL: "http://localhost:3000",
-  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -16,8 +15,6 @@ async function getBooksAndAuthors(req, res, next) {
     const responseAuthors = await apiClient.get("/authors");
     const responseBookAuthors = await apiClient.get("/bookAuthor");
     const responseBooksAuthorCount = await apiClient.get("/bookAuthor/count");
-
-    console.log(responseBookAuthors.data);
 
     const booksAuthorsCount = responseBooksAuthorCount.data;
     const books = responseBooks.data;
@@ -55,6 +52,7 @@ async function index(req, res) {
     books: res.locals.books,
     authors: res.locals.authors,
     bookAuthors: res.locals.bookAuthors,
+    user: req.session.user || null,
   });
 }
 

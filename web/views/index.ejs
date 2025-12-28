@@ -210,8 +210,18 @@
 
         <!-- Enlaces de login -->
         <div class="login-links">
-            <a href="/login">Iniciar sesión</a> |
-            <a href="/register">Registrarse</a>
+
+            <% if (user) { %>
+                <p>Bienvenido <%= user.name %>
+                        <a href="/user/profile">Ver perfil</a>
+                </p>
+                <a href="/logout">Cerrar sesión</a>
+                <% } else { console.log("No hay usuario");%>
+                    <a href="/login">Iniciar sesión</a> |
+                    <a href="/register">Registrarse</a>
+                    <% } %>
+
+
         </div>
     </div>
 
