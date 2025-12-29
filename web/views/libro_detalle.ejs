@@ -1,0 +1,96 @@
+<!-- web/views/partials/book-details.ejs -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= book.title || "Libro" %> - Detalles
+    </title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        img {
+            max-width: 300px;
+            border-radius: 8px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        strong {
+            color: #667eea;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 30px;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>
+            <%= book.title || "Sin título" %>
+        </h1>
+
+        <% if (book.cover_url) { %>
+            <img src="<%= book.cover_url %>" alt="<%= book.title %>">
+            <% } else { %>
+                <img src="/images/default-cover.jpg" alt="Portada no disponible">
+                <% } %>
+
+                    <p><strong>Autor:</strong>
+                        <%= authors.map(author=> author.name).join(", ") || "Desconocido" %>
+                    </p>
+                    <p><strong>ISBN:</strong>
+                        <%= book.isbn || "No disponible" %>
+                    </p>
+                    <p><strong>Precio:</strong>
+                        <%= book.price ? book.price + "€" : "No disponible" %>
+                    </p>
+                    <p><strong>Año de lanzamiento:</strong>
+                        <%= book.releashed_year || "Desconocido" %>
+                    </p>
+                    <p><strong>Sinopsis:</strong>
+                        <%= book.synopsis || "No disponible" %>
+                    </p>
+                    <p><strong>Géneros:</strong>
+                        <% if (genres && genres.length> 0) { %>
+                            <div class="d-flex flex-wrap gap-2">
+                                <% genres.forEach(genre=> { %>
+                                    <span class="badge bg-primary fs-6 px-3 py-2">
+                                        <%= genre.genre.name %>
+                                    </span>
+                                    <% }) %>
+                            </div>
+                            <% } else { %>
+                                <p class="text-muted">No hay géneros asociados.</p>
+                                <% } %>
+                    </p>
+
+                    <a href="/">← Volver al inicio</a>
+    </div>
+</body>
+
+</html>
