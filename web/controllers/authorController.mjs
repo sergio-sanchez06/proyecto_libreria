@@ -85,14 +85,39 @@ async function deleteAuthor(req, res) {
   }
 }
 
-async function createAuthor(req, res) {
+async function getCreateAuthor(req, res) {
   try {
-    const response = await apiClient.post("/authors", req.body);
-    const author = response.data;
-    res.redirect(`/author/${author.id}`);
+    res.render("admin/add_author", {
+      user: req.session.user,
+      error: null,
+    });
+  } catch (error) {
+    console.error("Error al obtener el autor:", error);
+    res.status(500).send("Error al obtener el autor");
+  }
+}
+
+async function createAuthor(req, res) {
+  console.log(req.body);
+
+  const authorData = req.body;
+
+  // Subida de foto (opcional)
+  if (req.file) {
+    authorData.photo_url = `/uploads/authors/${req.file.filename}`;
+  }
+
+  console.log(authorData);
+
+  try {
+    await apiClient.post("/authors", authorData);
+    res.redirect("/"); // o página de listado
   } catch (error) {
     console.error("Error al crear el autor:", error);
-    res.status(500).send("Error al crear el autor");
+    res.render("admin/add_author", {
+      error: error.response?.data?.message || "Error al crear autor",
+      user: req.session.user || null,
+    });
   }
 }
 
@@ -127,4 +152,5 @@ export default {
   createAuthor,
   editFormAuthor,
   getAuthors,
+  getCreateAuthor,
 };

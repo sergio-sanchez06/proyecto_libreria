@@ -175,6 +175,9 @@
                 <p class="no-books">Esta editorial aún no tiene libros registrados en nuestra librería.</p>
                 <% } %>
 
+                    <a href="/publishers/edit/<%= publisher.id %>" class="btn btn-primary">Editar editorial</a>
+                    <a href="/publishers/delete/<%= publisher.id %>" class="btn btn-danger">Eliminar editorial</a>
+
                     <!-- Volver al inicio -->
                     <div class="back-link">
                         <a href="/">← Volver al inicio</a>

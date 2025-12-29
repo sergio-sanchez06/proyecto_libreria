@@ -5,14 +5,20 @@ import upload from "../utils/upload.mjs";
 const router = express.Router();
 
 router.get("/:id", authorController.getAuthorById);
-router.get("/edit/:id", authorController.getEditAuthor);
+router.get("/author/create", authorController.getCreateAuthor);
 router.post(
-  "/create",
-  upload.single("author_photo"),
+  "/author/create",
+  upload.single("photo"),
   authorController.createAuthor
 );
+router.get("/author/edit/:id", authorController.getEditAuthor);
 router.post(
-  "/update/:id",
+  "/author/update/:id",
+  upload.single("author_photo"),
+  authorController.updateAuthor
+);
+router.post(
+  "/author/update/:id",
   upload.single("author_photo"),
   authorController.updateAuthor
 );

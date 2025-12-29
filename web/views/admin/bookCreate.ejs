@@ -2,9 +2,8 @@
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">Editar Libro - <%= book.title %>
-                    </h2>
+                <div class="card-header bg-success text-white text-center">
+                    <h2 class="mb-0">Crear Nuevo Libro</h2>
                 </div>
                 <div class="card-body">
                     <% if (error) { %>
@@ -13,42 +12,31 @@
                         </div>
                         <% } %>
 
-                            <!-- Portada actual -->
-                            <div class="text-center mb-4">
-                                <img src="<%= book.cover_url || '/images/default-cover.jpg' %>" alt="Portada actual"
-                                    class="img-fluid rounded" style="max-height: 300px; object-fit: cover;">
-                                <p class="text-muted mt-2">Portada actual</p>
-                            </div>
-
-                            <form action="/books/update/<%= book.id %>" method="POST" enctype="multipart/form-data">
+                            <form action="/books/create" method="POST" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="title" class="form-label">Título *</label>
-                                    <input type="text" name="title" id="title" value="<%= book.title %>"
-                                        class="form-control" required>
+                                    <input type="text" name="title" id="title" class="form-control" required>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="isbn" class="form-label">ISBN</label>
-                                    <input type="text" name="isbn" id="isbn" value="<%= book.isbn %>"
-                                        class="form-control">
+                                    <input type="text" name="isbn" id="isbn" class="form-control">
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="price" class="form-label">Precio (€) *</label>
-                                    <input type="number" step="0.01" name="price" id="price" value="<%= book.price %>"
-                                        class="form-control" required>
+                                    <input type="number" step="0.01" name="price" id="price" class="form-control"
+                                        required>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="releashed_year" class="form-label">Año de publicación</label>
-                                    <input type="number" name="releashed_year" id="releashed_year"
-                                        value="<%= book.releashed_year %>" class="form-control">
+                                    <label for="released_year" class="form-label">Año de publicación</label>
+                                    <input type="number" name="released_year" id="released_year" class="form-control">
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="synopsis" class="form-label">Sinopsis</label>
-                                    <textarea name="synopsis" id="synopsis" rows="5"
-                                        class="form-control"><%= book.synopsis || '' %></textarea>
+                                    <textarea name="synopsis" id="synopsis" rows="5" class="form-control"></textarea>
                                 </div>
 
                                 <!-- Select para Editorial -->
@@ -57,8 +45,7 @@
                                     <select name="publisher_id" id="publisher_id" class="form-select" required>
                                         <option value="">Selecciona una editorial</option>
                                         <% publishers.forEach(publisher=> { %>
-                                            <option value="<%= publisher.id %>" <%=book.publisher_id==publisher.id
-                                                ? 'selected' : '' %>>
+                                            <option value="<%= publisher.id %>">
                                                 <%= publisher.name %>
                                             </option>
                                             <% }) %>
@@ -70,8 +57,7 @@
                                     <label for="author_ids" class="form-label">Autores</label>
                                     <select name="author_ids[]" id="author_ids" class="form-select" multiple size="5">
                                         <% authors.forEach(author=> { %>
-                                            <option value="<%= author.id %>" <%=book.author_ids &&
-                                                book.author_ids.includes(author.id) ? 'selected' : '' %>>
+                                            <option value="<%= author.id %>">
                                                 <%= author.name %>
                                             </option>
                                             <% }) %>
@@ -85,8 +71,7 @@
                                     <label for="genre_ids" class="form-label">Géneros</label>
                                     <select name="genre_ids[]" id="genre_ids" class="form-select" multiple size="5">
                                         <% genres.forEach(genre=> { %>
-                                            <option value="<%= genre.id %>" <%=book.genre_ids &&
-                                                book.genre_ids.includes(genre.id) ? 'selected' : '' %>>
+                                            <option value="<%= genre.id %>">
                                                 <%= genre.name %>
                                             </option>
                                             <% }) %>
@@ -95,16 +80,17 @@
                                         varios.</small>
                                 </div>
 
-                                <!-- Nueva portada -->
+                                <!-- Portada -->
                                 <div class="mb-3">
-                                    <label for="cover" class="form-label">Nueva portada</label>
+                                    <label for="cover" class="form-label">Portada</label>
                                     <input type="file" name="cover" id="cover" class="form-control" accept="image/*">
-                                    <small class="form-text text-muted">Selecciona una nueva portada (opcional).</small>
+                                    <small class="form-text text-muted">Selecciona una imagen para la portada
+                                        (opcional).</small>
                                 </div>
 
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-                                    <a href="/book/<%= book.id %>" class="btn btn-secondary">Cancelar</a>
+                                    <button type="submit" class="btn btn-success me-2">Crear libro</button>
+                                    <a href="/" class="btn btn-secondary">Cancelar</a>
                                 </div>
                             </form>
                 </div>

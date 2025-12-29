@@ -44,39 +44,97 @@ async function detail(req, res) {
   }
 }
 
-export const createForm = (req, res) => {
-  res.render("books/create", { error: null, user: req.session.user || null });
-};
-
 export const create = async (req, res) => {
   const bookData = req.body;
 
   if (req.file) {
-    bookData.cover_url = `/img/covers/${req.file.filename}`;
+    bookData.cover_url = `/uploads/covers/${req.file.filename}`;
   }
+
+  // Asegura arrays
+  bookData.author_ids = Array.isArray(bookData.author_ids)
+    ? bookData.author_ids
+    : [];
+  bookData.genre_ids = Array.isArray(bookData.genre_ids)
+    ? bookData.genre_ids
+    : [];
 
   try {
     await apiClient.post("/books", bookData);
-    res.redirect("/books");
+    res.redirect("/");
   } catch (error) {
+    // Recarga formulario con error
+    const [authorsRes, publishersRes, genresRes] = await Promise.all([
+      apiClient.get("/authors"),
+      apiClient.get("/publishers"),
+      apiClient.get("/genres"),
+    ]);
+
     res.render("books/create", {
-      error: "Error al crear libro",
-      user: req.session.user || null,
+      authors: authorsRes.data,
+      publishers: publishersRes.data,
+      genres: genresRes.data,
+      error: error.response?.data?.message || "Error al crear libro",
     });
   }
 };
+
+async function getCreate(req, res) {
+  try {
+    const [authorsResponse, publishersResponse, genresResponse] =
+      await Promise.all([
+        apiClient.get("/authors"),
+        apiClient.get("/publishers"),
+        apiClient.get("/genres"),
+      ]);
+
+    const authors = authorsResponse.data;
+    const publishers = publishersResponse.data;
+    const genres = genresResponse.data;
+
+    res.render("admin/bookCreate", {
+      authors,
+      publishers,
+      genres,
+      error: null,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error cargando libros:", error);
+    res.render("admin/bookCreate", {
+      authors: [],
+      publishers: [],
+      genres: [],
+      error: "Error al cargar libros",
+      user: req.session.user || null,
+    });
+  }
+}
 
 async function getEdit(req, res) {
   const bookId = req.params.id;
 
   try {
-    const response = await apiClient.get(`/books/${bookId}`);
-    const book = response.data;
+    const bookResponse = await apiClient.get(`/books/${bookId}`);
+    const book = bookResponse.data;
 
-    console.log(book);
+    // Carga listas para selects
+    const [authorsResponse, publishersResponse, genresResponse] =
+      await Promise.all([
+        apiClient.get("/authors"),
+        apiClient.get("/publishers"),
+        apiClient.get("/genres"),
+      ]);
+
+    const authors = authorsResponse.data;
+    const publishers = publishersResponse.data;
+    const genres = genresResponse.data;
 
     res.render("bookEdit", {
       book,
+      authors,
+      publishers,
+      genres,
       error: null,
       user: req.session.user || null,
     });
@@ -93,6 +151,9 @@ async function update(req, res) {
     updateData.cover_url = `/uploads/covers/${req.file.filename}`;
   }
 
+  updateData.author_ids = req.body.author_ids;
+  updateData.genre_ids = req.body.genre_ids;
+
   try {
     console.log(updateData);
     await apiClient.put(`/books/${bookId}`, updateData);
@@ -105,10 +166,7 @@ async function update(req, res) {
       const response = await apiClient.get(`/books/${bookId}`);
       const book = response.data;
 
-      res.render("books/edit", {
-        book,
-        error: error.response?.data?.message || "Error al actualizar el libro",
-      });
+      res.redirect(`/books/edit/${bookId}`);
     } catch (fetchError) {
       res
         .status(500)
@@ -147,10 +205,6 @@ async function getLibroDetail(req, res) {
   }
 }
 
-async function getCreate(req, res) {
-  res.render("books/create", { error: null, user: req.session.user || null });
-}
-
 async function getDelete(req, res) {
   const bookId = req.params.id;
 
@@ -170,6 +224,19 @@ async function getDelete(req, res) {
   }
 }
 
+async function getBooksByPublisherId(req, res, next) {
+  try {
+    const response = await apiClient.get(`/books/publisher/${req.params.id}`);
+    const books = response.data;
+    res.locals.books = books;
+    next();
+  } catch (error) {
+    res.locals.books = [];
+    console.error("Error cargando libros por editorial:", error);
+    next();
+  }
+}
+
 export default {
   list,
   detail,
@@ -180,4 +247,5 @@ export default {
   remove,
   create,
   getDelete,
+  getBooksByPublisherId,
 };

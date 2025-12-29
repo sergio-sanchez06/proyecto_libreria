@@ -33,7 +33,7 @@ app.use(
 );
 
 app.use("/", webRoutes);
-app.use("/publishers", publisherRoutes);
+app.use("/publisher", publisherRoutes);
 app.use("/books", bookRoutes);
 app.use("/user", userRoutes);
 app.use("/author", authorRoutes);

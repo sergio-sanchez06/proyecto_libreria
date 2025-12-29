@@ -6,7 +6,7 @@ import bookModel from "../models/BookModel.mjs";
 // 1. Crear asociación (No suele requerir transacción si es una sola consulta)
 async function createBookAuthor(bookAuthor) {
   const result = await pool.query(
-    "INSERT INTO book_author (book_id, author_id) VALUES ($1, $2) RETURNING *",
+    "INSERT INTO book_authors (book_id, author_id) VALUES ($1, $2) RETURNING *",
     [bookAuthor.book_id, bookAuthor.author_id]
   );
   return result.rows[0] ? new BookAuthorModel(result.rows[0]) : null;
@@ -252,6 +252,22 @@ async function getBookAuthors() {
   }
 }
 
+async function deleteByBookId(book_id) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query("DELETE FROM book_authors WHERE book_id = $1", [
+      book_id,
+    ]);
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createBookAuthor,
   getBooksByAuthorName,
@@ -263,4 +279,5 @@ export default {
   countBooksByAuthors,
   deleteBookAuthor,
   getBookAuthors,
+  deleteByBookId,
 };

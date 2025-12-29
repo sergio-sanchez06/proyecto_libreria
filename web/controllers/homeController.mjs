@@ -82,9 +82,12 @@ async function getBookById(req, res) {
 }
 
 async function publisher(req, res) {
+  console.log(res.locals.books);
+
   res.render("publisher_detalle", {
     publisher: res.locals.publisher,
     books: res.locals.books,
+    user: req.session.user || null,
   });
 }
 

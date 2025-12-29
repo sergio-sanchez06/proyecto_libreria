@@ -70,6 +70,12 @@
         .login-links a:hover {
             text-decoration: underline;
         }
+
+        a {
+
+            color: white;
+
+        }
     </style>
 </head>
 
@@ -79,7 +85,25 @@
         <header>
             <h1>Bienvenido a Nuestra Librería</h1>
             <p><a href="/genres">Ver géneros</a></p>
-            <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
+            <p><a href="/authors">Ver autores</a></p>
+            <p><a href="/books">Ver libros</a></p>
+            <p><a href="/users">Ver usuarios</a></p>
+
+            <% if(user){ %>
+                <p><a href="/logout">Cerrar sesión</a></p>
+                <p><a href="/user/profile">Perfil</a></p>
+                <% } else { %>
+                    <p><a href="/login">Iniciar sesión</a></p>
+                    <p><a href="/register">Registrarse</a></p>
+                    <% } %>
+
+                        <p><a href="/genres/create">Crear género</a></p>
+                        <p><a href="/author/author/create">Crear autor</a></p>
+                        <p><a href="/books/create">Crear libro</a></p>
+                        <p><a href="/publisher/create">Crear editorial</a></p>
+                        <p><a href="/users/create">Crear usuario</a></p>
+
+                        <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
         </header>
 
         <!-- Libros Destacados -->
@@ -196,7 +220,7 @@
                                         <%= publisher.name %>
                                     </h5>
 
-                                    <a href="/publishers/<%= publisher.id %>" class="btn btn-primary btn-sm mt-2">
+                                    <a href="/publisher/<%= publisher.id %>" class="btn btn-primary btn-sm mt-2">
                                         Ver detalles
                                     </a>
                                 </div>

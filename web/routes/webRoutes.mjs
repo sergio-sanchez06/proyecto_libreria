@@ -28,12 +28,12 @@ router.get("/book/:id", homeController.getBookById);
 //   res.render("register");
 // });
 
-router.get(
-  "/publishers/:id",
-  publisherController.getPublisherById,
-  homeController.getBooksByPublisherId,
-  homeController.publisher
-);
+// router.get(
+//   "/publishers/:id",
+//   publisherController.getPublisherById,
+//   homeController.getBooksByPublisherId,
+//   homeController.publisher
+// );
 // Ruta detalle del autor
 router.get("/author/:id", authorController.getAuthorById);
 

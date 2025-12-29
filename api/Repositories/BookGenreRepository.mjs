@@ -6,7 +6,7 @@ async function createBookGenre(bookGenre) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "INSERT INTO book_genre (book_id, genre_id) VALUES ($1, $2) RETURNING *",
+      "INSERT INTO book_genres (book_id, genre_id) VALUES ($1, $2) RETURNING *",
       [bookGenre.book_id, bookGenre.genre_id]
     );
     await client.query("COMMIT");
@@ -23,7 +23,7 @@ async function getBookGenreById(book_id, genre_id) {
   const client = await pool.connect();
   try {
     const result = await client.query(
-      "SELECT * FROM book_genre WHERE book_id = $1 AND genre_id = $2",
+      "SELECT * FROM book_genres WHERE book_id = $1 AND genre_id = $2",
       [book_id]
     );
     return new BookGenreModel(result.rows[0]);
@@ -195,7 +195,7 @@ async function updateBookGenre(bookGenre) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "UPDATE book_genre SET book_id = $1, genre_id = $2 WHERE id = $3 AND book_id = $4 AND genre_id = $5 RETURNING *",
+      "UPDATE book_genres SET book_id = $1, genre_id = $2 WHERE id = $3 AND book_id = $4 AND genre_id = $5 RETURNING *",
       [
         bookGenre.book_id,
         bookGenre.genre_id,
@@ -213,12 +213,26 @@ async function updateBookGenre(bookGenre) {
   }
 }
 
+async function deleteByBookId(book_id) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query("DELETE FROM book_genres WHERE book_id = $1", [book_id]);
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 async function deleteBookGenre(book_id, genre_id) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
     await client.query(
-      "DELETE FROM book_genre WHERE book_id = $1 AND genre_id = $2",
+      "DELETE FROM book_genres WHERE book_id = $1 AND genre_id = $2",
       [book_id, genre_id]
     );
     await client.query("COMMIT");
@@ -237,4 +251,5 @@ export default {
   getBookGenresByGenre,
   updateBookGenre,
   deleteBookGenre,
+  deleteByBookId,
 };
