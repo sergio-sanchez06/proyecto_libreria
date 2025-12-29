@@ -16,6 +16,7 @@ import genreRoutes from "./routes/genreRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import publisherRoutes from "./routes/publisherRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 // Cargar variables de entorno
 dotenv.config();
@@ -92,6 +93,7 @@ app.use("/books", bookRoutes); // Libros
 app.use("/genres", genreRoutes); // Géneros
 app.use("/orders", orderRoutes); // Pedidos
 app.use("/publishers", publisherRoutes); // Editoriales
+app.use("/users", userRoutes); // Perfiles y usuarios
 app.use("/auth", authRoutes); // Autenticación (Login/Registro)
 
 // ****************************************************
