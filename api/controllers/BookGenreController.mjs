@@ -30,7 +30,7 @@ async function getBooksGenresByGenre(req, res) {
 async function getBookGenresByBook(req, res) {
   try {
     const bookGenres = await BookGenreRepository.getBookGenresByBook(
-      req.params.bookTitle
+      req.params.bookId
     );
     res.status(200).json(bookGenres);
   } catch (error) {

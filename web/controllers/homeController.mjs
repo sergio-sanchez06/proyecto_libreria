@@ -69,7 +69,12 @@ async function getBookById(req, res) {
     );
     const genres = genresResponse.data;
     console.log(genres);
-    res.render("libro_detalle", { book, authors, genres });
+    res.render("libro_detalle", {
+      book,
+      authors,
+      genres,
+      user: req.session.user || null,
+    });
   } catch (error) {
     console.error("Error cargando libro:", error);
     res.status(404).render("error", { message: "Libro no encontrado" });

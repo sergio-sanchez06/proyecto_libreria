@@ -92,7 +92,18 @@
                                 <% } %>
                     </p>
 
-                    <a href="/">← Volver al inicio</a>
+                    <% if(user && user.role==="ADMIN" ) { %>
+
+                        <div class="back-link">
+                            <a href="/books/edit/<%= book.id %>">Editar libro</a>
+                        </div>
+
+                        <div class="back-link">
+                            <a href="/books/delete/<%= book.id %>">Eliminar libro</a>
+                        </div>
+
+                        <% } %>
+                            <a href="/">← Volver al inicio</a>
     </div>
 </body>
 

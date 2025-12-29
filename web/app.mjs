@@ -6,6 +6,8 @@ import webRoutes from "./routes/webRoutes.mjs";
 import publisherRoutes from "./routes/publisherRouter.mjs";
 import userRoutes from "./routes/userRoutes.mjs";
 import authorRoutes from "./routes/authorRouter.mjs";
+import genreRoutes from "./routes/genresRouter.mjs";
+import bookRoutes from "./routes/bookRoutes.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -32,8 +34,15 @@ app.use(
 
 app.use("/", webRoutes);
 app.use("/publishers", publisherRoutes);
+app.use("/books", bookRoutes);
 app.use("/user", userRoutes);
 app.use("/author", authorRoutes);
+app.use("/genres", genreRoutes);
+
+app.use((req, res, next) => {
+  res.locals.user = req.session.user || null; // disponible en TODAS las vistas
+  next();
+});
 
 const port = 3001;
 app.listen(port, () => {

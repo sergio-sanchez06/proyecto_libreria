@@ -7,7 +7,7 @@ router.post("/", BookGenreController.addGenreToBook);
 
 router.get("/genre/:genreName", BookGenreController.getBooksGenresByGenre);
 
-router.get("/book/:bookTitle", BookGenreController.getBookGenresByBook);
+router.get("/book/:bookId", BookGenreController.getBookGenresByBook);
 
 router.delete("/:bookId/:genreId", BookGenreController.removeGenreFromBook);
 

@@ -133,7 +133,7 @@ async function getBooksByPublisherId(publisher_id) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "SELECT * FROM books WHERE publisher_id = $1",
+      "SELECT b.*, p.name as publisher_name FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.publisher_id = $1",
       [publisher_id]
     );
     await client.query("COMMIT");

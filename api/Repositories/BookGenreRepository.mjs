@@ -34,21 +34,21 @@ async function getBookGenreById(book_id, genre_id) {
   }
 }
 
-async function getBookGenresByBook(bookTitle) {
+async function getBookGenresByBook(id) {
   const client = await pool.connect();
   try {
-    console.log(bookTitle);
+    console.log(id);
 
     const result = await client.query(
       `SELECT 
                 bg.book_id, bg.genre_id,
-                b.title AS book_title,
-                g.name AS genre_name
+                b.title,
+                g.name
             FROM book_genres bg
             INNER JOIN books b ON bg.book_id = b.id
             INNER JOIN genres g ON bg.genre_id = g.id
-            WHERE b.title ILIKE $1`,
-      [`%${bookTitle}%`]
+            WHERE b.id = $1`,
+      [id]
     );
 
     if (result.rows.length === 0) {
@@ -61,10 +61,12 @@ async function getBookGenresByBook(bookTitle) {
           book_id: row.book_id,
           genre_id: row.genre_id,
           book: {
-            title: row.book_title,
+            title: row.title,
+            id: row.book_id,
           },
           genre: {
-            name: row.genre_name,
+            name: row.name,
+            id: row.genre_id,
           },
         })
     );
@@ -81,8 +83,11 @@ async function getBookGenresByGenre(genreName) {
     const result = await client.query(
       `SELECT 
         bg.book_id, bg.genre_id,
-        b.title AS book_title, 
-        g.name AS genre_name
+        b.title AS book_title,
+        b.id AS book_id,
+        b.cover_url,
+        g.name AS genre_name,
+        g.id AS genre_id
       FROM public.book_genres bg
       INNER JOIN public.books b ON bg.book_id = b.id
       INNER JOIN public.genres g ON bg.genre_id = g.id
@@ -101,9 +106,12 @@ async function getBookGenresByGenre(genreName) {
           genre_id: row.genre_id,
           book: {
             title: row.book_title,
+            id: row.book_id,
+            cover_url: row.cover_url,
           },
           genre: {
             name: row.genre_name,
+            id: row.genre_id,
           },
         })
     );
