@@ -4,20 +4,11 @@
 const express = require("express");
 const router = express.Router();
 
-// Vista principal de autores
+// Vista principal de autores (usa autor.ejs)
 router.get("/", (req, res) => {
-  res.render("authors/list", {
+  res.render("autor", {
     pageTitle: "Autores",
     user: req.session.user,
-  });
-});
-
-// Vista de detalle de autor
-router.get("/:id", (req, res) => {
-  res.render("authors/detail", {
-    pageTitle: "Detalle de Autor",
-    user: req.session.user,
-    authorId: req.params.id,
   });
 });
 

@@ -4,20 +4,11 @@
 const express = require("express");
 const router = express.Router();
 
-// Vista principal de géneros
+// Vista principal de géneros (usa genero.ejs)
 router.get("/", (req, res) => {
-  res.render("genres/list", {
+  res.render("genero", {
     pageTitle: "Géneros Literarios",
     user: req.session.user,
-  });
-});
-
-// Vista de libros por género
-router.get("/:id", (req, res) => {
-  res.render("genres/books", {
-    pageTitle: "Libros por Género",
-    user: req.session.user,
-    genreId: req.params.id,
   });
 });
 

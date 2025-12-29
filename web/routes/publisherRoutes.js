@@ -4,20 +4,11 @@
 const express = require("express");
 const router = express.Router();
 
-// Vista principal de editoriales
+// Vista principal de editoriales (usa editorial.ejs)
 router.get("/", (req, res) => {
-  res.render("publishers/list", {
+  res.render("editorial", {
     pageTitle: "Editoriales",
     user: req.session.user,
-  });
-});
-
-// Vista de detalle de editorial
-router.get("/:id", (req, res) => {
-  res.render("publishers/detail", {
-    pageTitle: "Detalle de Editorial",
-    user: req.session.user,
-    publisherId: req.params.id,
   });
 });
 

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iniciar Sesión - Librería</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/forms.css" />
+  </head>
+  <body class="form-page">
+    <header>
+      <h1>Librería</h1>
+    </header>
+
+    <main class="form-container">
+      <div class="form-card">
+        <h1>Iniciar Sesión</h1>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="tu@email.com" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+
+        <button id="loginBtn" class="btn-guardar">Entrar</button>
+
+        <p id="message"></p>
+        <div style="margin-top: 20px; text-align: center">
+          <a href="/auth/register" style="color: #6a1b9a; text-decoration: none"
+            >¿No tienes cuenta? Regístrate</a
+          >
+        </div>
+      </div>
+    </main>
+
+    <script type="module">
+      import authController from "/controllers/authController.mjs";
+
+      document
+        .getElementById("loginBtn")
+        .addEventListener("click", async () => {
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const messageArea = document.getElementById("message");
+
+          try {
+            await authController.login(email, password);
+            alert("¡Login exitoso!");
+            window.location.href = "/";
+          } catch (error) {
+            messageArea.innerText = error.message;
+          }
+        });
+    </script>
+  </body>
+</html>
