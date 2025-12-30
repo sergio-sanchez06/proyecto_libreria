@@ -1,0 +1,51 @@
+<%- include('layout/header.ejs') %>
+
+<div class="container">
+  <h2>Mi Perfil</h2>
+
+  <% if (error) { %>
+  <p class="error-message"><%= error %></p>
+  <% } %>
+
+  <div class="profile-card">
+    <div class="profile-header">
+      <h3>Información Personal</h3>
+    </div>
+
+    <div class="profile-body">
+      <div class="info-row">
+        <strong>Nombre:</strong>
+        <span><%= user.name || user.nombre || "No disponible" %></span>
+      </div>
+
+      <div class="info-row">
+        <strong>Email:</strong>
+        <span><%= user.email || "No disponible" %></span>
+      </div>
+
+      <div class="info-row">
+        <strong>Rol:</strong>
+        <span><%= user.rol || user.role || "Usuario" %></span>
+      </div>
+
+      <% if (userDetails) { %> <% if (userDetails.default_address) { %>
+      <div class="info-row">
+        <strong>Dirección Principal:</strong>
+        <span><%= userDetails.default_address %></span>
+      </div>
+      <% } %> <% if (userDetails.optional_address) { %>
+      <div class="info-row">
+        <strong>Dirección Alternativa:</strong>
+        <span><%= userDetails.optional_address %></span>
+      </div>
+      <% } %> <% } %>
+    </div>
+
+    <div class="profile-actions">
+      <a href="/users/edit" class="btn btn-primary">Editar Perfil</a>
+      <a href="/users/historial" class="btn btn-secondary">Ver Historial</a>
+    </div>
+  </div>
+</div>
+
+<%- include('layout/footer.ejs') %>

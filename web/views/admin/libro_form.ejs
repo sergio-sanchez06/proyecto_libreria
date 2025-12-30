@@ -1,0 +1,85 @@
+<%- include('../layout/header.ejs') %>
+
+<div class="container">
+    <h2><%= libro ? 'Editar Libro' : 'Nuevo Libro' %></h2>
+
+    <% if (error) { %>
+        <p class="error-message"><%= error %></p>
+    <% } %>
+
+    <form action="<%= libro ? '/admin/libros/' + libro.id : '/admin/libros' %>" method="POST" class="book-form">
+        <div class="form-group">
+            <label for="title">Título:</label>
+            <input type="text" id="title" name="title" value="<%= libro ? libro.title : '' %>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="isbn">ISBN:</label>
+            <input type="text" id="isbn" name="isbn" value="<%= libro ? libro.isbn : '' %>" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="price">Precio (€):</label>
+                <input type="number" id="price" name="price" step="0.01" value="<%= libro ? libro.price : '' %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="stock">Stock:</label>
+                <input type="number" id="stock" name="stock" value="<%= libro ? libro.stock : '' %>" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="releashed_year">Año de publicación:</label>
+                <input type="number" id="releashed_year" name="releashed_year" value="<%= libro ? libro.releashed_year : '' %>">
+            </div>
+
+            <div class="form-group">
+                <label for="pages">Páginas:</label>
+                <input type="number" id="pages" name="pages" value="<%= libro ? libro.pages : '' %>">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="format">Formato:</label>
+                <select id="format" name="format">
+                    <option value="Tapa blanda" <%= libro && libro.format === 'Tapa blanda' ? 'selected' : '' %>>Tapa blanda</option>
+                    <option value="Tapa dura" <%= libro && libro.format === 'Tapa dura' ? 'selected' : '' %>>Tapa dura</option>
+                    <option value="Ebook" <%= libro && libro.format === 'Ebook' ? 'selected' : '' %>>Ebook</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="language">Idioma:</label>
+                <input type="text" id="language" name="language" value="<%= libro ? libro.language : '' %>">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="synopsis">Sinopsis:</label>
+            <textarea id="synopsis" name="synopsis" rows="5"><%= libro ? libro.synopsis : '' %></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="cover_url">URL de portada:</label>
+            <input type="url" id="cover_url" name="cover_url" value="<%= libro ? libro.cover_url : '' %>">
+        </div>
+
+        <div class="form-group">
+            <label for="publisher_id">ID de Editorial:</label>
+            <input type="number" id="publisher_id" name="publisher_id" value="<%= libro ? libro.publisher_id : '' %>">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <%= libro ? 'Actualizar' : 'Crear' %> Libro
+            </button>
+            <a href="/admin" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<%- include('../layout/footer.ejs') %>

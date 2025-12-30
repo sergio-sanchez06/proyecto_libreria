@@ -1,62 +1,49 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><%= pageTitle %> | Sistema de Librería</title>
-    
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/forms.css">
-    
+
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/forms.css" />
+    <link rel="stylesheet" href="/css/detalle.css" />
+
     <% if (user && user.rol === 'administrador') { %>
-        <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/admin.css" />
     <% } %>
-</head>
-<body>
+  </head>
+  <body>
     <header class="main-header">
-        <div class="container">
-            <h1 class="logo">BookShop</h1>
-            
-            <nav class="main-nav">
-                <a href="/">Inventario</a>
+      <div class="container">
+        <h1 class="logo">BookShop</h1>
 
-                <% if (user) { %>
-                    <a href="/perfil">Perfil</a>
-                    <a href="/historial">Mis Compras</a>
-                    
-                    <% if (user.rol === 'administrador') { %>
-                        <span class="separator">|</span>
-                        <a href="/admin" class="nav-admin">Panel Admin</a>
-                        <a href="/admin/libros/new" class="nav-admin">Añadir Libro</a>
-                    <% } %>
-                    
-                    <span class="separator">|</span>
-                    <a href="/logout" class="nav-auth">Cerrar Sesión (<%= user.nombre %>)</a>
+        <nav class="main-nav">
+          <a href="/">Inventario</a>
 
-                <% } else { %>
-                    <a href="/login" class="nav-auth">Iniciar Sesión</a>
-                    <a href="/register" class="nav-auth">Registrarse</a>
-                <% } %>
-            </nav>
-        </div>
+          <% if (user) { %>
+          <a href="/users/perfil">Perfil</a>
+          <a href="/users/historial">Mis Compras</a>
+          <a href="/orders/cart">Carrito</a>
+
+          <% if (user.rol === 'administrador') { %>
+          <span class="separator">|</span>
+          <a href="/admin" class="nav-admin">Panel Admin</a>
+          <% } %>
+
+          <span class="separator">|</span>
+          <a href="/auth/logout" class="nav-auth"
+            >Cerrar Sesión (<%= user.name || user.nombre %>)</a
+          >
+
+          <% } else { %>
+          <a href="/login" class="nav-auth">Iniciar Sesión</a>
+          <a href="/auth/register" class="nav-auth">Registrarse</a>
+          <% } %>
+        </nav>
+      </div>
     </header>
-    
-    <main class="content-wrapper"> 
-        ```
 
-### 📌 Notas de los Cambios:
-
-1.  **Rutas CSS:** Se corrigió el enlace a `main.css` y se añadieron `forms.css` y el condicional `admin.css`.
-2.  **Lógica Condicional:** Se utiliza la variable `user` que pasamos en `res.render()`:
-    * `<% if (user) { %>`: Muestra enlaces de **Perfil**, **Compras** y **Cerrar Sesión**.
-    * `<% if (user.rol === 'administrador') { %>`: Muestra enlaces específicos de **Panel Admin**.
-    * `<% } else { %>`: Muestra enlaces de **Iniciar Sesión** y **Registrarse**.
-3.  **Etiqueta `<main>`:** Abrí la etiqueta `<main class="content-wrapper">` justo después del `<header>`. Esto es crucial, ya que el **`footer.ejs`** ahora debe encargarse de **cerrar** esta etiqueta `<main>`.
-
----
-
-### 📝 Próximo Paso: El Footer EJS
-
-Para que el HTML sea válido, ahora debes actualizar tu **`servidor/views/layout/footer.ejs`** para que cierre correctamente la etiqueta `<main>` que abrimos en el *header*.
-
-¿Quieres el código para el `footer.ejs` y luego pasamos a los estilos básicos de CSS?
+    <main class="content-wrapper"></main>
+  </body>
+</html>

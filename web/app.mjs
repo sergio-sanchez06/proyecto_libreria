@@ -80,6 +80,8 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 // Apuntamos a la carpeta 'public' para CSS e imágenes
 app.use(express.static(path.join(__dirname, "public")));
+// Permitimos que el navegador acceda a los controllers (como OrderController.mjs)
+app.use("/js-controllers", express.static(path.join(__dirname, "controllers")));
 
 // ****************************************************
 // PASO 5: DEFINICIÓN DE RUTAS
