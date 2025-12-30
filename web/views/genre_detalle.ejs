@@ -45,8 +45,8 @@
         </div>
 
         <% if(user && user.role==="ADMIN" ){ %>
-            <p> <a href="/genres/edit/<%= bookGenre.genre.name %>" target="_blank">Editar</a></p>
-            <p> <a href="/genres/delete/<%= bookGenre.genre.name %>" target="_blank">Borrar</a></p>
+            <p> <a href="/genres/edit/<%= bookGenre[0].genre.name %>" target="_blank">Editar</a></p>
+            <p> <a href="/genres/delete/<%= bookGenre[0].genre.name %>" target="_blank">Borrar</a></p>
             <% } %>
 
                 <p><a href="/genres">Volver</a></p>

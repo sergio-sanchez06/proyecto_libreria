@@ -100,18 +100,34 @@
                                 <% } %>
                     </p>
 
-                    <% if(user && user.role==="ADMIN" ) { %>
+                    <%if(user){ %>
 
-                        <div class="back-link">
-                            <a href="/books/edit/<%= book.id %>">Editar libro</a>
-                        </div>
-
-                        <div class="back-link">
-                            <a href="/books/delete/<%= book.id %>">Eliminar libro</a>
-                        </div>
+                        <form action="/cart/add" method="POST" class="d-inline">
+                            <input type="hidden" name="book_id" value="<%= book.id %>">
+                            <div class="input-group input-group-sm" style="width: 120px;">
+                                <input type="number" name="quantity" value="1" min="1" max="<%= book.stock %>"
+                                    class="form-control" <%=book.stock <=0 ? 'disabled' : '' %>>
+                                <button type="submit" class="btn btn-success" <%=book.stock <=0 ? 'disabled' : '' %>
+                                    title="<%= book.stock <=0 ? 'Sin stock' : 'Añadir al carrito' %>">
+                                        🛒
+                                </button>
+                            </div>
+                        </form>
 
                         <% } %>
-                            <a href="/">← Volver al inicio</a>
+
+                            <% if(user && user.role==="ADMIN" ) { %>
+
+                                <div class="back-link">
+                                    <a href="/books/edit/<%= book.id %>">Editar libro</a>
+                                </div>
+
+                                <div class="back-link">
+                                    <a href="/books/delete/<%= book.id %>">Eliminar libro</a>
+                                </div>
+
+                                <% } %>
+                                    <a href="/">← Volver al inicio</a>
     </div>
 </body>
 

@@ -5,6 +5,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
+  onAuthStateChanged,
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -107,4 +108,43 @@ export function isLoggedIn() {
 export function getCurrentUser() {
   const user = localStorage.getItem("user");
   return user ? JSON.parse(user) : null;
+}
+
+// ⭐ NUEVA FUNCIÓN: Inicializar checkout
+export function initCheckout() {
+  console.log("🛒 Inicializando checkout...");
+
+  onAuthStateChanged(auth, async (user) => {
+    console.log("👤 Estado de autenticación verificado");
+
+    if (!user) {
+      console.log("❌ No hay usuario autenticado");
+      alert("Debes iniciar sesión para finalizar la compra");
+      window.location.href = "/login";
+      return;
+    }
+
+    console.log("✅ Usuario autenticado:", user.email);
+
+    try {
+      console.log("🔑 Obteniendo token...");
+      const token = await user.getIdToken();
+      console.log("✅ Token obtenido");
+
+      const tokenInput = document.getElementById("firebase-token");
+      const checkoutBtn = document.getElementById("checkout-btn");
+
+      if (tokenInput && checkoutBtn) {
+        tokenInput.value = token;
+        checkoutBtn.disabled = false;
+        checkoutBtn.textContent = "Finalizar compra";
+        console.log("✅ Botón habilitado correctamente");
+      } else {
+        console.error("❌ No se encontraron los elementos del formulario");
+      }
+    } catch (err) {
+      console.error("❌ Error obteniendo token:", err);
+      alert("Error de autenticación. Intenta iniciar sesión de nuevo.");
+    }
+  });
 }

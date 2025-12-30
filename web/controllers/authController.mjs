@@ -3,6 +3,7 @@ import axios from "axios";
 
 const apiClient = axios.create({
   baseURL: "http://localhost:3000",
+  withCredentials: true,
 });
 
 // Muestra formulario
@@ -57,7 +58,7 @@ async function login(req, res) {
 // Logout
 async function logout(req, res) {
   req.session.destroy();
-  req.session.idToken = null;
+  // req.session.idToken = null;
   res.redirect("/login");
 }
 

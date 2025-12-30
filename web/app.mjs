@@ -8,6 +8,7 @@ import userRoutes from "./routes/userRoutes.mjs";
 import authorRoutes from "./routes/authorRouter.mjs";
 import genreRoutes from "./routes/genresRouter.mjs";
 import bookRoutes from "./routes/bookRoutes.mjs";
+import cartRoutes from "./routes/cartRouter.mjs";
 
 import cookieParser from "cookie-parser";
 
@@ -42,6 +43,7 @@ app.use("/books", bookRoutes);
 app.use("/user", userRoutes);
 app.use("/author", authorRoutes);
 app.use("/genres", genreRoutes);
+app.use("/cart", cartRoutes);
 
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null; // disponible en TODAS las vistas

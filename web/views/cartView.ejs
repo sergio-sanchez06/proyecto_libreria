@@ -1,42 +1,59 @@
-<%- include('../layout/header') %>
+<main class="container py-5">
+    <h1>Tu carrito</h1>
 
-    <main class="container py-5">
-        <h1>Tu carrito</h1>
+    <% if (error) { %>
+        <div class="alert alert-danger">
+            <%= error %>
+        </div>
+        <% } %>
 
-        <% if (error) { %>
-            <div class="alert alert-danger">
-                <%= error %>
-            </div>
-            <% } %>
-
-                <% if (cart.length===0) { %>
-                    <p>El carrito está vacío</p>
-                    <a href="/" class="btn btn-primary">Volver a la tienda</a>
-                    <% } else { %>
-                        <div class="row">
-                            <% cart.forEach(item=> { %>
-                                <div class="col-md-6 mb-4">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5>
-                                                <%= item.book.title %>
-                                            </h5>
-                                            <p>Precio: <%= item.book.price %>€</p>
-                                            <p>Cantidad: <%= item.quantity %>
-                                            </p>
-                                            <p>Subtotal: <%= (item.book.price * item.quantity).toFixed(2) %>€</p>
-                                        </div>
+            <% if (cart.length===0) { %>
+                <p>El carrito está vacío</p>
+                <a href="/" class="btn btn-primary">Volver a la tienda</a>
+                <% } else { %>
+                    <div class="row">
+                        <% cart.forEach(item=> { %>
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="<%= item.book.cover_url || '/images/default-cover.jpg' %>"
+                                        class="card-img-top" alt="<%= item.book.title %>"
+                                        style="height: 300px; object-fit: cover;">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">
+                                            <%= item.book.title %>
+                                        </h5>
+                                        <p class="card-text">Precio: <%= item.book.price %>€</p>
+                                        <p class="card-text">Cantidad: <%= item.quantity %>
+                                        </p>
+                                        <p class="card-text fw-bold">
+                                            Subtotal: <%= (item.book.price * item.quantity).toFixed(2) %>€
+                                        </p>
                                     </div>
                                 </div>
-                                <% }) %>
-                        </div>
+                            </div>
+                            <% }) %>
+                    </div>
 
-                        <h3>Total: <%= total.toFixed(2) %>€</h3>
+                    <h3 class="mt-4 fw-bold">Total: <%= total %>€</h3>
 
-                        <form action="/cart/checkout" method="POST">
-                            <button type="submit" class="btn btn-success">Finalizar compra</button>
-                        </form>
-                        <% } %>
-    </main>
+                    <!-- Formulario checkout -->
+                    <form action="/cart/checkout" method="POST" id="checkout-form">
+                        <input type="hidden" name="firebase_token" id="firebase-token">
+                        <button type="submit" id="checkout-btn" class="btn btn-success btn-lg mt-3" disabled>
+                            Cargando autenticación... (espera)
+                        </button>
+                    </form>
 
-    <%- include('../layout/footer') %>
+                    <!-- Script inline para inicializar el checkout -->
+                    <script type="module">
+                        import { initCheckout } from '/js/auth.mjs';
+
+                        // Esperar a que el DOM esté listo
+                        if (document.readyState === 'loading') {
+                            document.addEventListener('DOMContentLoaded', initCheckout);
+                        } else {
+                            initCheckout();
+                        }
+                    </script>
+                    <% } %>
+</main>

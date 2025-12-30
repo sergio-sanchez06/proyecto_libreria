@@ -2,7 +2,7 @@ import OrderRepository from "../Repositories/OrderRepository.mjs";
 
 async function createOrder(req, res) {
   const { items } = req.body;
-  const user_id = req.session.user.id;
+  const user_id = req.user.id;
 
   if (!items || items.length === 0) {
     return res.status(400).json({ error: "El carrito está vacío" });
@@ -13,7 +13,7 @@ async function createOrder(req, res) {
     res.status(201).json(order);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error al crear el autor" });
+    res.status(500).json({ error: "Error al crear el pedido" });
   }
 }
 
