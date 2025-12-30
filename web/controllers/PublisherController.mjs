@@ -13,6 +13,7 @@ async function publisher(req, res, next) {
     const response = await apiClient.get(`/publishers/${req.params.id}`);
     const publisher = response.data;
     res.locals.publisher = publisher;
+    res.locals.user = req.session.user || null;
     next();
   } catch (error) {
     console.error("Error cargando editorial:", error);
@@ -44,6 +45,9 @@ async function getPublisherById(req, res, next) {
     res.locals.publisher = publisher;
     res.locals.books = books;
     res.locals.user = req.session.user || null;
+
+    console.log("User:", req.session.user);
+
     res.render("publisher_detalle", {
       publisher,
       books,
@@ -55,12 +59,13 @@ async function getPublisherById(req, res, next) {
   }
 }
 
-async function getPublisherEdit(req, res, next) {
+async function getPublisherEdit(req, res) {
   try {
-    const response = await apiClient.get(`/publishers/edit/${req.params.id}`);
+    const response = await apiClient.get(`/publishers/${req.params.id}`);
     const publisher = response.data;
+    console.log("Publisher:", publisher);
     res.locals.publisher = publisher;
-    next();
+    res.render("publisherEdit", { publisher, user: req.session.user || null });
   } catch (error) {
     console.error("Error cargando editorial:", error);
     res.status(404).render("error", { message: "Editorial no encontrada" });
@@ -106,34 +111,33 @@ async function deletePublisher(req, res, next) {
   }
 }
 
-async function createPublisher(req, res, next) {
+async function createPublisher(req, res) {
   const publisherData = req.body;
 
   // Subida de logo (opcional)
   if (req.file) {
-    publisherData.logo_url = `/uploads/publishers/${req.file.filename}`;
+    publisherData.image_url = `/uploads/publishers/${req.file.filename}`;
   } else {
-    publisherData.logo_url = `/uploads/publishers/default.png`;
+    publisherData.image_url = `/uploads/publishers/default.png`;
   }
+
+  console.log("Publisher Data:", publisherData);
 
   try {
     await apiClient.post("/publishers", publisherData);
-    res.redirect("/publishers"); // o página de listado
+    res.redirect("/"); // o página de listado
   } catch (error) {
-    res.render("publishers/create", {
+    res.render("admin/add_publisher", {
+      publisherData,
       error: error.response?.data?.message || "Error al crear editorial",
       user: req.session.user || null,
     });
   }
 }
 
-async function getPublisherCreateForm(req, res, next) {
+async function getPublisherCreateForm(req, res) {
   try {
-    const response = await apiClient.get(`/publishers/create`);
-    const publisher = response.data;
-    res.locals.publisher = publisher;
-    res.locals.user = req.session.user;
-    res.render("admin/add_publisher", { publisher, user });
+    res.render("admin/add_publisher", { user: req.session.user, error: null });
   } catch (error) {
     console.error("Error cargando editorial:", error);
     res.status(404).render("error", { message: "Editorial no encontrada" });

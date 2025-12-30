@@ -9,6 +9,8 @@ import authorRoutes from "./routes/authorRouter.mjs";
 import genreRoutes from "./routes/genresRouter.mjs";
 import bookRoutes from "./routes/bookRoutes.mjs";
 
+import cookieParser from "cookie-parser";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -31,6 +33,8 @@ app.use(
     cookie: { secure: false }, // true en producción con HTTPS
   })
 );
+
+app.use(cookieParser("tu-secret-super-seguro"));
 
 app.use("/", webRoutes);
 app.use("/publisher", publisherRoutes);

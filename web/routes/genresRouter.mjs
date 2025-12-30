@@ -3,12 +3,12 @@ import genresController from "../controllers/genresController.mjs";
 
 const router = express.Router();
 
+router.get("/create", genresController.getCreateGenre);
+router.post("/create", genresController.createGenre);
 router.get("/", genresController.getGenres);
 router.get("/:genreName", genresController.getGenreBooksByGenreName);
-router.get("/genre/create", genresController.getCreateGenre);
-router.post("/genre/create", genresController.createGenre);
-router.get("/genre/edit/:genreName", genresController.getEditGenre);
-router.post("/genre/update/:genreName", genresController.updateGenre);
-router.delete("/genre/:genreName", genresController.deleteGenre);
+router.get("/edit/:genreName", genresController.getEditGenre);
+router.post("/update/:genreName", genresController.updateGenre);
+router.delete("/:genreName", genresController.deleteGenre);
 
 export default router;

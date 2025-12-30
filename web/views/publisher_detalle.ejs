@@ -163,7 +163,7 @@
                                 <p class="card-text fw-bold text-primary mt-auto">
                                     <%= book.price %>€
                                 </p>
-                                <a href="/book/<%= book.id %>" class="btn btn-primary btn-sm mt-3">
+                                <a href="/books/book/<%= book.id %>" class="btn btn-primary btn-sm mt-3">
                                     Ver detalles del libro
                                 </a>
                             </div>
@@ -175,13 +175,19 @@
                 <p class="no-books">Esta editorial aún no tiene libros registrados en nuestra librería.</p>
                 <% } %>
 
-                    <a href="/publishers/edit/<%= publisher.id %>" class="btn btn-primary">Editar editorial</a>
-                    <a href="/publishers/delete/<%= publisher.id %>" class="btn btn-danger">Eliminar editorial</a>
+                    <% console.log("Usuario:", user); %>
 
-                    <!-- Volver al inicio -->
-                    <div class="back-link">
-                        <a href="/">← Volver al inicio</a>
-                    </div>
+                        <% if (user && user.role==="ADMIN" ) { ;%>
+                            <a href="/publisher/edit/<%= publisher.id %>" class="btn btn-primary">Editar
+                                editorial</a>
+                            <a href="/publisher/delete/<%= publisher.id %>" class="btn btn-danger">Eliminar
+                                editorial</a>
+                            <% } %>
+
+                                <!-- Volver al inicio -->
+                                <div class="back-link">
+                                    <a href="/">← Volver al inicio</a>
+                                </div>
     </div>
 
     <!-- Bootstrap JS (para efectos si los añades) -->

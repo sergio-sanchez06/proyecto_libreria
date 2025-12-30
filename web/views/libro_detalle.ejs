@@ -61,7 +61,11 @@
                 <% } %>
 
                     <p><strong>Autor:</strong>
-                        <%= authors.map(author=> author.name).join(", ") || "Desconocido" %>
+                        <% authors.forEach(author=> { %>
+                            <a href="/author/<%= author.id %>">
+                                <%= author.name %>
+                            </a>
+                            <% }) %>
                     </p>
                     <p><strong>ISBN:</strong>
                         <%= book.isbn || "No disponible" %>
@@ -76,7 +80,9 @@
                         <%= book.synopsis || "No disponible" %>
                     </p>
                     <p><strong>Editorial:</strong>
-                        <%= book.publisher || "Desconocido" %>
+                        <a href="/publisher/<%= publisher.id %>">
+                            <%= publisher.name || "Desconocido" %>
+                        </a>
                     </p>
                     <p><strong>Géneros:</strong>
                         <% if (genres && genres.length> 0) { %>
@@ -84,6 +90,8 @@
                                 <% genres.forEach(genre=> { %>
                                     <span class="badge bg-primary fs-6 px-3 py-2">
                                         <%= genre.genre.name %>
+                                            <a href="/genres/<%= genre.genre.name %>" class="btn btn-primary btn-sm">Ver
+                                                género</a>
                                     </span>
                                     <% }) %>
                             </div>

@@ -19,7 +19,10 @@ async function getGenreBooksByGenreName(req, res) {
   let genre = req.params.genreName;
   try {
     const response = await apiClient.get("/bookGenre/genre/" + genre);
-    res.render("genre_detalle", { bookGenre: response.data });
+    res.render("genre_detalle", {
+      bookGenre: response.data,
+      user: req.session.user,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al obtener los géneros");
@@ -39,19 +42,14 @@ async function getCreateGenre(req, res) {
 }
 
 async function createGenre(req, res) {
-  const publisherData = req.body;
-
-  // Subida de logo (opcional)
-  if (req.file) {
-    publisherData.logo_url = `/uploads/publishers/${req.file.filename}`;
-  }
+  const genreData = req.body;
 
   try {
-    await apiClient.post("/publishers", publisherData);
-    res.redirect("/publishers"); // o página de listado
+    await apiClient.post("/genres", genreData);
+    res.redirect("/genres"); // o página de listado
   } catch (error) {
-    res.render("publishers/create", {
-      error: error.response?.data?.message || "Error al crear editorial",
+    res.render("admin/add_genre", {
+      error: error.response?.data?.message || "Error al crear género",
       user: req.session.user || null,
     });
   }

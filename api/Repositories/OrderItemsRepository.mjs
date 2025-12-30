@@ -1,122 +1,75 @@
-import OrderItems from "../models/OrderItemsModel.mjs";
 import pool from "../config/database.mjs";
+import OrderItem from "../models/OrderItemModel.mjs"; // crea el modelo si no existe
 
-async function createOrderItems(orderItems) {
-    const client = await pool.connect();
-    try {
-        await client.query("BEGIN");
-        const result = await client.query(
-            "INSERT INTO order_items (order_id, book_id, quantity) VALUES ($1, $2, $3) RETURNING *",
-            [orderItems.order_id, orderItems.book_id, orderItems.quantity]
-        );
-        await client.query("COMMIT");
-
-        const order_id = new OrderItems(result.rows[0]);
-
-        return order_id;
-    } catch (error) {
-        await client.query("ROLLBACK");
-        throw error;
-    } finally {
-        client.release();
-    }
+async function create(orderItemData) {
+  const result = await pool.query(
+    "INSERT INTO order_items (order_id, book_id, quantity, price) VALUES ($1, $2, $3, $4) RETURNING *",
+    [
+      orderItemData.order_id,
+      orderItemData.book_id,
+      orderItemData.quantity,
+      orderItemData.price,
+    ]
+  );
+  return result.rows[0] ? new OrderItem(result.rows[0]) : null;
 }
 
-async function getOrderItemsById(id) {
-    const client = await pool.connect();
-    try {
-        await client.query("BEGIN");
-        const result = await client.query("SELECT * FROM order_items WHERE id = $1", [
-            id,
-        ]);
-        await client.query("COMMIT");
-        return new OrderItems(result.rows[0]);
-    } catch (error) {
-        await client.query("ROLLBACK");
-        throw error;
-    } finally {
-        client.release();
-    }
+async function getById(id) {
+  const result = await pool.query("SELECT * FROM order_items WHERE id = $1", [
+    id,
+  ]);
+  return result.rows[0] ? new OrderItem(result.rows[0]) : null;
 }
 
-async function getOrdersItemsByUser(userId) {
-    const client = await pool.connect();
-    try {
-        await client.query("BEGIN");
-        const result = await client.query(
-            "SELECT * FROM books WHERE user_id = $1",
-            [userId]
-        );
-        await client.query("COMMIT");
-        return result.rows.map((row) => new OrderItems(row));
-    } catch (error) {
-        await client.query("ROLLBACK");
-        throw error;
-    } finally {
-        client.release();
-    }
+async function getAll() {
+  const result = await pool.query("SELECT * FROM order_items");
+  return result.rows.map((row) => new OrderItem(row));
 }
 
-async function updateOrderItems(orderItems) {
-    const client = await pool.connect();
-    try {
-        await client.query("BEGIN");
-        const result = await client.query(
-            `UPDATE order_items 
-             SET 
-               order_id = COALESCE($1, order_id),
-               book_id = COALESCE($2, book_id),
-               quantity = COALESCE($3, quantity),
-               updated_at = NOW()
-             WHERE id = $4 
-             RETURNING *`,
-            [orderItems.order_id, orderItems.book_id, orderItems.quantity, orderItems.id]
-        );
-        await client.query("COMMIT");
-        return new OrderItems(result.rows[0]);
-    } catch (error) {
-        await client.query("ROLLBACK");
-        throw error;
-    } finally {
-        client.release();
+async function update(updateData) {
+  const fields = [];
+  const values = [];
+  let index = 1;
+
+  const allowedFields = ["order_id", "book_id", "quantity", "price"];
+
+  for (const [key, value] of Object.entries(updateData)) {
+    if (allowedFields.includes(key) && value !== undefined) {
+      fields.push(`${key} = $${index}`);
+      values.push(value);
+      index++;
     }
+  }
+
+  if (fields.length === 0) {
+    throw new Error("No hay datos para actualizar");
+  }
+
+  values.push(updateData.id);
+
+  const query = `
+    UPDATE order_items 
+    SET ${fields.join(", ")}, updated_at = NOW()
+    WHERE id = $${index}
+    RETURNING *
+  `;
+
+  const result = await pool.query(query, values);
+  return result.rows[0] ? new OrderItem(result.rows[0]) : null;
 }
 
-async function deleteOrderItems(id) {
-    const client = await pool.connect();
-    try {
-        await client.query("BEGIN");
-        await client.query("DELETE FROM order_items where id = $1", [id]);
-        await client.query("COMMIT");
-    } catch (error) {
-        await client.query("ROLLBACK");
-        throw error;
-    } finally {
-        client.release();
-    }
-}
-
-async function getAllOrderItems() {
-    const client = await pool.connect();
-    try {
-        await client.query("BEGIN");
-        const result = await client.query("SELECT * FROM order_items");
-        await client.query("COMMIT");
-        return result.rows.map((row) => new OrderItems(row));
-    } catch (error) {
-        await client.query("ROLLBACK");
-        console.log(error);
-        throw error;
-    } finally {
-        client.release();
-    }
+async function deleteItem(id) {
+  const result = await pool.query(
+    "DELETE FROM order_items WHERE id = $1 RETURNING *",
+    [id]
+  );
+  return result.rowCount > 0;
 }
 
 export default {
-    createOrder,
-    getOrderById,
-    getOrdersByUser,
-    updateOrder,
-    deleteOrder,
-    getAllOrders,
+  create,
+  getById,
+  getAll,
+  update,
+  deleteItem,
 };

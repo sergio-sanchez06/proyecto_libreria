@@ -5,7 +5,7 @@ import upload from "../utils/upload.mjs";
 const router = express.Router();
 
 router.get("/", BookController.list);
-router.get("/libro/:id", BookController.getLibroDetail);
+router.get("/book/:id", BookController.getLibroDetail);
 
 router.get("/edit/:id", BookController.getEdit);
 router.post("/update/:id", upload.single("cover"), BookController.update);

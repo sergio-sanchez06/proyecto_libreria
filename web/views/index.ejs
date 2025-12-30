@@ -92,18 +92,23 @@
             <% if(user){ %>
                 <p><a href="/logout">Cerrar sesión</a></p>
                 <p><a href="/user/profile">Perfil</a></p>
-                <% } else { %>
-                    <p><a href="/login">Iniciar sesión</a></p>
-                    <p><a href="/register">Registrarse</a></p>
+
+                <% if(user.role==='ADMIN' ) { %>
+                    <p><a href="/genres/create">Crear género</a></p>
+                    <p><a href="/author/author/create">Crear autor</a></p>
+                    <p><a href="/books/create">Crear libro</a></p>
+                    <p><a href="/publisher/create">Crear editorial</a></p>
+                    <p><a href="/users/create">Crear usuario</a></p>
                     <% } %>
 
-                        <p><a href="/genres/create">Crear género</a></p>
-                        <p><a href="/author/author/create">Crear autor</a></p>
-                        <p><a href="/books/create">Crear libro</a></p>
-                        <p><a href="/publisher/create">Crear editorial</a></p>
-                        <p><a href="/users/create">Crear usuario</a></p>
+                        <% } else { %>
+                            <p><a href="/login">Iniciar sesión</a></p>
+                            <p><a href="/register">Registrarse</a></p>
+                            <% } %>
 
-                        <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
+
+
+                                <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
         </header>
 
         <!-- Libros Destacados -->
@@ -141,7 +146,8 @@
                                                     <p class="card-text fw-bold text-primary mt-auto">
                                                         <%= book.price %>€
                                                     </p>
-                                                    <a href="/book/<%= book.id %>" class="btn btn-primary btn-sm mt-2">
+                                                    <a href="/books/book/<%= book.id %>"
+                                                        class="btn btn-primary btn-sm mt-2">
                                                         Ver detalles
                                                     </a>
                                                 </div>

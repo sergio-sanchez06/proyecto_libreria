@@ -7,7 +7,7 @@ async function createBook(req, res) {
   const bookData = req.body;
 
   try {
-    const newBook = await RepoBook.create(bookData);
+    const newBook = await RepoBook.createBook(bookData);
 
     // Crea relaciones autores
     for (const authorId of bookData.author_ids || []) {

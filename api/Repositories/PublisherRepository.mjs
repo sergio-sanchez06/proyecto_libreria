@@ -6,8 +6,14 @@ async function createPublisher(publisher) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "INSERT INTO publishers (name, country) VALUES ($1, $2) RETURNING *",
-      [publisher.name, publisher.country]
+      "INSERT INTO publishers (name, country, website, description, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [
+        publisher.name,
+        publisher.country,
+        publisher.website,
+        publisher.description,
+        publisher.image_url,
+      ]
     );
     await client.query("COMMIT");
     return result.rows[0];

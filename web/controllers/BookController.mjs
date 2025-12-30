@@ -33,9 +33,11 @@ async function detail(req, res) {
     const authors = authorsResponse.data;
     const genres = genresResponse.data;
 
-    res.render("books/detail", {
+    console.log(authorsResponse.data);
+
+    res.render("libro_detalle", {
       book,
-      authors,
+      authors: authorsResponse.data || null,
       genres,
       user: req.session.user || null,
     });
@@ -70,10 +72,11 @@ export const create = async (req, res) => {
       apiClient.get("/genres"),
     ]);
 
-    res.render("books/create", {
+    res.render("admin/bookCreate", {
       authors: authorsRes.data,
       publishers: publishersRes.data,
       genres: genresRes.data,
+      user: req.session.user || null,
       error: error.response?.data?.message || "Error al crear libro",
     });
   }
@@ -187,17 +190,48 @@ async function remove(req, res) {
 }
 
 async function getLibroDetail(req, res) {
+  // const bookId = req.params.id;
+
+  // try {
+  //   const response = await apiClient.get(`/books/${bookId}`);
+  //   const book = response.data;
+
+  //   console.log(book);
+
+  //   res.render("libro_detalle", {
+  //     book,
+  //     error: null,
+  //     user: req.session.user || null,
+  //   });
+  // } catch (error) {
+  //   res.status(404).render("error", { message: "Libro no encontrado" });
+  // }
+
   const bookId = req.params.id;
 
   try {
     const response = await apiClient.get(`/books/${bookId}`);
+    const authorsResponse = await apiClient.get(
+      `/bookAuthor/book/id/${bookId}`
+    );
+    const genresResponse = await apiClient.get(`/bookGenre/book/${bookId}`);
     const book = response.data;
+    const authors = authorsResponse.data;
+    const genres = genresResponse.data;
 
+    const publisherResponse = await apiClient.get(
+      `/publishers/${book.publisher_id}`
+    );
+    const publisher = publisherResponse.data;
+
+    console.log(authorsResponse.data);
     console.log(book);
 
     res.render("libro_detalle", {
       book,
-      error: null,
+      authors,
+      genres,
+      publisher,
       user: req.session.user || null,
     });
   } catch (error) {

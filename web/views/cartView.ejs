@@ -1,0 +1,42 @@
+<%- include('../layout/header') %>
+
+    <main class="container py-5">
+        <h1>Tu carrito</h1>
+
+        <% if (error) { %>
+            <div class="alert alert-danger">
+                <%= error %>
+            </div>
+            <% } %>
+
+                <% if (cart.length===0) { %>
+                    <p>El carrito está vacío</p>
+                    <a href="/" class="btn btn-primary">Volver a la tienda</a>
+                    <% } else { %>
+                        <div class="row">
+                            <% cart.forEach(item=> { %>
+                                <div class="col-md-6 mb-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5>
+                                                <%= item.book.title %>
+                                            </h5>
+                                            <p>Precio: <%= item.book.price %>€</p>
+                                            <p>Cantidad: <%= item.quantity %>
+                                            </p>
+                                            <p>Subtotal: <%= (item.book.price * item.quantity).toFixed(2) %>€</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+
+                        <h3>Total: <%= total.toFixed(2) %>€</h3>
+
+                        <form action="/cart/checkout" method="POST">
+                            <button type="submit" class="btn btn-success">Finalizar compra</button>
+                        </form>
+                        <% } %>
+    </main>
+
+    <%- include('../layout/footer') %>
