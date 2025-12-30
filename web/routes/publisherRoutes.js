@@ -1,7 +1,8 @@
 // web/routes/publisherRoutes.js
 // Rutas para las vistas de editoriales
 
-const express = require("express");
+import express from "express";
+
 const router = express.Router();
 
 // Vista principal de editoriales (usa editorial.ejs)
@@ -12,4 +13,4 @@ router.get("/", (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

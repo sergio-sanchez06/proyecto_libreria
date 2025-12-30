@@ -1,6 +1,7 @@
-const express = require("express");
+import express from "express";
+import webController from "../controllers/webController.mjs";
+
 const router = express.Router();
-const webController = require("../controllers/webController");
 
 router.get("/", webController.showAllLibros);
 
@@ -13,4 +14,4 @@ router.get(
   webController.showAdminPanel
 );
 
-module.exports = router;
+export default router;

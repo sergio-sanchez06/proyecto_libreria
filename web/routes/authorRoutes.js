@@ -1,7 +1,8 @@
 // web/routes/authorRoutes.js
 // Rutas para las vistas de autores
 
-const express = require("express");
+import express from "express";
+
 const router = express.Router();
 
 // Vista principal de autores (usa autor.ejs)
@@ -12,4 +13,4 @@ router.get("/", (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

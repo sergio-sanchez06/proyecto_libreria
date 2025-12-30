@@ -1,9 +1,10 @@
 // web/routes/orderRoutes.js
 // Rutas para las vistas de pedidos
 
-const express = require("express");
+import express from "express";
+import webController from "../controllers/webController.mjs";
+
 const router = express.Router();
-const webController = require("../controllers/webController");
 
 // Vista de carrito
 router.get("/cart", (req, res) => {
@@ -21,4 +22,4 @@ router.get("/my-orders", webController.requireLogin, (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

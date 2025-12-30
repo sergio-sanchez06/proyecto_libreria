@@ -1,9 +1,10 @@
 // web/routes/bookAuthorRoutes.js
 // Rutas para las relaciones libro-autor
 
-const express = require("express");
+import express from "express";
+import webController from "../controllers/webController.mjs";
+
 const router = express.Router();
-const webController = require("../controllers/webController");
 
 // Vista de gestión de relaciones libro-autor (solo admin)
 router.get(
@@ -18,4 +19,4 @@ router.get(
   }
 );
 
-module.exports = router;
+export default router;
