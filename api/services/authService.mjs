@@ -1,20 +1,27 @@
 import admin from "../config/firebase.mjs";
 import UserRepository from "../Repositories/UserRepository.mjs";
 
-async function registerWithEmailPassword(user) {
-  const userRecord = await admin.auth().createUser({
-    email: user.email,
-    password: user.password,
-    displayName: user.name,
-  });
-  return await UserRepository.upsertFromFirebase({
-    firebase_uid: userRecord.uid,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    default_address: user.default_address,
-    optional_address: user.optional_address,
-  });
+async function registerWithToken(data) {
+  const { idToken, name, email, default_address, optional_address } = data;
+
+  try {
+    // 1. En lugar de crear al usuario, VERIFICAMOS el token que creó el cliente
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+    const firebase_uid = decodedToken.uid;
+
+    // 2. Ahora que tenemos el UID real de Firebase, guardamos en nuestras 3 tablas
+    return await UserRepository.upsertFromFirebase({
+      firebase_uid: firebase_uid,
+      name: name,
+      email: email,
+      role: "CLIENT", // Rol por defecto
+      default_address: default_address,
+      optional_address: optional_address,
+    });
+  } catch (error) {
+    console.error("Error verificando token en registro:", error);
+    throw new Error("Token de registro inválido");
+  }
 }
 
 async function verifyTokenAndGetUser(idToken) {
@@ -51,6 +58,6 @@ async function verifyTokenAndGetUser(idToken) {
 }
 
 export default {
-  registerWithEmailPassword,
+  registerWithToken,
   verifyTokenAndGetUser,
 };

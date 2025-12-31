@@ -19,7 +19,7 @@ async function authenticate(req, res, next) {
 }
 
 async function requireAdmin(req, res, next) {
-  if (!req.user || req.user.role !== "admin") {
+  if (!req.user || req.user.role !== "ADMIN") {
     return res
       .status(403)
       .json({ message: "No autorizado - Rol insuficiente" });

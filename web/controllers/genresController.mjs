@@ -1,110 +1,109 @@
-import axios from "axios";
+// web/controllers/genresController.mjs
+import apiClient from "../utils/apiClient.mjs";
+import { getAuthenticatedClient } from "../utils/apiClient.mjs"; // Asegúrate de importar esto
 
-const apiClient = axios.create({
-  baseURL: "http://localhost:3000",
-  withCredentials: true,
-});
+// --- FUNCIONES PÚBLICAS (Lectura) ---
 
 async function getGenres(req, res) {
   try {
     const response = await apiClient.get("/genres");
-
-    res.render("genres", { genres: response.data });
+    res.render("genres", {
+      genres: response.data,
+      user: req.session.user || null,
+    });
   } catch (error) {
-    console.error(error);
     res.status(500).send("Error al obtener los géneros");
   }
 }
 
 async function getGenreBooksByGenreName(req, res) {
-  let genre = req.params.genreName;
+  const { genreName } = req.params;
   try {
-    const response = await apiClient.get("/bookGenre/genre/" + genre);
+    const response = await apiClient.get(`/bookGenre/genre/${genreName}`);
     res.render("genre_detalle", {
       bookGenre: response.data,
-      user: req.session.user,
+      user: req.session.user || null,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error al obtener los géneros");
+    res.status(500).send("Error al obtener libros del género");
   }
 }
 
+// --- FUNCIONES DE ADMINISTRADOR (Escritura) ---
+
 async function getCreateGenre(req, res) {
-  try {
-    res.render("admin/add_genre", {
-      user: req.session.user,
-      error: null,
-    });
-  } catch (error) {
-    console.error("Error al obtener el género:", error);
-    res.status(500).send("Error al obtener el género");
+  // Verificación básica en el cliente antes de llamar a la API
+  if (!req.session.user || req.session.user.role !== "admin") {
+    return res.redirect("/genres");
   }
+  res.render("admin/add_genre", {
+    user: req.session.user,
+    error: null,
+  });
 }
 
 async function createGenre(req, res) {
-  const genreData = req.body;
-
   try {
-    await apiClient.post("/genres", genreData);
-    res.redirect("/genres"); // o página de listado
+    // 1. Limpiamos el token para evitar el "Bearer Bearer"
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    // 2. Llamada a la API
+    await api.post("/genres", req.body);
+    res.redirect("/genres");
   } catch (error) {
     res.render("admin/add_genre", {
       error: error.response?.data?.message || "Error al crear género",
-      user: req.session.user || null,
+      user: req.session.user,
     });
   }
 }
 
 async function getEditGenre(req, res) {
+  if (!req.session.user || req.session.user.role !== "admin") {
+    return res.redirect("/genres");
+  }
   try {
-    const { genreName } = req.params;
-    const response = await apiClient.get(`/genres/${genreName}`);
-    const genre = response.data;
+    const { id } = req.params; // Usamos ID para ser consistentes con la API
+    const response = await apiClient.get(`/genres/${id}`);
     res.render("admin/edit_genre", {
-      genre,
+      genre: response.data,
       error: null,
-      user: req.session.user || null,
+      user: req.session.user,
     });
   } catch (error) {
-    console.error("Error al obtener el género:", error);
-    res.status(500).send("Error al obtener el género");
+    res.status(500).send("Error al cargar el formulario de edición");
   }
 }
 
 async function updateGenre(req, res) {
-  const publisherId = req.params.id;
-  const updateData = req.body;
-
-  // Subida de logo (opcional)
-  if (req.file) {
-    updateData.logo_url = `/uploads/publishers/${req.file.filename}`;
-  }
-
   try {
-    await apiClient.put(`/publishers/${publisherId}`, updateData);
-    res.redirect(`/publisher/${publisherId}`); // o página de detalle
-  } catch (error) {
-    // Recarga formulario con error
-    const response = await apiClient.get(`/publishers/${publisherId}`);
-    const publisher = response.data;
+    const { id } = req.params;
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
 
-    res.render("publishers/edit", {
-      publisher,
-      error: error.response?.data?.message || "Error al actualizar editorial",
-      user: req.session.user || null,
+    await api.put(`/genres/${id}`, req.body);
+    res.redirect("/genres");
+  } catch (error) {
+    res.render("admin/edit_genre", {
+      genre: { ...req.body, id: req.params.id },
+      error: error.response?.data?.message || "Error al actualizar",
+      user: req.session.user,
     });
   }
 }
 
 async function deleteGenre(req, res) {
   try {
-    const { genreName } = req.params;
-    await apiClient.delete(`/genres/${genreName}`);
+    const { id } = req.params;
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    await api.delete(`/genres/${id}`);
     res.redirect("/genres");
   } catch (error) {
-    console.error("Error al eliminar el género:", error);
-    res.status(500).send("Error al eliminar el género");
+    console.error("Error eliminando género:", error.response?.data);
+    res.redirect("/genres?error=no_permitido");
   }
 }
 

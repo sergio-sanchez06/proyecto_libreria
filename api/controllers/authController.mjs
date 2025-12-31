@@ -1,10 +1,23 @@
 import AuthService from "../services/authService.mjs";
 
 export const register = async (req, res) => {
-  // Funcion para registrar usuarios
+  console.log("Registrando usuario");
+  console.log(req.body);
+
+  console.log("Registrando usuario", req.body);
+
+  const { idToken, name, email, default_address, optional_address } = req.body;
+
   try {
-    const user = await AuthService.registerWithEmailPassword(req.body);
-    res.status(201).json({ message: "Registro exitoso", user: user });
+    const user = await AuthService.registerWithToken({
+      idToken,
+      name,
+      email,
+      default_address,
+      optional_address,
+    });
+
+    res.status(201).json({ message: "Registro exitoso", user });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

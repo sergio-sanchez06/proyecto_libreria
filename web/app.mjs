@@ -39,6 +39,7 @@ app.use(cookieParser("tu-secret-super-seguro"));
 
 app.use("/", webRoutes);
 app.use("/publisher", publisherRoutes);
+// app.use("/auth", authRoutes);
 app.use("/books", bookRoutes);
 app.use("/user", userRoutes);
 app.use("/author", authorRoutes);

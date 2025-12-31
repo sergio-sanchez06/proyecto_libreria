@@ -1,0 +1,130 @@
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white text-center">
+                    <h2 class="mb-0">Crear nueva cuenta</h2>
+                </div>
+                <div class="card-body">
+                    <% if (error) { %>
+                        <div class="alert alert-danger">
+                            <%= error %>
+                        </div>
+                        <% } %>
+
+                            <form action="/register" method="POST" id="register-form">
+                                <input type="hidden" name="idToken" id="idToken" value="">
+
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nombre *</label>
+                                    <input type="text" name="name" id="name" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email *</label>
+                                    <input type="email" name="email" id="email" class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Contraseña *</label>
+                                    <input type="password" name="password" id="password" class="form-control" required
+                                        minlength="6">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="default_address" class="form-label">Dirección principal *</label>
+                                    <textarea name="default_address" id="default_address" class="form-control"
+                                        required></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="optional_address" class="form-label">Dirección secundaria
+                                        (opcional)</label>
+                                    <textarea name="optional_address" id="optional_address"
+                                        class="form-control"></textarea>
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" id="register-btn" class="btn btn-success btn-lg" disabled>
+                                        <span id="btn-text">Cargando autenticación...</span>
+                                    </button>
+                                </div>
+                            </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</main>
+
+<script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+    // CONFIGURACIÓN OBLIGATORIA: Copia estos datos de tu consola de Firebase
+    const firebaseConfig = {
+        apiKey: "AIzaSyAvh7UG5-wdn7JR408JDgKcvcNpkmH4Kf8",
+        authDomain: "libreria-ed6c0.firebaseapp.com",
+        projectId: "libreria-ed6c0",
+        storageBucket: "libreria-ed6c0.firebasestorage.app",
+        messagingSenderId: "140935488654",
+        appId: "1:140935488654:web:4dd044759584b563d415df",
+    };
+
+    // Inicializar Firebase
+    initializeApp(firebaseConfig);
+
+    const auth = getAuth();
+    const btn = document.getElementById('register-btn');
+    const btnText = document.getElementById('btn-text');
+
+    // No permitimos pulsar hasta que Firebase esté listo
+    btnText.textContent = "Cargando Firebase...";
+
+    // Cuando Firebase esté listo, habilitamos el formulario
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            // Si ya está logueado, redirigir
+            window.location.href = "/";
+            return;
+        }
+
+        // Firebase listo → habilitamos el formulario
+        btnText.textContent = "Registrarse";
+        btn.disabled = false;
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const default_address = document.getElementById('default_address').value.trim();
+            const optional_address = document.getElementById('optional_address').value.trim();
+
+            if (!default_address) {
+                alert("La dirección principal es obligatoria");
+                return;
+            }
+
+            btn.disabled = true;
+            btnText.textContent = "Creando cuenta...";
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const idToken = await userCredential.user.getIdToken();
+
+                document.getElementById('idToken').value = idToken;
+                console.log("Token generado y puesto en hidden");
+
+                e.target.submit();
+            } catch (error) {
+                btn.disabled = false;
+                btnText.textContent = "Registrarse";
+                alert(error.message || "Error al crear cuenta");
+            }
+        });
+    });
+</script>
