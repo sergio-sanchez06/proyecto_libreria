@@ -76,44 +76,53 @@ async function showRegister(req, res) {
   if (req.session.user) {
     return res.redirect("/");
   }
-  res.render("register", { error: null });
+  res.render("register", { error: null, formData: null });
 }
 
 async function register(req, res) {
-  const { idToken, name, email, default_address, optional_address } = req.body;
+  const { name, email, password, default_address, optional_address } = req.body;
 
-  // 1. Validación en el servidor (Requisito del PDF)
-  if (!idToken || !name || !email || !default_address) {
+  if (!name || !email || !password || !default_address) {
     return res.render("register", {
-      error: "Faltan campos obligatorios o el token de Firebase",
+      error: "Faltan campos obligatorios",
+      formData: {
+        name,
+        email,
+        default_address,
+        optional_address,
+      },
     });
   }
 
-  console.log("Registrando usuario", req.body);
+  // console.log("Registrando usuario", req.body);
 
   try {
     // 2. Consumo indirecto: Enviamos los datos a nuestra API REST
     const response = await apiClient.post("/auth/register", {
-      idToken,
       name,
       email,
+      password,
       default_address,
       optional_address,
     });
 
     // 3. Si la API responde bien, el usuario ya está en nuestra DB local.
     // Creamos la sesión para que el usuario entre directamente.
-    req.session.user = response.data.user;
-    req.session.idToken = idToken;
-    await req.session.save();
+    // req.session.user = response.data.user;
+    // req.session.idToken = idToken;
+    // await req.session.save();
 
-    res.redirect("/"); // Redirigimos al home
+    res.redirect("/login"); // Redirigimos al login para el inicio de sesión
   } catch (error) {
-    console.error("Error registro:", error.response?.data);
+    if (!error.response) {
+      console.error("Error de conexión: La API no responde");
+    } else {
+      console.error("Error de la API:", error.response.data);
+    }
     res.render("register", {
       error:
-        error.response?.data?.message ||
-        "Error al crear la cuenta en la base de datos",
+        error.response?.data?.message || "Error de conexión con el servidor",
+      formData: req.body,
     });
   }
 }

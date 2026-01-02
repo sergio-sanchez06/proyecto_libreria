@@ -178,14 +178,17 @@ async function getAuthorById(req, res) {
   try {
     const { id } = req.params;
     // Peticiones paralelas para optimizar carga
-    const [authorRes, booksRes] = await Promise.all([
-      apiClient.get(`/authors/${id}`),
-      apiClient.get(`/bookAuthor/author/name/${id}`), // Ajusta esta ruta según tu API
-    ]);
+    const authorResponse = await apiClient.get(`/authors/${id}`);
+    const booksResponse = await apiClient.get(
+      `/bookAuthor/author/${authorResponse.data.name}`
+    );
+
+    const author = authorResponse.data;
+    const books = booksResponse.data;
 
     res.render("autor_detalle", {
-      author: authorRes.data,
-      books: booksRes.data,
+      author,
+      books,
       user: req.session.user || null,
     });
   } catch (error) {

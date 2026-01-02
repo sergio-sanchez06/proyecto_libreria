@@ -1,4 +1,4 @@
-import AuthController from "../controllers/authController.mjs";
+import AuthController from "../controllers/AuthController.mjs";
 
 class Router {
     constructor() {

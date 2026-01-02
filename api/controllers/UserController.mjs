@@ -1,5 +1,24 @@
 // controllers/UserController.mjs
 import UserRepository from "../Repositories/UserRepository.mjs";
+import authService from "../services/authService.mjs";
+
+async function createUser(req, res) {
+  try {
+    // Llamamos al servicio, que es el que sabe qué hacer
+    const newUser = await authService.adminCreateUser(req.body);
+
+    res.status(201).json({
+      message: "Usuario creado con éxito",
+      user: newUser,
+    });
+  } catch (error) {
+    console.error("Error al crear usuario:", error);
+    res.status(400).json({
+      message: "No se pudo crear el usuario",
+      error: error.message,
+    });
+  }
+}
 
 async function getMe(req, res) {
   // req.user viene del middleware de autenticación
@@ -59,7 +78,7 @@ async function updateUser(req, res) {
   try {
     const updateData = { id: req.params.id, ...req.body };
     console.log("Update data:", updateData);
-    const user = await UserRepository.updateUser(updateData);
+    const user = await UserRepository.updateProfile(updateData);
     res.status(200).json(user);
   } catch (error) {
     console.error(error);
@@ -96,4 +115,5 @@ export default {
   getUserById,
   updateUser,
   deleteUser,
+  createUser,
 };

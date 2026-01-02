@@ -20,6 +20,12 @@ router.get(
   AuthMiddleware.requireAdmin,
   UserController.getAllUsers
 ); // Listar todos
+router.post(
+  "/",
+  AuthMiddleware.authenticate,
+  AuthMiddleware.requireAdmin,
+  UserController.createUser
+); // Crear nuevo usuario
 router.get(
   "/:id",
   AuthMiddleware.authenticate,

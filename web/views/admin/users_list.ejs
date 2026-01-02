@@ -1,0 +1,190 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<main class="container py-5">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h1 class="display-6 fw-bold text-dark">
+                <i class="bi bi-people-fill text-primary me-2"></i>Gestión de Usuarios
+            </h1>
+            <p class="text-muted">Administra los accesos y perfiles de la plataforma.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a href="/admin/users/create" class="btn btn-success btn-lg shadow-sm hover-lift">
+                <i class="bi bi-person-plus-fill me-1"></i> Nuevo Usuario
+            </a>
+        </div>
+    </div>
+
+    <% if (locals.message) { %>
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                <div>
+                    <%= message %>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <% } %>
+
+            <div class="card border-0 shadow-sm overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0 fw-bold">Lista de Miembros</h5>
+                        </div>
+                        <div class="col text-end">
+                            <span class="badge bg-light text-dark border">
+                                <%= users.length %> Usuarios registrados
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4 py-3 text-uppercase fs-xs text-muted">Usuario</th>
+                                    <th class="py-3 text-uppercase fs-xs text-muted">Email</th>
+                                    <th class="py-3 text-uppercase fs-xs text-muted">Rol</th>
+                                    <th class="py-3 text-uppercase fs-xs text-muted">Ubicación</th>
+                                    <th class="py-3 text-uppercase fs-xs text-muted text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% users.forEach(user=> { %>
+                                    <tr>
+                                        <td class="ps-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar-sm me-3 bg-light rounded-circle d-flex align-items-center justify-content-center"
+                                                    style="width: 40px; height: 40px;">
+                                                    <i class="bi bi-person text-secondary"></i>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark">
+                                                        <%= user.name %>
+                                                    </div>
+                                                    <small class="text-muted font-monospace"
+                                                        style="font-size: 0.75rem;">
+                                                        ID: <%= user.id %>...
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="text-secondary">
+                                                <%= user.email %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <% if (user.role==='ADMIN' ) { %>
+                                                <span
+                                                    class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-3">
+                                                    <i class="bi bi-shield-lock me-1"></i>ADMIN
+                                                </span>
+                                                <% } else { %>
+                                                    <span
+                                                        class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3">
+                                                        <i class="bi bi-person me-1"></i>USER
+                                                    </span>
+                                                    <% } %>
+                                        </td>
+                                        <td>
+                                            <div class="text-truncate d-flex align-items-center"
+                                                style="max-width: 180px;" title="<%= user.default_address %>">
+                                                <i class="bi bi-geo-alt text-muted me-1"></i>
+                                                <%= user.default_address || 'N/A' %>
+                                            </div>
+                                        </td>
+                                        <td class="pe-4 text-center">
+                                            <div class="btn-group shadow-sm">
+                                                <a href="/admin/users/update/<%= user.id %>"
+                                                    class="btn btn-white btn-sm border" title="Editar">
+                                                    <i class="bi bi-pencil-square text-primary"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-white btn-sm border"
+                                                    onclick="confirmDelete('<%= user.email %>', '<%= user.name %>')"
+                                                    title="Eliminar">
+                                                    <i class="bi bi-trash3 text-danger"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+</main>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle me-2"></i>Atención</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <i class="bi bi-person-x text-danger display-4 mb-3"></i>
+                <h4 class="fw-bold">¿Eliminar usuario?</h4>
+                <p class="text-muted">Estás a punto de borrar a <strong id="deleteUserName" class="text-dark"></strong>.
+                </p>
+                <div class="alert alert-warning small border-0 py-2">
+                    <i class="bi bi-info-circle me-1"></i> Se eliminará de Firebase y de la base de datos SQL de forma
+                    permanente.
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-0">
+                <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+                <form id="deleteForm" method="POST">
+                    <button type="submit" class="btn btn-danger px-4">Eliminar Usuario</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos extra para pulir el diseño */
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease;
+    }
+
+    .fs-xs {
+        font-size: 0.7rem;
+        letter-spacing: 0.05rem;
+    }
+
+    .bg-danger-subtle {
+        background-color: #f8d7da;
+    }
+
+    .bg-primary-subtle {
+        background-color: #cfe2ff;
+    }
+
+    .btn-white {
+        background: white;
+    }
+
+    .btn-white:hover {
+        background: #f8f9fa;
+    }
+
+    .avatar-sm {
+        font-size: 1.2rem;
+    }
+</style>
+
+<script>
+    function confirmDelete(uid, name) {
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        document.getElementById('deleteUserName').textContent = name;
+        document.getElementById('deleteForm').action = `/admin/users/delete/${uid}`;
+        modal.show();
+    }
+</script>

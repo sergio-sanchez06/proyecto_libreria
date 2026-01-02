@@ -93,7 +93,7 @@
             <p><a href="/genres">Ver géneros</a></p>
             <p><a href="/authors">Ver autores</a></p>
             <p><a href="/books">Ver libros</a></p>
-            <p><a href="/users">Ver usuarios</a></p>
+            <p><a href="/admin/users">Ver usuarios</a></p>
             <p><a href="/cart/view">Ver carrito</a></p>
 
             <% if(user){ %>
@@ -103,9 +103,10 @@
                 <% if(user.role==='ADMIN' ) { %>
                     <p><a href="/genres/create">Crear género</a></p>
                     <p><a href="/author/author/create">Crear autor</a></p>
-                    <p><a href="/books/create">Crear libro</a></p>
+                    <p><a href="/admin/books/create">Crear libro</a></p>
+                    <!-- <p><a href="/books/create">Crear libro</a></p> -->
                     <p><a href="/publisher/create">Crear editorial</a></p>
-                    <p><a href="/users/create">Crear usuario</a></p>
+                    <p><a href="/admin/users/create">Crear usuario</a></p>
                     <% } %>
 
                         <% } else { %>

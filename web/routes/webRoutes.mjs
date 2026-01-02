@@ -3,7 +3,7 @@ import express from "express";
 import homeController from "../controllers/homeController.mjs";
 import authorController from "../controllers/authorController.mjs";
 import publisherController from "../controllers/PublisherController.mjs";
-import authController from "../controllers/authController.mjs";
+import authController from "../controllers/AuthController.mjs";
 // import bookController from "../controllers/bookController.mjs";
 const router = express.Router();
 

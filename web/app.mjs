@@ -9,6 +9,7 @@ import authorRoutes from "./routes/authorRouter.mjs";
 import genreRoutes from "./routes/genresRouter.mjs";
 import bookRoutes from "./routes/bookRoutes.mjs";
 import cartRoutes from "./routes/cartRouter.mjs";
+import adminRoutes from "./routes/adminRoutes.mjs";
 
 import cookieParser from "cookie-parser";
 
@@ -38,6 +39,7 @@ app.use(
 app.use(cookieParser("tu-secret-super-seguro"));
 
 app.use("/", webRoutes);
+app.use("/admin", adminRoutes);
 app.use("/publisher", publisherRoutes);
 // app.use("/auth", authRoutes);
 app.use("/books", bookRoutes);

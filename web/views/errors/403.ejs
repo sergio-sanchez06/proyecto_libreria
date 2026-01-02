@@ -1,0 +1,19 @@
+<main class="container py-5 text-center">
+    <div class="my-5">
+        <h1 class="display-1 text-danger fw-bold">403</h1>
+        <h2 class="mb-4">Acceso prohibido</h2>
+        <p class="lead mb-5">No tienes permiso para acceder a esta página.</p>
+
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="/" class="btn btn-primary btn-lg">Volver al inicio</a>
+            <a href="/books" class="btn btn-outline-primary btn-lg">Explorar libros</a>
+        </div>
+
+        <% if (!user) { %>
+            <p class="mt-4 text-muted">
+                ¿Crees que deberías tener acceso?
+                <a href="/login">Inicia sesión</a> con otra cuenta.
+            </p>
+            <% } %>
+    </div>
+</main>

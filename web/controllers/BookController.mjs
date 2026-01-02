@@ -306,9 +306,29 @@ async function getAllBooks(req, res) {
 async function getBookById(req, res) {
   try {
     const { id } = req.params;
-    const response = await apiClient.get(`/books/${id}`);
+    const bookResponse = await apiClient.get(`/books/${id}`);
+
+    const authorsResponse = await apiClient.get(
+      `/bookAuthor/book/id/${bookResponse.data.id}`
+    );
+
+    const genresResponse = await apiClient.get(
+      `/bookGenre/book/${bookResponse.data.id}`
+    );
+
+    const publisherResponse = await apiClient.get(
+      `/publishers/${bookResponse.data.publisher_id}`
+    );
+
+    const book = bookResponse.data;
+    const authors = authorsResponse.data;
+    const genres = genresResponse.data;
+    const publisher = publisherResponse.data;
     res.render("libro_detalle", {
-      book: response.data,
+      book,
+      authors,
+      genres,
+      publisher,
       user: req.session.user || null,
     });
   } catch (error) {
@@ -319,7 +339,7 @@ async function getBookById(req, res) {
 // --- FUNCIONES DE ADMINISTRADOR (Escritura) ---
 
 async function getCreateBook(req, res) {
-  if (!req.session.user || req.session.user.role !== "admin")
+  if (!req.session.user || req.session.user.role !== "ADMIN")
     return res.redirect("/");
 
   try {
@@ -346,7 +366,7 @@ async function createBook(req, res) {
   const bookData = req.body;
 
   if (req.file) {
-    bookData.image_url = `/uploads/books/${req.file.filename}`;
+    bookData.cover_url = `/uploads/covers/${req.file.filename}`;
   }
 
   try {
@@ -396,7 +416,7 @@ async function updateBook(req, res) {
   const updateData = req.body;
 
   if (req.file) {
-    updateData.image_url = `/uploads/books/${req.file.filename}`;
+    updateData.cover_url = `/uploads/covers/${req.file.filename}`;
   }
 
   try {

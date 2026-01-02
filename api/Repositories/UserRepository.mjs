@@ -48,7 +48,7 @@ async function getUserByFirebaseUid(firebase_uid) {
   }
 }
 
-async function getById(id) {
+async function getUserById(id) {
   const client = await pool.connect();
   try {
     const result = await client.query(
@@ -152,7 +152,7 @@ async function deleteUser(id) {
 
 export default {
   upsertFromFirebase,
-  getById,
+  getUserById,
   getUserByFirebaseUid,
   getUserByEmail,
   getAllUsers,

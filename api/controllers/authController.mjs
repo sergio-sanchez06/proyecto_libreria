@@ -6,22 +6,36 @@ export const register = async (req, res) => {
 
   console.log("Registrando usuario", req.body);
 
-  const { idToken, name, email, default_address, optional_address } = req.body;
-
   try {
-    const user = await AuthService.registerWithToken({
-      idToken,
-      name,
-      email,
-      default_address,
-      optional_address,
-    });
-
+    const user = await AuthService.registerUser(req.body);
     res.status(201).json({ message: "Registro exitoso", user });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
+// export const register = async (req, res) => {
+//   console.log("Registrando usuario");
+//   console.log(req.body);
+
+//   console.log("Registrando usuario", req.body);
+
+//   const { idToken, name, email, default_address, optional_address } = req.body;
+
+//   try {
+//     const user = await AuthService.registerWithToken({
+//       idToken,
+//       name,
+//       email,
+//       default_address,
+//       optional_address,
+//     });
+
+//     res.status(201).json({ message: "Registro exitoso", user });
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
 
 export const login = async (req, res) => {
   // Funcion para iniciar sesion
