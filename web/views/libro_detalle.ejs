@@ -1,0 +1,68 @@
+<%- include('layout/header.ejs') %>
+
+<div class="container animate-fade-in">
+  <div class="book-detail-card">
+    <div class="book-cover">
+      <% if (libro.portada) { %>
+      <img src="<%= libro.portada %>" alt="<%= libro.titulo %>" />
+      <% } else { %>
+      <img src="/images/default-cover.jpg" alt="Portada no disponible" />
+      <% } %>
+    </div>
+
+    <div class="book-info">
+      <h1><%= libro.titulo || "Sin título" %></h1>
+
+      <div class="info-group">
+        <p><strong>Autor:</strong> <%= libro.autor || "Desconocido" %></p>
+        <p><strong>ISBN:</strong> <%= libro.isbn || "No disponible" %></p>
+        <p>
+          <strong>Año:</strong> <%= libro.anio_publicacion || "Desconocido" %>
+        </p>
+        <p class="price-tag">
+          <strong>Precio:</strong> <%= libro.precio ? libro.precio + "€" : "No
+          disponible" %>
+        </p>
+      </div>
+
+      <div class="synopsis">
+        <h3>Sinopsis</h3>
+        <p><%= libro.sinopsis || "No hay sinopsis disponible." %></p>
+      </div>
+
+      <% if (libro.generos && libro.generos.length > 0) { %>
+      <div class="genres">
+        <strong>Géneros:</strong>
+        <div class="genre-tags">
+          <% libro.generos.forEach(genero => { %>
+          <span class="badge"><%= genero %></span>
+          <% }) %>
+        </div>
+      </div>
+      <% } %>
+
+      <div class="actions">
+        <a href="/" class="btn-back">← Volver al catálogo</a>
+        <% if (libro.copias_disponibles > 0) { %>
+            <button 
+                data-book="<%= JSON.stringify(libro) %>"
+                onclick="window.OrderController.addToCart(JSON.parse(this.dataset.book))"
+                class="btn-success">
+                Añadir al Carrito
+            </button>
+        <% } else { %>
+        <button class="btn-disabled" disabled>Agotado</button>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+</div>
+
+<script type="module">
+    import OrderController from "/js-controllers/OrderController.mjs";
+</script>
+
+<%- include('layout/footer.ejs') %>

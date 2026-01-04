@@ -1,16 +1,17 @@
-const express = require('express');
-const router = express.Router();
-const webController = require('../controllers/webController');
+import express from "express";
+import webController from "../controllers/webController.mjs";
 
-router.get("/", webController.showAllLibros); 
+const router = express.Router();
+
+router.get("/", webController.showAllLibros);
 
 router.get("/login", webController.showLoginForm);
 
-
-router.get("/admin", 
-    webController.requireLogin,          // Primero: Asegura que el usuario esté logueado
-    webController.checkRole('administrador'), // Segundo: Asegura que el rol sea 'administrador'
-    webController.showAdminPanel
+router.get(
+  "/admin",
+  webController.requireLogin, // Primero: Asegura que el usuario esté logueado
+  webController.checkRole("administrador"), // Segundo: Asegura que el rol sea 'administrador'
+  webController.showAdminPanel
 );
 
-module.exports = router;
+export default router;

@@ -1,0 +1,57 @@
+<%- include('layout/header.ejs') %>
+
+<div class="container">
+  <h2>Historial de Compras</h2>
+
+  <% if (error) { %>
+  <p class="error-message"><%= error %></p>
+  <% } %> <% if (!orders || orders.length === 0) { %>
+  <div class="empty-state">
+    <p>No tienes pedidos aún</p>
+    <a href="/" class="btn btn-primary">Explorar libros</a>
+  </div>
+  <% } else { %>
+  <div class="orders-list">
+    <% orders.forEach(order => { %>
+    <div class="order-card">
+      <div class="order-header">
+        <h3>Pedido #<%= order.id %></h3>
+        <span class="order-status status-<%= order.status %>">
+          <%= order.status %>
+        </span>
+      </div>
+
+      <div class="order-body">
+        <p><strong>Total:</strong> <%= order.total %>€</p>
+        <p>
+          <strong>Fecha:</strong> <%= new
+          Date(order.created_at).toLocaleDateString() %>
+        </p>
+
+        <% if (order.items && order.items.length > 0) { %>
+        <div class="order-items">
+          <h4>Artículos:</h4>
+          <ul>
+            <% order.items.forEach(item => { %>
+            <li>
+              <%= item.book_title || item.titulo %> (x<%= item.quantity ||
+              item.cantidad %>) - <%= item.price || item.precio %>€
+            </li>
+            <% }); %>
+          </ul>
+        </div>
+        <% } %>
+      </div>
+
+      <div class="order-actions">
+        <a href="/orders/<%= order.id %>" class="btn btn-secondary"
+          >Ver detalles</a
+        >
+      </div>
+    </div>
+    <% }); %>
+  </div>
+  <% } %>
+</div>
+
+<%- include('layout/footer.ejs') %>

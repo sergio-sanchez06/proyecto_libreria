@@ -1,0 +1,21 @@
+<%- include('layout/header.ejs') %>
+
+<div class="container error-container">
+  <div class="error-card">
+    <h1>⚠️ Error</h1>
+    <p class="error-message">
+      <%= message || "Ha ocurrido un error inesperado" %>
+    </p>
+
+    <div class="actions">
+      <a href="/" class="btn btn-primary">← Volver al inicio</a>
+      <% if (user) { %>
+      <a href="/users/perfil" class="btn btn-secondary">Ir a mi perfil</a>
+      <% } else { %>
+      <a href="/login" class="btn btn-secondary">Iniciar sesión</a>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<%- include('layout/footer.ejs') %>

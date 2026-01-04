@@ -1,0 +1,58 @@
+<%- include('../layout/header.ejs') %>
+
+<main class="main-content">
+  <div class="container">
+    <h2>Panel de Administración</h2>
+    <p>Bienvenido al área de gestión de la librería</p>
+
+    <div class="admin-grid">
+      <!-- Gestión de Libros -->
+      <div class="admin-card">
+        <h3>Libros</h3>
+        <p>Añade, edita o elimina libros del catálogo</p>
+        <div class="actions">
+          <a href="/admin/libros/crear" class="btn btn-primary"
+            >+ Añadir Libro</a
+          >
+          <a href="/admin/libros" class="btn btn-secondary"
+            >Ver Lista Completa</a
+          >
+        </div>
+      </div>
+
+      <!-- Gestión de Usuarios -->
+      <div class="admin-card">
+        <h3>Usuarios</h3>
+        <p>Administra los usuarios registrados</p>
+        <div class="actions">
+          <a href="/admin/usuarios" class="btn btn-secondary">Ver Usuarios</a>
+        </div>
+      </div>
+
+      <!-- Gestión de Autores -->
+      <div class="admin-card">
+        <h3>Autores</h3>
+        <p>Gestiona los autores de la base de datos</p>
+        <div class="actions">
+          <a href="/admin/autores/crear" class="btn btn-secondary"
+            >Crear Autor</a
+          >
+          <a href="/admin/autores" class="btn btn-secondary">Ver Autores</a>
+        </div>
+      </div>
+
+      <!-- Gestión de Categorías/Géneros -->
+      <div class="admin-card">
+        <h3>Géneros</h3>
+        <p>Administra las categorías de libros</p>
+        <div class="actions">
+          <a href="/admin/generos" class="btn btn-secondary"
+            >Gestionar Géneros</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('../layout/footer.ejs') %>
