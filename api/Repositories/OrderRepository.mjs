@@ -1,65 +1,71 @@
 import Order from "../models/OrderModel.mjs";
 import pool from "../config/database.mjs";
+import OrderItemsRepository from "./OrderItemsRepository.mjs"; // Importar para introducir los nuevos libros en el pedido
+import BookRepository from "./BookRepository.mjs"; // Para el stock y precios
 
 async function createOrder({ user_id, items }) {
   const client = await pool.connect();
 
   try {
-    await client.query("BEGIN");
+    await client.query("BEGIN"); // Iniciamos la transacción única
 
     if (!items || items.length === 0) {
       throw new Error("El carrito está vacío");
     }
 
-    // Obtener libros para validar stock y calcular total
+    // 1. Obtener información de libros y validar stock
     const bookIds = items.map((item) => item.book_id);
-    const booksResult = await client.query(
-      "SELECT id, title, price, stock FROM books WHERE id = ANY($1)",
-      [bookIds]
-    );
-    const books = booksResult.rows;
+    const books = await BookRepository.getBooksByIds(bookIds);
 
     let total = 0;
+    const validatedItems = [];
+
     for (const item of items) {
       const book = books.find((b) => b.id == item.book_id);
-      if (!book) {
-        throw new Error(`Libro no encontrado: ${item.book_id}`);
-      }
+
+      if (!book) throw new Error(`Libro no encontrado: ID ${item.book_id}`);
       if (book.stock < item.quantity) {
-        throw new Error(`Stock insuficiente para ${book.title}`);
+        throw new Error(
+          `Stock insuficiente para "${book.title}". Disponible: ${book.stock}`
+        );
       }
+
       total += book.price * item.quantity;
+      // Guardamos el precio actual para asegurar la consistencia en el detalle
+      validatedItems.push({ ...item, currentPrice: book.price });
     }
 
-    // Crear pedido principal (tabla orders, no books!)
+    // 2. Crear cabecera (Tabla orders)
     const orderResult = await client.query(
-      "INSERT INTO orders (user_id, total, status) VALUES ($1, $2, 'pendiente') RETURNING *",
+      "INSERT INTO orders (user_id, total, status) VALUES ($1, $2, 'PENDIENTE') RETURNING *",
       [user_id, total]
     );
     const order = new Order(orderResult.rows[0]);
 
-    // Crear items del pedido
-    for (const item of items) {
-      const book = books.find((b) => b.id == item.book_id);
-      await client.query(
-        "INSERT INTO order_items (order_id, book_id, quantity, price) VALUES ($1, $2, $3, $4)",
-        [order.id, item.book_id, item.quantity, book.price]
+    // 3. Delegar inserción de items y actualización de stock
+    for (const item of validatedItems) {
+      // Llamada al repositorio de items compartiendo el cliente
+      await OrderItemsRepository.create(
+        {
+          order_id: order.id,
+          book_id: item.book_id,
+          quantity: item.quantity,
+          price_at_time: item.currentPrice,
+        },
+        client
       );
 
-      // Actualizar stock
-      await client.query("UPDATE books SET stock = stock - $1 WHERE id = $2", [
-        item.quantity,
-        item.book_id,
-      ]);
+      // Llamada al repositorio de libros para descontar stock
+      await BookRepository.updateStock(item.book_id, item.quantity, client);
     }
 
-    await client.query("COMMIT");
+    await client.query("COMMIT"); // Confirmamos todos los cambios
     return order;
   } catch (error) {
-    await client.query("ROLLBACK");
+    await client.query("ROLLBACK"); // Si algo falla, se deshace todo (pedido, items y stock)
     throw error;
   } finally {
-    client.release();
+    client.release(); // Siempre liberamos la conexión al pool
   }
 }
 

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Admin - Gestión de Pedidos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-gear-fill me-2"></i>Gestión de Pedidos</h2>
+            <span class="badge bg-dark">Total: <%= orders.length %> pedidos</span>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-0">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Usuario (ID)</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order=> { %>
+                            <tr>
+                                <td><strong>#<%= order.id %></strong></td>
+                                <td>
+                                    <%= new Date(order.created_at).toLocaleString() %>
+                                </td>
+                                <td><span class="text-muted">
+                                        <%= order.user_id %>
+                                    </span></td>
+                                <td class="fw-bold">
+                                    <%= order.total %>€
+                                </td>
+                                <td>
+                                    <form action="/admin/orders/update-status" method="POST" class="d-inline">
+                                        <input type="hidden" name="orderId" value="<%= order.id %>">
+                                        <select name="status" class="form-select form-select-sm d-inline-block w-auto"
+                                            onchange="this.form.submit()">
+                                            <option value="PENDIENTE" <%=order.status==='PENDIENTE' ? 'selected' : '' %>
+                                                >Pendiente</option>
+                                            <option value="ENVIADO" <%=order.status==='ENVIADO' ? 'selected' : '' %>
+                                                >Enviado</option>
+                                            <option value="COMPLETADO" <%=order.status==='COMPLETADO' ? 'selected' : ''
+                                                %>>Completado</option>
+                                            <option value="CANCELADO" <%=order.status==='CANCELADO' ? 'selected' : '' %>
+                                                >Cancelado</option>
+                                        </select>
+                                    </form>
+                                </td>
+                                <td class="text-center">
+                                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#modalOrder<%= order.id %>">
+                                        <i class="bi bi-eye"></i> Ver Detalles
+                                    </button>
+                                </td>
+                            </tr>
+
+                            <div class="modal fade" id="modalOrder<%= order.id %>" tabindex="-1">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Detalle Pedido #<%= order.id %>
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Libro (ID)</th>
+                                                        <th>Título</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Precio</th>
+                                                        <th>Subtotal</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% order.items.forEach(item=> { %>
+                                                        <tr>
+                                                            <td>
+                                                                <%= item.book_id %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.book_title %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.quantity %>
+                                                            </td>
+                                                            <td>
+                                                                <%= item.price_at_time %>€
+                                                            </td>
+                                                            <td>
+                                                                <%= (item.quantity * item.price_at_time).toFixed(2) %>€
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

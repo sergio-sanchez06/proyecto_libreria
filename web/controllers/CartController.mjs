@@ -90,77 +90,78 @@ async function viewCart(req, res) {
 
 // Checkout
 async function checkout(req, res) {
-  console.log("Entrando al Checkout:", req.body);
-
   const firebaseToken = req.body.firebase_token;
-
-  if (!firebaseToken) {
-    // Si no hay token, redirigir a login
-    return res.redirect("/login");
-  }
-
   const cart = req.signedCookies.cart || [];
 
+  // 1. Validaciones previas básicas
+  if (!firebaseToken) return res.redirect("/login");
   if (cart.length === 0) {
     return res.render("cartView", {
       cart: [],
       total: 0,
-      error: "Carrito vacío",
+      error: "Tu carrito está vacío",
     });
   }
 
-  // Calcular total (opcional, para mostrar en error)
+  let enrichedCart = [];
   let total = 0;
-  let enrichedCart = cart;
 
   try {
+    // 2. Obtener datos actualizados de los libros para el total y la vista
     const bookIds = cart.map((item) => item.book_id);
-    const response = await apiClient.get("/books", {
+    const booksResponse = await apiClient.get("/books", {
       params: { ids: bookIds.join(",") },
     });
-    const booksMap = {};
-    response.data.forEach((book) => (booksMap[book.id] = book));
+
+    // Usamos un Map para buscar libros por ID de forma óptima
+    const booksMap = new Map(booksResponse.data.map((b) => [Number(b.id), b]));
 
     enrichedCart = cart.map((item) => {
-      const book = booksMap[item.book_id] || {
-        title: "No encontrado",
-        price: 0,
+      const book = booksMap.get(Number(item.book_id));
+      const price = book ? Number(book.price) : 0;
+      total += price * item.quantity;
+      return {
+        ...item,
+        book: book || { title: "Libro no disponible", price: 0 },
       };
-      total += book.price * item.quantity;
-      return { ...item, book };
     });
-  } catch (error) {
-    console.error("Error cargando libros:", error);
-  }
 
-  console.log("Cart:", cart);
-  console.log("Enriched cart:", enrichedCart);
-  console.log("Total:", total);
-  console.log("Firebase token:", firebaseToken);
-
-  try {
-    console.log("Enriched cart:", enrichedCart);
-    console.log("Total:", total);
-    console.log("Firebase token:", firebaseToken);
-    // Llamada a API con token de Firebase
+    // 3. Petición de creación de pedido a la API
+    // Enviamos solo los datos mínimos, la API hará su propia validación
     await apiClient.post(
       "/orders",
       { items: cart },
       {
-        headers: {
-          Authorization: `Bearer ${firebaseToken}`,
-        },
+        headers: { Authorization: `Bearer ${firebaseToken}` },
       }
     );
 
+    // 4. Éxito: Limpiar carrito y mostrar confirmación
     res.clearCookie("cart");
-    res.render("cartSuccess");
+    return res.render("cartSuccess");
   } catch (error) {
-    console.error("Error en checkout:", error.response?.data);
-    res.render("cartView", {
+    console.error("Error en Checkout:", error.response?.data || error.message);
+
+    // 5. Gestión inteligente de errores para el usuario
+    let errorMessage = "Ocurrió un error inesperado al procesar tu pedido.";
+
+    if (error.response) {
+      // Errores que vienen de tu API (ej: stock, autenticación)
+      errorMessage = error.response.data?.error || errorMessage;
+
+      // Si el token falló (401), quizá expiró la sesión
+      if (error.response.status === 401) {
+        return res.render("login", {
+          error: "Tu sesión ha expirado, por favor inicia sesión de nuevo.",
+        });
+      }
+    }
+
+    // Volvemos a mostrar el carrito con el mensaje de error de la API
+    return res.render("cartView", {
       cart: enrichedCart,
       total: total.toFixed(2),
-      error: error.response?.data?.error || "Error al procesar el pedido",
+      error: errorMessage,
     });
   }
 }

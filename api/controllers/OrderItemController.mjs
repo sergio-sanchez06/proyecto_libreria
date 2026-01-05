@@ -1,4 +1,4 @@
-import OrderItemRepository from "../Repositories/OrderItemRepository.mjs";
+import OrderItemRepository from "../Repositories/OrderItemsRepository.mjs";
 
 async function create(req, res) {
   try {
@@ -15,6 +15,21 @@ async function create(req, res) {
 async function getById(req, res) {
   try {
     const orderItem = await OrderItemRepository.getById(req.params.id);
+    if (!orderItem) {
+      return res.status(404).json({ error: "Item del pedido no encontrado" });
+    }
+    res.json(orderItem);
+  } catch (error) {
+    console.error("Error al obtener order_item:", error);
+    res.status(500).json({ error: "Error interno" });
+  }
+}
+
+async function getItemsByOrderId(req, res) {
+  try {
+    const orderItem = await OrderItemRepository.getItemsByOrderId(
+      req.params.id
+    );
     if (!orderItem) {
       return res.status(404).json({ error: "Item del pedido no encontrado" });
     }
@@ -69,5 +84,6 @@ export default {
   getById,
   getAll,
   update,
+  getItemsByOrderId,
   deleteItem,
 };

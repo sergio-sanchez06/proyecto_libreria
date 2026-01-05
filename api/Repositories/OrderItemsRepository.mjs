@@ -1,17 +1,34 @@
 import pool from "../config/database.mjs";
-import OrderItem from "../models/OrderItemModel.mjs"; // crea el modelo si no existe
+import OrderItem from "../models/OrderItems.mjs"; // crea el modelo si no existe
 
-async function create(orderItemData) {
-  const result = await pool.query(
-    "INSERT INTO order_items (order_id, book_id, quantity, price) VALUES ($1, $2, $3, $4) RETURNING *",
+async function create(orderItemData, client) {
+  // Pasamos el cliente para compartir la transacción
+  const result = await client.query(
+    "INSERT INTO order_items (order_id, book_id, quantity, price_at_time) VALUES ($1, $2, $3, $4) RETURNING *",
     [
       orderItemData.order_id,
       orderItemData.book_id,
       orderItemData.quantity,
-      orderItemData.price,
+      orderItemData.price_at_time,
     ]
   );
   return result.rows[0] ? new OrderItem(result.rows[0]) : null;
+}
+
+async function getItemsByOrderId(orderId) {
+  const client = await pool.connect();
+
+  try {
+    const result = await client.query(
+      "SELECT * FROM order_items WHERE order_id = $1",
+      [orderId]
+    );
+    return result.rows.map((row) => new OrderItem(row));
+  } catch (error) {
+    throw error;
+  } finally {
+    await client.release();
+  }
 }
 
 async function getById(id) {
@@ -71,5 +88,6 @@ export default {
   getById,
   getAll,
   update,
+  getItemsByOrderId,
   deleteItem,
 };

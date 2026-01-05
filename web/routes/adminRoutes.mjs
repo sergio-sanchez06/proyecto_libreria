@@ -76,4 +76,11 @@ router.post(
   AdminController.deleteUser
 );
 
+router.get(
+  "/orders",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  AdminController.getManageOrders
+);
+
 export default router;

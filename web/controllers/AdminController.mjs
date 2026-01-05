@@ -15,11 +15,44 @@ export const getForm = (req, res) => {
   });
 };
 
+async function getManageOrders(req, res) {
+  try {
+    const api = getAuthenticatedClient(req.session.idToken);
+
+    const response = await api.get("/orders");
+    const orders = response.data;
+    // 2. Cargar ítems y títulos de libros (Carga masiva)
+    for (let order of orders) {
+      const resItems = await api.get("/orderItems/" + order.id);
+      order.items = resItems.data;
+    }
+
+    const allBookIds = [
+      ...new Set(orders.flatMap((o) => o.items.map((i) => i.book_id))),
+    ];
+    if (allBookIds.length > 0) {
+      const booksData = await Promise.all(
+        allBookIds.map((id) => api.get("/books/" + id).then((r) => r.data))
+      );
+      const titlesMap = new Map(booksData.map((b) => [b.id, b.title]));
+
+      orders.forEach((order) => {
+        order.items.forEach((item) => {
+          item.book_title = titlesMap.get(item.book_id) || "Desconocido";
+        });
+      });
+    }
+
+    res.render("admin/orders", { orders });
+  } catch (error) {
+    res.render("errors/500", { error: "No se pudieron cargar los pedidos" });
+  }
+}
+
 async function listUsers(req, res) {
   try {
-    const response = await apiClient.get("/users", {
-      headers: { Authorization: `Bearer ${req.session.idToken}` },
-    });
+    const api = getAuthenticatedClient(req.session.idToken);
+    const response = await api.get("/users");
 
     res.render("admin/users_list", {
       users: response.data,
@@ -102,4 +135,5 @@ export default {
   getUpdateUserForm,
   updateUser,
   deleteUser,
+  getManageOrders,
 };

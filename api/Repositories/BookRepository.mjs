@@ -240,6 +240,32 @@ async function getAllBooks() {
   }
 }
 
+async function updateStock(book_id, quantity, client) {
+  await client.query("UPDATE books SET stock = stock - $1 WHERE id = $2", [
+    quantity,
+    book_id,
+  ]);
+}
+
+async function getBooksByIds(bookIds) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      "SELECT * FROM books WHERE id = ANY($1)",
+      [bookIds]
+    );
+    await client.query("COMMIT");
+    return result.rows.map((book) => new Book(book));
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.log(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createBook,
   getBookById,
@@ -250,4 +276,6 @@ export default {
   getBookByFeatures,
   getAllBooks,
   getBooksByPublisherId,
+  updateStock,
+  getBooksByIds,
 };

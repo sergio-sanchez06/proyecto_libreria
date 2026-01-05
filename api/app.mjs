@@ -9,6 +9,7 @@ import authRouter from "./router/AuthRouter.mjs";
 import userRouter from "./router/UserRouter.mjs";
 import bookAuthorRouter from "./router/BookAuthorRouter.mjs";
 import bookGenreRouter from "./router/BookGenreRouter.mjs";
+import orderItemRouter from "./router/OrderItemRouter.mjs";
 
 const port = 3000;
 const app = express();
@@ -30,6 +31,7 @@ app.use("/publishers", publisherRouter);
 app.use("/orders", orderRouter);
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
+app.use("/orderItems", orderItemRouter);
 
 app.use("/bookAuthor", bookAuthorRouter);
 app.use("/bookGenre", bookGenreRouter);
