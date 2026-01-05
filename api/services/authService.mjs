@@ -1,32 +1,16 @@
 import admin from "../config/firebase.mjs";
 import UserRepository from "../Repositories/UserRepository.mjs";
 
-async function adminCreateUser(userData) {
-  const { email, password, name, role, default_address, optional_address } =
-    userData;
-
-  // 1. Declaramos la variable fuera para que sea accesible en el catch
-  let firebaseUser = null;
+async function createUser(userData) {
+  const { email, password, name } = userData;
 
   try {
-    // 2. Crear en Firebase usando Admin SDK
-    firebaseUser = await admin.auth().createUser({
+    // 1. Crear en Firebase usando Admin SDK
+    return await admin.auth().createUser({
       email,
       password,
       displayName: name,
     });
-
-    // 3. Llamar al repositorio para guardar en SQL
-    const newUser = await UserRepository.upsertFromFirebase({
-      firebase_uid: firebaseUser.uid,
-      email,
-      name,
-      role: role || "CLIENT",
-      default_address,
-      optional_address,
-    });
-
-    return newUser;
   } catch (error) {
     // 4. Ahora sí podemos preguntar si firebaseUser existe
     if (firebaseUser && firebaseUser.uid) {
@@ -46,38 +30,83 @@ async function adminCreateUser(userData) {
     throw new Error("Error en AuthService (Admin): " + error.message);
   }
 }
+// async function adminCreateUser(userData) {
+//   const { email, password, name, role, default_address, optional_address } =
+//     userData;
 
-async function registerUser(userData) {
-  const { email, password, name, default_address, optional_address } = userData;
-  let firebaseUser = null;
+//   // 1. Declaramos la variable fuera para que sea accesible en el catch
+//   let firebaseUser = null;
 
-  try {
-    // 1. Crear en Firebase
-    firebaseUser = await admin.auth().createUser({
-      email,
-      password,
-      displayName: name,
-    });
+//   try {
+//     // 2. Crear en Firebase usando Admin SDK
+//     firebaseUser = await admin.auth().createUser({
+//       email,
+//       password,
+//       displayName: name,
+//     });
 
-    // 2. Guardar en BBDD local (Forzamos rol 'user' y addresses)
-    const newUser = await UserRepository.upsertFromFirebase({
-      firebase_uid: firebaseUser.uid,
-      email,
-      name,
-      role: "CLIENT", // Siempre user por seguridad
-      default_address: default_address || null,
-      optional_address: optional_address || null,
-    });
+//     // 3. Llamar al repositorio para guardar en SQL
+//     const newUser = await UserRepository.upsertFromFirebase({
+//       firebase_uid: firebaseUser.uid,
+//       email,
+//       name,
+//       role: role || "CLIENT",
+//       default_address,
+//       optional_address,
+//     });
 
-    return newUser;
-  } catch (error) {
-    // Rollback: Si se creó en Firebase pero falló la DB local
-    if (firebaseUser && firebaseUser.uid) {
-      await admin.auth().deleteUser(firebaseUser.uid);
-    }
-    throw new Error("Error en el registro: " + error.message);
-  }
-}
+//     return newUser;
+//   } catch (error) {
+//     // 4. Ahora sí podemos preguntar si firebaseUser existe
+//     if (firebaseUser && firebaseUser.uid) {
+//       console.error(
+//         `Error en BBDD local. Eliminando rastro de Firebase para UID: ${firebaseUser.uid}`
+//       );
+//       try {
+//         await admin.auth().deleteUser(firebaseUser.uid);
+//       } catch (deleteError) {
+//         console.error(
+//           "Error crítico: No se pudo limpiar el usuario de Firebase",
+//           deleteError
+//         );
+//       }
+//     }
+//     // Lanzamos el mensaje original del error para saber qué falló en SQL
+//     throw new Error("Error en AuthService (Admin): " + error.message);
+//   }
+// }
+
+// async function registerUser(userData) {
+//   const { email, password, name, default_address, optional_address } = userData;
+//   let firebaseUser = null;
+
+//   try {
+//     // 1. Crear en Firebase
+//     firebaseUser = await admin.auth().createUser({
+//       email,
+//       password,
+//       displayName: name,
+//     });
+
+//     // 2. Guardar en BBDD local (Forzamos rol 'user' y addresses)
+//     const newUser = await UserRepository.upsertFromFirebase({
+//       firebase_uid: firebaseUser.uid,
+//       email,
+//       name,
+//       role: "CLIENT", // Siempre user por seguridad
+//       default_address: default_address || null,
+//       optional_address: optional_address || null,
+//     });
+
+//     return newUser;
+//   } catch (error) {
+//     // Rollback: Si se creó en Firebase pero falló la DB local
+//     if (firebaseUser && firebaseUser.uid) {
+//       await admin.auth().deleteUser(firebaseUser.uid);
+//     }
+//     throw new Error("Error en el registro: " + error.message);
+//   }
+// }
 
 async function registerWithToken(data) {
   const { idToken, name, email, default_address, optional_address } = data;
@@ -149,9 +178,18 @@ async function verifyTokenAndGetUser(idToken) {
   }
 }
 
+async function deleteAuthUser(firebase_uid) {
+  try {
+    return await admin.auth().deleteUser(firebase_uid);
+  } catch (error) {
+    console.error("Error al eliminar usuario de Firebase:", error);
+    throw error;
+  }
+}
+
 export default {
-  registerWithToken,
-  adminCreateUser,
+  //registerWithToken,
   verifyTokenAndGetUser,
-  registerUser,
+  createUser,
+  deleteAuthUser,
 };

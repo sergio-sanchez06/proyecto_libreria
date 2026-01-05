@@ -98,7 +98,7 @@ async function register(req, res) {
 
   try {
     // 2. Consumo indirecto: Enviamos los datos a nuestra API REST
-    const response = await apiClient.post("/auth/register", {
+    const response = await apiClient.post("/users/register", {
       name,
       email,
       password,

@@ -164,7 +164,7 @@ import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 async function getAuthors(req, res) {
   try {
     const response = await apiClient.get("/authors");
-    res.render("authors", {
+    res.render("partials/authorsTable", {
       authors: response.data,
       user: req.session.user || null,
     });
@@ -200,7 +200,7 @@ async function getAuthorById(req, res) {
 // --- FUNCIONES DE ADMINISTRADOR (Escritura) ---
 
 async function getCreateAuthor(req, res) {
-  if (!req.session.user || req.session.user.role !== "admin")
+  if (!req.session.user || req.session.user.role !== "ADMIN")
     return res.redirect("/authors");
   res.render("admin/add_author", {
     user: req.session.user,

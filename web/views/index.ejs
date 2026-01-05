@@ -19,7 +19,7 @@
             background-color: #f8f9fa;
         }
 
-        header {
+        /* header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 60px 20px;
@@ -36,7 +36,7 @@
         .section-title {
             margin-bottom: 30px;
             color: #333;
-        }
+        } */
 
         .book-card img {
             height: 280px;
@@ -88,13 +88,17 @@
 <body>
     <div class="container py-5">
         <!-- Header -->
-        <header>
+
+        <%- include('layout/header') %>
+
+            <!-- <header>
             <h1>Bienvenido a Nuestra Librería</h1>
             <p><a href="/genres">Ver géneros</a></p>
-            <p><a href="/authors">Ver autores</a></p>
-            <p><a href="/books">Ver libros</a></p>
+            <p><a href="/authors/showAllAuthors">Ver autores</a></p>
+            <p><a href="/books/showAllBooks">Ver libros</a></p>
             <p><a href="/admin/users">Ver usuarios</a></p>
             <p><a href="/cart/view">Ver carrito</a></p>
+            <p><a href="/publishers/showAllPublishers">Ver editoriales</a></p>
 
             <% if(user){ %>
                 <p><a href="/logout">Cerrar sesión</a></p>
@@ -104,165 +108,189 @@
                     <p><a href="/genres/create">Crear género</a></p>
                     <p><a href="/author/author/create">Crear autor</a></p>
                     <p><a href="/admin/books/create">Crear libro</a></p>
-                    <!-- <p><a href="/books/create">Crear libro</a></p> -->
-                    <p><a href="/publisher/create">Crear editorial</a></p>
-                    <p><a href="/admin/users/create">Crear usuario</a></p>
-                    <p><a href="/admin/orders">Gestionar pedidos</a></p>
-                    <% } %>
+                    <!-- <p><a href="/books/create">Crear libro</a></p> 
+            <p><a href="/publisher/create">Crear editorial</a></p>
+            <p><a href="/admin/users/create">Crear usuario</a></p>
+            <p><a href="/admin/orders">Gestionar pedidos</a></p>
+            <% } %>
 
-                        <% } else { %>
-                            <p><a href="/login">Iniciar sesión</a></p>
-                            <p><a href="/register">Registrarse</a></p>
-                            <% } %>
+                <% } else { %>
+                    <p><a href="/login">Iniciar sesión</a></p>
+                    <p><a href="/register">Registrarse</a></p>
+                    <% } %>-->
 
 
 
-                                <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
-        </header>
+            <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
+            </header>
 
-        <!-- Libros Destacados -->
-        <section class="mb-5">
-            <h2 class="section-title text-center">Libros Destacados</h2>
+            <!-- Libros Destacados -->
+            <section class="mb-5">
+                <h2 class="section-title text-center">Libros Destacados</h2>
 
-            <% if (books && books.length> 0) { %>
-                <div id="booksCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner" id="carouselInner">
-                        <% const booksPerSlide=4; for (let i=0; i < books.length; i +=booksPerSlide) { const
-                            group=books.slice(i, i + booksPerSlide); const isActive=i===0 ? "active" : "" ; %>
-                            <div class="carousel-item <%= isActive %>">
-                                <div class="row justify-content-center">
-                                    <% group.forEach(book=> { %>
-                                        <div class="col-md-3 mb-4">
-                                            <div class="card h-100 shadow-sm book-card">
-                                                <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
-                                                    class="card-img-top" alt="<%= book.title %>">
-                                                <div class="card-body d-flex flex-column">
-                                                    <h5 class="card-title text-truncate">
-                                                        <%= book.title %>
-                                                    </h5>
-                                                    <p class="card-text text-muted small">
-                                                        Autor:
-                                                        <% // Busca la relación para este libro const
-                                                            relation=bookAuthors.find(ba=> Number(ba.book_id) ===
-                                                            Number(book.id));
-                                                            let authorName = "Desconocido";
-                                                            if (relation && relation.author) {
-                                                            authorName = relation.author.name || "Desconocido";
-                                                            }
-                                                            %>
-                                                            <%= authorName %>
-                                                    </p>
-                                                    <p class="card-text fw-bold text-primary mt-auto">
-                                                        <%= book.price %>€
-                                                    </p>
-                                                    <a href="/books/book/<%= book.id %>"
-                                                        class="btn btn-primary btn-sm mt-2">
-                                                        Ver detalles
-                                                    </a>
+                <% if (books && books.length> 0) { %>
+                    <div id="booksCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner" id="carouselInner">
+                            <% const booksPerSlide=4; for (let i=0; i < books.length; i +=booksPerSlide) { const
+                                group=books.slice(i, i + booksPerSlide); const isActive=i===0 ? "active" : "" ; %>
+                                <div class="carousel-item <%= isActive %>">
+                                    <div class="row justify-content-center">
+                                        <% group.forEach(book=> { %>
+                                            <div class="col-md-3 mb-4">
+                                                <div class="card h-100 shadow-sm book-card">
+                                                    <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
+                                                        class="card-img-top" alt="<%= book.title %>">
+                                                    <div class="card-body d-flex flex-column">
+                                                        <h5 class="card-title text-truncate">
+                                                            <%= book.title %>
+                                                        </h5>
+                                                        <p class="card-text text-muted small">
+                                                            Autor:
+                                                            <% // Busca la relación para este libro const
+                                                                relation=bookAuthors.find(ba=>
+                                                                Number(ba.book_id) ===
+                                                                Number(book.id));
+                                                                let authorName = "Desconocido";
+                                                                if (relation && relation.author) {
+                                                                authorName = relation.author.name ||
+                                                                "Desconocido";
+                                                                }
+                                                                %>
+                                                                <%= authorName %>
+                                                        </p>
+                                                        <p class="card-text fw-bold text-primary mt-auto">
+                                                            <%= book.price %>€
+                                                        </p>
+                                                        <a href="/books/book/<%= book.id %>"
+                                                            class="btn btn-primary btn-sm mt-2">
+                                                            Ver detalles
+                                                        </a>
+                                                        <form action="/cart/add" method="POST" class="d-inline">
+                                                            <input type="hidden" name="book_id" value="<%= book.id %>">
+                                                            <div class="input-group input-group-sm"
+                                                                style="width: 120px;">
+                                                                <label for="quantity">Cantidad: </label>
+                                                                <input type="number" name="quantity" value="1" min="1"
+                                                                    max="<%= book.stock %>" class="form-control"
+                                                                    <%=book.stock <=0 ? 'disabled' : '' %>>
+                                                                <button type="submit" class="btn btn-success"
+                                                                    <%=book.stock <=0 ? 'disabled' : '' %>
+                                                                    title="<%= book.stock <=0 ? 'Sin stock'
+                                                                        : 'Añadir al carrito' %>
+                                                                        ">
+                                                                        Añadir al carrito 🛒
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <% }) %>
+
+
+                                            <% }) %>
+                                    </div>
+
                                 </div>
-                            </div>
-                            <% } %>
+                                <% } %>
+                        </div>
+
+                        <!-- Controles del carrusel -->
+                        <button class="carousel-control-prev" type="button" data-bs-target="#booksCarousel"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#booksCarousel"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
                     </div>
+                    <% } else { %>
+                        <p class="text-center text-muted">No hay libros destacados en este momento.</p>
+                        <% } %>
+            </section>
 
-                    <!-- Controles del carrusel -->
-                    <button class="carousel-control-prev" type="button" data-bs-target="#booksCarousel"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Anterior</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#booksCarousel"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Siguiente</span>
-                    </button>
-                </div>
-                <% } else { %>
-                    <p class="text-center text-muted">No hay libros destacados en este momento.</p>
-                    <% } %>
-        </section>
+            <!-- Autores Destacados -->
+            <section class="mb-5">
+                <h2 class="section-title text-center">Autores Destacados</h2>
 
-        <!-- Autores Destacados -->
-        <section class="mb-5">
-            <h2 class="section-title text-center">Autores Destacados</h2>
+                <% if (authors && authors.length> 0) { %>
+                    <div class="row justify-content-center">
+                        <% authors.forEach(author=> { %>
 
-            <% if (authors && authors.length> 0) { %>
-                <div class="row justify-content-center">
-                    <% authors.forEach(author=> { %>
+                            <% const countData=bookAuthorsCount.find(item=> Number(item.author_id) ===
+                                Number(author.id));
+                                const totalLibros = countData ? Number(countData.count_books) : 0; %>
 
-                        <% const countData=bookAuthorsCount.find(item=> Number(item.author_id) === Number(author.id));
-                            const totalLibros = countData ? Number(countData.count_books) : 0; %>
+                                <div class="col-md-3 mb-4">
+                                    <div class="card author-card text-center shadow-sm">
+                                        <div class="card-body">
+                                            <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
+                                                alt="<%= author.name %>">
+                                            <h5 class="mt-3">
+                                                <%= author.name %>
+                                            </h5>
+                                            <p class="text-muted small">
+                                                <%= author.country || "País desconocido" %>
+                                            </p>
+                                            <span class="badge bg-secondary">Libros: <%= totalLibros %>
+                                            </span>
+                                            <a href="/author/<%= author.id %>" class="btn btn-primary btn-sm mt-2">
+                                                Ver detalles
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                    </div>
+                    <% } else { %>
+                        <p class="text-center text-muted">No hay autores destacados en este momento.</p>
+                        <% } %>
+            </section>
 
+            <section>
+                <h2 class="section-title text-center">Editoriales Destacadas</h2>
+                <% if (publishers && publishers.length> 0) { %>
+                    <div class="row justify-content-center">
+                        <% publishers.forEach(publisher=> { %>
                             <div class="col-md-3 mb-4">
                                 <div class="card author-card text-center shadow-sm">
                                     <div class="card-body">
-                                        <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
-                                            alt="<%= author.name %>">
+                                        <img src="<%= publisher.image_url || '/images/default-author.jpg' %>"
+                                            alt="<%= publisher.name %>">
                                         <h5 class="mt-3">
-                                            <%= author.name %>
+                                            <%= publisher.name %>
                                         </h5>
-                                        <p class="text-muted small">
-                                            <%= author.country || "País desconocido" %>
-                                        </p>
-                                        <span class="badge bg-secondary">Libros: <%= totalLibros %></span>
-                                        <a href="/author/<%= author.id %>" class="btn btn-primary btn-sm mt-2">
+
+                                        <a href="/publisher/<%= publisher.id %>" class="btn btn-primary btn-sm mt-2">
                                             Ver detalles
                                         </a>
                                     </div>
                                 </div>
                             </div>
                             <% }) %>
-                </div>
-                <% } else { %>
-                    <p class="text-center text-muted">No hay autores destacados en este momento.</p>
-                    <% } %>
-        </section>
+                    </div>
+                    <% } else { %>
+                        <p class="text-center text-muted">No hay editoriales destacadas en este momento.</p>
+                        <% } %>
+            </section>
 
-        <section>
-            <h2 class="section-title text-center">Editoriales Destacadas</h2>
-            <% if (publishers && publishers.length> 0) { %>
-                <div class="row justify-content-center">
-                    <% publishers.forEach(publisher=> { %>
-                        <div class="col-md-3 mb-4">
-                            <div class="card author-card text-center shadow-sm">
-                                <div class="card-body">
-                                    <img src="<%= publisher.image_url || '/images/default-author.jpg' %>"
-                                        alt="<%= publisher.name %>">
-                                    <h5 class="mt-3">
-                                        <%= publisher.name %>
-                                    </h5>
+            <!-- Enlaces de login -->
+            <div class="login-links">
 
-                                    <a href="/publisher/<%= publisher.id %>" class="btn btn-primary btn-sm mt-2">
-                                        Ver detalles
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <% }) %>
-                </div>
-                <% } else { %>
-                    <p class="text-center text-muted">No hay editoriales destacadas en este momento.</p>
-                    <% } %>
-        </section>
-
-        <!-- Enlaces de login -->
-        <div class="login-links">
-
-            <% if (user) { %>
-                <p>Bienvenido <%= user.name %>
-                        <a href="/user/profile">Ver perfil</a>
-                </p>
-                <a href="/logout">Cerrar sesión</a>
-                <% } else { console.log("No hay usuario");%>
-                    <a href="/login">Iniciar sesión</a> |
-                    <a href="/register">Registrarse</a>
-                    <% } %>
+                <% if (user) { %>
+                    <p>Bienvenido <%= user.name %>
+                            <a href="/user/profile">Ver perfil</a>
+                    </p>
+                    <a href="/logout">Cerrar sesión</a>
+                    <% } else { console.log("No hay usuario");%>
+                        <a href="/login">Iniciar sesión</a> |
+                        <a href="/register">Registrarse</a>
+                        <% } %>
 
 
-        </div>
+            </div>
     </div>
 
     <!-- Bootstrap JS -->

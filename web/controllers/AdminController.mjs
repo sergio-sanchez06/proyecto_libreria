@@ -116,14 +116,38 @@ async function updateUser(req, res) {
 
 async function deleteUser(req, res) {
   try {
+    // 1. Verificación de seguridad: ¿Viene el ID del formulario EJS?
+    if (!req.body || !req.body.id) {
+      throw new Error(
+        "El ID del usuario es requerido en el cuerpo del formulario"
+      );
+    }
+
+    const userId = req.body.id;
     const api = getAuthenticatedClient(req.session.idToken);
-    const response = await api.delete(`/users/${req.params.id}`);
-    const user = response.data;
+
+    // 2. IMPORTANTE: Pasa el ID en la URL de la API, no en el body
+    // Esto coincidirá con tu router.post("/users/delete/:id", ...) o similar
+    await api.delete(`/users/${userId}`);
+
+    // 3. Si todo sale bien, refrescamos la lista
     res.redirect("/admin/users");
   } catch (error) {
-    console.error("Error al eliminar usuario:", error);
-    res.status(500).send("Error al eliminar usuario");
+    console.error("Error al eliminar usuario:", error.message);
+    // Es mejor redirigir con error que enviar un .send() para no romper la experiencia del admin
+    res.redirect("/admin/users?error=No se pudo eliminar");
   }
+}
+
+async function getDashboard(req, res) {
+  if (!req.session.user || req.session.user.role !== "ADMIN") {
+    return res.redirect("/login");
+  }
+
+  res.render("admin/dashboard", {
+    title: "Consola de Administración",
+    user: req.session.user,
+  });
 }
 
 export default {
@@ -136,4 +160,5 @@ export default {
   updateUser,
   deleteUser,
   getManageOrders,
+  getDashboard,
 };

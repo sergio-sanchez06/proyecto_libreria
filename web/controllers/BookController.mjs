@@ -303,6 +303,19 @@ async function getAllBooks(req, res) {
   }
 }
 
+async function showAllBooks(req, res) {
+  try {
+    const response = await apiClient.get("/books");
+    res.render("partials/booksTable", {
+      books: response.data,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error al obtener libros:", error);
+    res.status(500).render("error", { message: "Error al cargar el catálogo" });
+  }
+}
+
 async function getBookById(req, res) {
   try {
     const { id } = req.params;
@@ -435,7 +448,7 @@ async function deleteBook(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    await api.delete(`/books/${req.params.id}`);
+    await api.delete(`/books/${req.body.id}`);
     res.redirect("/");
   } catch (error) {
     console.error("Error al eliminar libro:", error.response?.data);
@@ -445,6 +458,7 @@ async function deleteBook(req, res) {
 
 export default {
   getAllBooks,
+  showAllBooks,
   getBookById,
   getCreateBook,
   createBook,

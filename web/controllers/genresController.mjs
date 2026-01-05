@@ -33,7 +33,7 @@ async function getGenreBooksByGenreName(req, res) {
 
 async function getCreateGenre(req, res) {
   // Verificación básica en el cliente antes de llamar a la API
-  if (!req.session.user || req.session.user.role !== "admin") {
+  if (!req.session.user || req.session.user.role !== "ADMIN") {
     return res.redirect("/genres");
   }
   res.render("admin/add_genre", {

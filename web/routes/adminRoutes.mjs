@@ -6,6 +6,8 @@ import bookController from "../controllers/BookController.mjs";
 
 const router = express.Router();
 
+router.get("/dashboard", AdminController.getDashboard);
+
 router.get("/admin/libros", AdminController.getManageBooks);
 
 router.get(

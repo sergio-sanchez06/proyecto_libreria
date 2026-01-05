@@ -2,10 +2,26 @@
 import UserRepository from "../Repositories/UserRepository.mjs";
 import authService from "../services/authService.mjs";
 
-async function createUser(req, res) {
+async function adminCreateUser(req, res) {
+  const { email, password, name, role, default_address, optional_address } =
+    req.body;
+
+  const userData = { email, password, name };
+
+  let firebaseUser = null;
+
   try {
     // Llamamos al servicio, que es el que sabe qué hacer
-    const newUser = await authService.adminCreateUser(req.body);
+    firebaseUser = await authService.createUser(userData);
+
+    const newUser = await UserRepository.upsertFromFirebase({
+      firebase_uid: firebaseUser.uid,
+      email,
+      name,
+      role: role || "CLIENT",
+      default_address,
+      optional_address,
+    });
 
     res.status(201).json({
       message: "Usuario creado con éxito",
@@ -20,12 +36,76 @@ async function createUser(req, res) {
   }
 }
 
+async function registerUser(req, res) {
+  const { email, password, name, role, default_address, optional_address } =
+    req.body;
+
+  const userData = { email, password, name };
+
+  let firebaseUser = null;
+
+  try {
+    // Llamamos al servicio, que es el que sabe qué hacer
+    firebaseUser = await authService.createUser(userData);
+
+    const newUser = await UserRepository.upsertFromFirebase({
+      firebase_uid: firebaseUser.uid,
+      email,
+      name,
+      role: "CLIENT",
+      default_address,
+      optional_address,
+    });
+
+    res.status(201).json({
+      message: "Usuario creado con éxito",
+      user: newUser,
+    });
+  } catch (error) {
+    console.error("Error al crear usuario:", error);
+    res.status(400).json({
+      message: "No se pudo crear el usuario",
+      error: error.message,
+    });
+  }
+}
+// async function createUser(req, res) {
+//   try {
+//     // Llamamos al servicio, que es el que sabe qué hacer
+//     const newUser = await authService.adminCreateUser(req.body);
+
+//     res.status(201).json({
+//       message: "Usuario creado con éxito",
+//       user: newUser,
+//     });
+//   } catch (error) {
+//     console.error("Error al crear usuario:", error);
+//     res.status(400).json({
+//       message: "No se pudo crear el usuario",
+//       error: error.message,
+//     });
+//   }
+// }
+
 async function getMe(req, res) {
   // req.user viene del middleware de autenticación
-  res.status(200).json({
-    message: "Perfil del usuario",
-    user: req.user,
-  });
+  // res.status(200).json({
+  //   message: "Perfil del usuario",
+  //   user: req.user,
+  // });
+
+  try {
+    console.log("Recuperando perfil del usuario");
+
+    const user = await UserRepository.getUserById(req.params.id);
+    res.status(200).json({
+      message: "Perfil del usuario",
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al obtener perfil" });
+  }
 }
 
 async function updateProfile(req, res) {
@@ -33,7 +113,9 @@ async function updateProfile(req, res) {
     // req.user.id viene del middleware
     const updates = {
       id: req.user.id,
-      ...req.body,
+      name: req.body.name,
+      default_address: req.body.default_address,
+      optional_address: req.body.optional_address,
     };
 
     console.log("Updates enviados:", updates); // Log para depurar
@@ -88,23 +170,24 @@ async function updateUser(req, res) {
 
 async function deleteUser(req, res) {
   try {
-    const { firebase_uid } = await UserRepository.deleteUser(req.params.id);
+    const userId = req.params.id; // El ID que pasaste en el hidden input
 
-    // Eliminar de Firebase (opcional)
+    // 1. Obtener UID de Firebase antes de borrar de SQL
+    // const user = await UserRepository.getUserById(userId);
+
+    // 2. Borrar de SQL
+
+    const { firebase_uid } = await UserRepository.deleteUser(userId);
+
+    // 3. Borrar de Firebase (Lógica delegada al servicio)
     if (firebase_uid) {
-      try {
-        await admin.auth().deleteUser(firebase_uid);
-      } catch (firebaseError) {
-        console.warn("No se pudo eliminar de Firebase:", firebaseError.message);
-      }
+      await authService.deleteAuthUser(firebase_uid);
     }
 
     res.status(200).json({ message: "Usuario eliminado correctamente" });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ message: error.message || "Error al eliminar usuario" });
+    res.status(500).json({ message: "Error al eliminar usuario" });
   }
 }
 
@@ -115,5 +198,6 @@ export default {
   getUserById,
   updateUser,
   deleteUser,
-  createUser,
+  adminCreateUser,
+  registerUser,
 };

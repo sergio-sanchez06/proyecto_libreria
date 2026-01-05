@@ -4,6 +4,7 @@ import upload from "../utils/upload.mjs";
 
 const router = express.Router();
 
+router.get("/showAllAuthors", authorController.getAuthors);
 router.get("/:id", authorController.getAuthorById);
 router.get("/author/create", authorController.getCreateAuthor);
 router.post(

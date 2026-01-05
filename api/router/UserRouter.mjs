@@ -6,9 +6,9 @@ import AuthMiddleware from "../middlewares/AuthMiddleware.mjs"; // Importamos lo
 const router = express.Router();
 
 // Rutas para el usuario autenticado (propio perfil)
-router.get("/me", AuthMiddleware.authenticate, UserController.getMe); // Ver mi perfil
+router.get("/me/:id", AuthMiddleware.authenticate, UserController.getMe); // Ver mi perfil
 router.put(
-  "/profile",
+  "/profile/:id",
   AuthMiddleware.authenticate,
   UserController.updateProfile
 ); // Actualizar mi perfil
@@ -24,8 +24,9 @@ router.post(
   "/",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
-  UserController.createUser
+  UserController.adminCreateUser
 ); // Crear nuevo usuario
+router.post("/register", UserController.registerUser); // Crear nuevo usuario
 router.get(
   "/:id",
   AuthMiddleware.authenticate,

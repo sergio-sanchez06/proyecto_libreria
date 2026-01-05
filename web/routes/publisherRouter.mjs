@@ -4,6 +4,7 @@ import upload from "../utils/upload.mjs";
 
 const router = express.Router();
 
+router.get("/showAllPublishers", publisherController.showAllPublishers);
 router.get("/edit/:id", publisherController.getPublisherEdit);
 router.get("/create", publisherController.getPublisherCreateForm);
 router.get("/:id", publisherController.getPublisherById);

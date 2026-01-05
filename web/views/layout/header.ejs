@@ -19,17 +19,24 @@
 
                 <nav class="d-flex align-items-center gap-4">
                     <a href="/" class="text-white">Inicio</a>
-                    <a href="/books" class="text-white">Libros</a>
-                    <a href="/authors" class="text-white">Autores</a>
-                    <a href="/publishers" class="text-white">Editoriales</a>
+                    <a href="/books/showAllBooks" class="text-white">Libros</a>
+                    <a href="/authors/showAllAuthors" class="text-white">Autores</a>
+                    <a href="/publishers/showAllPublishers" class="text-white">Editoriales</a>
+                    <a href="/genres" class="text-white">Géneros</a>
+                    <a href="/cart/view" class="text-white">Carrito</a>
 
                     <% if (user) { %>
                         <span class="text-white">Hola, <%= user.name || user.email %></span>
-                        <a href="/logout" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
-                        <% } else { %>
-                            <a href="/login" class="btn btn-outline-light btn-sm">Iniciar sesión</a>
-                            <a href="/register" class="btn btn-light btn-sm">Registrarse</a>
+                        <a href="/user/profile" class="btn btn-outline-light btn-sm">Perfil</a>
+                        <a href="/user/logout" class="btn btn-outline-light btn-sm">Cerrar sesión</a>
+                        <% if(user.role==='ADMIN' ) { %>
+                            <a href="/admin/dashboard" class="btn btn-outline-light btn-sm">Consola de
+                                administración</a>
                             <% } %>
+                                <% } else { %>
+                                    <a href="/login" class="btn btn-outline-light btn-sm">Iniciar sesión</a>
+                                    <a href="/register" class="btn btn-light btn-sm">Registrarse</a>
+                                    <% } %>
                 </nav>
             </div>
         </div>

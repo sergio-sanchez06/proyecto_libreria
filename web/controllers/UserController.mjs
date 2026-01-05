@@ -16,7 +16,7 @@ async function getProfile(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     // 4. Petición a la API (Consumo Indirecto)
-    const response = await api.get("/users/me");
+    const response = await api.get("/users/me/" + req.session.user.id);
 
     // 5. Renderizamos con los datos frescos de la base de datos (profileData)
     // que vendrán de tus 3 tablas (usuario, direcciones, roles)
@@ -108,7 +108,104 @@ async function getPurchaseHistory(req, res) {
   }
 }
 
+async function getEditProfileForm(req, res) {
+  console.log("Hemos entrado al controlador de editar perfil");
+
+  if (!req.session.user || !req.session.idToken) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    // 1. Obtener los datos del usuario
+    const response = await api.get("/users/me/" + req.session.user.id);
+
+    // 2. Renderizar la plantilla con los datos del usuario
+    res.render("partials/editUserProfile", {
+      user: response.data.user,
+    });
+  } catch (error) {
+    console.error("Error en editProfile:", error.message);
+    res.render("partials/editUserProfile", {
+      user: null,
+      error: "Error al cargar los datos del usuario.",
+    });
+  }
+}
+
+async function updateProfile(req, res) {
+  if (!req.session.user || !req.session.idToken) {
+    return res.redirect("/login");
+  }
+
+  try {
+    console.log("Hemos entrado al controlador de actualizar perfil");
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    console.log(req.body);
+
+    // 1. Obtener los datos del usuario
+    const response = await api.put(
+      "/users/profile/" + req.session.user.id,
+      req.body
+    );
+    const user = response.data.user;
+
+    req.session.user = user;
+
+    console.log(user);
+
+    // 2. Renderizar la plantilla con los datos del usuario
+    res.render("perfil", {
+      user: req.session.user,
+    });
+  } catch (error) {
+    console.error("Error en editProfile:", error.message);
+    res.render("partials/editUserProfile", {
+      user: null,
+      error: "Error al cargar los datos del usuario.",
+    });
+  }
+}
+
+async function deleteUser(req, res) {
+  if (!req.session.user || !req.session.idToken) {
+    return res.redirect("/login");
+  }
+
+  try {
+    console.log("Hemos entrado al controlador de eliminar perfil");
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    // 1. Obtener los datos del usuario
+    const response = await api.delete("/users/" + req.body.id);
+    const user = response.data.user;
+
+    req.session.user = user;
+
+    console.log(user);
+
+    // 2. Renderizar la plantilla con los datos del usuario
+    res.render("perfil", {
+      user: req.session.user,
+    });
+  } catch (error) {
+    console.error("Error en editProfile:", error.message);
+    res.render("partials/editUserProfile", {
+      user: null,
+      error: "Error al cargar los datos del usuario.",
+    });
+  }
+}
+
 export default {
   getProfile,
   getPurchaseHistory,
+  getEditProfileForm,
+  updateProfile,
+  deleteUser,
 };

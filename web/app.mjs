@@ -44,7 +44,7 @@ app.use("/publisher", publisherRoutes);
 // app.use("/auth", authRoutes);
 app.use("/books", bookRoutes);
 app.use("/user", userRoutes);
-app.use("/author", authorRoutes);
+app.use("/authors", authorRoutes);
 app.use("/genres", genreRoutes);
 app.use("/cart", cartRoutes);
 

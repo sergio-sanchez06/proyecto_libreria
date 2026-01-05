@@ -49,6 +49,7 @@ async function getUserByFirebaseUid(firebase_uid) {
 }
 
 async function getUserById(id) {
+  console.log("Recuperando perfil del usuario en la bbdd");
   const client = await pool.connect();
   try {
     const result = await client.query(
@@ -87,6 +88,10 @@ async function getAllUsers() {
 }
 
 async function updateProfile(updates) {
+  console.log("Actualizando perfil del usuario en la bbdd");
+
+  console.log(updates);
+
   const { id, name, default_address, optional_address, role } = updates || {};
 
   if (!id) throw new Error("ID del usuario requerido");
@@ -127,21 +132,19 @@ async function deleteUser(id) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-
-    const uidResult = await client.query(
+    // Obtenemos el UID antes de borrar para devolvérselo al controlador
+    const res = await client.query(
       "SELECT firebase_uid FROM public.users WHERE id = $1",
       [id]
     );
 
-    if (uidResult.rowCount === 0) throw new Error("Usuario no encontrado");
+    if (res.rowCount === 0) throw new Error("Usuario no encontrado");
 
-    const firebase_uid = uidResult.rows[0].firebase_uid;
-
+    const firebase_uid = res.rows[0].firebase_uid;
     await client.query("DELETE FROM public.users WHERE id = $1", [id]);
-
     await client.query("COMMIT");
 
-    return { firebase_uid };
+    return { firebase_uid }; // Importante para que el controlador borre en Firebase
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;

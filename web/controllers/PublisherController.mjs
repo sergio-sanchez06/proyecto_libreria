@@ -186,6 +186,25 @@ async function getPublishers(req, res, next) {
   }
 }
 
+async function showAllPublishers(req, res, next) {
+  try {
+    const response = await apiClient.get("/publishers");
+    res.locals.publishers = response.data;
+    res.locals.user = req.session.user || null;
+    res.render("partials/publishersTable", {
+      publishers: response.data,
+      user: res.locals.user,
+    });
+  } catch (error) {
+    console.error("Error cargando editoriales:", error);
+    res.locals.publishers = [];
+    res.render("partials/publishersTable", {
+      publishers: [],
+      user: res.locals.user,
+    });
+  }
+}
+
 async function getPublisherById(req, res, next) {
   try {
     const { id } = req.params;
@@ -210,7 +229,7 @@ async function getPublisherById(req, res, next) {
 // --- FUNCIONES DE ADMINISTRADOR (Escritura) ---
 
 async function getPublisherCreateForm(req, res) {
-  if (!req.session.user || req.session.user.role !== "admin")
+  if (!req.session.user || req.session.user.role !== "ADMIN")
     return res.redirect("/");
   res.render("admin/add_publisher", { user: req.session.user, error: null });
 }
@@ -295,6 +314,7 @@ async function deletePublisher(req, res) {
 
 export default {
   getPublishers,
+  showAllPublishers,
   getPublisherById,
   getPublisherEdit,
   updatePublisher,

@@ -49,86 +49,91 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>
-            <%= book.title || "Sin título" %>
-        </h1>
 
-        <% if (book.cover_url) { %>
-            <img src="<%= book.cover_url %>" alt="<%= book.title %>">
-            <% } else { %>
-                <img src="/images/default-cover.jpg" alt="Portada no disponible">
-                <% } %>
+    <%- include("layout/header") %>
 
-                    <p><strong>Autor:</strong>
-                        <% authors.forEach(author=> { %>
-                            <a href="/author/<%= author.id %>">
-                                <%= author.name %>
+        <div class="container">
+            <h1>
+                <%= book.title || "Sin título" %>
+            </h1>
+
+            <% if (book.cover_url) { %>
+                <img src="<%= book.cover_url %>" alt="<%= book.title %>">
+                <% } else { %>
+                    <img src="/images/default-cover.jpg" alt="Portada no disponible">
+                    <% } %>
+
+                        <p><strong>Autor:</strong>
+                            <% authors.forEach(author=> { %>
+                                <a href="/author/<%= author.id %>">
+                                    <%= author.name %>
+                                </a>
+                                <% }) %>
+                        </p>
+                        <p><strong>ISBN:</strong>
+                            <%= book.isbn || "No disponible" %>
+                        </p>
+                        <p><strong>Precio:</strong>
+                            <%= book.price ? book.price + "€" : "No disponible" %>
+                        </p>
+                        <p><strong>Año de lanzamiento:</strong>
+                            <%= book.releashed_year || "Desconocido" %>
+                        </p>
+                        <p><strong>Sinopsis:</strong>
+                            <%= book.synopsis || "No disponible" %>
+                        </p>
+                        <p><strong>Editorial:</strong>
+                            <a href="/publisher/<%= publisher.id %>">
+                                <%= publisher.name || "Desconocido" %>
                             </a>
-                            <% }) %>
-                    </p>
-                    <p><strong>ISBN:</strong>
-                        <%= book.isbn || "No disponible" %>
-                    </p>
-                    <p><strong>Precio:</strong>
-                        <%= book.price ? book.price + "€" : "No disponible" %>
-                    </p>
-                    <p><strong>Año de lanzamiento:</strong>
-                        <%= book.releashed_year || "Desconocido" %>
-                    </p>
-                    <p><strong>Sinopsis:</strong>
-                        <%= book.synopsis || "No disponible" %>
-                    </p>
-                    <p><strong>Editorial:</strong>
-                        <a href="/publisher/<%= publisher.id %>">
-                            <%= publisher.name || "Desconocido" %>
-                        </a>
-                    </p>
-                    <p><strong>Géneros:</strong>
-                        <% if (genres && genres.length> 0) { %>
-                            <div class="d-flex flex-wrap gap-2">
-                                <% genres.forEach(genre=> { %>
-                                    <span class="badge bg-primary fs-6 px-3 py-2">
-                                        <%= genre.genre.name %>
-                                            <a href="/genres/<%= genre.genre.name %>" class="btn btn-primary btn-sm">Ver
-                                                género</a>
-                                    </span>
-                                    <% }) %>
-                            </div>
-                            <% } else { %>
-                                <p class="text-muted">No hay géneros asociados.</p>
-                                <% } %>
-                    </p>
-
-                    <%if(user){ %>
+                        </p>
+                        <p><strong>Géneros:</strong>
+                            <% if (genres && genres.length> 0) { %>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <% genres.forEach(genre=> { %>
+                                        <span class="badge bg-primary fs-6 px-3 py-2">
+                                            <%= genre.genre.name %>
+                                                <a href="/genres/<%= genre.genre.name %>"
+                                                    class="btn btn-primary btn-sm">Ver
+                                                    género</a>
+                                        </span>
+                                        <% }) %>
+                                </div>
+                                <% } else { %>
+                                    <p class="text-muted">No hay géneros asociados.</p>
+                                    <% } %>
+                        </p>
 
                         <form action="/cart/add" method="POST" class="d-inline">
                             <input type="hidden" name="book_id" value="<%= book.id %>">
                             <div class="input-group input-group-sm" style="width: 120px;">
+                                <label for="quantity">Cantidad: </label>
                                 <input type="number" name="quantity" value="1" min="1" max="<%= book.stock %>"
                                     class="form-control" <%=book.stock <=0 ? 'disabled' : '' %>>
                                 <button type="submit" class="btn btn-success" <%=book.stock <=0 ? 'disabled' : '' %>
                                     title="<%= book.stock <=0 ? 'Sin stock' : 'Añadir al carrito' %>">
-                                        🛒
+                                        Añadir al carrito 🛒
                                 </button>
                             </div>
                         </form>
 
-                        <% } %>
 
-                            <% if(user && user.role==="ADMIN" ) { %>
+                        <% if(user && user.role==="ADMIN" ) { %>
 
-                                <div class="back-link">
-                                    <a href="/books/edit/<%= book.id %>">Editar libro</a>
-                                </div>
+                            <div class="back-link">
+                                <a href="/books/edit/<%= book.id %>">Editar libro</a>
+                            </div>
 
-                                <div class="back-link">
-                                    <a href="/books/delete/<%= book.id %>">Eliminar libro</a>
-                                </div>
+                            <div class="back-link">
+                                <form action="/books/delete/<%= book.id %>" method="POST">
+                                    <input type="hidden" name="id" value="<%= book.id %>">
+                                    <button type="submit" class="btn btn-danger">Eliminar libro</button>
+                                </form>
+                            </div>
 
-                                <% } %>
-                                    <a href="/">← Volver al inicio</a>
-    </div>
+                            <% } %>
+                                <a href="/">← Volver al inicio</a>
+        </div>
 </body>
 
 </html>
