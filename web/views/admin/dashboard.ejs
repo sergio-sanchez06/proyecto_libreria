@@ -27,10 +27,22 @@
         .section-title {
             border-left: 5px solid #0d6efd;
             padding-left: 15px;
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             margin-bottom: 1.5rem;
             font-weight: 700;
             color: #333;
+        }
+
+        .bg-orange {
+            background-color: #fd7e14 !important;
+        }
+
+        .border-orange {
+            border-color: #fd7e14 !important;
+        }
+
+        .text-orange {
+            color: #fd7e14 !important;
         }
     </style>
 </head>
@@ -49,6 +61,8 @@
         </nav>
 
         <div class="container mb-5">
+
+
 
             <h3 class="section-title">Gestión de Usuarios</h3>
             <div class="row g-4">
@@ -95,10 +109,10 @@
                                 <h5 class="card-title">Libros</h5>
                                 <i class="bi bi-book text-primary h3"></i>
                             </div>
-                            <p class="small text-muted">Gestionar el catálogo de libros y stock.</p>
+                            <p class="small text-muted">Catálogo y stock.</p>
                             <div class="d-grid gap-2">
-                                <a href="/books" class="btn btn-sm btn-primary">Ver Libros</a>
-                                <a href="/books/add" class="btn btn-sm btn-outline-primary">Añadir Libro</a>
+                                <a href="/books/showAllBooks" class="btn btn-sm btn-primary">Ver Libros</a>
+                                <a href="/admin/books/create" class="btn btn-sm btn-outline-primary">Añadir Libro</a>
                             </div>
                         </div>
                     </div>
@@ -111,9 +125,11 @@
                                 <h5 class="card-title">Géneros</h5>
                                 <i class="bi bi-tags text-info h3"></i>
                             </div>
-                            <p class="small text-muted">Categorías y etiquetas literarias.</p>
-                            <a href="/genres" class="btn btn-sm btn-info text-white mt-auto">Gestionar Géneros</a>
-                            <a href="/genres/create" class="btn btn-sm btn-info text-white mt-auto">Añadir Género</a>
+                            <p class="small text-muted">Categorías literarias.</p>
+                            <div class="d-grid gap-2">
+                                <a href="/genres" class="btn btn-sm btn-info text-white">Gestionar</a>
+                                <a href="/genres/create" class="btn btn-sm btn-outline-info">Añadir</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -125,9 +141,11 @@
                                 <h5 class="card-title">Autores</h5>
                                 <i class="bi bi-pen text-dark h3"></i>
                             </div>
-                            <p class="small text-muted">Lista de escritores y sus biografías.</p>
-                            <a href="/authors" class="btn btn-sm btn-dark mt-auto">Gestionar Autores</a>
-                            <a href="/authors/author/create" class="btn btn-sm btn-dark mt-auto">Añadir Autor</a>
+                            <p class="small text-muted">Escritores y biografías.</p>
+                            <div class="d-grid gap-2">
+                                <a href="/authors/showAllAuthors" class="btn btn-sm btn-dark">Gestionar</a>
+                                <a href="/authors/author/create" class="btn btn-sm btn-outline-dark">Añadir</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -139,10 +157,32 @@
                                 <h5 class="card-title">Editoriales</h5>
                                 <i class="bi bi-building-up text-secondary h3"></i>
                             </div>
-                            <p class="small text-muted">Publicadoras y proveedores.</p>
-                            <a href="/publishers" class="btn btn-sm btn-secondary mt-auto">Gestionar
-                                Editoriales</a>
-                            <a href="/publisher/create" class="btn btn-sm btn-secondary mt-auto">Añadir Editorial</a>
+                            <p class="small text-muted">Publicadoras.</p>
+                            <div class="d-grid gap-2">
+                                <a href="/publisher/showAllPublishers" class="btn btn-sm btn-secondary">Gestionar</a>
+                                <a href="/publisher/create" class="btn btn-sm btn-outline-secondary">Añadir</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-title" style="border-left-color: #fd7e14;">Gestión Comercial</h3>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 admin-card border-start border-orange border-5">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title">Pedidos / Ventas</h5>
+                                <i class="bi bi-cart-check text-orange h3"></i>
+                            </div>
+                            <p class="small text-muted">Gestionar estados de envío, facturas y devoluciones.</p>
+                            <div class="d-grid gap-2">
+                                <a href="/admin/orders" class="btn btn-sm btn-warning text-white bg-orange">Ver todos
+                                    los pedidos</a>
+                                <a href="/admin/orders/pending"
+                                    class="btn btn-sm btn-outline-warning text-orange">Pedidos Pendientes</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -152,16 +192,20 @@
                 <h4 class="mb-4"><i class="bi bi-graph-up-arrow me-2"></i>Resumen de actividad</h4>
                 <div class="row text-center">
                     <div class="col">
-                        <h3 class="fw-bold">120</h3>
+                        <h3 class="fw-bold">
+                            <%= users %>
+                        </h3>
                         <p class="text-muted">Usuarios Totales</p>
+                    </div>
+                    <div class="col border-start">
+                        <h3 class="fw-bold text-orange">
+                            <%= orders %>
+                        </h3>
+                        <p class="text-muted">Pedidos Totales</p>
                     </div>
                     <div class="col border-start">
                         <h3 class="fw-bold text-success">Active</h3>
                         <p class="text-muted">Estado Firebase</p>
-                    </div>
-                    <div class="col border-start">
-                        <h3 class="fw-bold">Postgres</h3>
-                        <p class="text-muted">Base de Datos</p>
                     </div>
                 </div>
             </div>

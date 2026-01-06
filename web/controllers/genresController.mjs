@@ -60,7 +60,7 @@ async function createGenre(req, res) {
 }
 
 async function getEditGenre(req, res) {
-  if (!req.session.user || req.session.user.role !== "admin") {
+  if (!req.session.user || req.session.user.role !== "ADMIN") {
     return res.redirect("/genres");
   }
   try {

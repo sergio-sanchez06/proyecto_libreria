@@ -257,7 +257,7 @@ async function createPublisher(req, res) {
 }
 
 async function getPublisherEdit(req, res) {
-  if (!req.session.user || req.session.user.role !== "admin")
+  if (!req.session.user || req.session.user.role !== "ADMIN")
     return res.redirect("/");
   try {
     const response = await apiClient.get(`/publishers/${req.params.id}`);

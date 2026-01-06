@@ -38,7 +38,7 @@ async function addToCart(req, res) {
   });
 
   // ¡Redirige, no renderices aquí!
-  res.redirect("back");
+  res.redirect("/cart/view");
 }
 
 // Ver carrito - aquí sí renderizas
@@ -83,6 +83,7 @@ async function viewCart(req, res) {
 
   res.render("cartView", {
     cart,
+    user: req.session.user,
     total: total.toFixed(2),
     error: null,
   });
@@ -138,7 +139,7 @@ async function checkout(req, res) {
 
     // 4. Éxito: Limpiar carrito y mostrar confirmación
     res.clearCookie("cart");
-    return res.render("cartSuccess");
+    return res.redirect("/user/myOrders");
   } catch (error) {
     console.error("Error en Checkout:", error.response?.data || error.message);
 
@@ -160,6 +161,7 @@ async function checkout(req, res) {
     // Volvemos a mostrar el carrito con el mensaje de error de la API
     return res.render("cartView", {
       cart: enrichedCart,
+      user: req.session.user,
       total: total.toFixed(2),
       error: errorMessage,
     });

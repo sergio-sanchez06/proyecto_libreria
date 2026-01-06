@@ -399,7 +399,7 @@ async function createBook(req, res) {
 }
 
 async function getEditBook(req, res) {
-  if (!req.session.user || req.session.user.role !== "admin")
+  if (!req.session.user || req.session.user.role !== "ADMIN")
     return res.redirect("/");
 
   try {

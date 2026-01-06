@@ -1,0 +1,38 @@
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Editar Autor</h2>
+                </div>
+                <div class="card-body">
+
+                    <form action="/author/<%= author.id %>" method="POST">
+                        <input type="hidden" name="_method" value="PUT">
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nombre</label>
+                            <input type="text" name="name" id="name" value="<%= author.name %>" class="form-control"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="country" class="form-label">País</label>
+                            <input type="text" name="country" id="country" value="<%= author.country %>"
+                                class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="photo_url" class="form-label">Foto (URL)</label>
+                            <input type="url" name="photo_url" id="photo_url" value="<%= author.photo_url %>"
+                                class="form-control">
+                        </div>
+
+                        <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
+                        <a href="/author/<%= author.id %>" class="btn btn-secondary">Cancelar</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

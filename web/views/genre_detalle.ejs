@@ -22,36 +22,56 @@
 <%- include('layout/header') %>
 
     <body>
-        <div class="container">
-            <h1>Libros de <%= bookGenre[0].genre.name %>
-            </h1>
+        <div class="container my-5">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Libros de <span class="text-primary">
+                        <%= bookGenre[0].genre.name %>
+                    </span></h1>
+                <a href="/genres" class="btn btn-outline-secondary rounded-pill">
+                    <i class="bi bi-arrow-left"></i> Volver
+                </a>
+            </div>
 
-            <% bookGenre.forEach(bookGenre=> { %>
-                <p class="lead">
-                    <%= bookGenre.book.title %>
-                </p>
-                <p class="lead">
-                    <%= bookGenre.genre.name %>
-                </p>
-                <p>
-                    <img src="<%= bookGenre.book.cover_url %>" alt="">
-                </p>
-                <p>
-                    <%= bookGenre.book.synopsis %>
-                </p>
-                <p> <a href="/book/<%= bookGenre.book.id %>" target="_blank">Ver más</a></p>
-                <% }) %>
+            <div class="row g-4">
+                <% bookGenre.forEach(item=> { %>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                        <div class="book-card shadow-sm">
+                            <div class="book-cover-container">
+                                <img src="<%= item.book.cover_url %>" class="book-cover" alt="<%= item.book.title %>">
+                            </div>
+                            <div class="book-body">
+                                <h5 class="book-title">
+                                    <%= item.book.title %>
+                                </h5>
+                                <span class="badge bg-light text-dark mb-2">
+                                    <%= item.genre.name %>
+                                </span>
+                                <p class="book-synopsis">
+                                    <%= item.book.synopsis %>
+                                </p>
+                                <a href="/books/book/<%= item.book.id %>"
+                                    class="btn btn-sm btn-primary w-100 rounded-pill">Ver detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
 
+            <% if(user && user.role==="ADMIN" ) { %>
+                <div class="admin-actions mt-5 d-flex align-items-center gap-3">
+                    <span class="fw-bold text-danger"><i class="bi bi-shield-lock-fill"></i> Panel Admin:</span>
+                    <a href="/genres/edit/<%= bookGenre[0].genre.name %>" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil-square"></i> Editar Género
+                    </a>
+                    <a href="/genres/delete/<%= bookGenre[0].genre.name %>" class="btn btn-danger btn-sm"
+                        onclick="return confirm('¿Borrar este género?')">
+                        <i class="bi bi-trash"></i> Borrar Género
+                    </a>
+                </div>
+                <% } %>
         </div>
 
-        <% if(user && user.role==="ADMIN" ){ %>
-            <p> <a href="/genres/edit/<%= bookGenre[0].genre.name %>" target="_blank">Editar</a></p>
-            <p> <a href="/genres/delete/<%= bookGenre[0].genre.name %>" target="_blank">Borrar</a></p>
-            <% } %>
-
-                <p><a href="/genres">Volver</a></p>
-
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 
     <%- include('layout/footer') %>

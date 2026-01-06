@@ -144,10 +144,43 @@ async function getDashboard(req, res) {
     return res.redirect("/login");
   }
 
+  const api = getAuthenticatedClient(req.session.idToken);
+  const response = await api.get("/users");
+  const users = response.data.length;
+
+  const responseOrders = await api.get("/orders");
+  const orders = responseOrders.data.length;
+
   res.render("admin/dashboard", {
     title: "Consola de Administración",
     user: req.session.user,
+    users: users,
+    orders: orders,
   });
+}
+
+async function updateOrderStatus(req, res) {
+  try {
+    const api = getAuthenticatedClient(req.session.idToken);
+    const response = await api.put(`/orders/${req.body.orderId}`, req.body);
+    const order = response.data;
+    res.redirect("/admin/orders");
+  } catch (error) {
+    console.error("Error al actualizar estado del pedido:", error);
+    res.status(500).send("Error al actualizar estado del pedido");
+  }
+}
+
+async function deleteOrder(req, res) {
+  try {
+    const api = getAuthenticatedClient(req.session.idToken);
+    const response = await api.delete(`/orders/${req.body.orderId}`);
+    const order = response.data;
+    res.redirect("/admin/orders");
+  } catch (error) {
+    console.error("Error al eliminar pedido:", error);
+    res.status(500).send("Error al eliminar pedido");
+  }
 }
 
 export default {
@@ -161,4 +194,6 @@ export default {
   deleteUser,
   getManageOrders,
   getDashboard,
+  updateOrderStatus,
+  deleteOrder,
 };

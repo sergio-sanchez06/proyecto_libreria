@@ -85,4 +85,7 @@ router.get(
   AdminController.getManageOrders
 );
 
+router.post("/orders/updateStatus", AdminController.updateOrderStatus);
+router.post("/orders/delete", AdminController.deleteOrder);
+
 export default router;

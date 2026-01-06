@@ -8,131 +8,90 @@
     <title>
         <%= book.title || "Libro" %> - Detalles
     </title>
-    <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        img {
-            max-width: 300px;
-            border-radius: 8px;
-            display: block;
-            margin: 20px auto;
-        }
-
-        p {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-
-        strong {
-            color: #667eea;
-        }
-
-        a {
-            display: inline-block;
-            margin-top: 30px;
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/libro_detalle.css">
 </head>
 
 <body>
 
-    <%- include("layout/header") %>
+    <%- include("./layout/header") %>
 
         <div class="container">
             <h1>
                 <%= book.title || "Sin título" %>
             </h1>
 
-            <% if (book.cover_url) { %>
-                <img src="<%= book.cover_url %>" alt="<%= book.title %>">
-                <% } else { %>
-                    <img src="/images/default-cover.jpg" alt="Portada no disponible">
-                    <% } %>
+            <div class="book-details-wrapper">
+                <div class="book-cover-column">
+                    <img src="<%= book.cover_url || '/images/default-cover.jpg' %>" alt="<%= book.title %>">
+                </div>
 
-                        <p><strong>Autor:</strong>
-                            <% authors.forEach(author=> { %>
-                                <a href="/author/<%= author.id %>">
-                                    <%= author.name %>
-                                </a>
-                                <% }) %>
-                        </p>
-                        <p><strong>ISBN:</strong>
-                            <%= book.isbn || "No disponible" %>
-                        </p>
-                        <p><strong>Precio:</strong>
-                            <%= book.price ? book.price + "€" : "No disponible" %>
-                        </p>
-                        <p><strong>Año de lanzamiento:</strong>
-                            <%= book.releashed_year || "Desconocido" %>
-                        </p>
-                        <p><strong>Sinopsis:</strong>
-                            <%= book.synopsis || "No disponible" %>
-                        </p>
-                        <p><strong>Editorial:</strong>
-                            <a href="/publisher/<%= publisher.id %>">
-                                <%= publisher.name || "Desconocido" %>
+                <div class="book-info-column">
+                    <p><strong>Autor:</strong>
+                        <% authors.forEach(author=> { %>
+                            <a href="/author/<%= author.id %>" class="text-decoration-none">
+                                <%= author.name %>
                             </a>
-                        </p>
-                        <p><strong>Géneros:</strong>
-                            <% if (genres && genres.length> 0) { %>
-                                <div class="d-flex flex-wrap gap-2">
-                                    <% genres.forEach(genre=> { %>
-                                        <span class="badge bg-primary fs-6 px-3 py-2">
-                                            <%= genre.genre.name %>
-                                                <a href="/genres/<%= genre.genre.name %>"
-                                                    class="btn btn-primary btn-sm">Ver
-                                                    género</a>
-                                        </span>
-                                        <% }) %>
-                                </div>
-                                <% } else { %>
-                                    <p class="text-muted">No hay géneros asociados.</p>
-                                    <% } %>
-                        </p>
+                            <% }) %>
+                    </p>
 
-                        <form action="/cart/add" method="POST" class="d-inline">
+                    <p><strong>Sinopsis:</strong>
+                        <%= book.synopsis || "No disponible" %>
+                    </p>
+
+                    <p><strong>ISBN:</strong>
+                        <%= book.isbn %>
+                    </p>
+                    <p><strong>Editorial:</strong> <a href="/publisher/<%= publisher.id %>">
+                            <%= publisher.name %>
+                        </a></p>
+                    <p><strong>Lanzamiento:</strong>
+                        <%= book.releashed_year %>
+                    </p>
+
+                    <p><strong>Géneros:</strong>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <% genres.forEach(genre=> { %>
+                            <span class="badge bg-primary fs-6 px-3 py-2">
+                                <%= genre.genre.name %>
+                                    <a href="/genres/<%= genre.genre.name %>">Ver</a>
+                            </span>
+                            <% }) %>
+                    </div>
+                    </p>
+
+                    <h3 class="text-success mb-3">
+                        <%= book.price %>€
+                    </h3>
+
+                    <div class="cart-section">
+                        <form action="/cart/add" method="POST" class="row g-3 align-items-center">
                             <input type="hidden" name="book_id" value="<%= book.id %>">
-                            <div class="input-group input-group-sm" style="width: 120px;">
-                                <label for="quantity">Cantidad: </label>
+                            <div class="col-auto">
+                                <label class="form-label mb-0">Cantidad:</label>
                                 <input type="number" name="quantity" value="1" min="1" max="<%= book.stock %>"
-                                    class="form-control" <%=book.stock <=0 ? 'disabled' : '' %>>
-                                <button type="submit" class="btn btn-success" <%=book.stock <=0 ? 'disabled' : '' %>
-                                    title="<%= book.stock <=0 ? 'Sin stock' : 'Añadir al carrito' %>">
-                                        Añadir al carrito 🛒
+                                    class="form-control" style="width: 80px;">
+                            </div>
+                            <div class="col-auto mt-4">
+                                <button type="submit" class="btn btn-success" <%=book.stock <=0 ? 'disabled' : '' %>>
+                                    Añadir al carrito 🛒
                                 </button>
                             </div>
                         </form>
+                    </div>
 
+                    <% if(user && user.role==="ADMIN" ) { %>
+                        <div class="admin-controls">
+                            <a href="/admin/books/update/<%= book.id %>" class="btn btn-warning">Editar Libro</a>
+                            <form action="/admin/books/delete/<%= book.id %>" method="POST"
+                                onsubmit="return confirm('¿Seguro?')">
+                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                        <% } %>
 
-                        <% if(user && user.role==="ADMIN" ) { %>
-
-                            <div class="back-link">
-                                <a href="/books/edit/<%= book.id %>">Editar libro</a>
-                            </div>
-
-                            <div class="back-link">
-                                <form action="/books/delete/<%= book.id %>" method="POST">
-                                    <input type="hidden" name="id" value="<%= book.id %>">
-                                    <button type="submit" class="btn btn-danger">Eliminar libro</button>
-                                </form>
-                            </div>
-
-                            <% } %>
-                                <a href="/">← Volver al inicio</a>
+                            <a href="/" class="back-link-nav">← Volver al inicio</a>
+                </div>
+            </div>
         </div>
 </body>
 

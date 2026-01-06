@@ -230,7 +230,7 @@ async function createAuthor(req, res) {
 }
 
 async function getEditAuthor(req, res) {
-  if (!req.session.user || req.session.user.role !== "admin")
+  if (!req.session.user || req.session.user.role !== "ADMIN")
     return res.redirect("/authors");
   try {
     const { id } = req.params;

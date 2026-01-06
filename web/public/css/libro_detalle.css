@@ -1,0 +1,118 @@
+/* Contenedor Principal */
+.container {
+  max-width: 1000px; /* Un poco más ancho para las dos columnas */
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Título */
+h1 {
+  color: #2c3e50;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f1f1f1;
+  padding-bottom: 15px;
+}
+
+/* Layout de dos columnas */
+.book-details-wrapper {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap; /* Responsivo para móviles */
+}
+
+.book-cover-column {
+  flex: 1;
+  min-width: 300px;
+}
+
+.book-info-column {
+  flex: 2;
+  min-width: 300px;
+}
+
+/* Imagen de la portada */
+.book-cover-column img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  display: block;
+  margin: 0 auto;
+}
+
+/* Estilo de los párrafos y etiquetas */
+p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+strong {
+  color: #667eea;
+  font-weight: 600;
+  margin-right: 5px;
+}
+
+/* Badges de Géneros */
+.badge {
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.badge a {
+  color: white !important;
+  margin-top: 0;
+  margin-left: 10px;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Formulario de Compra */
+.cart-section {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 25px 0;
+  border-left: 5px solid #28a745;
+}
+
+.input-group {
+  width: 250px !important; /* Ajuste para que quepa el texto y el botón */
+}
+
+/* Botones de Administración */
+.admin-controls {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px dashed #ddd;
+}
+
+/* Enlaces */
+.back-link-nav {
+  display: block;
+  margin-top: 20px;
+  color: #667eea;
+  font-weight: 600;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .book-details-wrapper {
+    flex-direction: column;
+  }
+  .book-cover-column img {
+    max-width: 250px;
+  }
+}
