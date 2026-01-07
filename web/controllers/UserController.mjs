@@ -18,7 +18,7 @@ async function getProfile(req, res) {
     const response = await api.get("/users/me/" + req.session.user.id);
 
     // 5. Renderizamos con los datos frescos de la base de datos (profileData)
-    res.render("perfil", {
+    res.render("partials/perfil", {
       user: req.session.user,
       profile: response.data,
       error: null,

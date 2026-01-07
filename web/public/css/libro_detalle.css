@@ -1,5 +1,4 @@
-Contenedor Principal
-.container {
+Contenedor Principal .container {
   max-width: 1000px; /* Un poco más ancho para las dos columnas */
   margin: 40px auto;
   padding: 30px;
@@ -55,7 +54,7 @@ p {
 }
 
 strong {
-  color: #667eea;
+  color: var(--primary-green);
   font-weight: 600;
   margin-right: 5px;
 }
@@ -103,7 +102,7 @@ strong {
 .back-link-nav {
   display: block;
   margin-top: 20px;
-  color: #667eea;
+  color: #006d33;
   font-weight: 600;
 }
 

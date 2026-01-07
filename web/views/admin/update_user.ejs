@@ -1,121 +1,126 @@
-<main class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="mb-4">
-                <a href="/admin/users" class="text-decoration-none text-muted">
-                    <i class="bi bi-arrow-left"></i> Volver a la lista
-                </a>
-            </div>
+<%- include ("../layout/header") %>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h2 class="h4 mb-0 fw-bold text-dark">
-                        <i class="bi bi-pencil-square text-primary me-2"></i>Editar Perfil de Usuario
-                    </h2>
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="mb-4">
+                    <a href="/admin/users" class="text-decoration-none text-muted">
+                        <i class="bi bi-arrow-left"></i> Volver a la lista
+                    </a>
                 </div>
 
-                <div class="card-body p-4">
-                    <% if (error) { %>
-                        <div class="alert alert-danger border-0 shadow-sm">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            <%= error %>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h2 class="h4 mb-0 fw-bold text-dark">
+                            <i class="bi bi-pencil-square text-primary me-2"></i>Editar Perfil de Usuario
+                        </h2>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <% if (error) { %>
+                            <div class="alert alert-danger border-0 shadow-sm">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <%= error %>
+                            </div>
+                            <% } %>
+
+                                <form action="/admin/users/update/<%= user.id %>" method="POST">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted small fw-bold">Email (No
+                                                editable)</label>
+                                            <input type="email" class="form-control bg-light" value="<%= user.email %>"
+                                                readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label text-muted small fw-bold">Firebase UID</label>
+                                            <input type="text" class="form-control bg-light font-monospace"
+                                                style="font-size: 0.8rem;" value="<%= user.firebase_uid %>" readonly>
+                                        </div>
+
+                                        <hr class="my-4 text-muted opacity-25">
+
+                                        <div class="col-md-8">
+                                            <label for="name" class="form-label fw-bold">Nombre Completo</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i
+                                                        class="bi bi-person"></i></span>
+                                                <input type="text" name="name" id="name" class="form-control"
+                                                    value="<%= user.name %>" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label for="role" class="form-label fw-bold">Rol del Sistema</label>
+                                            <select name="role" id="role" class="form-select">
+                                                <option value="CLIENT" <%=user.role==='CLIENT' ? 'selected' : '' %>
+                                                    >Usuario (User)</option>
+                                                <option value="ADMIN" <%=user.role==='ADMIN' ? 'selected' : '' %>
+                                                    >Administrador (Admin)</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="default_address" class="form-label fw-bold">Dirección
+                                                Principal</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white"><i
+                                                        class="bi bi-geo-alt"></i></span>
+                                                <textarea name="default_address" id="default_address"
+                                                    class="form-control" rows="2"
+                                                    required><%= user.default_address %></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label for="optional_address" class="form-label fw-bold">Dirección
+                                                Secundaria <span class="text-muted fw-normal">(Opcional)</span></label>
+                                            <textarea name="optional_address" id="optional_address" class="form-control"
+                                                rows="2"><%= user.optional_address %></textarea>
+                                        </div>
+
+                                        <div class="col-12 d-flex justify-content-end gap-2 mt-4">
+                                            <a href="/admin/users" class="btn btn-light px-4 border">Cancelar</a>
+                                            <button type="submit" class="btn btn-primary px-5 shadow-sm">
+                                                <i class="bi bi-save me-1"></i> Guardar Cambios
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mt-4 bg-light">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-shield-check fs-2 text-success me-3"></i>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Gestión de Seguridad</h6>
+                            <small class="text-muted">Para cambiar la contraseña de este usuario, debe hacerse
+                                directamente desde la consola de Firebase Auth.</small>
                         </div>
-                        <% } %>
-
-                            <form action="/admin/users/update/<%= user.id %>" method="POST">
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="form-label text-muted small fw-bold">Email (No
-                                            editable)</label>
-                                        <input type="email" class="form-control bg-light" value="<%= user.email %>"
-                                            readonly>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label text-muted small fw-bold">Firebase UID</label>
-                                        <input type="text" class="form-control bg-light font-monospace"
-                                            style="font-size: 0.8rem;" value="<%= user.firebase_uid %>" readonly>
-                                    </div>
-
-                                    <hr class="my-4 text-muted opacity-25">
-
-                                    <div class="col-md-8">
-                                        <label for="name" class="form-label fw-bold">Nombre Completo</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i class="bi bi-person"></i></span>
-                                            <input type="text" name="name" id="name" class="form-control"
-                                                value="<%= user.name %>" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <label for="role" class="form-label fw-bold">Rol del Sistema</label>
-                                        <select name="role" id="role" class="form-select">
-                                            <option value="CLIENT" <%=user.role==='CLIENT' ? 'selected' : '' %>
-                                                >Usuario (User)</option>
-                                            <option value="ADMIN" <%=user.role==='ADMIN' ? 'selected' : '' %>
-                                                >Administrador (Admin)</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <label for="default_address" class="form-label fw-bold">Dirección
-                                            Principal</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white"><i class="bi bi-geo-alt"></i></span>
-                                            <textarea name="default_address" id="default_address" class="form-control"
-                                                rows="2" required><%= user.default_address %></textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12">
-                                        <label for="optional_address" class="form-label fw-bold">Dirección
-                                            Secundaria <span class="text-muted fw-normal">(Opcional)</span></label>
-                                        <textarea name="optional_address" id="optional_address" class="form-control"
-                                            rows="2"><%= user.optional_address %></textarea>
-                                    </div>
-
-                                    <div class="col-12 d-flex justify-content-end gap-2 mt-4">
-                                        <a href="/admin/users" class="btn btn-light px-4 border">Cancelar</a>
-                                        <button type="submit" class="btn btn-primary px-5 shadow-sm">
-                                            <i class="bi bi-save me-1"></i> Guardar Cambios
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                </div>
-            </div>
-
-            <div class="card border-0 shadow-sm mt-4 bg-light">
-                <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-shield-check fs-2 text-success me-3"></i>
-                    <div>
-                        <h6 class="mb-0 fw-bold">Gestión de Seguridad</h6>
-                        <small class="text-muted">Para cambiar la contraseña de este usuario, debe hacerse
-                            directamente desde la consola de Firebase Auth.</small>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
-    .form-control:focus,
-    .form-select:focus {
-        border-color: #0d6efd;
-        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
-    }
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        }
 
-    .input-group-text {
-        border-right: none;
-        color: #6c757d;
-    }
+        .input-group-text {
+            border-right: none;
+            color: #6c757d;
+        }
 
-    .input-group .form-control {
-        border-left: none;
-    }
-</style>
+        .input-group .form-control {
+            border-left: none;
+        }
+    </style>

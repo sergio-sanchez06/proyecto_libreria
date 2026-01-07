@@ -15,6 +15,11 @@
             border-radius: 12px;
         }
 
+        .btn-primary {
+            background-color: #6610f2 !important;
+            border-radius: 0px !important;
+        }
+
         .admin-card:hover {
             transform: translateY(-5px);
         }
@@ -25,7 +30,7 @@
         }
 
         .section-title {
-            border-left: 5px solid #0d6efd;
+            border-left: 5px solid #006d33;
             padding-left: 15px;
             margin-top: 2.5rem;
             margin-bottom: 1.5rem;
@@ -47,11 +52,13 @@
     </style>
 </head>
 
+
+
 <body class="bg-light">
 
     <%- include("../layout/header") %>
 
-        <nav class="navbar navbar-dark bg-dark mb-4 shadow">
+        <nav class="navbar navbar-dark bg-dark shadow">
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">
                     <i class="bi bi-shield-lock me-2"></i>Admin Panel | <%= user.name %>
@@ -62,8 +69,6 @@
 
         <div class="container mb-5">
 
-
-
             <h3 class="section-title">Gestión de Usuarios</h3>
             <div class="row g-4">
                 <div class="col-md-4">
@@ -72,7 +77,7 @@
                             <div class="icon-box text-primary"><i class="bi bi-people-fill"></i></div>
                             <h5 class="card-title">Usuarios</h5>
                             <p class="card-text text-muted">Control de accesos, roles y eliminación.</p>
-                            <a href="/admin/users" class="btn btn-primary w-100">Gestionar Usuarios</a>
+                            <a href="/admin/users" class="btn btn-books w-100">Gestionar Usuarios</a>
                         </div>
                     </div>
                 </div>
@@ -111,7 +116,7 @@
                             </div>
                             <p class="small text-muted">Catálogo y stock.</p>
                             <div class="d-grid gap-2">
-                                <a href="/books/showAllBooks" class="btn btn-sm btn-primary">Ver Libros</a>
+                                <a href="/books/showAllBooks" class="btn btn-sm btn-books">Ver Libros</a>
                                 <a href="/admin/books/create" class="btn btn-sm btn-outline-primary">Añadir Libro</a>
                             </div>
                         </div>
@@ -178,10 +183,11 @@
                             </div>
                             <p class="small text-muted">Gestionar estados de envío, facturas y devoluciones.</p>
                             <div class="d-grid gap-2">
-                                <a href="/admin/orders" class="btn btn-sm btn-warning text-white bg-orange">Ver todos
+                                <a href="/admin/orders" class="btn btn-sm text-white bg-orange">Ver todos
                                     los pedidos</a>
                                 <a href="/admin/orders/pending"
-                                    class="btn btn-sm btn-outline-warning text-orange">Pedidos Pendientes</a>
+                                    class="btn btn-sm btn-outline-warning text-orange">Pedidos
+                                    Pendientes</a>
                             </div>
                         </div>
                     </div>

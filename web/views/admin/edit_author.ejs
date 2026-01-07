@@ -16,7 +16,7 @@
             <div class="row justify-content-center">
                 <div class="col-md-8 col-lg-6">
                     <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
+                        <div class="card-header text-white" style="background-color: #006d33;">
                             <h2 class="mb-0">Editar Autor</h2>
                         </div>
                         <div class="card-body">
@@ -53,7 +53,9 @@
                                     <small class="form-text text-muted">Selecciona una foto (opcional).</small>
                                 </div>
 
-                                <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
+                                <button type="submit" class="btn me-2"
+                                    style="background-color: #006d33; color: white">Guardar
+                                    cambios</button>
                                 <a href="/author/<%= author.id %>" class="btn btn-secondary">Cancelar</a>
                             </form>
                         </div>

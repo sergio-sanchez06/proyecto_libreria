@@ -13,11 +13,7 @@ body {
 
 /* --- Cabecera de la Editorial --- */
 .publisher-header {
-  background: linear-gradient(
-    135deg,
-    var(--primary-blue) 0%,
-    var(--accent-purple) 100%
-  );
+  background: linear-gradient(135deg, #006d33 0%, #006d33 100%);
   color: white;
   padding: 60px 20px;
   text-align: center;
@@ -46,11 +42,11 @@ body {
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 50px;
-  border-top: 5px solid var(--primary-blue);
+  border-top: 5px solid #006d33;
 }
 
 .publisher-info h3 {
-  color: var(--primary-blue);
+  color: #006d33;
   font-weight: 700;
   margin-bottom: 20px;
 }
@@ -90,7 +86,7 @@ body {
 }
 
 .book-card img {
-  height: 300px;
+  height: 250px;
   object-fit: cover;
 }
 

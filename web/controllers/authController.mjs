@@ -24,10 +24,8 @@ async function login(req, res) {
   }
 
   try {
-
     const response = await apiClient.post("/auth/login", { idToken });
     const { user } = response.data;
-
 
     // Crea sesión
     req.session.user = user;

@@ -1,27 +1,32 @@
-/* --- 1. CONFIGURACIÓN GENERAL Y VARIABLES --- */
+/* --- 1. CONFIGURACIÓN GENERAL (Paleta Casa del Libro) --- */
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --accent-color: #667eea;
-  --accent-hover: #764ba2;
-  --bg-light: #f8f9fa;
-  --text-dark: #2d3436;
+  --primary-green: #006d33; /* Verde principal */
+  --hover-green: #005628; /* Verde más oscuro */
+  --accent-yellow: #fecb00; /* Amarillo detalle */
+  --bg-cream: #fdfdfb; /* Fondo cálido */
+
+  --text-dark: #2d2d2d;
+  --text-muted: #666666;
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.12);
 }
 
 body {
-  background-color: var(--bg-light);
+  background-color: var(--bg-cream);
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-  color: #333;
+  color: var(--text-dark);
+  line-height: 1.6;
 }
 
 /* --- 2. HEADER Y TÍTULOS --- */
 .hero-header {
-  background: var(--primary-gradient);
+  background: var(--primary-green);
   color: white;
   padding: 60px 20px;
   text-align: center;
-  border-radius: 15px;
-  margin-bottom: 40px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 0; /* Más sobrio, estilo librería clásica */
+  box-shadow: var(--shadow-soft);
+  border-bottom: 5px solid var(--accent-yellow);
 }
 
 .section-title {
@@ -30,129 +35,131 @@ body {
   color: var(--text-dark);
   text-transform: uppercase;
   letter-spacing: 1px;
+  border-left: 6px solid var(--primary-green); /* Detalle verde lateral */
+  padding-left: 15px;
 }
 
-/* --- 3. TARJETAS DE LIBROS (Visualización Pro) --- */
+/* --- 3. TARJETAS DE LIBROS (Estructura Pro + Colores Librería) --- */
 .book-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: none;
+  border: 1px solid #eee !important;
   background: #fff;
-  overflow: hidden; /* Evita que el zoom de la imagen se salga */
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 .book-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: var(--shadow-hover) !important;
 }
 
 .book-card img {
   width: 100%;
-  aspect-ratio: 2 / 3; /* Proporción estándar de libros */
-  object-fit: cover;
-  object-position: center;
+  aspect-ratio: 2 / 3;
+  object-fit: contain; /* Cambiado a contain para ver portadas completas */
+  background: #f9f9f9;
+  padding: 10px; /* Espacio para que la portada no toque los bordes */
   transition: transform 0.5s ease;
   border-bottom: 1px solid #eee;
 }
 
 .book-card:hover img {
-  transform: scale(1.08); /* Zoom suave al hacer hover */
+  transform: scale(1.05);
 }
 
 .book-card .card-title {
   font-size: 1.05rem;
   font-weight: 700;
-  height: 2.6em; /* Alinea los títulos a dos líneas */
+  height: 2.6em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-bottom: 10px;
+  color: var(--text-dark);
 }
 
 /* --- 4. TARJETAS DE AUTORES Y EDITORIALES --- */
-.author-card {
-  border: none;
-  background: transparent;
-  padding: 15px;
-}
-
-.author-card .card-body {
-  background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  padding: 25px 15px;
-  transition: all 0.3s ease;
-}
-
-.author-card:hover .card-body {
-  background: #fdfbff;
-}
-
 .author-card img {
   width: 140px;
   height: 140px;
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 50%;
-  border: 4px solid var(--accent-color);
+  border: 4px solid var(--primary-green);
   margin: 0 auto 15px;
   display: block;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+  box-shadow: 0 5px 15px rgba(0, 109, 51, 0.2);
 }
 
 .author-card:hover img {
-  border-color: var(--accent-hover);
+  border-color: var(--accent-yellow);
   transform: scale(1.05);
 }
 
-/* --- 5. COMPONENTES DE INTERFAZ (Botones, Carrusel) --- */
+/* --- 5. COMPONENTES DE INTERFAZ --- */
 .btn-primary {
-  background: var(--accent-color);
-  border: none;
+  background-color: var(--primary-green) !important;
+  border: none !important;
   color: white !important;
-  font-weight: 600;
+  border-radius: 50px !important; /* Estilo píldora */
+  font-weight: 700 !important;
+  padding: 10px 25px !important;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  transition: background 0.3s;
+}
+
+.btn-books {
+  background-color: #1041f2 !important;
+  border: none !important;
+  color: white !important;
+  border-radius: none !important; /* Estilo píldora */
+  padding: 5px !important;
   transition: background 0.3s;
 }
 
 .btn-primary:hover {
-  background: var(--accent-hover);
+  background-color: var(--hover-green) !important;
 }
 
-.btn-success {
-  background-color: #27ae60;
-  border: none;
-  color: white !important;
+.btn-warning {
+  background-color: var(--accent-yellow) !important;
+  border: none !important;
+  color: var(--text-dark) !important;
+  font-weight: 700 !important;
+  border-radius: 50px !important;
 }
 
 /* Carrusel */
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  background-color: rgba(102, 126, 234, 0.9);
+  background-color: var(--primary-green);
   border-radius: 50%;
   width: 40px;
   height: 40px;
-  background-size: 50%;
-}
-
-/* Cantidad y Formularios */
-.input-group label {
-  font-size: 0.8rem;
-  color: #666;
-  width: 100%;
-  margin-bottom: 4px;
-}
-
-.input-group .form-control {
-  border-radius: 5px !important;
-  text-align: center;
+  opacity: 0.8;
 }
 
 /* Badge de Libros */
 .badge.bg-secondary {
-  background-color: #ecf0f1 !important;
-  color: #7f8c8d;
-  font-weight: 500;
-  padding: 6px 12px;
+  background-color: #f1f1f1 !important;
+  color: var(--primary-green);
+  border: 1px solid var(--primary-green);
+  font-weight: 600;
+}
+
+/* Lista de Géneros/Editoriales (Estilo lead-custom) */
+.list-group-item-custom {
+  background: white !important;
+  border-left: 6px solid var(--primary-green) !important;
   margin-bottom: 10px;
+  border-radius: 4px !important;
+  transition: all 0.2s;
+}
+
+.list-group-item-custom:hover {
+  background: #f0f7f3 !important;
+  transform: translateX(5px);
 }
