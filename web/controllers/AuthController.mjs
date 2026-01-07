@@ -1,4 +1,4 @@
-// web/controllers/authController.mjs
+// web/controllers/AuthController.mjs
 import axios from "axios";
 
 const apiClient = axios.create({
