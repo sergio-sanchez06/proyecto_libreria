@@ -7,6 +7,7 @@ export default class OrderItems {
     price_at_time,
     created_at,
     update_at,
+    book,
   } = {}) {
     this.id = id;
     this.order_id = order_id;
@@ -15,5 +16,6 @@ export default class OrderItems {
     this.price_at_time = price_at_time;
     this.created_at = created_at;
     this.update_at = update_at;
+    this.book = book;
   }
 }

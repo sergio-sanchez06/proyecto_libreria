@@ -44,7 +44,9 @@ async function getProfile(req, res) {
 }
 
 async function getPurchaseHistory(req, res) {
-  console.log("Hemos entrado al controlador de mis compras");
+  console.log(
+    "Hemos entrado al controlador de mis compras - Versión Optimizada"
+  );
 
   if (!req.session.user || !req.session.idToken) {
     return res.redirect("/login");
@@ -59,40 +61,22 @@ async function getPurchaseHistory(req, res) {
     const orders = response.data;
 
     // 2. Obtener los ítems de cada pedido
+    // Ahora cada ítem YA TRAE su objeto 'book' dentro gracias al nuevo modelo
     for (let order of orders) {
       const responseItems = await api.get("/orderItems/" + order.id);
       order.items = responseItems.data;
     }
 
-    // 3. Recopilar todos los IDs de libros que necesitamos consultar
-    const allBookIds = [
-      ...new Set(orders.flatMap((o) => o.items.map((i) => i.book_id))),
-    ];
+    console.log("orders", orders);
+    console.log("orders[0].items", orders[0].items);
 
-    if (allBookIds.length > 0) {
-      // 4. Consultar los libros a la API (o repositorio)
-      const bookPromises = allBookIds.map((id) =>
-        api.get("/books/" + id).then((r) => r.data)
-      );
-      const booksData = await Promise.all(bookPromises);
-
-      // 5. Crear un mapa para buscar el título rápidamente por ID
-      const titlesMap = new Map(booksData.map((b) => [b.id, b.title]));
-
-      // 6. Inyectar el título directamente en el objeto del ítem
-      orders.forEach((order) => {
-        order.items.forEach((item) => {
-          // Creamos la propiedad 'book_title' sobre la marcha (en tiempo de ejecución)
-          item.book_title =
-            titlesMap.get(item.book_id) || "Título no disponible";
-        });
-      });
-    }
+    // NOTA: Los pasos 3, 4, 5 y 6 ya no son necesarios.
+    // El objeto 'book' ya está dentro de cada ítem.
 
     res.render("partials/purchaseHistory", {
       title: "Mis compras",
       user: req.session.user,
-      orders: orders,
+      orders: orders, // Contiene pedidos -> items -> book
     });
   } catch (error) {
     console.error("Error en getPurchaseHistory:", error.message);
@@ -100,10 +84,72 @@ async function getPurchaseHistory(req, res) {
       title: "Mis compras",
       user: req.session.user,
       orders: [],
-      error: "Error al cargar los nombres de los libros.",
+      error: "Error al cargar el historial de compras.",
     });
   }
 }
+
+// async function getPurchaseHistory(req, res) {
+//   console.log("Hemos entrado al controlador de mis compras");
+
+//   if (!req.session.user || !req.session.idToken) {
+//     return res.redirect("/login");
+//   }
+
+//   try {
+//     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+//     const api = getAuthenticatedClient(cleanToken);
+
+//     // 1. Obtener los pedidos del usuario
+//     const response = await api.get("/orders/user/" + req.session.user.id);
+//     const orders = response.data;
+
+//     // 2. Obtener los ítems de cada pedido
+//     for (let order of orders) {
+//       const responseItems = await api.get("/orderItems/" + order.id);
+//       order.items = responseItems.data;
+//     }
+
+//     // 3. Recopilar todos los IDs de libros que necesitamos consultar
+//     const allBookIds = [
+//       ...new Set(orders.flatMap((o) => o.items.map((i) => i.book_id))),
+//     ];
+
+//     if (allBookIds.length > 0) {
+//       // 4. Consultar los libros a la API (o repositorio)
+//       const bookPromises = allBookIds.map((id) =>
+//         api.get("/books/" + id).then((r) => r.data)
+//       );
+//       const booksData = await Promise.all(bookPromises);
+
+//       // 5. Crear un mapa para buscar el título rápidamente por ID
+//       const titlesMap = new Map(booksData.map((b) => [b.id, b.title]));
+
+//       // 6. Inyectar el título directamente en el objeto del ítem
+//       orders.forEach((order) => {
+//         order.items.forEach((item) => {
+//           // Creamos la propiedad 'book_title' sobre la marcha (en tiempo de ejecución)
+//           item.book_title =
+//             titlesMap.get(item.book_id) || "Título no disponible";
+//         });
+//       });
+//     }
+
+//     res.render("partials/purchaseHistory", {
+//       title: "Mis compras",
+//       user: req.session.user,
+//       orders: orders,
+//     });
+//   } catch (error) {
+//     console.error("Error en getPurchaseHistory:", error.message);
+//     res.render("partials/purchaseHistory", {
+//       title: "Mis compras",
+//       user: req.session.user,
+//       orders: [],
+//       error: "Error al cargar los nombres de los libros.",
+//     });
+//   }
+// }
 
 async function getEditProfileForm(req, res) {
   console.log("Hemos entrado al controlador de editar perfil");

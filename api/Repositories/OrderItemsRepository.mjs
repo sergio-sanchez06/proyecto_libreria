@@ -19,17 +19,60 @@ async function getItemsByOrderId(orderId) {
   const client = await pool.connect();
 
   try {
+    // Usamos alias para las columnas del libro para evitar conflictos con oi.id
     const result = await client.query(
-      "SELECT * FROM order_items WHERE order_id = $1",
+      `SELECT 
+        oi.*, 
+        b.id AS book_id,
+        b.title AS book_title 
+      FROM order_items oi 
+      JOIN books b ON oi.book_id = b.id 
+      WHERE oi.order_id = $1`,
       [orderId]
     );
-    return result.rows.map((row) => new OrderItem(row));
+
+    return result.rows.map((row) => {
+      // 1. Creamos el objeto libro de forma independiente
+      const bookObj = {
+        id: row.book_id,
+        title: row.book_title,
+      };
+
+      // 2. Instanciamos OrderItem pasando el objeto book anidado
+      return new OrderItem({
+        id: row.id,
+        order_id: row.order_id,
+        book_id: row.book_id,
+        quantity: row.quantity,
+        price_at_time: row.price_at_time,
+        created_at: row.created_at,
+        update_at: row.update_at,
+        book: bookObj, // <--- Aquí inyectamos el objeto compuesto
+      });
+    });
   } catch (error) {
+    console.error("Error obteniendo ítems del pedido:", error);
     throw error;
   } finally {
-    await client.release();
+    client.release();
   }
 }
+
+// async function getItemsByOrderId(orderId) {
+//   const client = await pool.connect();
+
+//   try {
+//     const result = await client.query(
+//       "SELECT oi.*, b.* FROM order_items oi JOIN books b ON oi.book_id = b.id WHERE order_id = $1",
+//       [orderId]
+//     );
+//     return result.rows.map((row) => new OrderItem(row));
+//   } catch (error) {
+//     throw error;
+//   } finally {
+//     await client.release();
+//   }
+// }
 
 async function getById(id) {
   const result = await pool.query("SELECT * FROM order_items WHERE id = $1", [
