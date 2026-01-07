@@ -30,14 +30,7 @@ router.post(
   "/author/update/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  upload.single("author_photo"),
-  authorController.updateAuthor
-);
-router.post(
-  "/author/update/:id",
-  protectMiddleware.protect,
-  protectMiddleware.requireAdmin,
-  upload.single("author_photo"),
+  upload.single("photo"),
   authorController.updateAuthor
 );
 router.post(

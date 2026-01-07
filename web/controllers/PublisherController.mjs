@@ -213,7 +213,7 @@ async function getPublisherById(req, res, next) {
       apiClient.get(`/books/publisher/${id}`),
     ]);
 
-    res.render("publisher_detalle", {
+    res.render("partials/publisher_detalle", {
       publisher: pubRes.data,
       books: booksRes.data,
       user: req.session.user || null,
@@ -285,7 +285,7 @@ async function updatePublisher(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.put(`/publishers/${publisherId}`, updateData);
-    res.redirect(`/publishers`); // Redirigir a la lista o al detalle
+    res.redirect(`/publisher/${publisherId}`); // Redirigir a la lista o al detalle
   } catch (error) {
     res.render("admin/edit_publisher", {
       publisher: { ...req.body, id: publisherId },
@@ -300,8 +300,8 @@ async function deletePublisher(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    await api.delete(`/publishers/${req.params.id}`);
-    res.redirect("/publishers");
+    await api.delete(`/publishers/${req.body.id}`);
+    res.redirect("/publishers/showAllPublishers");
   } catch (error) {
     console.error("Error eliminando editorial:", error.response?.data);
     res

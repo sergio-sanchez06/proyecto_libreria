@@ -19,19 +19,19 @@ router.post(
 router.get("/", genresController.getGenres);
 router.get("/:genreName", genresController.getGenreBooksByGenreName);
 router.get(
-  "/edit/:genreName",
+  "/edit/:genreId",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   genresController.getEditGenre
 );
 router.post(
-  "/update/:genreName",
+  "/update/:genreId",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   genresController.updateGenre
 );
-router.delete(
-  "/:genreName",
+router.post(
+  "/delete/:genreId",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   genresController.deleteGenre

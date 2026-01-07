@@ -186,7 +186,7 @@ async function getAuthorById(req, res) {
     const author = authorResponse.data;
     const books = booksResponse.data;
 
-    res.render("autor_detalle", {
+    res.render("partials/autor_detalle", {
       author,
       books,
       user: req.session.user || null,
@@ -253,6 +253,8 @@ async function updateAuthor(req, res) {
     updateData.photo_url = `/uploads/authors/${req.file.filename}`;
   }
 
+  console.log(updateData);
+
   try {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
@@ -274,7 +276,7 @@ async function deleteAuthor(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.delete(`/authors/${req.params.id}`);
-    res.redirect("/authors");
+    res.redirect("/authors/showAllAuthors");
   } catch (error) {
     console.error("Error al eliminar autor:", error.response?.data);
     res

@@ -1,46 +1,62 @@
-<main class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-success text-white text-center">
-                    <h2 class="mb-0">Añadir Nuevo Autor</h2>
-                </div>
-                <div class="card-body">
-                    <% if (error) { %>
-                        <div class="alert alert-danger">
-                            <%= error %>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/add_author.css">
+</head>
+
+<body>
+
+    <%- include("../layout/header") %>
+
+        <main class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white text-center">
+                            <h2 class="mb-0">Añadir Nuevo Autor</h2>
                         </div>
-                        <% } %>
-
-                            <form action="/author/author/create" method="POST" enctype="multipart/form-data">
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Nombre *</label>
-                                    <input type="text" name="name" id="name" class="form-control" required>
+                        <div class="card-body">
+                            <% if (error) { %>
+                                <div class="alert alert-danger">
+                                    <%= error %>
                                 </div>
+                                <% } %>
 
-                                <div class="mb-3">
-                                    <label for="country" class="form-label">País</label>
-                                    <input type="text" name="country" id="country" class="form-control">
-                                </div>
+                                    <form action="/authors/author/create" method="POST" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Nombre *</label>
+                                            <input type="text" name="name" id="name" class="form-control" required>
+                                        </div>
 
-                                <div class="mb-3">
-                                    <label for="biography" class="form-label">Biografía</label>
-                                    <textarea name="biography" id="biography" rows="5" class="form-control"></textarea>
-                                </div>
+                                        <div class="mb-3">
+                                            <label for="country" class="form-label">País</label>
+                                            <input type="text" name="country" id="country" class="form-control">
+                                        </div>
 
-                                <div class="mb-3">
-                                    <label for="photo" class="form-label">Foto</label>
-                                    <input type="file" name="photo" id="photo" class="form-control" accept="image/*">
-                                    <small class="form-text text-muted">Selecciona una foto (opcional).</small>
-                                </div>
+                                        <div class="mb-3">
+                                            <label for="biography" class="form-label">Biografía</label>
+                                            <textarea name="biography" id="biography" rows="5"
+                                                class="form-control"></textarea>
+                                        </div>
 
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-success me-2">Crear autor</button>
-                                    <a href="/authors" class="btn btn-secondary">Cancelar</a>
-                                </div>
-                            </form>
+                                        <div class="mb-3">
+                                            <label for="photo" class="form-label">Foto</label>
+                                            <input type="file" name="photo" id="photo" class="form-control"
+                                                accept="image/*">
+                                            <small class="form-text text-muted">Selecciona una foto (opcional).</small>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-success me-2">Crear autor</button>
+                                            <a href="/authors" class="btn btn-secondary">Cancelar</a>
+                                        </div>
+                                    </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</main>
+        </main>

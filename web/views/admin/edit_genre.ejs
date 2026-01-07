@@ -1,60 +1,43 @@
-<main class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
-                    <h2 class="mb-0">Editar Editorial - <%= publisher.name %>
-                    </h2>
-                </div>
-                <div class="card-body">
-                    <% if (error) { %>
-                        <div class="alert alert-danger">
-                            <%= error %>
-                        </div>
-                        <% } %>
+<%- include("../layout/header") %>
 
-                            <!-- Logo actual -->
-                            <div class="text-center mb-4">
-                                <img src="<%= publisher.logo_url || '/images/default-publisher.jpg' %>"
-                                    alt="Logo actual" class="img-fluid rounded"
-                                    style="max-height: 200px; object-fit: contain;">
-                                <p class="text-muted mt-2">Logo actual</p>
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-white text-center">
+                        <h2 class="mb-0">Editar Género: <%= genre.name %>
+                        </h2>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <% if (error) { %>
+                            <div class="alert alert-danger">
+                                <%= error %>
                             </div>
+                            <% } %>
 
-                            <form action="/publisher/update/<%= publisher.id %>" method="POST"
-                                enctype="multipart/form-data">
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Nombre *</label>
-                                    <input type="text" name="name" id="name" value="<%= publisher.name %>"
-                                        class="form-control" required>
-                                </div>
+                                <form action="/genres/update/<%= genre.id %>" method="POST">
 
-                                <div class="mb-3">
-                                    <label for="country" class="form-label">País</label>
-                                    <input type="text" name="country" id="country" value="<%= publisher.country %>"
-                                        class="form-control">
-                                </div>
+                                    <div class="mb-4">
+                                        <label for="name" class="form-label">Nombre del Género *</label>
+                                        <input type="text" name="name" id="name" value="<%= genre.name %>"
+                                            class="form-control" placeholder="Ej. Ciencia Ficción, Novela Negra..."
+                                            required>
+                                        <small class="text-muted">El nombre debe ser único en la base de datos.</small>
+                                        <input type="hidden" name="id" value="<%= genre.id %>">
+                                    </div>
 
-                                <div class="mb-3">
-                                    <label for="website" class="form-label">Sitio web</label>
-                                    <input type="url" name="website" id="website" value="<%= publisher.website %>"
-                                        class="form-control" placeholder="https://ejemplo.com">
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="publisher_logo" class="form-label">Nuevo logo</label>
-                                    <input type="file" name="publisher_logo" id="publisher_logo" class="form-control"
-                                        accept="image/*">
-                                    <small class="form-text text-muted">Selecciona un nuevo logo (opcional).</small>
-                                </div>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-                                    <a href="/publisher/<%= publisher.id %>" class="btn btn-secondary">Cancelar</a>
-                                </div>
-                            </form>
+                                    <div class="text-center mt-4">
+                                        <button type="submit" class="btn btn-success btn-lg me-2">
+                                            Guardar cambios
+                                        </button>
+                                        <a href="/genres" class="btn btn-secondary btn-lg">
+                                            Cancelar
+                                        </a>
+                                    </div>
+                                </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>

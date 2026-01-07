@@ -68,8 +68,11 @@ async function getBookByTitle(title) {
   }
 }
 
-async function updateBook(book) {
+async function updateBook(id, book) {
   const client = await pool.connect();
+
+  console.log(`Datos del libro a modificar: ${book}`);
+
   try {
     await client.query("BEGIN");
     const result = await client.query(
@@ -101,7 +104,7 @@ async function updateBook(book) {
         book.synopsis,
         book.cover_url,
         book.publisher_id,
-        book.id,
+        id,
       ]
     );
     await client.query("COMMIT");

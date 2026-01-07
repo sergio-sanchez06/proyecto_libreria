@@ -11,7 +11,7 @@ async function showLogin(req, res) {
   if (req.session.user) {
     return res.redirect("/");
   }
-  res.render("login", { error: null });
+  res.render("partials/login", { error: null, user: null });
 }
 
 // Procesa login (recibe idToken del cliente)
@@ -20,28 +20,14 @@ async function login(req, res) {
 
   if (!idToken) {
     console.log("Token requerido");
-    return res.render("login", { error: "Token requerido" });
+    return res.render("partials/login", { error: "Token requerido" });
   }
 
   try {
-    // const response = await apiClient.post(
-    //   "/auth/login",
-    //   {},
-    //   {
-    //     headers: { Authorization: `Bearer ${idToken}` },
-    //   }
-    // );
 
     const response = await apiClient.post("/auth/login", { idToken });
     const { user } = response.data;
 
-    // if (response.status !== 200) {
-    //   return res.render("login", { error: "Token inválido" });
-    // } else {
-    //   console.log(response.data);
-    // }
-
-    // const { user } = response.data;
 
     // Crea sesión
     req.session.user = user;
@@ -51,7 +37,7 @@ async function login(req, res) {
     res.redirect("/");
   } catch (error) {
     const message = error.response?.data?.message || "Error al iniciar sesión";
-    res.render("login", { error: message });
+    res.render("partials/login", { error: message });
   }
 }
 
@@ -76,7 +62,7 @@ async function showRegister(req, res) {
   if (req.session.user) {
     return res.redirect("/");
   }
-  res.render("register", { error: null, formData: null });
+  res.render("partials/register", { error: null, formData: null, user: null });
 }
 
 async function register(req, res) {
@@ -94,8 +80,6 @@ async function register(req, res) {
     });
   }
 
-  // console.log("Registrando usuario", req.body);
-
   try {
     // 2. Consumo indirecto: Enviamos los datos a nuestra API REST
     const response = await apiClient.post("/users/register", {
@@ -105,12 +89,6 @@ async function register(req, res) {
       default_address,
       optional_address,
     });
-
-    // 3. Si la API responde bien, el usuario ya está en nuestra DB local.
-    // Creamos la sesión para que el usuario entre directamente.
-    // req.session.user = response.data.user;
-    // req.session.idToken = idToken;
-    // await req.session.save();
 
     res.redirect("/login"); // Redirigimos al login para el inicio de sesión
   } catch (error) {

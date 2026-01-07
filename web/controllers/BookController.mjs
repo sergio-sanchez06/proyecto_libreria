@@ -337,7 +337,7 @@ async function getBookById(req, res) {
     const authors = authorsResponse.data;
     const genres = genresResponse.data;
     const publisher = publisherResponse.data;
-    res.render("libro_detalle", {
+    res.render("partials/libro_detalle", {
       book,
       authors,
       genres,
@@ -387,7 +387,7 @@ async function createBook(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.post("/books", bookData);
-    res.redirect("/");
+    res.redirect("/books/showAllBooks");
   } catch (error) {
     // Si falla, volvemos a cargar el formulario con el error
     res.render("admin/add_book", {
@@ -432,12 +432,14 @@ async function updateBook(req, res) {
     updateData.cover_url = `/uploads/covers/${req.file.filename}`;
   }
 
+  console.log(updateData);
+
   try {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
     await api.put(`/books/${id}`, updateData);
-    res.redirect(`/book/${id}`);
+    res.redirect(`/books/book/${id}`);
   } catch (error) {
     res.status(500).send("Error al actualizar el libro");
   }
@@ -449,7 +451,7 @@ async function deleteBook(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.delete(`/books/${req.body.id}`);
-    res.redirect("/");
+    res.redirect("/books/showAllBooks");
   } catch (error) {
     console.error("Error al eliminar libro:", error.response?.data);
     res.status(500).send("No se pudo eliminar el libro.");

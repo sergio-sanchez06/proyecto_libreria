@@ -38,30 +38,6 @@ async function getBooksByAuthorName(authorName) {
       [`%${authorName}%`]
     );
 
-    // Sacar toda la información de los generos de libro en formato json
-    // const result = await client.query(
-    //   `SELECT
-    //     b.id, b.title, b.isbn, b.price, b.stock, b.releashed_year,
-    //     b.format, b.language, b.synopsis, b.pages, b.cover_url,
-    //     b.created_at, b.updated_at,
-    //     p.name AS publisher_name,
-    //     json_agg(DISTINCT jsonb_build_object(
-    //       'id', g.id,
-    //       'name', g.name
-    //     )) FILTER (WHERE g.id IS NOT NULL) AS genres
-    //   FROM public.books b
-    //   INNER JOIN public.book_authors ba ON b.id = ba.book_id
-    //   INNER JOIN public.authors a ON ba.author_id = a.id
-    //   LEFT JOIN public.publishers p ON b.publisher_id = p.id
-    //   LEFT JOIN public.book_genres bg ON b.id = bg.book_id
-    //   LEFT JOIN public.genres g ON bg.genre_id = g.id
-    //   WHERE a.name ILIKE $1  -- ILIKE para búsqueda insensible a mayúsculas
-    //   GROUP BY b.id, p.name
-    //   ORDER BY b.releashed_year DESC
-    //   `,
-    //   [`%${authorName}%`]
-    // );
-
     console.log(result.rows);
 
     return result.rows.map((row) => ({

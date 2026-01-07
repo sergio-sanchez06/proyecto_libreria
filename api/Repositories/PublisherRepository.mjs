@@ -6,7 +6,7 @@ async function createPublisher(publisher) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "INSERT INTO publishers (name, country, website, description, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      "INSERT INTO publishers (name, country, website, descripcion, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *",
       [
         publisher.name,
         publisher.country,
@@ -61,6 +61,8 @@ async function getPublisherByName(name) {
 }
 
 async function updatePublisher(publisher) {
+  console.log(publisher);
+
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -70,10 +72,19 @@ async function updatePublisher(publisher) {
          name = COALESCE($1, name),
          country = COALESCE($2, country),
          website = COALESCE($3, website),
+         descripcion = COALESCE($4, descripcion),
+         image_url = COALESCE($5, image_url),
          updated_at = NOW()
-       WHERE id = $4 
+       WHERE id = $6 
        RETURNING *`,
-      [publisher.name, publisher.country, publisher.website, publisher.id]
+      [
+        publisher.name,
+        publisher.country,
+        publisher.website,
+        publisher.descripcion,
+        publisher.logo_url,
+        publisher.id,
+      ]
     );
     await client.query("COMMIT");
     return result.rows[0];

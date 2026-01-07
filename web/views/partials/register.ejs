@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="/css/register.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <%- include('../layout/header') %>
+
+        <main class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white text-center">
+                            <h2 class="mb-0">Crear nueva cuenta</h2>
+                        </div>
+                        <div class="card-body">
+                            <% if (error) { %>
+                                <div class="alert alert-danger">
+                                    <%= error %>
+                                </div>
+                                <% } %>
+
+                                    <form action="/register" method="POST" id="register-form">
+
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">Nombre *</label>
+                                            <input type="text" name="name" id="name" class="form-control"
+                                                value="<%= formData ? formData.name : '' %>" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email *</label>
+                                            <input type="email" name="email" id="email" class="form-control"
+                                                value="<%= formData ? formData.email : '' %>" required>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="password" class="form-label">Contraseña *</label>
+                                            <input type="password" name="password" id="password" class="form-control"
+                                                required minlength="6">
+                                            <div class="form-text">Mínimo 6 caracteres.</div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="default_address" class="form-label">Dirección principal
+                                                *</label>
+                                            <textarea name="default_address" id="default_address" class="form-control"
+                                                required><%= formData ? formData.default_address : '' %></textarea>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="optional_address" class="form-label">Dirección secundaria
+                                                (opcional)</label>
+                                            <textarea name="optional_address" id="optional_address"
+                                                class="form-control"><%= formData ? formData.optional_address : '' %></textarea>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" id="register-btn" class="btn btn-success btn-lg">
+                                                <span id="btn-text">Registrarse</span>
+                                            </button>
+                                        </div>
+                                    </form>
+                        </div>
+                        <div class="card-footer text-center bg-light">
+                            <p class="mb-0">¿Ya tienes cuenta? <a href="/login" class="text-success">Inicia sesión</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%- include('../layout/footer') %>
+        </main>
+
+        <script>
+            document.getElementById('register-form').addEventListener('submit', function () {
+                const btn = document.getElementById('register-btn');
+                const btnText = document.getElementById('btn-text');
+                btn.disabled = true;
+                btnText.textContent = "Procesando registro...";
+            });
+        </script>

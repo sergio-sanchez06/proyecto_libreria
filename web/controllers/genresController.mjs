@@ -7,7 +7,7 @@ import { getAuthenticatedClient } from "../utils/apiClient.mjs"; // Asegúrate d
 async function getGenres(req, res) {
   try {
     const response = await apiClient.get("/genres");
-    res.render("genres", {
+    res.render("partials/genres", {
       genres: response.data,
       user: req.session.user || null,
     });
@@ -20,8 +20,12 @@ async function getGenreBooksByGenreName(req, res) {
   const { genreName } = req.params;
   try {
     const response = await apiClient.get(`/bookGenre/genre/${genreName}`);
-    res.render("genre_detalle", {
-      bookGenre: response.data,
+    const genreResponse = await apiClient.get(`/genres/name/${genreName}`);
+    console.log(response.data);
+    console.log(genreResponse.data);
+    res.render("partials/genre_detalle", {
+      bookGenre: response.data || null,
+      genreData: genreResponse.data || null,
       user: req.session.user || null,
     });
   } catch (error) {
@@ -64,21 +68,25 @@ async function getEditGenre(req, res) {
     return res.redirect("/genres");
   }
   try {
-    const { id } = req.params; // Usamos ID para ser consistentes con la API
-    const response = await apiClient.get(`/genres/${id}`);
+    console.log(req.params.genreId);
+
+    const genreId = req.params.genreId; // Usamos ID para ser consistentes con la API
+    console.log(`Id del genero a editar: ${genreId}`);
+    const response = await apiClient.get(`/genres/${genreId}`);
     res.render("admin/edit_genre", {
       genre: response.data,
       error: null,
       user: req.session.user,
     });
   } catch (error) {
+    // console.error(error);
     res.status(500).send("Error al cargar el formulario de edición");
   }
 }
 
 async function updateGenre(req, res) {
   try {
-    const { id } = req.params;
+    const id = req.body.id;
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
@@ -95,12 +103,12 @@ async function updateGenre(req, res) {
 
 async function deleteGenre(req, res) {
   try {
-    const { id } = req.params;
+    const id = req.body.id;
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
     await api.delete(`/genres/${id}`);
-    res.redirect("/genres");
+    res.redirect("/genres/showAllGenres");
   } catch (error) {
     console.error("Error eliminando género:", error.response?.data);
     res.redirect("/genres?error=no_permitido");

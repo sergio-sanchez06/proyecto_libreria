@@ -9,7 +9,6 @@ async function getProfile(req, res) {
 
   try {
     // 2. Limpieza preventiva: Si por error guardaste el token con "Bearer " en la sesión,
-    // lo limpiamos para que getAuthenticatedClient no lo duplique.
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
 
     // 3. Creamos el cliente de Axios configurado con el Token
@@ -19,10 +18,9 @@ async function getProfile(req, res) {
     const response = await api.get("/users/me/" + req.session.user.id);
 
     // 5. Renderizamos con los datos frescos de la base de datos (profileData)
-    // que vendrán de tus 3 tablas (usuario, direcciones, roles)
     res.render("perfil", {
-      user: req.session.user, // Datos de sesión
-      profile: response.data, // Datos reales de la DB local
+      user: req.session.user,
+      profile: response.data,
       error: null,
     });
   } catch (error) {
@@ -73,7 +71,6 @@ async function getPurchaseHistory(req, res) {
 
     if (allBookIds.length > 0) {
       // 4. Consultar los libros a la API (o repositorio)
-      // Usamos Promise.all para buscar todos los libros en paralelo de forma eficiente
       const bookPromises = allBookIds.map((id) =>
         api.get("/books/" + id).then((r) => r.data)
       );
@@ -171,7 +168,7 @@ async function updateProfile(req, res) {
   }
 }
 
-async function deleteUser(req, res) {
+async function dismissSelf(req, res) {
   if (!req.session.user || !req.session.idToken) {
     return res.redirect("/login");
   }
@@ -182,16 +179,15 @@ async function deleteUser(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     // 1. Obtener los datos del usuario
-    const response = await api.delete("/users/" + req.body.id);
-    const user = response.data.user;
-
-    req.session.user = user;
-
-    console.log(user);
-
-    // 2. Renderizar la plantilla con los datos del usuario
-    res.render("perfil", {
-      user: req.session.user,
+    const response = await api.delete("/users/dismissSelf/" + req.body.id);
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Error al destruir la sesión:", err);
+        return res.redirect("/");
+      }
+      // 3. Limpiar la cookie del navegador
+      res.clearCookie("connect.sid");
+      res.redirect("/");
     });
   } catch (error) {
     console.error("Error en editProfile:", error.message);
@@ -207,5 +203,5 @@ export default {
   getPurchaseHistory,
   getEditProfileForm,
   updateProfile,
-  deleteUser,
+  dismissSelf,
 };

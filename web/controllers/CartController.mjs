@@ -15,7 +15,7 @@ async function addToCart(req, res) {
   const parsedQuantity = parseInt(quantity);
 
   if (isNaN(parsedBookId) || isNaN(parsedQuantity)) {
-    return res.redirect("back");
+    return res.redirect("/");
   }
 
   const itemIndex = cart.findIndex((item) => item.book_id === parsedBookId);
@@ -81,7 +81,7 @@ async function viewCart(req, res) {
     }
   }
 
-  res.render("cartView", {
+  res.render("partials/cartView", {
     cart,
     user: req.session.user,
     total: total.toFixed(2),
@@ -159,7 +159,7 @@ async function checkout(req, res) {
     }
 
     // Volvemos a mostrar el carrito con el mensaje de error de la API
-    return res.render("cartView", {
+    return res.render("partials/cartView", {
       cart: enrichedCart,
       user: req.session.user,
       total: total.toFixed(2),

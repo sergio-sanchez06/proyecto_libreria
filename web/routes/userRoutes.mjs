@@ -1,5 +1,5 @@
 import express from "express";
-import UserController from "../controllers/userController.mjs";
+import UserController from "../controllers/UserController.mjs";
 import protectMiddleware from "../middlewares/protect.mjs";
 
 const router = express.Router();
@@ -22,9 +22,9 @@ router.post(
 );
 
 router.post(
-  "/bajaUsuario",
+  "/dismissSelf",
   protectMiddleware.protect,
-  UserController.deleteUser
+  UserController.dismissSelf
 );
 
 export default router;

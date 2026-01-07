@@ -49,7 +49,7 @@ async function getBooksByPublisherId(req, res, next) {
 }
 
 async function index(req, res) {
-  res.render("index", {
+  res.render("partials/index", {
     books: res.locals.books,
     authors: res.locals.authors,
     bookAuthors: res.locals.bookAuthors,
@@ -70,7 +70,7 @@ async function getBookById(req, res) {
     );
     const genres = genresResponse.data;
     console.log(genres);
-    res.render("libro_detalle", {
+    res.render("partials/libro_detalle", {
       book,
       authors,
       genres,
@@ -85,7 +85,7 @@ async function getBookById(req, res) {
 async function publisher(req, res) {
   console.log(res.locals.books);
 
-  res.render("publisher_detalle", {
+  res.render("partials/publisher_detalle", {
     publisher: res.locals.publisher,
     books: res.locals.books,
     user: req.session.user || null,

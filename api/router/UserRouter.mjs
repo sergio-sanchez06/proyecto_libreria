@@ -40,6 +40,11 @@ router.put(
   UserController.updateUser
 ); // Actualizar por ID
 router.delete(
+  "/dismissSelf/:id",
+  AuthMiddleware.authenticate,
+  UserController.deleteUser
+); // Eliminar al propio usuario
+router.delete(
   "/:id",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,

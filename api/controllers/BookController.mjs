@@ -81,6 +81,8 @@ async function updateBook(req, res) {
   const bookId = req.params.id;
   const updateData = req.body;
 
+  console.log(updateData);
+
   try {
     // Actualiza campos básicos del libro
     await RepoBook.updateBook(bookId, updateData);

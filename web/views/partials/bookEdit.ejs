@@ -1,4 +1,5 @@
-<%- include("../layout/header") %>
+<%- include('../layout/header') %>
+
     <main class="container py-5">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
@@ -21,8 +22,7 @@
                                     <p class="text-muted mt-2">Portada actual</p>
                                 </div>
 
-                                <form action="/admin/books/update/<%= book.id %>" method="POST"
-                                    enctype="multipart/form-data">
+                                <form action="/books/update/<%= book.id %>" method="POST" enctype="multipart/form-data">
                                     <div class="mb-3">
                                         <label for="title" class="form-label">Título *</label>
                                         <input type="text" name="title" id="title" value="<%= book.title %>"
@@ -109,7 +109,7 @@
 
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-success me-2">Guardar cambios</button>
-                                        <a href="/books/book/<%= book.id %>" class="btn btn-secondary">Cancelar</a>
+                                        <a href="/book/<%= book.id %>" class="btn btn-secondary">Cancelar</a>
                                     </div>
                                 </form>
                     </div>
@@ -117,3 +117,5 @@
             </div>
         </div>
     </main>
+
+    <%- include('../layout/footer') %>

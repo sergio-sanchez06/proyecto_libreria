@@ -1,0 +1,151 @@
+/* --- CONFIGURACIÓN DE CONTENEDORES --- */
+.container,
+.container-small {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.container-small {
+  max-width: 600px;
+  padding: 3rem 1rem;
+}
+
+/* --- ESTILO DE TARJETAS Y TÍTULOS --- */
+.card,
+.form-admin {
+  background: #ffffff;
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Encabezados de formulario (Géneros y Editoriales usan card-header) */
+.card-header.bg-success,
+.container-small h1 {
+  background: var(
+    --primary-gradient,
+    linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+  ) !important;
+  color: white !important;
+  padding: 2rem 1rem;
+  text-align: center;
+  border: none;
+  margin: 0;
+}
+
+/* El h1 de la vista de usuarios que no tiene card-header */
+.container-small h1 {
+  border-radius: 20px 20px 0 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+
+/* --- ELEMENTOS DE FORMULARIO --- */
+.card-body,
+.form-admin {
+  padding: 2rem;
+}
+
+/* Labels */
+.form-label,
+.form-group label,
+label {
+  font-weight: 700;
+  color: #2d3436;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Inputs y Selects */
+.form-control,
+.form-select,
+.form-admin input,
+.form-admin select,
+.form-admin textarea {
+  width: 100%;
+  border: 1.5px solid #eef0f2;
+  border-radius: 10px;
+  padding: 12px 15px;
+  background-color: #f8f9fc;
+  transition: all 0.3s ease;
+  margin-bottom: 1rem; /* Para la vista de usuarios */
+}
+
+.form-control:focus,
+.form-admin input:focus {
+  background-color: #fff;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  outline: 0;
+}
+
+/* --- BOTONES (ESTILO PASTILLA) --- */
+.btn-success,
+.btn-primary,
+.btn-primary-admin {
+  background: var(--accent-color, #667eea) !important;
+  border: none !important;
+  padding: 12px 30px;
+  font-weight: 700;
+  border-radius: 50px;
+  text-transform: uppercase;
+  color: white;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background-color: #ecf0f1 !important;
+  color: #7f8c8d !important;
+  border: none;
+  padding: 12px 30px;
+  font-weight: 700;
+  border-radius: 50px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+.btn-success:hover,
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* --- ALERTAS --- */
+.alert-danger,
+.alert-error {
+  background-color: #fff5f5;
+  color: #e03131;
+  border-radius: 10px;
+  padding: 1rem;
+  border-left: 5px solid #e03131;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+/* --- AJUSTE PARA VISTA USUARIOS (SIN BOOTSTRAP) --- */
+.form-admin div {
+  margin-bottom: 1.2rem;
+}
+
+.form-actions {
+  text-align: center;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}

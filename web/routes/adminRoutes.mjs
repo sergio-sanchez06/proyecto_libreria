@@ -1,8 +1,9 @@
 import express from "express";
 import AdminController from "../controllers/AdminController.mjs";
-import userController from "../controllers/userController.mjs";
+import userController from "../controllers/UserController.mjs";
 import protectMiddleware from "../middlewares/protect.mjs";
 import bookController from "../controllers/BookController.mjs";
+import upload from "../utils/upload.mjs";
 
 const router = express.Router();
 
@@ -20,6 +21,7 @@ router.post(
   "/books/create",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
+  upload.single("cover"),
   bookController.createBook
 );
 router.get(
@@ -32,6 +34,7 @@ router.post(
   "/books/update/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
+  upload.single("cover"),
   bookController.updateBook
 );
 router.post(
