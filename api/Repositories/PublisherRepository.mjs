@@ -118,7 +118,7 @@ async function getAllPublishers() {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const result = await client.query("SELECT * FROM publishers");
+    const result = await client.query("SELECT * FROM publishers order by name");
     await client.query("COMMIT");
     return result.rows.map((publisher) => new PublisherModel(publisher));
   } catch (error) {
@@ -147,6 +147,30 @@ async function getPublisherByCountry(country) {
   }
 }
 
+async function getPublishersMostSold() {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      `select p.*, sum(oi.quantity) as total_sold 
+      from publishers p left join books b on p.id = b.publisher_id 
+        join order_items oi on oi.book_id = b.id 
+      group by p.id 
+      order by total_sold desc
+      LIMIT 5;`
+    );
+    return result.rows.map((row) => {
+      const publisher = new PublisherModel(row);
+      publisher.totalSold = row.total_sold;
+      return publisher;
+    });
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createPublisher,
   getPublisherById,
@@ -155,4 +179,5 @@ export default {
   getAllPublishers,
   updatePublisher,
   deletePublisher,
+  getPublishersMostSold,
 };

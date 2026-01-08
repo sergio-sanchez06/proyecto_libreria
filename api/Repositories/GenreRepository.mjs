@@ -38,7 +38,7 @@ async function getGenreById(id) {
 
 async function getGenreByName(name) {
   const client = await pool.connect();
-  console.log("Tipo de dato de nombre: " +typeof name);
+  console.log("Tipo de dato de nombre: " + typeof name);
   try {
     await client.query("BEGIN");
     const result = await client.query("SELECT * FROM genres WHERE name = $1", [
@@ -118,6 +118,30 @@ async function deleteGenre(id) {
   }
 }
 
+async function getGenresMostSold() {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      `select name, sum(oi.quantity) as total_sold 
+      from genres g join book_genres bg on g.id = bg.genre_id 
+        join order_items oi on bg.book_id = oi.book_id 
+      group by g.id, g.name 
+      order by 2 desc 
+      limit 5;`
+    );
+    return result.rows.map((row) => {
+      const genre = new GenreModel(row);
+      genre.totalSold = row.total_sold;
+      return genre;
+    });
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createGenre,
   getGenreById,
@@ -125,4 +149,5 @@ export default {
   getAllGenres,
   updateGenre,
   deleteGenre,
+  getGenresMostSold,
 };

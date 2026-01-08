@@ -75,6 +75,16 @@ async function getGenreByCountry(req, res) {
   }
 }
 
+async function getGenresMostSold(req, res) {
+  try {
+    const genres = await GenreRepository.getGenresMostSold();
+    res.status(200).json(genres);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los géneros" });
+  }
+}
+
 export default {
   createGenre,
   getGenreById,
@@ -83,4 +93,5 @@ export default {
   updateGenre,
   deleteGenre,
   getGenreByCountry,
+  getGenresMostSold,
 };

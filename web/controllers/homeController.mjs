@@ -49,9 +49,29 @@ async function getBooksByPublisherId(req, res, next) {
 }
 
 async function index(req, res) {
+  const response = await apiClient.get("/books/mostSold");
+  const booksMostSold = response.data;
+
+  console.log(booksMostSold[0].totalSold);
+
+  const responseAuthors = await apiClient.get("/authors/authors/mostSold");
+  const authorsMostSold = responseAuthors.data;
+
+  const responsePublishers = await apiClient.get("/publishers/mostSold");
+  const publishersMostSold = responsePublishers.data;
+
+  const responseGenres = await apiClient.get("/genres/mostSold");
+  const genresMostSold = responseGenres.data;
+
+  console.log(res.locals.bookAuthors);
+
   res.render("partials/index", {
     books: res.locals.books,
+    booksMostSold,
     authors: res.locals.authors,
+    authorsMostSold,
+    publishersMostSold,
+    genresMostSold,
     bookAuthors: res.locals.bookAuthors,
     user: req.session.user || null,
   });

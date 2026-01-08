@@ -163,6 +163,29 @@ async function updatePhoto(id, photoUrl) {
   }
 }
 
+async function getAuthorsMostSold() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `select a.*, sum(oi.quantity) as total_sold
+        from authors a join book_authors ba on ba.author_id = a.id 
+          right join order_items oi on oi.book_id = ba.book_id 
+        group by a.id,a.name, oi.book_id 
+        order by total_sold desc
+        LIMIT 5;`
+    );
+    return result.rows.map((row) => {
+      const author = new authorModel(row);
+      author.totalSold = row.total_sold;
+      return author;
+    });
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createAuthor,
   getAuthorById,
@@ -172,4 +195,5 @@ export default {
   deleteAuthor,
   getAllAuthors,
   updatePhoto,
+  getAuthorsMostSold,
 };

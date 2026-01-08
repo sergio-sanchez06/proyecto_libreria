@@ -8,6 +8,7 @@ router.post(
   AuthMiddleware.requireAdmin,
   GenreController.createGenre
 );
+router.get("/mostSold", GenreController.getGenresMostSold);
 router.get("/:id", GenreController.getGenreById);
 router.get("/name/:name", GenreController.getGenreByName);
 router.get("/country/:country", GenreController.getGenreByCountry);

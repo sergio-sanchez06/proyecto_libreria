@@ -9,6 +9,7 @@ router.get("/:id", AuthorController.getAuthorById);
 router.get("/name/:name", AuthorController.getAuthorByName);
 router.get("/country/:country", AuthorController.getAuthorByCountry);
 router.get("/", AuthorController.getAllAuthors);
+router.get("/authors/mostSold", AuthorController.getAuthorsMostSold);
 router.put(
   "/:id",
   uploadImage.single("author_photo"),

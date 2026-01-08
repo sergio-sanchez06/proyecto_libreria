@@ -269,6 +269,28 @@ async function getBooksByIds(bookIds) {
   }
 }
 
+async function getBooksMostSold() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `select b.*, sum(oi.quantity) as total_sold 
+      from books b right join order_items oi on b.id = oi.book_id 
+      group by b.id 
+      order by total_sold desc
+      LIMIT 5;`
+    );
+    return result.rows.map((row) => {
+      const book = new Book(row);
+      book.totalSold = row.total_sold;
+      return book;
+    });
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createBook,
   getBookById,
@@ -281,4 +303,5 @@ export default {
   getBooksByPublisherId,
   updateStock,
   getBooksByIds,
+  getBooksMostSold,
 };

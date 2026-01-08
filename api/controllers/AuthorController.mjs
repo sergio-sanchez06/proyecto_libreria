@@ -106,6 +106,18 @@ async function getAllAuthors(req, res) {
   }
 }
 
+async function getAuthorsMostSold(req, res) {
+  try {
+    const authors = await AuthorRepository.getAuthorsMostSold();
+    res.status(200).json(authors);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener los autores más vendidos" });
+  }
+}
+
 export default {
   createAuthor,
   getAuthorById,
@@ -115,4 +127,5 @@ export default {
   updatePhoto,
   deleteAuthor,
   getAllAuthors,
+  getAuthorsMostSold,
 };

@@ -12,51 +12,120 @@
         console.log(user);
     </script>
 
-    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="css/main.css">
+
+    <style>
+        /* Reducimos el ancho del contenedor del botón */
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 5%;
+            /* Bootstrap por defecto usa 15% */
+            z-index: 10;
+            /* Asegura que esté por encima pero sin estorbar */
+        }
+
+        /* Opcional: Si quieres que las flechas sean más visibles 
+   ya que ahora el área es más pequeña */
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Fondo oscuro semitransparente */
+            border-radius: 50%;
+            padding: 15px;
+            background-size: 60%;
+        }
+
+        /* Evitamos que el botón capture clics fuera del icono visual */
+        .carousel-control-prev,
+        .carousel-control-next {
+            pointer-events: none;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            pointer-events: auto;
+            /* Solo el icono responde al clic */
+        }
+
+        .publisher-logo-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            border-radius: 50%;
+            /* O '8px' si prefieres cuadrados redondeados */
+            padding: 15px;
+            /* Espacio para que el logo no toque los bordes */
+            overflow: hidden;
+        }
+
+        .publisher-logo-container img {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            /* Mantiene la proporción del SVG/Imagen sin deformar */
+        }
+    </style>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="/css/main.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
 <body>
     <%- include('../layout/header') %>
         <div class="container py-5">
-            <!-- Header -->
 
+            <header class="mb-5">
+                <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
 
-            <!-- <header>
-            <h1>Bienvenido a Nuestra Librería</h1>
-            <p><a href="/genres">Ver géneros</a></p>
-            <p><a href="/authors/showAllAuthors">Ver autores</a></p>
-            <p><a href="/books/showAllBooks">Ver libros</a></p>
-            <p><a href="/admin/users">Ver usuarios</a></p>
-            <p><a href="/cart/view">Ver carrito</a></p>
-            <p><a href="/publishers/showAllPublishers">Ver editoriales</a></p>
-
-            <% if(user){ %>
-                <p><a href="/logout">Cerrar sesión</a></p>
-                <p><a href="/user/profile">Perfil</a></p>
-
-                <% if(user.role==='ADMIN' ) { %>
-                    <p><a href="/genres/create">Crear género</a></p>
-                    <p><a href="/author/author/create">Crear autor</a></p>
-                    <p><a href="/admin/books/create">Crear libro</a></p>
-                    <!-- <p><a href="/books/create">Crear libro</a></p> 
-            <p><a href="/publisher/create">Crear editorial</a></p>
-            <p><a href="/admin/users/create">Crear usuario</a></p>
-            <p><a href="/admin/orders">Gestionar pedidos</a></p>
-            <% } %>
-
-                <% } else { %>
-                    <p><a href="/login">Iniciar sesión</a></p>
-                    <p><a href="/register">Registrarse</a></p>
-                    <% } %>-->
-
-
-
-            <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    <% genresMostSold.forEach(genre=> { %>
+                        <span class="badge rounded-pill bg-light text-dark border p-2">
+                            <i class="bi bi-tag-fill text-primary"></i>
+                            <a href="/genres/<%= genre.name %>" class="text-decoration-none">
+                                <%= genre.name %>
+                            </a>
+                            <span class="ms-1 fw-bold text-primary">
+                                <%= genre.totalSold %>
+                            </span>
+                        </span>
+                        <% }) %>
+                </div>
             </header>
 
-            <!-- Libros Destacados -->
+            <section class="mb-5 bg-white p-4 rounded shadow-sm">
+                <h2 class="section-title text-center mb-4"><i class="bi bi-graph-up-arrow text-danger"></i> Libros más
+                    vendidos</h2>
+                <div class="row row-cols-1 row-cols-md-5 g-3">
+                    <% booksMostSold.forEach((book, index)=> { %>
+                        <div class="col">
+                            <div class="card h-100 border-0 text-center">
+                                <div class="position-absolute top-0 start-0 badge bg-danger m-2">#<%= index + 1 %>
+                                </div>
+                                <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
+                                    class="card-img-top rounded mx-auto" style="height: 150px; width: fit-content;"
+                                    alt="<%= book.title %>">
+                                <div class="card-body p-2">
+                                    <p class="small fw-bold mb-0 text-truncate">
+                                        <a href="/books/book/<%= book.id %>" class="text-decoration-none">
+                                            <%= book.title %>
+                                        </a>
+                                    </p>
+                                    <span class="badge bg-light text-muted border text-dark">
+                                        <%= book.totalSold %> vendidos
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+            </section>
+
             <section class="mb-5">
                 <h2 class="section-title text-center">Libros Destacados</h2>
 
@@ -77,18 +146,20 @@
                                                             <%= book.title %>
                                                         </h5>
                                                         <p class="card-text text-muted small">
-                                                            Autor:
-                                                            <% // Busca la relación para este libro const
-                                                                relation=bookAuthors.find(ba=>
-                                                                Number(ba.book_id) ===
-                                                                Number(book.id));
-                                                                let authorName = "Desconocido";
-                                                                if (relation && relation.author) {
-                                                                authorName = relation.author.name ||
-                                                                "Desconocido";
-                                                                }
-                                                                %>
-                                                                <%= authorName %>
+                                                            <strong>Autor:</strong>
+                                                            <% const relations=bookAuthors.filter(ba=>
+                                                                Number(ba.book_id) === Number(book.id));
+
+                                                                if (relations.length > 0) {
+                                                                relations.forEach((ba, index) => { %>
+                                                                <a href="/author/<%= ba.author_id %>"
+                                                                    class="text-decoration-none">
+                                                                    <%= ba.author ? ba.author.name : "Desconocido" %>
+                                                                </a>
+                                                                <%= index < relations.length - 1 ? ', ' : '' %>
+                                                                    <% }); } else { %>
+                                                                        Desconocido
+                                                                        <% } %>
                                                         </p>
                                                         <p class="card-text fw-bold text-primary mt-auto">
                                                             <%= book.price %>€
@@ -108,8 +179,7 @@
                                                                 <button type="submit" class="btn btn-success"
                                                                     <%=book.stock <=0 ? 'disabled' : '' %>
                                                                     title="<%= book.stock <=0 ? 'Sin stock'
-                                                                        : 'Añadir al carrito' %>
-                                                                        ">
+                                                                        : 'Añadir al carrito' %>">
                                                                         Añadir al carrito 🛒
                                                                 </button>
                                                             </div>
@@ -117,16 +187,11 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
                                             <% }) %>
                                     </div>
-
                                 </div>
                                 <% } %>
                         </div>
-
-                        <!-- Controles del carrusel -->
                         <button class="carousel-control-prev" type="button" data-bs-target="#booksCarousel"
                             data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -143,76 +208,105 @@
                         <% } %>
             </section>
 
-            <!-- Autores Destacados -->
-            <section class="mb-5">
-                <h2 class="section-title text-center">Autores Destacados</h2>
-
-                <% if (authors && authors.length> 0) { %>
-                    <div class="row justify-content-center">
-                        <% authors.forEach(author=> { %>
-
-                            <% const countData=bookAuthorsCount.find(item=> Number(item.author_id) ===
-                                Number(author.id));
-                                const totalLibros = countData ? Number(countData.count_books) : 0; %>
-
-                                <div class="col-md-3 mb-4">
-                                    <div class="card author-card text-center shadow-sm">
-                                        <div class="card-body">
-                                            <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
-                                                alt="<%= author.name %>">
-                                            <h5 class="mt-3">
-                                                <%= author.name %>
-                                            </h5>
-                                            <p class="text-muted small">
-                                                <%= author.country || "País desconocido" %>
-                                            </p>
-                                            <span class="badge bg-secondary">Libros: <%= totalLibros %>
-                                            </span>
-                                            <a href="/author/<%= author.id %>" class="btn btn-primary btn-sm mt-2">
-                                                Ver detalles
-                                            </a>
+            <div class="row">
+                <div class="col-md-8">
+                    <section class="mb-5">
+                        <h2 class="section-title text-center">Autores Destacados</h2>
+                        <% if (authors && authors.length> 0) { %>
+                            <div class="row justify-content-center">
+                                <% authors.forEach(author=> { %>
+                                    <% const countData=bookAuthorsCount.find(item=> Number(item.author_id) ===
+                                        Number(author.id));
+                                        const totalLibros = countData ? Number(countData.count_books) : 0; %>
+                                        <div class="col-md-4 mb-4">
+                                            <div class="card author-card text-center shadow-sm">
+                                                <div class="card-body">
+                                                    <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
+                                                        alt="<%= author.name %>" class="rounded-circle mb-2"
+                                                        style="width: 80px; height: 80px; object-fit: cover;">
+                                                    <h5 class="mt-3 small">
+                                                        <%= author.name %>
+                                                    </h5>
+                                                    <p class="text-muted small">
+                                                        <%= author.country || "País desconocido" %>
+                                                    </p>
+                                                    <span class="badge bg-secondary">Libros: <%= totalLibros %></span>
+                                                    <a href="/author/<%= author.id %>"
+                                                        class="btn btn-primary btn-sm mt-2">Detalles</a>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <% }) %>
+                                        <% }) %>
+                            </div>
+                            <% } %>
+                    </section>
+                </div>
+
+                <div class="col-md-4">
+                    <h3 class="h5 mb-3 text-center">Ranking de Autores</h3>
+                    <div class="list-group shadow-sm mb-5">
+                        <% authorsMostSold.forEach((author, index)=> { %>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <span><strong>
+                                        <%= index + 1 %>.
+                                    </strong>
+                                    <a href="/author/<%= author.id %>" class="text-decoration-none">
+                                        <%= author.name %>
+                                    </a>
+                                </span>
+                                <span class="badge bg-info text-dark rounded-pill">
+                                    <%= author.totalSold %> vendidos
+                                </span>
+                            </div>
+                            <% }) %>
                     </div>
-                    <% } else { %>
-                        <p class="text-center text-muted">No hay autores destacados en este momento.</p>
-                        <% } %>
-            </section>
+                </div>
+            </div>
 
             <section>
                 <h2 class="section-title text-center">Editoriales Destacadas</h2>
+
+                <div class="row mb-3 justify-content-center">
+                    <% publishersMostSold.forEach(pub=> { %>
+                        <div class="col-md-2 col-6 text-center mb-3">
+                            <div class="p-2 border rounded bg-white shadow-sm">
+                                <p class="small fw-bold mb-0 text-truncate">
+                                    <a href="/publisher/<%= pub.id %>">
+                                        <%= pub.name %>
+                                    </a>
+                                </p>
+                                <small class="text-success">
+                                    <%= pub.totalSold %> ventas
+                                </small>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+
                 <% if (publishers && publishers.length> 0) { %>
                     <div class="row justify-content-center">
                         <% publishers.forEach(publisher=> { %>
                             <div class="col-md-3 mb-4">
                                 <div class="card author-card text-center shadow-sm">
-                                    <div class="card-body">
+                                    <div class="card-body text-center">
                                         <img src="<%= publisher.image_url || '/images/default-author.jpg' %>"
                                             alt="<%= publisher.name %>">
                                         <h5 class="mt-3">
                                             <%= publisher.name %>
                                         </h5>
-
-                                        <a href="/publisher/<%= publisher.id %>" class="btn btn-primary btn-sm mt-2">
-                                            Ver detalles
-                                        </a>
+                                        <a href="/publisher/<%= publisher.id %>" class="btn btn-primary btn-sm mt-2">Ver
+                                            detalles</a>
                                     </div>
                                 </div>
                             </div>
                             <% }) %>
                     </div>
-                    <% } else { %>
-                        <p class="text-center text-muted">No hay editoriales destacadas en este momento.</p>
-                        <% } %>
+                    <% } %>
             </section>
 
         </div>
 
         <%- include('../layout/footer') %>
-
-            <!-- Bootstrap JS -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
