@@ -13,8 +13,8 @@
 *.sql
 *.vscode
 
-public/js/firebaseConfig.mjs
-public/js/auth.mjs
+web/public/js/firebaseConfig.mjs
+web/public/js/auth.mjs
 
 *.json
 .env
