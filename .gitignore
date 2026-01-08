@@ -4,6 +4,9 @@
 *.gif
 *.bmp
 *.svg
+*.avif
+*.zip
+*.rar
 *.webp
 *.tiff
 *.env
