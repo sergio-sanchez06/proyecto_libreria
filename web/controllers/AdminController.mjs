@@ -37,8 +37,6 @@ async function getManageOrders(req, res) {
       })
     );
 
-    // ... lógica de títulos de libros ...
-
     res.render("admin/orders", { orders });
   } catch (error) {
     console.error("Error al cargar pedidos:", error);
@@ -123,15 +121,11 @@ async function deleteUser(req, res) {
     const userId = req.body.id;
     const api = getAuthenticatedClient(req.session.idToken);
 
-    // 2. IMPORTANTE: Pasa el ID en la URL de la API, no en el body
-    // Esto coincidirá con tu router.post("/users/delete/:id", ...) o similar
     await api.delete(`/users/${userId}`);
 
-    // 3. Si todo sale bien, refrescamos la lista
     res.redirect("/admin/users");
   } catch (error) {
     console.error("Error al eliminar usuario:", error.message);
-    // Es mejor redirigir con error que enviar un .send() para no romper la experiencia del admin
     res.redirect("/admin/users?error=No se pudo eliminar");
   }
 }

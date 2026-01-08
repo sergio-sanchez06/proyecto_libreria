@@ -5,7 +5,7 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
-// Añadir al carrito - SOLO añade y redirige
+// Añadir al carrito
 async function addToCart(req, res) {
   const { book_id, quantity = 1 } = req.body;
 
@@ -37,11 +37,9 @@ async function addToCart(req, res) {
     secure: false,
   });
 
-  // ¡Redirige, no renderices aquí!
   res.redirect("/cart/view");
 }
 
-// Ver carrito - aquí sí renderizas
 async function viewCart(req, res) {
   let cart = req.signedCookies.cart || [];
   let total = 0;
@@ -128,7 +126,6 @@ async function checkout(req, res) {
     });
 
     // 3. Petición de creación de pedido a la API
-    // Enviamos solo los datos mínimos, la API hará su propia validación
     await apiClient.post(
       "/orders",
       { items: cart },
@@ -147,10 +144,8 @@ async function checkout(req, res) {
     let errorMessage = "Ocurrió un error inesperado al procesar tu pedido.";
 
     if (error.response) {
-      // Errores que vienen de tu API (ej: stock, autenticación)
       errorMessage = error.response.data?.error || errorMessage;
 
-      // Si el token falló (401), quizá expiró la sesión
       if (error.response.status === 401) {
         return res.render("login", {
           error: "Tu sesión ha expirado, por favor inicia sesión de nuevo.",

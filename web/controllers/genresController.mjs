@@ -108,7 +108,7 @@ async function deleteGenre(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.delete(`/genres/${id}`);
-    res.redirect("/genres/showAllGenres");
+    res.redirect("/genres");
   } catch (error) {
     console.error("Error eliminando género:", error.response?.data);
     res.redirect("/genres?error=no_permitido");
