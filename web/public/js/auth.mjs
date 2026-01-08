@@ -10,7 +10,7 @@ import {
 
 // Importamos la instancia de auth desde tu archivo centralizado
 // Si renombraste el archivo a .js, asegúrate de cambiar la extensión aquí también
-import { auth } from "./firebaseConfig.mjs";
+import { auth } from "./firebaseConfig.mjs"; 
 
 const API_URL = "http://localhost:3000/auth";
 
@@ -19,11 +19,7 @@ const API_URL = "http://localhost:3000/auth";
  */
 export async function login(email, password) {
   try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const idToken = await userCredential.user.getIdToken();
 
     const response = await fetch(`${API_URL}/login`, {
@@ -57,12 +53,8 @@ export async function register({
 }) {
   try {
     // 1. Crear usuario en Firebase
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    
     // 2. Actualizar el nombre en el perfil de Firebase (V9 Modular)
     await updateProfile(userCredential.user, { displayName: name });
 
