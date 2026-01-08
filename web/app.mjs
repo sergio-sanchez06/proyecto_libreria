@@ -32,7 +32,7 @@ app.use(
     secret: "tu-secret-super-seguro",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }, // true en producción con HTTPS
+    cookie: { secure: false },
   })
 );
 

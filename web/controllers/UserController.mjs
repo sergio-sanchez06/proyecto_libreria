@@ -8,16 +8,12 @@ async function getProfile(req, res) {
   }
 
   try {
-    // 2. Limpieza preventiva: Si por error guardaste el token con "Bearer " en la sesión,
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
 
-    // 3. Creamos el cliente de Axios configurado con el Token
     const api = getAuthenticatedClient(cleanToken);
 
-    // 4. Petición a la API
     const response = await api.get("/users/me/" + req.session.user.id);
 
-    // 5. Renderizamos con los datos frescos de la base de datos (profileData)
     res.render("partials/perfil", {
       user: req.session.user,
       profile: response.data,
@@ -70,7 +66,7 @@ async function getPurchaseHistory(req, res) {
     res.render("partials/purchaseHistory", {
       title: "Mis compras",
       user: req.session.user,
-      orders: orders, 
+      orders: orders,
     });
   } catch (error) {
     console.error("Error en getPurchaseHistory:", error.message);
@@ -134,7 +130,7 @@ async function updateProfile(req, res) {
     console.log(user);
 
     // 2. Renderizar la plantilla con los datos del usuario
-    res.render("perfil", {
+    res.render("partials/perfil", {
       user: req.session.user,
     });
   } catch (error) {
