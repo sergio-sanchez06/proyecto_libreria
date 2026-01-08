@@ -19,32 +19,29 @@ async function getManageOrders(req, res) {
   try {
     const api = getAuthenticatedClient(req.session.idToken);
 
+    // 1. Pedimos los pedidos
     const response = await api.get("/orders");
     const orders = response.data;
-    // 2. Cargar ítems y títulos de libros (Carga masiva)
-    for (let order of orders) {
-      const resItems = await api.get("/orderItems/" + order.id);
-      order.items = resItems.data;
-    }
 
-    const allBookIds = [
-      ...new Set(orders.flatMap((o) => o.items.map((i) => i.book_id))),
-    ];
-    if (allBookIds.length > 0) {
-      const booksData = await Promise.all(
-        allBookIds.map((id) => api.get("/books/" + id).then((r) => r.data))
-      );
-      const titlesMap = new Map(booksData.map((b) => [b.id, b.title]));
+    // 2. En lugar de un FOR con AWAIT, lanzamos todas las peticiones a la vez
+    // Promise.all permite que el pooler de Supabase gestione la cola
+    await Promise.all(
+      orders.map(async (order) => {
+        try {
+          const resItems = await api.get("/orderItems/" + order.id);
+          console.log(resItems.data);
+          order.items = resItems.data;
+        } catch (err) {
+          order.items = []; // Evitamos que un error en un pedido rompa todo
+        }
+      })
+    );
 
-      orders.forEach((order) => {
-        order.items.forEach((item) => {
-          item.book_title = titlesMap.get(item.book_id) || "Desconocido";
-        });
-      });
-    }
+    // ... lógica de títulos de libros ...
 
     res.render("admin/orders", { orders });
   } catch (error) {
+    console.error("Error al cargar pedidos:", error);
     res.render("errors/500", { error: "No se pudieron cargar los pedidos" });
   }
 }

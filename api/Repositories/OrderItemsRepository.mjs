@@ -1,8 +1,9 @@
+// api/Repositories/OrderItemsRepository.mjs
 import pool from "../config/database.mjs";
-import OrderItem from "../models/OrderItems.mjs"; // crea el modelo si no existe
+import OrderItem from "../models/OrderItems.mjs";
 
 async function create(orderItemData, client) {
-  // Pasamos el cliente para compartir la transacción
+  // Aquí usamos el 'client' que viene de la transacción del OrderRepository
   const result = await client.query(
     "INSERT INTO order_items (order_id, book_id, quantity, price_at_time) VALUES ($1, $2, $3, $4) RETURNING *",
     [
@@ -16,11 +17,9 @@ async function create(orderItemData, client) {
 }
 
 async function getItemsByOrderId(orderId) {
-  const client = await pool.connect();
-
+  // Al usar pool.query directamente, evitamos fugas de conexiones (memory leaks)
   try {
-    // Usamos alias para las columnas del libro para evitar conflictos con oi.id
-    const result = await client.query(
+    const result = await pool.query(
       `SELECT 
         oi.*, 
         b.id AS book_id,
@@ -32,13 +31,11 @@ async function getItemsByOrderId(orderId) {
     );
 
     return result.rows.map((row) => {
-      // 1. Creamos el objeto libro de forma independiente
       const bookObj = {
         id: row.book_id,
         title: row.book_title,
       };
 
-      // 2. Instanciamos OrderItem pasando el objeto book anidado
       return new OrderItem({
         id: row.id,
         order_id: row.order_id,
@@ -47,43 +44,35 @@ async function getItemsByOrderId(orderId) {
         price_at_time: row.price_at_time,
         created_at: row.created_at,
         update_at: row.update_at,
-        book: bookObj, // <--- Aquí inyectamos el objeto compuesto
+        book: bookObj,
       });
     });
   } catch (error) {
     console.error("Error obteniendo ítems del pedido:", error);
     throw error;
-  } finally {
-    client.release();
   }
+  // ELIMINADO: client.release() ya no es necesario con pool.query
 }
 
-// async function getItemsByOrderId(orderId) {
-//   const client = await pool.connect();
-
-//   try {
-//     const result = await client.query(
-//       "SELECT oi.*, b.* FROM order_items oi JOIN books b ON oi.book_id = b.id WHERE order_id = $1",
-//       [orderId]
-//     );
-//     return result.rows.map((row) => new OrderItem(row));
-//   } catch (error) {
-//     throw error;
-//   } finally {
-//     await client.release();
-//   }
-// }
-
 async function getById(id) {
-  const result = await pool.query("SELECT * FROM order_items WHERE id = $1", [
-    id,
-  ]);
-  return result.rows[0] ? new OrderItem(result.rows[0]) : null;
+  try {
+    const result = await pool.query("SELECT * FROM order_items WHERE id = $1", [
+      id,
+    ]);
+    return result.rows[0] ? new OrderItem(result.rows[0]) : null;
+  } catch (error) {
+    throw error;
+  }
+  // CORREGIDO: Eliminado el finally que causaba el error
 }
 
 async function getAll() {
-  const result = await pool.query("SELECT * FROM order_items");
-  return result.rows.map((row) => new OrderItem(row));
+  try {
+    const result = await pool.query("SELECT * FROM order_items");
+    return result.rows.map((row) => new OrderItem(row));
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function update(updateData) {
@@ -91,7 +80,7 @@ async function update(updateData) {
   const values = [];
   let index = 1;
 
-  const allowedFields = ["order_id", "book_id", "quantity", "price"];
+  const allowedFields = ["order_id", "book_id", "quantity", "price_at_time"];
 
   for (const [key, value] of Object.entries(updateData)) {
     if (allowedFields.includes(key) && value !== undefined) {
@@ -101,9 +90,7 @@ async function update(updateData) {
     }
   }
 
-  if (fields.length === 0) {
-    throw new Error("No hay datos para actualizar");
-  }
+  if (fields.length === 0) throw new Error("No hay datos para actualizar");
 
   values.push(updateData.id);
 
@@ -119,11 +106,15 @@ async function update(updateData) {
 }
 
 async function deleteItem(id) {
-  const result = await pool.query(
-    "DELETE FROM order_items WHERE id = $1 RETURNING *",
-    [id]
-  );
-  return result.rowCount > 0;
+  try {
+    const result = await pool.query(
+      "DELETE FROM order_items WHERE id = $1 RETURNING *",
+      [id]
+    );
+    return result.rowCount > 0;
+  } catch (error) {
+    throw error;
+  }
 }
 
 export default {

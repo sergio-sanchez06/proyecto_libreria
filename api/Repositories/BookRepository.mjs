@@ -35,15 +35,12 @@ async function createBook(book) {
 async function getBookById(id) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       "SELECT b.* FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.id = $1",
       [id]
     );
-    await client.query("COMMIT");
     return new Book(result.rows[0]);
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -53,15 +50,12 @@ async function getBookById(id) {
 async function getBookByTitle(title) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       "SELECT b.* FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.title = $1",
       [title]
     );
-    await client.query("COMMIT");
     return new Book(result.rows[0]);
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -134,15 +128,12 @@ async function deleteBook(id) {
 async function getBooksByPublisherId(publisher_id) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       "SELECT b.*, p.name as publisher_name FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.publisher_id = $1",
       [publisher_id]
     );
-    await client.query("COMMIT");
     return result.rows.map((book) => new Book(book));
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -230,12 +221,9 @@ async function getBookByFeatures(features) {
 async function getAllBooks() {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query("SELECT * FROM books");
-    await client.query("COMMIT");
     return result.rows.map((book) => new Book(book));
   } catch (error) {
-    await client.query("ROLLBACK");
     console.log(error);
     throw error;
   } finally {
@@ -253,15 +241,12 @@ async function updateStock(book_id, quantity, client) {
 async function getBooksByIds(bookIds) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM books WHERE id = ANY($1)",
       [bookIds]
     );
-    await client.query("COMMIT");
     return result.rows.map((book) => new Book(book));
   } catch (error) {
-    await client.query("ROLLBACK");
     console.log(error);
     throw error;
   } finally {

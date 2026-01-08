@@ -119,7 +119,7 @@
                                                 <%= item.book_id %>
                                             </td>
                                             <td>
-                                                <%= item.book_title %>
+                                                <%= item.book_title || (item.book ? item.book.title : 'Sin título' ) %>
                                             </td>
                                             <td>
                                                 <%= item.quantity %>

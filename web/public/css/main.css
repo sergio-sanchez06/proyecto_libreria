@@ -163,3 +163,7 @@ body {
   background: #f0f7f3 !important;
   transform: translateX(5px);
 }
+
+a {
+  text-decoration: none;
+}
