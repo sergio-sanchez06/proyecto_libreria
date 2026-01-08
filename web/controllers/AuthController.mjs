@@ -18,9 +18,14 @@ async function showLogin(req, res) {
 async function login(req, res) {
   const { idToken } = req.body;
 
+  console.log(req.body);
+
   if (!idToken) {
     console.log("Token requerido");
-    return res.render("partials/login", { error: "Token requerido" });
+    return res.render("partials/login", {
+      error: "Token requerido",
+      user: null,
+    });
   }
 
   try {

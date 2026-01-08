@@ -44,6 +44,52 @@
         </main>
 
         <script type="module">
+
+            console.log("Prueba del script")
+
+            import { auth } from "./js/firebaseConfig.mjs"; // Asegúrate de que esta ruta sea correcta
+            import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+            const loginForm = document.getElementById("loginForm");
+
+            console.log(auth)
+
+            loginForm.addEventListener("submit", async (e) => {
+                e.preventDefault(); // BLOQUEA el envío normal
+
+                const email = document.getElementById("email").value;
+                const password = document.getElementById("password").value;
+                const idTokenInput = document.getElementById("idToken");
+
+                try {
+                    // 1. Autenticación
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+                    // 2. Obtención del Token
+                    const token = await userCredential.user.getIdToken();
+
+                    // 3. ASIGNACIÓN CRÍTICA
+                    idTokenInput.value = token;
+
+                    // VERIFICACIÓN: Mira la consola de tu navegador (F12)
+                    console.log("Token generado:", token.substring(0, 20) + "...");
+
+                    // 4. ENVÍO MANUAL asegurando que el input ya tiene el valor
+                    if (idTokenInput.value !== "") {
+                        // Usamos el método de envío del prototipo para evitar conflictos con el event listener
+                        HTMLFormElement.prototype.submit.call(loginForm);
+                    } else {
+                        alert("Error al generar el token de seguridad.");
+                    }
+
+                } catch (error) {
+                    console.error("Error en el proceso:", error);
+                    alert("Error: " + error.message);
+                }
+            });
+        </script>
+
+        <!-- <script type="module">
             import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
             import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
@@ -75,4 +121,4 @@
                     alert(error.message || "Error en autenticación");
                 }
             });
-        </script>
+        </script> -->

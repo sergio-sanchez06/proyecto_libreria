@@ -13,6 +13,9 @@
 *.sql
 *.vscode
 
+/public/js/firebaseConfig.mjs
+/public/js/auth.mjs
+
 *.json
 .env
 .env.local
