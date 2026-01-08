@@ -143,7 +143,7 @@ async function deletePublisher(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.delete(`/publishers/${req.body.id}`);
-    res.redirect("/publishers/showAllPublishers");
+    res.redirect("/publisher/showAllPublishers");
   } catch (error) {
     console.error("Error eliminando editorial:", error.response?.data);
     res
