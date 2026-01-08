@@ -382,6 +382,8 @@ async function createBook(req, res) {
     bookData.cover_url = `/uploads/covers/${req.file.filename}`;
   }
 
+  console.log(bookData);
+
   try {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
@@ -389,6 +391,9 @@ async function createBook(req, res) {
     await api.post("/books", bookData);
     res.redirect("/books/showAllBooks");
   } catch (error) {
+    console.log("Error al crear libro:", error);
+    console.log(error);
+
     // Si falla, volvemos a cargar el formulario con el error
     res.render("admin/add_book", {
       error: error.response?.data?.message || "Error al crear libro",

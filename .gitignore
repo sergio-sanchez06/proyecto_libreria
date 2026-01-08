@@ -14,7 +14,6 @@
 *.vscode
 
 web/public/js/firebaseConfig.mjs
-web/public/js/auth.mjs
 
 *.json
 .env
