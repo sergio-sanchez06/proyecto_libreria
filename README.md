@@ -20,6 +20,10 @@ Dependecias necesarias para ejecutar el proyecto:
 - CookieParser
 - Firebase
 - Session Express
+- i18next
+- i18next-http-middleware
+- i18next-fs-backend
+- express-UserAgent
 
 📚 Sistema de Gestión de Librería (Fullstack)
 Este proyecto es una plataforma integral para la gestión de libros, usuarios y pedidos. Utiliza una arquitectura desacoplada con una API REST en el backend y un cliente Web (EJS) en el frontend.

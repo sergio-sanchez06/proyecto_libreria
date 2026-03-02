@@ -10,6 +10,10 @@ import genreRoutes from "./routes/genresRouter.mjs";
 import bookRoutes from "./routes/bookRoutes.mjs";
 import cartRoutes from "./routes/cartRouter.mjs";
 import adminRoutes from "./routes/adminRoutes.mjs";
+import controlUserAgent from "./middlewares/controlUserAgent.mjs";
+import i18next from "i18next";
+import i18nextHttpMiddleware from "i18next-http-middleware";
+import i18nextFsBackend from "i18next-fs-backend";
 
 import cookieParser from "cookie-parser";
 
@@ -24,6 +28,28 @@ app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+// Configuración de i18next para la internacionalización entre los idiomas oficiales de España
+i18next
+  .use(i18nextHttpMiddleware.LanguageDetector)
+  .use(i18nextFsBackend)
+  .init({
+    fallbackLng: "es", // Idioma por defecto es --> español
+    supportedLngs: ["es", "ca", "gl", "eu"], // Los 4 idiomas configurados es --> español, ca --> catalán, gl --> gallego, eu --> euskera
+    backend: {
+      loadPath: path.join(__dirname, "locales/{{lng}}.json"),
+    },
+    detection: {
+      order: ["querystring", "cookie", "header"], // Dónde busca el idioma primero
+      caches: ["cookie"], // Guarda la elección en una cookie
+    },
+  });
+
+// Middleware para manejar la internacionalización
+app.use(i18nextHttpMiddleware.handle(i18next));
+
+// Middleware para detectar el User Agent y filtrar los accesos de agentes de IA
+app.use(controlUserAgent.filterUserAgent);
+
 // Servir archivos estáticos de public/
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -33,7 +59,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false },
-  })
+  }),
 );
 
 app.use(cookieParser("tu-secret-super-seguro"));

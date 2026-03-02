@@ -4,15 +4,18 @@ import homeController from "../controllers/homeController.mjs";
 import authorController from "../controllers/authorController.mjs";
 import publisherController from "../controllers/PublisherController.mjs";
 import authController from "../controllers/AuthController.mjs";
+// import controlUserAgent from "../middlewares/controlUserAgent.mjs";
 // import bookController from "../controllers/bookController.mjs";
 const router = express.Router();
+
+// router.use(controlUserAgent.filterUserAgent);
 
 // Ruta principal (inicio)
 router.get(
   "/",
   homeController.getBooksAndAuthors,
   publisherController.getPublishers,
-  homeController.index
+  homeController.index,
 );
 
 // Ruta detalle del libro
