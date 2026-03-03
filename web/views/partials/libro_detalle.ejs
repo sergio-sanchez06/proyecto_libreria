@@ -1,4 +1,3 @@
-<!-- web/views/partials/book-details.ejs -->
 <!DOCTYPE html>
 <html lang="es">
 
@@ -6,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        <%= book.title || "Libro" %> - Detalles
+        <%= book.title || t('book.details_title') %> - <%= t('book.details_title') %>
     </title>
     <link rel="stylesheet" href="/css/libro_detalle.css">
 </head>
@@ -16,7 +15,7 @@
     <%- include("../layout/header") %>
         <div class="container">
             <h1>
-                <%= book.title || "Sin título" %>
+                <%= book.title || t('book.no_synopsis') %>
             </h1>
 
             <div class="book-details-wrapper">
@@ -25,7 +24,9 @@
                 </div>
 
                 <div class="book-info-column">
-                    <p><strong>Autor:</strong>
+                    <p><strong>
+                            <%= t('book.author') %>:
+                        </strong>
                         <% authors.forEach(author=> { %>
                             <a href="/author/<%= author.id %>" class="text-decoration-none">
                                 <%= author.name %>
@@ -33,38 +34,61 @@
                             <% }) %>
                     </p>
 
-                    <p><strong>Sinopsis:</strong>
-                        <%= book.synopsis || "No disponible" %>
+                    <p><strong>
+                            <%= t('book.synopsis') %>:
+                        </strong>
+                        <%= book.synopsis || t('book.no_synopsis') %>
                     </p>
 
-                    <p><strong>ISBN:</strong>
+                    <p><strong>
+                            <%= t('book.isbn') %>:
+                        </strong>
                         <%= book.isbn %>
                     </p>
-                    <p><strong>Editorial:</strong> <a href="/publisher/<%= publisher.id %>">
+
+                    <p><strong>
+                            <%= t('book.publisher') %>:
+                        </strong>
+                        <a href="/publisher/<%= publisher.id %>">
                             <%= publisher.name %>
-                        </a></p>
-                    <p><strong>Lanzamiento:</strong>
+                        </a>
+                    </p>
+
+                    <p><strong>
+                            <%= t('book.release') %>:
+                        </strong>
                         <%= book.releashed_year %>
                     </p>
 
-                    <p><strong>Formato:</strong>
+                    <p><strong>
+                            <%= t('book.format') %>:
+                        </strong>
                         <%= book.format %>
                     </p>
 
-                    <p><strong>Idioma:</strong>
+                    <p><strong>
+                            <%= t('book.language') %>:
+                        </strong>
                         <%= book.language %>
                     </p>
 
-                    <p><strong>Páginas:</strong>
+                    <p><strong>
+                            <%= t('book.pages') %>:
+                        </strong>
                         <%= book.pages %>
                     </p>
 
-                    <p><strong>Géneros:</strong>
+                    <p><strong>
+                            <%= t('book.genres') %>:
+                        </strong>
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         <% genres.forEach(genre=> { %>
                             <span class="badge bg-primary fs-6 px-3 py-2">
                                 <%= genre.genre.name %>
-                                    <a href="/genres/<%= genre.genre.name %>">Ver</a>
+                                    <a href="/genres/<%= genre.genre.name %>" class="text-white ms-2"
+                                        style="font-size: 0.8rem;">
+                                        (<%= t('book.view') %>)
+                                    </a>
                             </span>
                             <% }) %>
                     </div>
@@ -78,30 +102,51 @@
                         <form action="/cart/add" method="POST" class="row g-3 align-items-center">
                             <input type="hidden" name="book_id" value="<%= book.id %>">
                             <div class="col-auto">
-                                <label class="form-label mb-0">Cantidad:</label>
+                                <label class="form-label mb-0">
+                                    <%= t('book.quantity') %>:
+                                </label>
                                 <input type="number" name="quantity" value="1" min="1" max="<%= book.stock %>"
                                     class="form-control" style="width: 80px;">
                             </div>
                             <div class="col-auto mt-4">
                                 <button type="submit" class="btn btn-success" <%=book.stock <=0 ? 'disabled' : '' %>>
-                                    Añadir al carrito 🛒
+                                    <%= t('book.add_to_cart') %> 🛒
                                 </button>
                             </div>
                         </form>
                     </div>
 
                     <% if(user && user.role==="ADMIN" ) { %>
-                        <div class="admin-controls">
-                            <a href="/admin/books/update/<%= book.id %>" class="btn btn-warning">Editar Libro</a>
-                            <form action="/admin/books/delete/<%= book.id %>" method="POST"
-                                onsubmit="return confirm('¿Seguro?')">
-                                <input type="hidden" name="id" value="<%= book.id %>">
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                            </form>
-                        </div>
-                        <% } %>
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <a href="/authors/author/edit/<%= author.id %>" class="btn btn-warning rounded-pill px-4">
+                                <%= t('author_detail.edit_author') %>
+                            </a>
 
-                            <a href="/" class="back-link-nav">← Volver al inicio</a>
+                            <%# Guardamos la traducción en una variable para evitar conflictos de comillas %>
+                                <% const confirmMsg=t('admin.confirm'); %>
+
+                                    <form action="/authors/author/delete/<%= author.id %>" method="POST"
+                                        class="d-inline">
+                                        <input type="hidden" name="id" value="<%= author.id %>">
+                                        <button type="submit" class="btn btn-danger rounded-pill px-4"
+                                            onclick="return confirm('<%= confirmMsg %>')">
+                                            <%= t('author_detail.delete_author') %>
+                                        </button>
+                                    </form>
+                        </div>
+                        <% } else { %>
+                            <div class="mt-4 text-center">
+                                <a href="/" class="text-decoration-none">
+                                    <%= t('author_detail.back') %>
+                                </a>
+                            </div>
+                            <% } %>
+
+                                <div class="mt-4">
+                                    <a href="/" class="back-link-nav text-decoration-none">
+                                        <%= t('book.back') %>
+                                    </a>
+                                </div>
                 </div>
             </div>
         </div>

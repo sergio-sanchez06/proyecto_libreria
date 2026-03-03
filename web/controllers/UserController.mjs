@@ -22,7 +22,7 @@ async function getProfile(req, res) {
   } catch (error) {
     console.error(
       "Error en getProfile (Web):",
-      error.response?.data || error.message
+      error.response?.data || error.message,
     );
 
     // Si la API dice que el token expiró (401/403), mandamos al login
@@ -41,7 +41,7 @@ async function getProfile(req, res) {
 
 async function getPurchaseHistory(req, res) {
   console.log(
-    "Hemos entrado al controlador de mis compras - Versión Optimizada"
+    "Hemos entrado al controlador de mis compras - Versión Optimizada",
   );
 
   if (!req.session.user || !req.session.idToken) {
@@ -67,6 +67,7 @@ async function getPurchaseHistory(req, res) {
       title: "Mis compras",
       user: req.session.user,
       orders: orders,
+      lang: req.session.lang,
     });
   } catch (error) {
     console.error("Error en getPurchaseHistory:", error.message);
@@ -121,7 +122,7 @@ async function updateProfile(req, res) {
     // 1. Obtener los datos del usuario
     const response = await api.put(
       "/users/profile/" + req.session.user.id,
-      req.body
+      req.body,
     );
     const user = response.data.user;
 

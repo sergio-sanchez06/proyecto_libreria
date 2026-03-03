@@ -2,8 +2,12 @@
 
     <div class="container py-5">
         <div class="text-center mb-5">
-            <h2 class="fw-bold">Nuestros Escritores</h2>
-            <p class="text-muted">Descubre a los autores detrás de tus historias favoritas</p>
+            <h2 class="fw-bold">
+                <%= t('es:authors.title') %>
+            </h2>
+            <p class="text-muted">
+                <%= t('es:authors.subtitle') %>
+            </p>
         </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
@@ -12,19 +16,23 @@
                     <div class="card h-100 shadow-sm border-0 text-center p-3 card-custom">
                         <div class="card-body">
                             <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3"
-                                style="width: 70px; height: 70px;">
-
-                                <img src="<%= author.photo_url %>" alt="<%= author.name %>" class="img-fluid">
+                                style="width: 70px; height: 70px; overflow: hidden;">
+                                <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
+                                    alt="<%= author.name %>" class="img-fluid"
+                                    style="object-fit: cover; width: 100%; height: 100%;">
                             </div>
 
                             <h5 class="card-title fw-bold mb-1">
                                 <%= author.name %>
                             </h5>
-                            <p class="text-muted small mb-3">Autor/a</p>
+
+                            <p class="text-muted small mb-3">
+                                <%= t('es:authors.role') %>
+                            </p>
 
                             <a href="/author/<%= author.id %>"
                                 class="btn btn-outline-primary btn-sm w-100 rounded-pill">
-                                Ver catálogo
+                                <%= t('es:authors.view_catalog') %>
                             </a>
                         </div>
                     </div>

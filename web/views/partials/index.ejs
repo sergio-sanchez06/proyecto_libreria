@@ -1,50 +1,31 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="<%= i18n.language %>">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Librería - Inicio</title>
-
-    <script type="module">
-        import { getCurrentUser, logout } from "/js/auth.mjs";
-        const user = getCurrentUser();
-        console.log(user);
-    </script>
+    <title>Librería - <%= t('es:nav.home') %>
+    </title>
 
     <link rel="stylesheet" href="css/main.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <style>
-        /* Reducimos el ancho del contenedor del botón */
         .carousel-control-prev,
         .carousel-control-next {
             width: 5%;
-            /* Bootstrap por defecto usa 15% */
             z-index: 10;
-            /* Asegura que esté por encima pero sin estorbar */
-        }
-
-        /* Opcional: Si quieres que las flechas sean más visibles 
-   ya que ahora el área es más pequeña */
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            background-color: rgba(0, 0, 0, 0.5);
-            /* Fondo oscuro semitransparente */
-            border-radius: 50%;
-            padding: 15px;
-            background-size: 60%;
-        }
-
-        /* Evitamos que el botón capture clics fuera del icono visual */
-        .carousel-control-prev,
-        .carousel-control-next {
             pointer-events: none;
         }
 
         .carousel-control-prev-icon,
         .carousel-control-next-icon {
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            padding: 15px;
+            background-size: 60%;
             pointer-events: auto;
-            /* Solo el icono responde al clic */
         }
 
         .publisher-logo-container {
@@ -56,32 +37,26 @@
             justify-content: center;
             background-color: #fff;
             border-radius: 50%;
-            /* O '8px' si prefieres cuadrados redondeados */
             padding: 15px;
-            /* Espacio para que el logo no toque los bordes */
             overflow: hidden;
         }
 
         .publisher-logo-container img {
             max-width: 100%;
             max-height: 100%;
-            width: auto;
-            height: auto;
             object-fit: contain;
-            /* Mantiene la proporción del SVG/Imagen sin deformar */
         }
     </style>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
 <body>
     <%- include('../layout/header') %>
-        <div class="container py-5">
 
+        <div class="container py-5">
             <header class="mb-5">
-                <p class="lead mt-3">Descubre los mejores libros y autores del momento</p>
+                <p class="lead mt-3">
+                    <%= t('es:index.welcome_msg') %>
+                </p>
 
                 <div class="d-flex flex-wrap gap-2 mt-3">
                     <% genresMostSold.forEach(genre=> { %>
@@ -99,8 +74,10 @@
             </header>
 
             <section class="mb-5 bg-white p-4 rounded shadow-sm">
-                <h2 class="section-title text-center mb-4"><i class="bi bi-graph-up-arrow text-danger"></i> Libros más
-                    vendidos</h2>
+                <h2 class="section-title text-center mb-4">
+                    <i class="bi bi-graph-up-arrow text-danger"></i>
+                    <%= t('es:index.most_sold_books') %>
+                </h2>
                 <div class="row row-cols-1 row-cols-md-5 g-3">
                     <% booksMostSold.forEach((book, index)=> { %>
                         <div class="col">
@@ -117,7 +94,7 @@
                                         </a>
                                     </p>
                                     <span class="badge bg-light text-muted border text-dark">
-                                        <%= book.totalSold %> vendidos
+                                        <%= t('es:index.sold_units', { count: book.totalSold }) %>
                                     </span>
                                 </div>
                             </div>
@@ -127,11 +104,13 @@
             </section>
 
             <section class="mb-5">
-                <h2 class="section-title text-center">Libros Destacados</h2>
+                <h2 class="section-title text-center">
+                    <%= t('es:index.featured_books') %>
+                </h2>
 
                 <% if (books && books.length> 0) { %>
                     <div id="booksCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner" id="carouselInner">
+                        <div class="carousel-inner">
                             <% const booksPerSlide=4; for (let i=0; i < books.length; i +=booksPerSlide) { const
                                 group=books.slice(i, i + booksPerSlide); const isActive=i===0 ? "active" : "" ; %>
                                 <div class="carousel-item <%= isActive %>">
@@ -146,42 +125,49 @@
                                                             <%= book.title %>
                                                         </h5>
                                                         <p class="card-text text-muted small">
-                                                            <strong>Autor:</strong>
+                                                            <strong>
+                                                                <%= t('es:book.author') %>:
+                                                            </strong>
                                                             <% const relations=bookAuthors.filter(ba=>
                                                                 Number(ba.book_id) === Number(book.id));
-
                                                                 if (relations.length > 0) {
-                                                                relations.forEach((ba, index) => { %>
+                                                                relations.forEach((ba, idx) => { %>
                                                                 <a href="/author/<%= ba.author_id %>"
                                                                     class="text-decoration-none">
-                                                                    <%= ba.author ? ba.author.name : "Desconocido" %>
+                                                                    <%= ba.author ? ba.author.name :
+                                                                        t('es:index.unknown_country') %>
                                                                 </a>
-                                                                <%= index < relations.length - 1 ? ', ' : '' %>
+                                                                <%= idx < relations.length - 1 ? ', ' : '' %>
                                                                     <% }); } else { %>
-                                                                        Desconocido
-                                                                        <% } %>
+                                                                        <%= t('es:index.unknown_country') %>
+                                                                            <% } %>
                                                         </p>
                                                         <p class="card-text fw-bold text-primary mt-auto">
                                                             <%= book.price %>€
                                                         </p>
+
                                                         <a href="/books/book/<%= book.id %>"
                                                             class="btn btn-primary btn-sm mt-2">
-                                                            Ver detalles
+                                                            <%= t('es:index.view_details') %>
                                                         </a>
-                                                        <form action="/cart/add" method="POST" class="d-inline">
+
+                                                        <form action="/cart/add" method="POST" class="mt-2">
                                                             <input type="hidden" name="book_id" value="<%= book.id %>">
-                                                            <div class="input-group input-group-sm"
-                                                                style="width: 120px;">
-                                                                <label for="quantity">Cantidad: </label>
-                                                                <input type="number" name="quantity" value="1" min="1"
-                                                                    max="<%= book.stock %>" class="form-control"
-                                                                    <%=book.stock <=0 ? 'disabled' : '' %>>
-                                                                <button type="submit" class="btn btn-success"
-                                                                    <%=book.stock <=0 ? 'disabled' : '' %>
-                                                                    title="<%= book.stock <=0 ? 'Sin stock'
-                                                                        : 'Añadir al carrito' %>">
-                                                                        Añadir al carrito 🛒
-                                                                </button>
+                                                            <div class="d-flex flex-column gap-1 text-start">
+                                                                <label class="small">
+                                                                    <%= t('es:book.quantity') %>:
+                                                                </label>
+                                                                <div class="input-group input-group-sm">
+                                                                    <input type="number" name="quantity" value="1"
+                                                                        min="1" max="<%= book.stock %>"
+                                                                        class="form-control" <%=book.stock <=0
+                                                                        ? 'disabled' : '' %>>
+                                                                    <button type="submit" class="btn btn-success"
+                                                                        <%=book.stock <=0 ? 'disabled' : '' %>>
+                                                                        <%= book.stock <=0 ? t('es:book.out_of_stock') :
+                                                                            t('es:book.add_to_cart') %>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -195,67 +181,74 @@
                         <button class="carousel-control-prev" type="button" data-bs-target="#booksCarousel"
                             data-bs-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Anterior</span>
+                            <span class="visually-hidden">
+                                <%= t('es:common.back') %>
+                            </span>
                         </button>
                         <button class="carousel-control-next" type="button" data-bs-target="#booksCarousel"
                             data-bs-slide="next">
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Siguiente</span>
+                            <span class="visually-hidden">Next</span>
                         </button>
                     </div>
                     <% } else { %>
-                        <p class="text-center text-muted">No hay libros destacados en este momento.</p>
+                        <p class="text-center text-muted">
+                            <%= t('es:index.no_featured') %>
+                        </p>
                         <% } %>
             </section>
 
             <div class="row">
                 <div class="col-md-8">
                     <section class="mb-5">
-                        <h2 class="section-title text-center">Autores Destacados</h2>
-                        <% if (authors && authors.length> 0) { %>
-                            <div class="row justify-content-center">
-                                <% authors.forEach(author=> { %>
-                                    <% const countData=bookAuthorsCount.find(item=> Number(item.author_id) ===
-                                        Number(author.id));
-                                        const totalLibros = countData ? Number(countData.count_books) : 0; %>
-                                        <div class="col-md-4 mb-4">
-                                            <div class="card author-card text-center shadow-sm">
-                                                <div class="card-body">
-                                                    <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
-                                                        alt="<%= author.name %>" class="rounded-circle mb-2"
-                                                        style="width: 80px; height: 80px; object-fit: cover;">
-                                                    <h5 class="mt-3 small">
-                                                        <%= author.name %>
-                                                    </h5>
-                                                    <p class="text-muted small">
-                                                        <%= author.country || "País desconocido" %>
-                                                    </p>
-                                                    <span class="badge bg-secondary">Libros: <%= totalLibros %></span>
-                                                    <a href="/author/<%= author.id %>"
-                                                        class="btn btn-primary btn-sm mt-2">Detalles</a>
-                                                </div>
-                                            </div>
+                        <h2 class="section-title text-center">
+                            <%= t('es:index.featured_authors') %>
+                        </h2>
+                        <div class="row justify-content-center">
+                            <% authors.forEach(author=> {
+                                const countData = bookAuthorsCount.find(item => Number(item.author_id) ===
+                                Number(author.id));
+                                const totalLibros = countData ? Number(countData.count_books) : 0; %>
+                                <div class="col-md-4 mb-4">
+                                    <div class="card author-card text-center shadow-sm">
+                                        <div class="card-body">
+                                            <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
+                                                class="rounded-circle mb-2"
+                                                style="width: 80px; height: 80px; object-fit: cover;">
+                                            <h5 class="mt-3 small">
+                                                <%= author.name %>
+                                            </h5>
+                                            <p class="text-muted small">
+                                                <%= author.country || t('es:index.unknown_country') %>
+                                            </p>
+                                            <span class="badge bg-secondary">
+                                                <%= t('es:index.books_count', { count: totalLibros }) %>
+                                            </span>
+                                            <a href="/author/<%= author.id %>" class="btn btn-primary btn-sm mt-2">
+                                                <%= t('es:index.view_details') %>
+                                            </a>
                                         </div>
-                                        <% }) %>
-                            </div>
-                            <% } %>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
                     </section>
                 </div>
 
                 <div class="col-md-4">
-                    <h3 class="h5 mb-3 text-center">Ranking de Autores</h3>
+                    <h3 class="h5 mb-3 text-center">
+                        <%= t('es:index.authors_ranking') %>
+                    </h3>
                     <div class="list-group shadow-sm mb-5">
                         <% authorsMostSold.forEach((author, index)=> { %>
                             <div class="list-group-item d-flex justify-content-between align-items-center">
                                 <span><strong>
                                         <%= index + 1 %>.
-                                    </strong>
-                                    <a href="/author/<%= author.id %>" class="text-decoration-none">
+                                    </strong> <a href="/author/<%= author.id %>" class="text-decoration-none">
                                         <%= author.name %>
-                                    </a>
-                                </span>
+                                    </a></span>
                                 <span class="badge bg-info text-dark rounded-pill">
-                                    <%= author.totalSold %> vendidos
+                                    <%= t('es:index.sold_units', { count: author.totalSold }) %>
                                 </span>
                             </div>
                             <% }) %>
@@ -264,8 +257,9 @@
             </div>
 
             <section>
-                <h2 class="section-title text-center">Editoriales Destacadas</h2>
-
+                <h2 class="section-title text-center">
+                    <%= t('es:index.featured_publishers') %>
+                </h2>
                 <div class="row mb-3 justify-content-center">
                     <% publishersMostSold.forEach(pub=> { %>
                         <div class="col-md-2 col-6 text-center mb-3">
@@ -276,26 +270,29 @@
                                     </a>
                                 </p>
                                 <small class="text-success">
-                                    <%= pub.totalSold %> ventas
+                                    <%= t('es:index.sales', { count: pub.totalSold }) %>
                                 </small>
                             </div>
                         </div>
                         <% }) %>
                 </div>
-
                 <% if (publishers && publishers.length> 0) { %>
                     <div class="row justify-content-center">
                         <% publishers.forEach(publisher=> { %>
                             <div class="col-md-3 mb-4">
-                                <div class="card author-card text-center shadow-sm">
-                                    <div class="card-body text-center">
-                                        <img src="<%= publisher.image_url || '/images/default-author.jpg' %>"
-                                            alt="<%= publisher.name %>">
-                                        <h5 class="mt-3">
+                                <div class="card author-card text-center shadow-sm h-100">
+                                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                        <div class="publisher-logo-container mb-3">
+                                            <img src="<%= publisher.image_url || '/images/default-publisher.jpg' %>"
+                                                alt="<%= publisher.name %>">
+                                        </div>
+                                        <h5 class="h6 fw-bold">
                                             <%= publisher.name %>
                                         </h5>
-                                        <a href="/publisher/<%= publisher.id %>" class="btn btn-primary btn-sm mt-2">Ver
-                                            detalles</a>
+                                        <a href="/publisher/<%= publisher.id %>"
+                                            class="btn btn-outline-primary btn-sm mt-auto">
+                                            <%= t('es:index.view_details') %>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -303,7 +300,6 @@
                     </div>
                     <% } %>
             </section>
-
         </div>
 
         <%- include('../layout/footer') %>

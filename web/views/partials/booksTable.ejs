@@ -2,10 +2,8 @@
     /* Control de la imagen del libro */
     .book-img-container {
         height: 300px;
-        /* Altura fija para todas las portadas */
         overflow: hidden;
         background-color: #f8f9fa;
-        /* Fondo gris claro por si la imagen es pequeña */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -15,12 +13,9 @@
         width: 100%;
         height: 100%;
         object-fit: contain;
-        /* 'contain' para ver la portada completa, 'cover' si prefieres que llene todo el espacio */
         padding: 10px;
-        /* Un poco de aire para que no pegue a los bordes */
     }
 
-    /* Mejora opcional: sombra al pasar el ratón */
     .card-custom {
         transition: transform 0.2s;
     }
@@ -34,8 +29,12 @@
 
     <div class="container py-5">
         <div class="text-center mb-5">
-            <h1 class="display-4 fw-bold">Nuestro Catálogo</h1>
-            <p class="lead text-muted">Explora todos los títulos disponibles en nuestra librería</p>
+            <h1 class="display-4 fw-bold">
+                <%= t('catalog.title') %>
+            </h1>
+            <p class="lead text-muted">
+                <%= t('catalog.subtitle') %>
+            </p>
         </div>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
@@ -58,7 +57,7 @@
 
                             <div class="d-grid gap-2 mt-3">
                                 <a href="/books/book/<%= book.id %>" class="btn btn-outline-primary btn-sm">
-                                    Ver detalles
+                                    <%= t('catalog.view_details') %>
                                 </a>
 
                                 <form action="/cart/add" method="POST" class="w-100">
@@ -70,10 +69,16 @@
                                                 max="<%= book.stock %>" class="form-control" <%=book.stock <=0
                                                 ? 'disabled' : '' %>>
                                         </div>
+
                                         <button type="submit" class="btn btn-success btn-sm flex-grow-1" <%=book.stock
                                             <=0 ? 'disabled' : '' %>
-                                            title="<%= book.stock <=0 ? 'Sin stock' : 'Añadir al carrito' %>">
-                                                Añadir 🛒
+                                            title="<%= book.stock <=0 ? t('catalog.no_stock') :
+                                                t('catalog.add_to_cart') %>">
+                                                <% if (book.stock <=0) { %>
+                                                    <%= t('catalog.no_stock') %>
+                                                        <% } else { %>
+                                                            <%= t('catalog.add_to_cart') %> 🛒
+                                                                <% } %>
                                         </button>
                                     </div>
                                 </form>

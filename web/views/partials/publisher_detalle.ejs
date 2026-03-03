@@ -18,65 +18,78 @@
     <%- include('../layout/header') %>
 
         <div class="container py-5">
-            <!-- Cabecera de la editorial -->
-            <div class="publisher-header">
-                <h1>
-                    <%= publisher.name || "Editorial sin nombre" %>
+            <div class="publisher-header text-center mb-5">
+                <h1 class="fw-bold">
+                    <%= publisher.name || t('publisher_detail.not_available') %>
                 </h1>
                 <% if (publisher.country) { %>
-                    <p>
+                    <p class="lead text-muted">
                         <%= publisher.country %>
                     </p>
                     <% } %>
             </div>
 
-            <!-- Información adicional -->
-            <div class="publisher-info">
-                <h3>Información de la Editorial</h3>
-                <% if (publisher.website) { %>
-                    <p><strong>Sitio web:</strong> <a href="<%= publisher.website %>" target="_blank">
+            <div class="publisher-info mb-5 p-4 bg-light rounded shadow-sm">
+                <h3 class="mb-4">
+                    <%= t('publisher_detail.title_info') %>
+                </h3>
+
+                <p><strong>
+                        <%= t('publisher_detail.website') %>:
+                    </strong>
+                    <% if (publisher.website) { %>
+                        <a href="<%= publisher.website %>" target="_blank">
                             <%= publisher.website %>
-                        </a></p>
-                    <% } else { %>
-                        <p><strong>Sitio web:</strong> No disponible</p>
-                        <% } %>
-
-                            <% if (publisher.descripcion) { %>
-                                <p><strong>Descripción:</strong>
-                                    <%= publisher.descripcion %>
-                                </p>
+                        </a>
+                        <% } else { %>
+                            <%= t('publisher_detail.not_available') %>
                                 <% } %>
+                </p>
 
-                                    <% if (publisher.image_url) { %>
-                                        <p><strong>Imagen:</strong> <img src="<%= publisher.image_url %>"
-                                                alt="<%= publisher.name %>" class="img-fluid">
-                                        </p>
-                                        <% } %>
+                <% if (publisher.descripcion) { %>
+                    <p><strong>
+                            <%= t('publisher_detail.description') %>:
+                        </strong>
+                        <%= publisher.descripcion %>
+                    </p>
+                    <% } %>
+
+                        <% if (publisher.image_url) { %>
+                            <div class="mt-3">
+                                <strong>
+                                    <%= t('publisher_detail.image') %>:
+                                </strong><br>
+                                <img src="<%= publisher.image_url %>" alt="<%= publisher.name %>"
+                                    class="img-fluid mt-2 rounded" style="max-height: 100px;">
+                            </div>
+                            <% } %>
             </div>
 
-            <!-- Libros de la editorial -->
-            <h2 class="books-title">Libros publicados por <%= publisher.name %>
+            <h2 class="text-center mb-4">
+                <%= t('publisher_detail.books_by', { name: publisher.name }) %>
             </h2>
 
             <% if (books && books.length> 0) { %>
-                <div class="row justify-content-center">
+                <div class="row justify-content-center g-4">
                     <% books.forEach(book=> { %>
-                        <div class="col-md-3 mb-4">
-                            <div class="card h-100 shadow-sm book-card">
+                        <div class="col-md-3">
+                            <div class="card h-100 shadow-sm book-card border-0">
                                 <img src="<%= book.cover_url || '/images/default-cover.jpg' %>" class="card-img-top"
                                     alt="<%= book.title %>">
                                 <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title text-truncate">
+                                    <h5 class="card-title text-truncate" title="<%= book.title %>">
                                         <%= book.title %>
                                     </h5>
-                                    <p class="card-text small">
-                                        Año: <%= book.releashed_year || "Desconocido" %>
+                                    <p class="card-text text-muted small">
+                                        <%= t('publisher_detail.year') %>: <%= book.releashed_year ||
+                                                t('publisher_detail.unknown') %>
                                     </p>
-                                    <p class="card-text fw-bold text-primary mt-auto">
+                                    <p class="card-text fw-bold text-primary mt-auto fs-5">
                                         <%= book.price %>€
                                     </p>
-                                    <a href="/books/book/<%= book.id %>" class="btn btn-primary btn-sm mt-3">
-                                        Ver detalles del libro
+                                    <a href="/books/book/<%= book.id %>"
+                                        class="btn btn-outline-primary btn-sm mt-3 rounded-pill">
+                                        <%= t('publisher_detail.view_book') %>
                                     </a>
                                 </div>
                             </div>
@@ -84,24 +97,36 @@
                         <% }) %>
                 </div>
                 <% } else { %>
-                    <p class="no-books">Esta editorial aún no tiene libros registrados en nuestra librería.</p>
+                    <p class="text-center text-muted py-5">
+                        <%= t('publisher_detail.no_books') %>
+                    </p>
                     <% } %>
 
-                        <% console.log("Usuario:", user); %>
-
-                            <% if (user && user.role==="ADMIN" ) { ;%>
-                                <a href="/publisher/edit/<%= publisher.id %>" class="btn btn-primary admin-btns">Editar
-                                    editorial</a>
-                                <form action="/publisher/delete/<%= publisher.id %>" method="post">
-                                    <input type="hidden" name="id" value="<%= publisher.id %>">
-                                    <button type="submit" class="btn btn-danger admin-btns">Eliminar editorial</button>
-                                </form>
-                                <% } %>
-
-                                    <!-- Volver al inicio -->
-                                    <div class="back-link">
-                                        <a href="/">← Volver al inicio</a>
+                        <div class="mt-5 pt-4 border-top text-center">
+                            <% if (user && user.role==="ADMIN" ) { %>
+                                <% const confirmMsg=t('admin.confirm'); %>
+                                    <div class="d-flex justify-content-center gap-3 mb-3">
+                                        <a href="/publisher/edit/<%= publisher.id %>"
+                                            class="btn btn-warning rounded-pill px-4">
+                                            <%= t('publisher_detail.edit') %>
+                                        </a>
+                                        <form action="/publisher/delete/<%= publisher.id %>" method="post"
+                                            class="d-inline">
+                                            <input type="hidden" name="id" value="<%= publisher.id %>">
+                                            <button type="submit" class="btn btn-danger rounded-pill px-4"
+                                                onclick="return confirm('<%= confirmMsg %>')">
+                                                <%= t('publisher_detail.delete') %>
+                                            </button>
+                                        </form>
                                     </div>
+                                    <% } %>
+
+                                        <div class="back-link mt-3">
+                                            <a href="/" class="text-decoration-none">
+                                                <%= t('publisher_detail.back') %>
+                                            </a>
+                                        </div>
+                        </div>
         </div>
 
         <%- include('../layout/footer') %>

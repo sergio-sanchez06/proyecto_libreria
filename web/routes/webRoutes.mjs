@@ -4,6 +4,7 @@ import homeController from "../controllers/homeController.mjs";
 import authorController from "../controllers/authorController.mjs";
 import publisherController from "../controllers/PublisherController.mjs";
 import authController from "../controllers/AuthController.mjs";
+import languageController from "../controllers/languageController.mjs";
 // import controlUserAgent from "../middlewares/controlUserAgent.mjs";
 // import bookController from "../controllers/bookController.mjs";
 const router = express.Router();
@@ -17,6 +18,8 @@ router.get(
   publisherController.getPublishers,
   homeController.index,
 );
+
+router.get("/language", languageController.changeLanguage);
 
 // Ruta detalle del libro
 router.get("/book/:id", homeController.getBookById);
