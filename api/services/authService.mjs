@@ -1,6 +1,23 @@
 import admin from "../config/firebase.mjs";
 import UserRepository from "../Repositories/UserRepository.mjs";
 
+async function verifySocialToken(idToken) {
+  try {
+    // No creamos usuario, solo verificamos que el token que viene del front es válido
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+    return {
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      name: decodedToken.name,
+      picture: decodedToken.picture,
+      provider: decodedToken.firebase.sign_in_provider, // 'google.com' o 'twitter.com'
+    };
+  } catch (error) {
+    throw new Error("Token de Firebase inválido: " + error.message);
+  }
+}
+
 async function createUser(userData) {
   const { email, password, name } = userData;
 
@@ -15,14 +32,14 @@ async function createUser(userData) {
     // 4. Ahora sí podemos preguntar si firebaseUser existe
     if (firebaseUser && firebaseUser.uid) {
       console.error(
-        `Error en BBDD local. Eliminando rastro de Firebase para UID: ${firebaseUser.uid}`
+        `Error en BBDD local. Eliminando rastro de Firebase para UID: ${firebaseUser.uid}`,
       );
       try {
         await admin.auth().deleteUser(firebaseUser.uid);
       } catch (deleteError) {
         console.error(
           "Error crítico: No se pudo limpiar el usuario de Firebase",
-          deleteError
+          deleteError,
         );
       }
     }
@@ -130,14 +147,14 @@ async function registerWithToken(data) {
 
     if (firebaseUid) {
       console.error(
-        `Error en BBDD local. Eliminando rastro de Firebase para UID: ${firebaseUid}`
+        `Error en BBDD local. Eliminando rastro de Firebase para UID: ${firebaseUid}`,
       );
       try {
         await admin.auth().deleteUser(firebaseUid);
       } catch (deleteError) {
         console.error(
           "Error crítico: No se pudo limpiar el usuario de Firebase",
-          deleteError
+          deleteError,
         );
       }
     }
@@ -192,4 +209,5 @@ export default {
   verifyTokenAndGetUser,
   createUser,
   deleteAuthUser,
+  verifySocialToken,
 };

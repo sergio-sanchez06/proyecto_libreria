@@ -1,4 +1,4 @@
-// web/public/js/auth.js
+// web/public/js/auth.mjs
 
 import {
   signInWithEmailAndPassword,
@@ -6,124 +6,135 @@ import {
   updateProfile,
   signOut,
   onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup,
+  TwitterAuthProvider,
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
-// Importamos la instancia de auth desde tu archivo centralizado
-// Si renombraste el archivo a .js, asegúrate de cambiar la extensión aquí también
-import { auth } from "./firebaseConfig.mjs"; 
+import axios from "https://cdn.jsdelivr.net/npm/axios@1.6.7/+esm";
+import { auth } from "./firebaseConfig.mjs";
 
 const API_URL = "http://localhost:3000/auth";
 
+// Configuración centralizada de Axios
+const apiClient = axios.create({
+  baseURL: "http://localhost:3000",
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // Crucial para permitir que el servidor gestione cookies de sesión
+});
+
 /**
- * Iniciar sesión con Firebase y enviar el token al backend
+ * Iniciar sesión con Email y Password
  */
-export async function login(email, password) {
+export async function getFirebaseToken(email, password) {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const idToken = await userCredential.user.getIdToken();
-
-    const response = await fetch(`${API_URL}/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) throw new Error(data.message || "Error en login");
-
-    localStorage.setItem("idToken", idToken);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    return data.user;
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    return await userCredential.user.getIdToken();
   } catch (error) {
-    console.error("Error en login:", error);
-    throw new Error(error.message || "Error al iniciar sesión");
+    throw new Error(error.message);
   }
 }
 
 /**
- * Registrar nuevo usuario en Firebase y en la base de datos local
+ * Autentica con Google y devuelve el ID Token
  */
-export async function register({
-  email,
-  password,
-  name,
-  default_address,
-  optional_address,
-}) {
+export async function getGoogleToken() {
+  const provider = new GoogleAuthProvider();
   try {
-    // 1. Crear usuario en Firebase
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    
-    // 2. Actualizar el nombre en el perfil de Firebase (V9 Modular)
-    await updateProfile(userCredential.user, { displayName: name });
+    const result = await signInWithPopup(auth, provider);
+    return await result.user.getIdToken();
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 
+export async function getTwitterToken() {
+  const provider = new TwitterAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return await result.user.getIdToken();
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
+}
+
+/**
+ * Registrar nuevo usuario
+ */
+export async function register(userData) {
+  const { email, password, name, default_address, optional_address } = userData;
+  try {
+    // 1. Registro en Firebase
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+    await updateProfile(userCredential.user, { displayName: name });
     const idToken = await userCredential.user.getIdToken();
 
-    // 3. Registrar datos adicionales en nuestro servidor
-    const response = await fetch(`${API_URL}/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        password,
-        name,
-        default_address,
-        optional_address,
-      }),
+    // 2. Registro en base de datos local
+    const response = await apiClient.post(`${API_URL}/register`, {
+      email,
+      password,
+      name,
+      default_address,
+      optional_address,
     });
 
-    const data = await response.json();
-
-    if (!response.ok) throw new Error(data.message || "Error en registro");
-
     localStorage.setItem("idToken", idToken);
-    localStorage.setItem("user", JSON.stringify(data.user));
-    return data.user;
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+
+    return response.data.user;
   } catch (error) {
     console.error("Error en registro:", error);
-    throw new Error(error.message || "Error al registrar");
+    const errorMsg =
+      error.response?.data?.message || error.message || "Error al registrar";
+    throw new Error(errorMsg);
   }
 }
 
 /**
- * Cerrar sesión en Firebase y limpiar almacenamiento local
+ * Cerrar sesión
  */
 export async function logout() {
   try {
     await signOut(auth);
     localStorage.removeItem("idToken");
     localStorage.removeItem("user");
+    // Opcional: Llamar al backend para destruir la cookie de sesión si existe
+    await apiClient.post(`${API_URL}/logout`).catch(() => {});
   } catch (error) {
     console.error("Error al cerrar sesión:", error);
   }
 }
 
 /**
- * Verificar si existe un token en el almacenamiento local
+ * Utilidades de estado
  */
 export function isLoggedIn() {
   return !!localStorage.getItem("idToken");
 }
 
-/**
- * Obtener los datos del usuario guardados en local
- */
 export function getCurrentUser() {
   const user = localStorage.getItem("user");
   return user ? JSON.parse(user) : null;
 }
 
 /**
- * Inicializar la lógica de checkout verificando el estado de Firebase
+ * Lógica para la vista de Checkout
  */
 export function initCheckout() {
-  console.log("🛒 Inicializando checkout...");
-
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      console.log("❌ No hay usuario autenticado");
-      alert("Debes iniciar sesión para finalizar la compra");
       window.location.href = "/login";
       return;
     }
@@ -137,11 +148,9 @@ export function initCheckout() {
         tokenInput.value = token;
         checkoutBtn.disabled = false;
         checkoutBtn.textContent = "Finalizar compra";
-        console.log("✅ Checkout preparado para el usuario:", user.email);
       }
     } catch (err) {
-      console.error("❌ Error obteniendo token en checkout:", err);
-      alert("Error de autenticación. Intenta iniciar sesión de nuevo.");
+      console.error("Error en checkout auth:", err);
     }
   });
 }

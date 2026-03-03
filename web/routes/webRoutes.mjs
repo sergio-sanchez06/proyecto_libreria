@@ -50,4 +50,6 @@ router.get("/register", authController.showRegister);
 
 router.post("/register", authController.register);
 
+router.post("/login-social", authController.socialLogin);
+
 export default router;

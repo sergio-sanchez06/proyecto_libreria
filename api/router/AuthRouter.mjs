@@ -1,10 +1,15 @@
 // router/AuthRouter.mjs
 import express from "express";
-import { login, register } from "../controllers/authController.mjs";
+import {
+  login,
+  register,
+  socialLogin,
+} from "../controllers/authController.mjs";
 
 const router = express.Router();
 
 router.post("/register", register);
 router.post("/login", login);
+router.post("/social-login", socialLogin);
 
 export default router;

@@ -52,7 +52,7 @@ async function index(req, res) {
   const response = await apiClient.get("/books/mostSold");
   const booksMostSold = response.data;
 
-  console.log(booksMostSold[0].totalSold);
+  // console.log(booksMostSold[0].totalSold);
 
   const responseAuthors = await apiClient.get("/authors/authors/mostSold");
   const authorsMostSold = responseAuthors.data;
@@ -63,7 +63,7 @@ async function index(req, res) {
   const responseGenres = await apiClient.get("/genres/mostSold");
   const genresMostSold = responseGenres.data;
 
-  console.log(res.locals.bookAuthors);
+  // console.log(res.locals.bookAuthors);
 
   res.render("partials/index", {
     books: res.locals.books,
@@ -82,11 +82,11 @@ async function getBookById(req, res) {
     const response = await apiClient.get(`/books/${req.params.id}`);
     const book = response.data;
     const authorsResponse = await apiClient.get(
-      `/bookAuthor/book/id/${req.params.id}`
+      `/bookAuthor/book/id/${req.params.id}`,
     );
     const authors = authorsResponse.data;
     const genresResponse = await apiClient.get(
-      `/bookGenre/book/${req.params.id}`
+      `/bookGenre/book/${req.params.id}`,
     );
     const genres = genresResponse.data;
     console.log(genres);
