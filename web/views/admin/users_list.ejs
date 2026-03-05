@@ -6,13 +6,17 @@
         <div class="row mb-5 align-items-center">
             <div class="col-md-6">
                 <h1 class="display-6 fw-bold text-dark mb-1">
-                    <i class="bi bi-people-fill text-primary me-2"></i>Gestión de Usuarios
+                    <i class="bi bi-people-fill text-primary me-2"></i>
+                    <%= t('adminUsersList.title') %>
                 </h1>
-                <p class="text-muted mb-0">Administra los accesos, roles y perfiles de seguridad de la plataforma.</p>
+                <p class="text-muted mb-0">
+                    <%= t('adminUsersList.subtitle') %>
+                </p>
             </div>
             <div class="col-md-6 text-md-end mt-3 mt-md-0">
                 <a href="/admin/users/create" class="btn btn-primary btn-lg px-4 shadow-sm hover-lift rounded-3">
-                    <i class="bi bi-person-plus-fill me-2"></i>Nuevo Usuario
+                    <i class="bi bi-person-plus-fill me-2"></i>
+                    <%= t('adminUsersList.btn_new') %>
                 </a>
             </div>
         </div>
@@ -37,12 +41,15 @@
                     <div class="card-header bg-white py-3 px-4 border-bottom">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h5 class="mb-0 fw-bold text-dark">Lista de Miembros</h5>
+                                <h5 class="mb-0 fw-bold text-dark">
+                                    <%= t('adminUsersList.list_title') %>
+                                </h5>
                             </div>
                             <div class="col text-end">
                                 <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill">
                                     <i class="bi bi-person-check me-1"></i>
-                                    <%= users.length %> registrados
+                                    <%= users.length %>
+                                        <%= t('adminUsersList.registered_count') %>
                                 </span>
                             </div>
                         </div>
@@ -54,18 +61,25 @@
                                 <thead class="bg-light-subtle">
                                     <tr>
                                         <th class="ps-4 py-3 text-uppercase fw-semibold text-muted"
-                                            style="font-size: 0.75rem;">Usuario</th>
+                                            style="font-size: 0.75rem;">
+                                            <%= t('adminUsersList.th_user') %>
+                                        </th>
                                         <th class="py-3 text-uppercase fw-semibold text-muted"
                                             style="font-size: 0.75rem;">
-                                            Email</th>
+                                            <%= t('adminUsersList.th_email') %>
+                                        </th>
                                         <th class="py-3 text-uppercase fw-semibold text-muted"
                                             style="font-size: 0.75rem;">
-                                            Rol</th>
+                                            <%= t('adminUsersList.th_role') %>
+                                        </th>
                                         <th class="py-3 text-uppercase fw-semibold text-muted"
                                             style="font-size: 0.75rem;">
-                                            Ubicación</th>
+                                            <%= t('adminUsersList.th_location') %>
+                                        </th>
                                         <th class="py-3 text-uppercase fw-semibold text-muted text-center"
-                                            style="font-size: 0.75rem;">Acciones</th>
+                                            style="font-size: 0.75rem;">
+                                            <%= t('adminUsersList.th_actions') %>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,27 +96,25 @@
                                                             <%= user.name %>
                                                         </div>
                                                         <small class="text-muted d-block" style="font-size: 0.7rem;">ID:
-                                                            #
-                                                            <%= user.id %>
-                                                        </small>
+                                                            #<%= user.id %></small>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td>
-                                                <span class="text-dark">
+                                            <td><span class="text-dark">
                                                     <%= user.email %>
-                                                </span>
-                                            </td>
+                                                </span></td>
                                             <td>
                                                 <% if (user.role==='ADMIN' ) { %>
                                                     <span
                                                         class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 fw-semibold">
-                                                        <i class="bi bi-shield-check me-1"></i>ADMIN
+                                                        <i class="bi bi-shield-check me-1"></i>
+                                                        <%= t('adminUsersList.role_admin') %>
                                                     </span>
                                                     <% } else { %>
                                                         <span
                                                             class="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-3 py-1 fw-semibold">
-                                                            <i class="bi bi-person me-1"></i>CLIENTE
+                                                            <i class="bi bi-person me-1"></i>
+                                                            <%= t('adminUsersList.role_client') %>
                                                         </span>
                                                         <% } %>
                                             </td>
@@ -110,31 +122,26 @@
                                                 <div class="text-truncate d-flex align-items-center text-muted"
                                                     style="max-width: 200px;" title="<%= user.default_address %>">
                                                     <i class="bi bi-geo-alt me-1 text-primary opacity-75"></i>
-                                                    <%= user.default_address || 'Sin dirección' %>
+                                                    <%= user.default_address || t('adminUsersList.no_address') %>
                                                 </div>
                                             </td>
                                             <td class="pe-4 text-center">
-                                                <div class="btn-group rounded-3 overflow-hidden border shadow-xs">
+                                                <div class="d-flex justify-content-center gap-2">
                                                     <a href="/admin/users/update/<%= user.id %>"
-                                                        class="btn btn-white btn-sm px-3 hover-bg-light border-end"
-                                                        title="Editar perfil">
+                                                        class="btn btn-white btn-sm px-3 hover-bg-light border shadow-sm"
+                                                        title="<%= t('adminUsersList.btn_edit') %>">
                                                         <i class="bi bi-pencil-square text-primary"></i>
                                                     </a>
-
+                                                    <form action="/admin/users/delete/<%= user.email %>" method="POST"
+                                                        onsubmit="return confirmDelete(event, '<%= user.name %>')">
+                                                        <input type="hidden" name="id" value="<%= user.id %>">
+                                                        <input type="hidden" name="email" value="<%= user.email %>">
+                                                        <button type="submit"
+                                                            class="btn btn-white btn-sm px-3 border shadow-sm">
+                                                            <i class="bi bi-trash3 text-danger"></i>
+                                                        </button>
+                                                    </form>
                                                 </div>
-                                            </td>
-                                            <td class="pe-4 text-center">
-
-                                                <form action="/admin/users/delete/<%= user.email %>" method="POST"
-                                                    style="display: inline;">
-                                                    <input type="hidden" name="id" value="<%= user.id %>">
-                                                    <input type="hidden" name="email" value="<%= user.email %>">
-
-                                                    <button type="submit" class="btn btn-white btn-sm px-3">
-                                                        <span>Eliminar: </span><i class="bi bi-trash3 text-danger"></i>
-                                                    </button>
-                                                </form>
-
                                             </td>
                                         </tr>
                                         <% }) %>
@@ -145,86 +152,17 @@
                 </div>
     </main>
 
-    <!-- <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg rounded-4">
-            <div class="modal-body p-5 text-center">
-                <div class="bg-danger-subtle text-danger rounded-circle d-inline-flex align-items-center justify-content-center mb-4"
-                    style="width: 80px; height: 80px;">
-                    <i class="bi bi-person-x display-4"></i>
-                </div>
-                <h3 class="fw-bold text-dark">¿Estás seguro?</h3>
-                <p class="text-muted px-3">Estás a punto de eliminar a <strong id="deleteUserName"
-                        class="text-dark"></strong>. Esta acción no se puede deshacer y afectará tanto a la base de
-                    datos como a Firebase.</p>
+    <script>
+        function confirmDelete(event, userName) {
+            // Obtenemos el mensaje traducido desde el motor de EJS
+            const message = "<%= t('adminUsersList.delete_confirm') %>";
 
-                <div class="d-grid gap-2 mt-4">
-                    <form id="deleteForm" method="POST">
-                        <button type="submit" class="btn btn-danger btn-lg w-100 rounded-3 shadow-sm mb-2">Eliminar
-                            definitivamente</button>
-                    </form>
-                    <button type="button" class="btn btn-light btn-lg w-100 rounded-3"
-                        data-bs-dismiss="modal">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
-
-    <style>
-        body {
-            background-color: #f8fafc;
+            // Mostramos el cuadro de confirmación
+            if (confirm(message)) {
+                return true; // Continúa con el envío del formulario
+            } else {
+                event.preventDefault(); // Detiene el envío
+                return false;
+            }
         }
-
-        .hover-lift:hover {
-            transform: translateY(-2px);
-            transition: all 0.2s ease;
-            filter: brightness(1.1);
-        }
-
-        .bg-light-subtle {
-            background-color: #f9fafb;
-        }
-
-        .btn-white {
-            background: white;
-            border: none;
-        }
-
-        .btn-white:hover {
-            background: #f3f4f6;
-        }
-
-        .hover-bg-light:hover {
-            background-color: #f8f9fa !important;
-        }
-
-        .shadow-xs {
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        }
-
-        /* Estilos personalizados para badges de Bootstrap 5.3+ */
-        .bg-danger-subtle {
-            background-color: #fee2e2 !important;
-            color: #dc2626 !important;
-        }
-
-        .bg-info-subtle {
-            background-color: #e0f2fe !important;
-            color: #0284c7 !important;
-        }
-
-        .bg-primary-subtle {
-            background-color: #e0e7ff !important;
-            color: #4f46e5 !important;
-        }
-
-        /* Animación de entrada para la tabla */
-        tbody tr {
-            transition: background-color 0.2s ease;
-        }
-
-        .table-hover tbody tr:hover {
-            background-color: #f1f5f9 !important;
-        }
-    </style>
+    </script>

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración | Librería</title>
+    <title>
+        <%= t('adminDashboard.nav_title') %> | Librería
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -49,10 +50,18 @@
         .text-orange {
             color: #fd7e14 !important;
         }
+
+        .btn-books {
+            background-color: #006d33;
+            color: white;
+        }
+
+        .btn-books:hover {
+            background-color: #005a2a;
+            color: white;
+        }
     </style>
 </head>
-
-
 
 <body class="bg-light">
 
@@ -61,23 +70,34 @@
         <nav class="navbar navbar-dark bg-dark shadow">
             <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">
-                    <i class="bi bi-shield-lock me-2"></i>Admin Panel | <%= user.name %>
+                    <i class="bi bi-shield-lock me-2"></i>
+                    <%= t('adminDashboard.nav_title') %> | <%= user.name %>
                 </span>
-                <a href="/logout" class="btn btn-outline-light btn-sm">Cerrar Sesión</a>
+                <a href="/logout" class="btn btn-outline-light btn-sm">
+                    <%= t('adminDashboard.logout') %>
+                </a>
             </div>
         </nav>
 
         <div class="container mb-5">
 
-            <h3 class="section-title">Gestión de Usuarios</h3>
+            <h3 class="section-title">
+                <%= t('adminDashboard.sec_users') %>
+            </h3>
             <div class="row g-4">
                 <div class="col-md-4">
                     <div class="card h-100 admin-card">
                         <div class="card-body text-center">
                             <div class="icon-box text-primary"><i class="bi bi-people-fill"></i></div>
-                            <h5 class="card-title">Usuarios</h5>
-                            <p class="card-text text-muted">Control de accesos, roles y eliminación.</p>
-                            <a href="/admin/users" class="btn btn-books w-100">Gestionar Usuarios</a>
+                            <h5 class="card-title">
+                                <%= t('adminDashboard.card_users_title') %>
+                            </h5>
+                            <p class="card-text text-muted small">
+                                <%= t('adminDashboard.card_users_text') %>
+                            </p>
+                            <a href="/admin/users" class="btn btn-books w-100">
+                                <%= t('adminDashboard.card_users_btn') %>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -86,9 +106,15 @@
                     <div class="card h-100 admin-card">
                         <div class="card-body text-center">
                             <div class="icon-box text-success"><i class="bi bi-person-plus-fill"></i></div>
-                            <h5 class="card-title">Nuevo Registro</h5>
-                            <p class="card-text text-muted">Crear cuentas para trabajadores o administradores.</p>
-                            <a href="/admin/users/create" class="btn btn-outline-success w-100">Crear Usuario</a>
+                            <h5 class="card-title">
+                                <%= t('adminDashboard.card_new_user_title') %>
+                            </h5>
+                            <p class="card-text text-muted small">
+                                <%= t('adminDashboard.card_new_user_text') %>
+                            </p>
+                            <a href="/admin/users/create" class="btn btn-outline-success w-100">
+                                <%= t('adminDashboard.card_new_user_btn') %>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -97,27 +123,43 @@
                     <div class="card h-100 admin-card border-warning">
                         <div class="card-body text-center">
                             <div class="icon-box text-warning"><i class="bi bi-shield-lock-fill"></i></div>
-                            <h5 class="card-title">Seguridad</h5>
-                            <p class="card-text text-muted">Auditoría de Firebase y permisos.</p>
-                            <button class="btn btn-warning w-100" disabled>Configurar</button>
+                            <h5 class="card-title">
+                                <%= t('adminDashboard.card_security_title') %>
+                            </h5>
+                            <p class="card-text text-muted small">
+                                <%= t('adminDashboard.card_security_text') %>
+                            </p>
+                            <button class="btn btn-warning w-100" disabled>
+                                <%= t('adminDashboard.card_security_btn') %>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <h3 class="section-title" style="border-left-color: #6610f2;">Gestión de Inventario</h3>
+            <h3 class="section-title" style="border-left-color: #6610f2;">
+                <%= t('adminDashboard.sec_inventory') %>
+            </h3>
             <div class="row g-4">
                 <div class="col-md-6 col-lg-3">
                     <div class="card h-100 admin-card border-start border-primary border-5">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">Libros</h5>
+                                <h5 class="card-title">
+                                    <%= t('adminDashboard.card_books') %>
+                                </h5>
                                 <i class="bi bi-book text-primary h3"></i>
                             </div>
-                            <p class="small text-muted">Catálogo y stock.</p>
+                            <p class="small text-muted">
+                                <%= t('adminDashboard.card_books_text') %>
+                            </p>
                             <div class="d-grid gap-2">
-                                <a href="/books/showAllBooks" class="btn btn-sm btn-books">Gestionar</a>
-                                <a href="/admin/books/create" class="btn btn-sm btn-outline-primary">Añadir</a>
+                                <a href="/books/showAllBooks" class="btn btn-sm btn-books">
+                                    <%= t('adminDashboard.btn_manage') %>
+                                </a>
+                                <a href="/admin/books/create" class="btn btn-sm btn-outline-primary">
+                                    <%= t('adminDashboard.btn_add') %>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -127,13 +169,21 @@
                     <div class="card h-100 admin-card border-start border-info border-5">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">Géneros</h5>
+                                <h5 class="card-title">
+                                    <%= t('adminDashboard.card_genres') %>
+                                </h5>
                                 <i class="bi bi-tags text-info h3"></i>
                             </div>
-                            <p class="small text-muted">Categorías literarias.</p>
+                            <p class="small text-muted">
+                                <%= t('adminDashboard.card_genres_text') %>
+                            </p>
                             <div class="d-grid gap-2">
-                                <a href="/genres" class="btn btn-sm btn-info text-white">Gestionar</a>
-                                <a href="/genres/create" class="btn btn-sm btn-outline-info">Añadir</a>
+                                <a href="/genres" class="btn btn-sm btn-info text-white">
+                                    <%= t('adminDashboard.btn_manage') %>
+                                </a>
+                                <a href="/genres/create" class="btn btn-sm btn-outline-info">
+                                    <%= t('adminDashboard.btn_add') %>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -143,13 +193,21 @@
                     <div class="card h-100 admin-card border-start border-dark border-5">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">Autores</h5>
+                                <h5 class="card-title">
+                                    <%= t('adminDashboard.card_authors') %>
+                                </h5>
                                 <i class="bi bi-pen text-dark h3"></i>
                             </div>
-                            <p class="small text-muted">Escritores y biografías.</p>
+                            <p class="small text-muted">
+                                <%= t('adminDashboard.card_authors_text') %>
+                            </p>
                             <div class="d-grid gap-2">
-                                <a href="/authors/showAllAuthors" class="btn btn-sm btn-dark">Gestionar</a>
-                                <a href="/authors/author/create" class="btn btn-sm btn-outline-dark">Añadir</a>
+                                <a href="/authors/showAllAuthors" class="btn btn-sm btn-dark">
+                                    <%= t('adminDashboard.btn_manage') %>
+                                </a>
+                                <a href="/authors/author/create" class="btn btn-sm btn-outline-dark">
+                                    <%= t('adminDashboard.btn_add') %>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -159,59 +217,83 @@
                     <div class="card h-100 admin-card border-start border-secondary border-5">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">Editoriales</h5>
+                                <h5 class="card-title">
+                                    <%= t('adminDashboard.card_publishers') %>
+                                </h5>
                                 <i class="bi bi-building-up text-secondary h3"></i>
                             </div>
-                            <p class="small text-muted">Publicadoras.</p>
+                            <p class="small text-muted">
+                                <%= t('adminDashboard.card_publishers_text') %>
+                            </p>
                             <div class="d-grid gap-2">
-                                <a href="/publisher/showAllPublishers" class="btn btn-sm btn-secondary">Gestionar</a>
-                                <a href="/publisher/create" class="btn btn-sm btn-outline-secondary">Añadir</a>
+                                <a href="/publisher/showAllPublishers" class="btn btn-sm btn-secondary">
+                                    <%= t('adminDashboard.btn_manage') %>
+                                </a>
+                                <a href="/publisher/create" class="btn btn-sm btn-outline-secondary">
+                                    <%= t('adminDashboard.btn_add') %>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <h3 class="section-title" style="border-left-color: #fd7e14;">Gestión Comercial</h3>
+            <h3 class="section-title" style="border-left-color: #fd7e14;">
+                <%= t('adminDashboard.sec_commercial') %>
+            </h3>
             <div class="row g-4">
                 <div class="col-md-6 col-lg-4">
                     <div class="card h-100 admin-card border-start border-orange border-5">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">Pedidos / Ventas</h5>
+                                <h5 class="card-title">
+                                    <%= t('adminDashboard.card_orders_title') %>
+                                </h5>
                                 <i class="bi bi-cart-check text-orange h3"></i>
                             </div>
-                            <p class="small text-muted">Gestionar estados de envío, facturas y devoluciones.</p>
+                            <p class="small text-muted">
+                                <%= t('adminDashboard.card_orders_text') %>
+                            </p>
                             <div class="d-grid gap-2">
-                                <a href="/admin/orders" class="btn btn-sm text-white bg-orange">Ver todos
-                                    los pedidos</a>
+                                <a href="/admin/orders" class="btn btn-sm text-white bg-orange">
+                                    <%= t('adminDashboard.btn_all_orders') %>
+                                </a>
                                 <a href="/admin/orders/pending"
-                                    class="btn btn-sm btn-outline-warning text-orange">Pedidos
-                                    Pendientes</a>
+                                    class="btn btn-sm btn-outline-warning text-orange fw-bold">
+                                    <%= t('adminDashboard.btn_pending_orders') %>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-5 p-4 bg-white rounded shadow-sm">
-                <h4 class="mb-4"><i class="bi bi-graph-up-arrow me-2"></i>Resumen de actividad</h4>
+            <div class="mt-5 p-4 bg-white rounded shadow-sm border">
+                <h4 class="mb-4 fw-bold"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>
+                    <%= t('adminDashboard.stats_title') %>
+                </h4>
                 <div class="row text-center">
                     <div class="col">
                         <h3 class="fw-bold">
                             <%= users %>
                         </h3>
-                        <p class="text-muted">Usuarios Totales</p>
+                        <p class="text-muted small">
+                            <%= t('adminDashboard.stats_users') %>
+                        </p>
                     </div>
                     <div class="col border-start">
                         <h3 class="fw-bold text-orange">
                             <%= orders %>
                         </h3>
-                        <p class="text-muted">Pedidos Totales</p>
+                        <p class="text-muted small">
+                            <%= t('adminDashboard.stats_orders') %>
+                        </p>
                     </div>
                     <div class="col border-start">
                         <h3 class="fw-bold text-success">Active</h3>
-                        <p class="text-muted">Estado Firebase</p>
+                        <p class="text-muted small">
+                            <%= t('adminDashboard.stats_status') %>
+                        </p>
                     </div>
                 </div>
             </div>

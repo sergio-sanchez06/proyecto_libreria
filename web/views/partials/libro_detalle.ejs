@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html lang="es">
 
 <head>
     <meta charset="UTF-8">
@@ -117,36 +116,28 @@
                     </div>
 
                     <% if(user && user.role==="ADMIN" ) { %>
-                        <div class="d-flex justify-content-center gap-3 mt-4">
-                            <a href="/authors/author/edit/<%= author.id %>" class="btn btn-warning rounded-pill px-4">
-                                <%= t('author_detail.edit_author') %>
-                            </a>
+                        <div class="mt-4 p-4 border rounded-4 bg-white shadow-sm">
+                            <h5 class="text-dark fw-bold mb-3">
+                                <i class="bi bi-gear-fill me-2"></i>
+                                <%= t('admin.panel_title') %>
+                            </h5>
 
-                            <%# Guardamos la traducción en una variable para evitar conflictos de comillas %>
-                                <% const confirmMsg=t('admin.confirm'); %>
-
-                                    <form action="/authors/author/delete/<%= author.id %>" method="POST"
-                                        class="d-inline">
-                                        <input type="hidden" name="id" value="<%= author.id %>">
-                                        <button type="submit" class="btn btn-danger rounded-pill px-4"
-                                            onclick="return confirm('<%= confirmMsg %>')">
-                                            <%= t('author_detail.delete_author') %>
-                                        </button>
-                                    </form>
-                        </div>
-                        <% } else { %>
-                            <div class="mt-4 text-center">
-                                <a href="/" class="text-decoration-none">
-                                    <%= t('author_detail.back') %>
+                            <div class="d-flex flex-wrap gap-3">
+                                <a href="/books/edit/<%= book.id %>"
+                                    class="btn btn-primary rounded-pill px-4 shadow-sm">
+                                    <i class="bi bi-pencil-square me-1"></i>
+                                    <%= t('book.edit_book') %>
                                 </a>
-                            </div>
-                            <% } %>
 
-                                <div class="mt-4">
-                                    <a href="/" class="back-link-nav text-decoration-none">
-                                        <%= t('book.back') %>
-                                    </a>
-                                </div>
+                                <a href="/books/delete/<%= book.id %>"
+                                    class="btn btn-danger rounded-pill px-4 shadow-sm">
+                                    <i class="bi bi-trash-fill me-1"></i>
+                                    <%= t('book.delete_book') %>
+                                </a>
+
+                            </div>
+                        </div>
+                        <% } %>
                 </div>
             </div>
         </div>

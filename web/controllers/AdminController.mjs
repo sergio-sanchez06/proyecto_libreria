@@ -34,10 +34,10 @@ async function getManageOrders(req, res) {
         } catch (err) {
           order.items = []; // Evitamos que un error en un pedido rompa todo
         }
-      })
+      }),
     );
 
-    res.render("admin/orders", { orders });
+    res.render("admin/orders", { orders, lang: req.session.lang });
   } catch (error) {
     console.error("Error al cargar pedidos:", error);
     res.render("errors/500", { error: "No se pudieron cargar los pedidos" });
@@ -114,7 +114,7 @@ async function deleteUser(req, res) {
     // 1. Verificación de seguridad: ¿Viene el ID del formulario EJS?
     if (!req.body || !req.body.id) {
       throw new Error(
-        "El ID del usuario es requerido en el cuerpo del formulario"
+        "El ID del usuario es requerido en el cuerpo del formulario",
       );
     }
 

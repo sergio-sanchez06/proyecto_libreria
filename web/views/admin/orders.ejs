@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <title>Panel Admin - Gestión de Pedidos</title>
+    <title>
+        <%= t('adminOrders.title') %> | Panel Admin
+    </title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
@@ -14,129 +15,177 @@
 
         <div class="container-fluid py-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2><i class="bi bi-gear-fill me-2"></i>Gestión de Pedidos</h2>
-                <span class="badge bg-dark">Total: <%= orders.length %> pedidos</span>
+                <h2 class="fw-bold text-dark"><i class="bi bi-gear-fill me-2 text-secondary"></i>
+                    <%= t('adminOrders.title') %>
+                </h2>
+                <span class="badge bg-dark px-3 py-2 rounded-pill">
+                    <%= t('adminOrders.total_count', { count: orders.length }) %>
+                </span>
             </div>
 
-            <div class="card shadow-sm">
+            <div class="card shadow-sm border-0">
                 <div class="card-body p-0">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Fecha</th>
-                                <th>Usuario (ID)</th>
-                                <th>Total</th>
-                                <th>Estado</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% orders.forEach(order=> { %>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-dark">
                                 <tr>
-                                    <td><strong>#<%= order.id %></strong></td>
-                                    <td>
-                                        <%= new Date(order.created_at).toLocaleString() %>
-                                    </td>
-                                    <td><span class="text-muted">
-                                            <%= order.user_id %>
-                                        </span></td>
-                                    <td class="fw-bold">
-                                        <%= order.total %>€
-                                    </td>
-                                    <td>
-                                        <form action="/admin/orders/updateStatus" method="POST" class="d-inline">
-                                            <input type="hidden" name="orderId" value="<%= order.id %>">
-                                            <select name="status"
-                                                class="form-select form-select-sm d-inline-block w-auto fw-bold"
-                                                onchange="this.form.submit()">
-                                                <option value="PENDIENTE" <%=order.status==='PENDIENTE' ? 'selected'
-                                                    : '' %>>Pendiente</option>
-                                                <option value="PAGADO" <%=order.status==='PAGADO' ? 'selected' : '' %>
-                                                    >Pagado</option>
-                                                <option value="PROCESANDO" <%=order.status==='PROCESANDO' ? 'selected'
-                                                    : '' %>>Procesando</option>
-                                                <option value="ENVIADO" <%=order.status==='ENVIADO' ? 'selected' : '' %>
-                                                    >Enviado</option>
-                                                <option value="ENTREGADO" <%=order.status==='ENTREGADO' ? 'selected'
-                                                    : '' %>>Entregado</option>
-                                                <option value="CANCELADO" <%=order.status==='CANCELADO' ? 'selected'
-                                                    : '' %>>Cancelado</option>
-                                            </select>
-                                        </form>
-                                    </td>
-                                    <td class="text-center">
-                                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#modalOrder<%= order.id %>">
-                                            <i class="bi bi-eye"></i> Ver Detalles
-                                        </button>
-                                    </td>
-                                    <td class="text-center">
-                                        <div class="btn-group" role="group">
-                                            <form action="/admin/orders/delete" method="POST" class="d-inline"
-                                                onsubmit="return confirm('¿Estás seguro de que deseas eliminar este pedido? Esta acción no se puede deshacer.');">
-                                                <input type="hidden" name="orderId" value="<%= order.id %>">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm"
-                                                    title="Eliminar pedido">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                    <th class="ps-4">
+                                        <%= t('adminOrders.table_id') %>
+                                    </th>
+                                    <th>
+                                        <%= t('adminOrders.table_date') %>
+                                    </th>
+                                    <th>
+                                        <%= t('adminOrders.table_user') %>
+                                    </th>
+                                    <th>
+                                        <%= t('adminOrders.table_total') %>
+                                    </th>
+                                    <th>
+                                        <%= t('adminOrders.table_status') %>
+                                    </th>
+                                    <th class="text-center">
+                                        <%= t('adminOrders.table_actions') %>
+                                    </th>
                                 </tr>
-                                <% }) %>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <% orders.forEach(order=> { %>
+                                    <tr>
+                                        <td class="ps-4"><strong>#<%= order.id %></strong></td>
+                                        <td class="small">
+                                            <% const currentLang=(typeof lang !=='undefined' && lang) ? lang : 'es' ;
+                                                const locales={ 'eu' : 'eu-ES' , 'ca' : 'ca-ES' , 'gl' : 'gl-ES' , 'es'
+                                                : 'es-ES' }; const orderDate=order.created_at ? new
+                                                Date(order.created_at).toLocaleString(locales[currentLang] || 'es-ES' )
+                                                : '---' ; %>
+                                                <%= orderDate %>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark border">
+                                                <%= order.user_id %>
+                                            </span></td>
+                                        <td class="fw-bold text-success">
+                                            <%= order.total %>€
+                                        </td>
+                                        <td>
+                                            <form action="/admin/orders/updateStatus" method="POST" class="d-inline">
+                                                <input type="hidden" name="orderId" value="<%= order.id %>">
+                                                <select name="status"
+                                                    class="form-select form-select-sm d-inline-block w-auto fw-semibold border-secondary-subtle"
+                                                    onchange="this.form.submit()">
+                                                    <option value="PENDIENTE" <%=order.status==='PENDIENTE' ? 'selected'
+                                                        : '' %>><%= t('adminOrders.status_pending') %>
+                                                    </option>
+                                                    <option value="PAGADO" <%=order.status==='PAGADO' ? 'selected' : ''
+                                                        %>><%= t('adminOrders.status_paid') %>
+                                                    </option>
+                                                    <option value="PROCESANDO" <%=order.status==='PROCESANDO'
+                                                        ? 'selected' : '' %>><%= t('adminOrders.status_processing') %>
+                                                    </option>
+                                                    <option value="ENVIADO" <%=order.status==='ENVIADO' ? 'selected'
+                                                        : '' %>><%= t('adminOrders.status_shipped') %>
+                                                    </option>
+                                                    <option value="ENTREGADO" <%=order.status==='ENTREGADO' ? 'selected'
+                                                        : '' %>><%= t('adminOrders.status_delivered') %>
+                                                    </option>
+                                                    <option value="CANCELADO" <%=order.status==='CANCELADO' ? 'selected'
+                                                        : '' %>><%= t('adminOrders.status_cancelled') %>
+                                                    </option>
+                                                </select>
+                                            </form>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="btn-group">
+                                                <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#modalOrder<%= order.id %>">
+                                                    <i class="bi bi-eye-fill"></i>
+                                                    <%= t('adminOrders.btn_view') %>
+                                                </button>
+
+                                                <% const confirmMsg=t('adminOrders.delete_confirm'); %>
+                                                    <form action="/admin/orders/delete" method="POST" class="d-inline"
+                                                        onsubmit="return confirm('<%= confirmMsg %>');">
+                                                        <input type="hidden" name="orderId" value="<%= order.id %>">
+                                                        <button type="submit"
+                                                            class="btn btn-outline-danger btn-sm border-start-0"
+                                                            title="Eliminar">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
         <% orders.forEach(order=> { %>
             <div class="modal fade" id="modalOrder<%= order.id %>" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Detalle Pedido #<%= order.id %>
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header bg-dark text-white">
+                            <h5 class="modal-title fw-bold">
+                                <%= t('adminOrders.modal_title') %> #<%= order.id %>
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
-                            <h6>Items del Pedido:</h6>
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>ID Libro</th>
-                                        <th>Título</th>
-                                        <th>Cant.</th>
-                                        <th>Precio Unit.</th>
-                                        <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% order.items.forEach(item=> { %>
-                                        <tr>
-                                            <td>
-                                                <%= item.book_id %>
-                                            </td>
-                                            <td>
-                                                <%= item.book_title || (item.book ? item.book.title : 'Sin título' ) %>
-                                            </td>
-                                            <td>
-                                                <%= item.quantity %>
-                                            </td>
-                                            <td>
-                                                <%= item.price_at_time %>€
-                                            </td>
-                                            <td>
-                                                <%= (item.quantity * item.price_at_time).toFixed(2) %>€
-                                            </td>
+                        <div class="modal-body p-4">
+                            <h6 class="fw-bold mb-3 text-primary"><i class="bi bi-list-ul me-2"></i>
+                                <%= t('adminOrders.modal_items') %>
+                            </h6>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped">
+                                    <thead class="table-light">
+                                        <tr class="small text-muted">
+                                            <th>
+                                                <%= t('adminOrders.modal_book_id') %>
+                                            </th>
+                                            <th>
+                                                <%= t('adminOrders.modal_book_title') %>
+                                            </th>
+                                            <th class="text-center">
+                                                <%= t('adminOrders.modal_qty') %>
+                                            </th>
+                                            <th class="text-end">
+                                                <%= t('adminOrders.modal_price') %>
+                                            </th>
+                                            <th class="text-end">
+                                                <%= t('adminOrders.modal_subtotal') %>
+                                            </th>
                                         </tr>
-                                        <% }) %>
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        <% order.items.forEach(item=> { %>
+                                            <tr>
+                                                <td><small class="text-muted">
+                                                        <%= item.book_id %>
+                                                    </small></td>
+                                                <td class="fw-semibold">
+                                                    <%= item.book_title || (item.book ? item.book.title : '---' ) %>
+                                                </td>
+                                                <td class="text-center">x<%= item.quantity %>
+                                                </td>
+                                                <td class="text-end">
+                                                    <%= item.price_at_time %>€
+                                                </td>
+                                                <td class="text-end fw-bold">
+                                                    <%= (item.quantity * item.price_at_time).toFixed(2) %>€
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <div class="modal-footer border-0">
+                            <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">
+                                <%= t('adminOrders.modal_close') %>
+                            </button>
                         </div>
                     </div>
                 </div>
