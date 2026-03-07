@@ -1,53 +1,18 @@
 import pool from "../config/database.mjs";
 import BookAuthorModel from "../models/bookAuthorModel.mjs";
-<<<<<<< HEAD
-=======
 import authorModel from "../models/authorModel.mjs";
 import bookModel from "../models/BookModel.mjs";
->>>>>>> api
 
 // 1. Crear asociación (No suele requerir transacción si es una sola consulta)
 async function createBookAuthor(bookAuthor) {
   const result = await pool.query(
-<<<<<<< HEAD
-    "INSERT INTO book_author (book_id, author_id) VALUES ($1, $2) RETURNING *",
-=======
     "INSERT INTO book_authors (book_id, author_id) VALUES ($1, $2) RETURNING *",
->>>>>>> api
     [bookAuthor.book_id, bookAuthor.author_id]
   );
   return result.rows[0] ? new BookAuthorModel(result.rows[0]) : null;
 }
 
 async function getBooksByAuthorName(authorName) {
-<<<<<<< HEAD
-
-  const client = await pool.connect()
-
-  try {
-
-    const result = await client.query(`SELECT ba.* 
-      from books b join book_authors ba on b.id = ba.book_id
-      join authors a on ba.author_id = a.id
-      where a.name = $1
-                    `, [authorName])
-
-    console.log(result.rows)
-
-    return result.rows.map((row) => new BookAuthorModel(row))
-
-  } catch (err) {
-
-    console.log(err)
-    return "Fallo al recueperar los libros del autor"
-  }
-  finally {
-
-    client.release()
-
-  }
-
-=======
   const client = await pool.connect();
 
   try {
@@ -143,7 +108,6 @@ async function countBooksByAuthor(authorId) {
   } finally {
     client.release();
   }
->>>>>>> api
 }
 
 // 2. Obtener por clave compuesta (book_id Y author_id)
@@ -178,8 +142,6 @@ async function updateBookAuthor(oldIds, newIds) {
   }
 }
 
-<<<<<<< HEAD
-=======
 async function getAuthorsByBookId(bookId) {
   const client = await pool.connect();
 
@@ -197,7 +159,6 @@ async function getAuthorsByBookId(bookId) {
   }
 }
 
->>>>>>> api
 // 4. Eliminar por clave compuesta
 async function deleteBookAuthor(bookId, authorId) {
   const result = await pool.query(
@@ -207,15 +168,6 @@ async function deleteBookAuthor(bookId, authorId) {
   return result.rowCount > 0;
 }
 
-<<<<<<< HEAD
-export default {
-  createBookAuthor,
-  getBooksByAuthorName,
-  getBookAuthor,
-  updateBookAuthor,
-  deleteBookAuthor,
-};
-=======
 async function getBookAuthors() {
   const client = await pool.connect();
 
@@ -305,4 +257,3 @@ export default {
   getBookAuthors,
   deleteByBookId,
 };
->>>>>>> api

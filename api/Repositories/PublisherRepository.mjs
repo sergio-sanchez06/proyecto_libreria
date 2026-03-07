@@ -71,12 +71,6 @@ async function updatePublisher(publisher) {
        SET 
          name = COALESCE($1, name),
          country = COALESCE($2, country),
-<<<<<<< HEAD
-         updated_at = NOW()
-       WHERE id = $3 
-       RETURNING *`,
-      [publisher.name, publisher.country, publisher.id]
-=======
          website = COALESCE($3, website),
          descripcion = COALESCE($4, descripcion),
          image_url = COALESCE($5, image_url),
@@ -91,7 +85,6 @@ async function updatePublisher(publisher) {
         publisher.logo_url,
         publisher.id,
       ]
->>>>>>> api
     );
     await client.query("COMMIT");
     return result.rows[0];
