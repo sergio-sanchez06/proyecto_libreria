@@ -130,7 +130,7 @@ async function deleteAuthor(id) {
   }
 }
 
-async function getAllAuthors() {
+/*async function getAllAuthors() {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -139,6 +139,45 @@ async function getAllAuthors() {
     return result.rows.map((author) => new authorModel(author));
   } catch (error) {
     await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}*/
+
+async function getAllAuthors(page = null, limit = null) {
+  const client = await pool.connect();
+  try {
+    let query = "SELECT * FROM authors ORDER BY name ASC ";
+    let params = [];
+
+    if (page !== null && limit !== null) {
+      const p = Math.max(1, parseInt(page));
+      const l = parseInt(limit);
+      const offset = (p - 1) * l;
+
+      query += "LIMIT $1 OFFSET $2";
+      params = [l, offset];
+    }
+
+    const result = await client.query(query, params);
+    
+    const authors = result.rows; 
+
+    if (page !== null) {
+      const countRes = await client.query("SELECT COUNT(*) FROM authors");
+      const totalItems = parseInt(countRes.rows[0].count);
+      
+      return {
+        data: authors,
+        totalItems,
+        totalPages: Math.ceil(totalItems / (limit || 4)),
+        currentPage: parseInt(page)
+      };
+    }
+    return authors;
+  } catch (error) {
+    console.error("Error en AuthorRepository:", error);
     throw error;
   } finally {
     client.release();

@@ -114,7 +114,7 @@ async function deletePublisher(id) {
   }
 }
 
-async function getAllPublishers() {
+/*async function getAllPublishers() {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -123,6 +123,32 @@ async function getAllPublishers() {
     return result.rows.map((publisher) => new PublisherModel(publisher));
   } catch (error) {
     await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}*/
+
+async function getAllPublishers(page = 1, limit = 4) {
+  const client = await pool.connect();
+  try {
+    const offset = (page - 1) * limit;
+
+    const countRes = await client.query("SELECT COUNT(*) FROM publishers");
+    const totalItems = parseInt(countRes.rows[0].count);
+
+    const result = await client.query(
+      "SELECT * FROM publishers ORDER BY name LIMIT $1 OFFSET $2",
+      [limit, offset]
+    );
+
+    return {
+      data: result.rows.map((publisher) => new PublisherModel(publisher)),
+      totalItems: totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+      currentPage: parseInt(page)
+    };
+  } catch (error) {
     throw error;
   } finally {
     client.release();

@@ -162,7 +162,7 @@ async function updateAllCovers(req, res) {
   }
 }
 
-async function getAllBooks(req, res) {
+/*async function getAllBooks(req, res) {
   // Controlador de obtención de todos los libros
   try {
     const books = await RepoBook.getAllBooks();
@@ -170,6 +170,20 @@ async function getAllBooks(req, res) {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al obtener los libros" });
+  }
+}*/
+
+async function getAllBooks(req, res) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.page) || 10;
+
+    const result = await RepoBook.getAllBooks(page, limit);
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error al obtener los libros: ", error);
+    res.status(500).json({ error: "Error al obtener los libros"});
   }
 }
 

@@ -1,44 +1,70 @@
 <%- include('../layout/header') %>
 
-    <div class="container py-5">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">
-                <%= t('es:authors.title') %>
-            </h2>
-            <p class="text-muted">
-                <%= t('es:authors.subtitle') %>
-            </p>
-        </div>
-
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-            <% authors.forEach(author=> { %>
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-0 text-center p-3 card-custom">
-                        <div class="card-body">
-                            <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3"
-                                style="width: 70px; height: 70px; overflow: hidden;">
-                                <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
-                                    alt="<%= author.name %>" class="img-fluid"
-                                    style="object-fit: cover; width: 100%; height: 100%;">
-                            </div>
-
-                            <h5 class="card-title fw-bold mb-1">
-                                <%= author.name %>
-                            </h5>
-
-                            <p class="text-muted small mb-3">
-                                <%= t('es:authors.role') %>
-                            </p>
-
-                            <a href="/author/<%= author.id %>"
-                                class="btn btn-outline-primary btn-sm w-100 rounded-pill">
-                                <%= t('es:authors.view_catalog') %>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <% }) %>
-        </div>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold"><%= t('es:authors.title') %></h2>
+        <p class="text-muted"><%= t('es:authors.subtitle') %></p>
     </div>
 
-    <%- include('../layout/footer') %>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        <% authors.forEach(author=> { %>
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 text-center p-3 card-custom">
+                    <div class="card-body">
+                        <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center mx-auto mb-3"
+                            style="width: 70px; height: 70px; overflow: hidden;">
+                            <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
+                                alt="<%= author.name %>" class="img-fluid"
+                                style="object-fit: cover; width: 100%; height: 100%;">
+                        </div>
+                        <h5 class="card-title fw-bold mb-1"><%= author.name %></h5>
+                        <p class="text-muted small mb-3"><%= t('es:authors.role') %></p>
+                        <a href="/author/<%= author.id %>" class="btn btn-outline-primary btn-sm w-100 rounded-pill">
+                            <%= t('es:authors.view_catalog') %>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+
+    <div class="d-flex justify-content-center mt-5">
+        <nav aria-label="Navegación de autores">
+            <ul class="pagination shadow-sm">
+                <% const miRuta = "/authors/showAllAuthors"; %>
+                
+                <% if (currentPage > 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) - 1 %>">
+                            &laquo; <%= t('es:catalog.previous') %>
+                        </a>
+                    </li>
+                <% } else { %>
+                    <li class="page-item disabled">
+                        <span class="page-link">&laquo; <%= t('es:catalog.previous') %></span>
+                    </li>
+                <% } %>
+
+                <% for(let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+                        <a class="page-link" href="<%= miRuta %>?page=<%= i %>"><%= i %></a>
+                    </li>
+                <% } %>
+
+                <% if (currentPage < totalPages) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) + 1 %>">
+                            <%= t('es:catalog.next') %> &raquo;
+                        </a>
+                    </li>
+                <% } else { %>
+                    <li class="page-item disabled">
+                        <span class="page-link"><%= t('es:catalog.next') %> &raquo;</span>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<%- include('../layout/footer') %>

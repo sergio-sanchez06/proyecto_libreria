@@ -53,10 +53,24 @@ async function deletePublisher(req, res) {
   }
 }
 
-async function getAllPublishers(req, res) {
+/*async function getAllPublishers(req, res) {
   try {
     const publishers = await PublisherRepository.getAllPublishers();
     res.status(200).json(publishers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los editores" });
+  }
+}*/
+
+async function getAllPublishers(req, res) {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
+
+    const publishersData = await PublisherRepository.getAllPublishers(page, limit);
+    
+    res.status(200).json(publishersData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al obtener los editores" });
