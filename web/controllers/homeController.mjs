@@ -1,0 +1,121 @@
+import axios from "axios";
+
+const apiClient = axios.create({
+  baseURL: "http://localhost:3000",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+});
+
+async function getBooksAndAuthors(req, res, next) {
+  try {
+    // const response = await apiClient.get("/books");
+    // const authorsResponse = await apiClient.get("/authors");
+    const responseBooks = await apiClient.get("/books");
+    const responseAuthors = await apiClient.get("/authors");
+    const responseBookAuthors = await apiClient.get("/bookAuthor");
+    const responseBooksAuthorCount = await apiClient.get("/bookAuthor/count");
+
+    const booksAuthorsCount = responseBooksAuthorCount.data;
+    const books = responseBooks.data;
+    const authors = responseAuthors.data;
+    const bookAuthors = responseBookAuthors.data;
+    res.locals.bookAuthors = bookAuthors;
+    res.locals.bookAuthorsCount = booksAuthorsCount;
+    res.locals.books = books;
+    res.locals.authors = authors;
+    next();
+  } catch (error) {
+    res.locals.bookAuthors = [];
+    res.locals.books = [];
+    res.locals.authors = [];
+    console.error("Error cargando libros destacados:", error);
+    next();
+  }
+}
+
+async function getBooksByPublisherId(req, res, next) {
+  try {
+    const response = await apiClient.get(`/books/publisher/${req.params.id}`);
+    const books = response.data;
+    res.locals.books = books;
+    next();
+  } catch (error) {
+    res.locals.books = [];
+    console.error("Error cargando libros por editorial:", error);
+    next();
+  }
+}
+
+async function index(req, res) {
+  const response = await apiClient.get("/books/mostSold");
+  const booksMostSold = response.data;
+
+  // console.log(booksMostSold[0].totalSold);
+
+  const responseAuthors = await apiClient.get("/authors/authors/mostSold");
+  const authorsMostSold = responseAuthors.data;
+
+  const responsePublishers = await apiClient.get("/publishers/mostSold");
+  const publishersMostSold = responsePublishers.data;
+
+  const responseGenres = await apiClient.get("/genres/mostSold");
+  const genresMostSold = responseGenres.data;
+
+  // console.log(res.locals.bookAuthors);
+
+  res.render("partials/index", {
+    books: res.locals.books,
+    booksMostSold,
+    authors: res.locals.authors,
+    authorsMostSold,
+    publishersMostSold,
+    genresMostSold,
+    bookAuthors: res.locals.bookAuthors,
+    user: req.session.user || null,
+  });
+}
+
+async function getBookById(req, res) {
+  try {
+    const response = await apiClient.get(`/books/${req.params.id}`);
+    const book = response.data;
+    const authorsResponse = await apiClient.get(
+      `/bookAuthor/book/id/${req.params.id}`,
+    );
+    const authors = authorsResponse.data;
+    const genresResponse = await apiClient.get(
+      `/bookGenre/book/${req.params.id}`,
+    );
+    const genres = genresResponse.data;
+    console.log(genres);
+    res.render("partials/libro_detalle", {
+      book,
+      authors,
+      genres,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error cargando libro:", error);
+    res.status(404).render("error", { message: "Libro no encontrado" });
+  }
+}
+
+async function publisher(req, res) {
+  console.log(res.locals.books);
+
+  res.render("partials/publisher_detalle", {
+    publisher: res.locals.publisher,
+    books: res.locals.books,
+    user: req.session.user || null,
+  });
+}
+
+export default {
+  getBooksAndAuthors,
+  getBookById,
+  index,
+  getBooksByPublisherId,
+  publisher,
+};

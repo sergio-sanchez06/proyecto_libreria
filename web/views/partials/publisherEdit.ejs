@@ -1,0 +1,64 @@
+<%- include('../layout/header') %>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2 class="mb-0">Editar Editorial - <%= publisher.name %>
+                    </h2>
+                </div>
+                <div class="card-body">
+
+
+                    <!-- Logo actual (si existe) -->
+                    <% if (publisher.image_url) { %>
+                        <div class="text-center mb-4">
+                            <img src="<%= publisher.image_url %>" alt="Logo actual de <%= publisher.name %>"
+                                class="img-fluid rounded" style="max-height: 200px; object-fit: contain;">
+                            <p class="text-muted mt-2">Logo actual</p>
+                        </div>
+                        <% } %>
+
+                            <!-- Formulario -->
+                            <form action="/publishers/update/<%= publisher.id %>" method="POST"
+                                enctype="multipart/form-data">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nombre *</label>
+                                    <input type="text" name="name" id="name" value="<%= publisher.name %>"
+                                        class="form-control" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="country" class="form-label">País</label>
+                                    <input type="text" name="country" id="country"
+                                        value="<%= publisher.country || '' %>" class="form-control">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="descripcion" class="form-label">Descripción</label>
+                                    <textarea name="descripcion" id="descripcion" rows="5"
+                                        class="form-control"><%= publisher.descripcion || '' %></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="image" class="form-label">Nuevo logo</label>
+                                    <input type="file" name="image" id="image" class="form-control" accept="image/*">
+                                    <small class="form-text text-muted">Selecciona una nueva imagen (opcional).
+                                        Si no subes ninguna, se mantiene la actual.</small>
+                                </div>
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary me-2">Actualizar
+                                        editorial</button>
+                                    <a href="/publishers" class="btn btn-secondary">Cancelar</a>
+                                </div>
+                            </form>
+                </div>
+            </div>
+        </div>
+
+        <%- include('../layout/footer') %>
+
+    </div>
+</main>

@@ -1,13 +1,19 @@
-import PublisherModel from "../models/publisherModel";
-import pool from "../config/database";
+import PublisherModel from "../models/publisherModel.mjs";
+import pool from "../config/database.mjs";
 
 async function createPublisher(publisher) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "INSERT INTO publishers (name, country) VALUES ($1, $2) RETURNING *",
-      [publisher.name, publisher.country]
+      "INSERT INTO publishers (name, country, website, descripcion, image_url) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [
+        publisher.name,
+        publisher.country,
+        publisher.website,
+        publisher.description,
+        publisher.image_url,
+      ]
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -55,6 +61,8 @@ async function getPublisherByName(name) {
 }
 
 async function updatePublisher(publisher) {
+  console.log(publisher);
+
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -63,10 +71,27 @@ async function updatePublisher(publisher) {
        SET 
          name = COALESCE($1, name),
          country = COALESCE($2, country),
+<<<<<<< HEAD
          updated_at = NOW()
        WHERE id = $3 
        RETURNING *`,
       [publisher.name, publisher.country, publisher.id]
+=======
+         website = COALESCE($3, website),
+         descripcion = COALESCE($4, descripcion),
+         image_url = COALESCE($5, image_url),
+         updated_at = NOW()
+       WHERE id = $6 
+       RETURNING *`,
+      [
+        publisher.name,
+        publisher.country,
+        publisher.website,
+        publisher.descripcion,
+        publisher.logo_url,
+        publisher.id,
+      ]
+>>>>>>> api
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -100,7 +125,7 @@ async function getAllPublishers() {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const result = await client.query("SELECT * FROM publishers");
+    const result = await client.query("SELECT * FROM publishers order by name");
     await client.query("COMMIT");
     return result.rows.map((publisher) => new PublisherModel(publisher));
   } catch (error) {
@@ -129,6 +154,30 @@ async function getPublisherByCountry(country) {
   }
 }
 
+async function getPublishersMostSold() {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      `select p.*, sum(oi.quantity) as total_sold 
+      from publishers p left join books b on p.id = b.publisher_id 
+        join order_items oi on oi.book_id = b.id 
+      group by p.id 
+      order by total_sold desc
+      LIMIT 5;`
+    );
+    return result.rows.map((row) => {
+      const publisher = new PublisherModel(row);
+      publisher.totalSold = row.total_sold;
+      return publisher;
+    });
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createPublisher,
   getPublisherById,
@@ -137,4 +186,5 @@ export default {
   getAllPublishers,
   updatePublisher,
   deletePublisher,
+  getPublishersMostSold,
 };

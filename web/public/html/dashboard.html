@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Librería</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/forms.css">
+</head>
+<body>
+    <header>
+        <h1>Librería</h1>
+        <nav>
+            <a href="inicio.html" style="color: white; text-decoration: none;">Catálogo</a>
+            <a href="carrito.html" style="color: white; text-decoration: none; margin-left: 15px;">Mi Carrito</a>
+        </nav>
+    </header>
+
+    <main class="form-container">
+        <div class="form-card">
+            <h1>Bienvenido a tu Dashboard</h1>
+
+            <div class="profile-box" style="text-align: left; background: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <p style="margin: 10px 0;"><strong>Nombre:</strong> <span id="name"></span></p>
+                <p style="margin: 10px 0;"><strong>Email:</strong> <span id="email"></span></p>
+                <p style="margin: 10px 0;"><strong>Rol:</strong> <span id="role" style="color: #6a1b9a; font-weight: bold;"></span></p>
+                
+                <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
+                
+                <p style="margin: 10px 0;"><strong>Dirección principal:</strong> <br>
+                    <span id="default_address" style="color: #666;"></span>
+                </p>
+                <p style="margin: 10px 0;"><strong>Dirección opcional:</strong> <br>
+                    <span id="optional_address" style="color: #666;"></span>
+                </p>
+            </div>
+
+            <button id="logoutBtn" class="btn-guardar" style="background-color: #e74c3c;">Cerrar Sesión</button>
+            <p id="message"></p>
+        </div>
+    </main>
+
+    <script type="module">
+        // Importante: Asegúrate de que la ruta a auth.mjs sea correcta en tu carpeta
+        import { logout, getCurrentUser } from "../js/auth.mjs";
+
+        const user = getCurrentUser();
+        if (!user) {
+            window.location.href = "login.html";
+        } else {
+            document.getElementById("name").textContent = user.name || "Usuario";
+            document.getElementById("email").textContent = user.email;
+            document.getElementById("role").textContent = user.role || "CLIENTE";
+            document.getElementById("default_address").textContent = user.default_address || "Pendiente de completar";
+            document.getElementById("optional_address").textContent = user.optional_address || "Ninguna";
+        }
+
+        document.getElementById("logoutBtn").addEventListener("click", async () => {
+            try {
+                await logout();
+                window.location.href = "login.html";
+            } catch (error) {
+                document.getElementById("message").textContent = "Error al cerrar sesión";
+            }
+        });
+    </script>
+</body>
+</html>

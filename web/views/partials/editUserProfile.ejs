@@ -1,0 +1,50 @@
+<%- include('../layout/header.ejs') %>
+
+    <div class="container mt-5">
+        <div class="card shadow-sm mx-auto" style="max-width: 600px;">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">Actualizar mis Datos</h4>
+            </div>
+            <div class="card-body">
+                <form action="/user/edit/<%= user.id %>" method="POST">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nombre Completo</label>
+                        <input type="text" name="name" class="form-control" value="<%= user.name %>" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Correo Electrónico</label>
+                        <input type="email" class="form-control bg-light" value="<%= user.email %>" readonly>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Dirección Principal</label>
+                        <input type="text" name="default_address" class="form-control"
+                            value="<%= user.default_address %>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Dirección Opcional</label>
+                        <input type="text" name="optional_address" class="form-control"
+                            value="<%= user.optional_address %>">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Firebase UID</label>
+                        <input type="text" class="form-control form-control-sm bg-light"
+                            value="<%= user.firebase_uid %>" disabled>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/profile" class="btn btn-outline-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../layout/footer.ejs') %>

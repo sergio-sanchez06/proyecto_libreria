@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="<%= lang %>">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= t('orders.title') %> | Mi Librería
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        .order-card {
+            border-left: 5px solid #006c33;
+            /* Color verde de tu marca */
+            transition: transform 0.2s;
+        }
+
+        .order-card:hover {
+            transform: scale(1.005);
+        }
+
+        .status-badge {
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <%- include('../layout/header') %>
+
+        <div class="container my-5">
+            <h2 class="mb-4 fw-bold text-dark">
+                <i class="bi bi-bag-check-fill me-2 text-primary"></i>
+                <%= t('orders.title') %>
+            </h2>
+
+            <% if (orders && orders.length> 0) { %>
+                <% orders.forEach(order=> { %>
+                    <div class="card mb-4 shadow-sm border-0 order-card">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                            <div>
+                                <span class="text-muted small fw-bold text-uppercase">
+                                    <%= t('orders.order_no') %> #<%= order.id %>
+                                </span>
+                                <h5 class="mb-0 fw-bold">
+                                    <%= t('orders.date_label') %>:
+                                        <%= new Date(order.created_at).toLocaleDateString(lang==='eu' ? 'eu-ES' :
+                                            lang==='ca' ? 'ca-ES' : lang==='gl' ? 'gl-ES' : 'es-ES' ) %>
+                                </h5>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-primary rounded-pill status-badge mb-1 px-3">
+                                    <%= order.status %>
+                                </span>
+                                <p class="h5 mb-0 text-success fw-bold">
+                                    <%= order.total %>€
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4">
+                            <h6 class="fw-bold">
+                                <%= t('orders.shipping_details') %>:
+                            </h6>
+                            <p class="text-muted mb-3 small">
+                                <%= t('orders.shipped_to') %>: <strong>
+                                        <%= user.email %>
+                                    </strong>
+                            </p>
+
+                            <div class="table-responsive">
+                                <table class="table table-sm align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr class="small text-uppercase">
+                                            <th class="py-2">
+                                                <%= t('orders.table_book') %>
+                                            </th>
+                                            <th class="text-center py-2">
+                                                <%= t('orders.table_qty') %>
+                                            </th>
+                                            <th class="text-end py-2">
+                                                <%= t('orders.table_price') %>
+                                            </th>
+                                            <th class="text-end py-2">
+                                                <%= t('orders.table_subtotal') %>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (order.items && order.items.length> 0) { %>
+                                            <% order.items.forEach(item=> { %>
+                                                <tr>
+                                                    <td class="py-2">
+                                                        <span class="fw-semibold text-dark">
+                                                            <%= item.book.title %>
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-center">x<%= item.quantity %>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <%= item.price_at_time %>€
+                                                    </td>
+                                                    <td class="text-end fw-bold">
+                                                        <%= (item.quantity * item.price_at_time).toFixed(2) %>€
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <tr>
+                                                            <td colspan="4"
+                                                                class="text-center text-muted fst-italic py-3">
+                                                                <%= t('orders.loading_details') %>
+                                                            </td>
+                                                        </tr>
+                                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+                        <% } else { %>
+                            <div class="text-center py-5 bg-white rounded shadow-sm">
+                                <i class="bi bi-cart-x text-muted mb-3 d-block" style="font-size: 5rem;"></i>
+                                <h4 class="fw-bold">
+                                    <%= t('orders.empty_msg') %>
+                                </h4>
+                                <a href="/books/showAllBooks" class="btn btn-primary mt-3 rounded-pill px-4">
+                                    <i class="bi bi-shop me-2"></i>
+                                    <%= t('orders.btn_shop') %>
+                                </a>
+                            </div>
+                            <% } %>
+        </div>
+
+        <%- include('../layout/footer') %>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

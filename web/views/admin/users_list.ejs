@@ -1,0 +1,168 @@
+<%- include('../layout/header') %>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <main class="container py-5">
+        <div class="row mb-5 align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-6 fw-bold text-dark mb-1">
+                    <i class="bi bi-people-fill text-primary me-2"></i>
+                    <%= t('adminUsersList.title') %>
+                </h1>
+                <p class="text-muted mb-0">
+                    <%= t('adminUsersList.subtitle') %>
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a href="/admin/users/create" class="btn btn-primary btn-lg px-4 shadow-sm hover-lift rounded-3">
+                    <i class="bi bi-person-plus-fill me-2"></i>
+                    <%= t('adminUsersList.btn_new') %>
+                </a>
+            </div>
+        </div>
+
+        <% if (locals.message) { %>
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4 rounded-3 p-3"
+                role="alert">
+                <div class="d-flex align-items-center">
+                    <div class="bg-success text-white rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
+                        style="width: 32px; height: 32px;">
+                        <i class="bi bi-check-lg fs-6"></i>
+                    </div>
+                    <div class="fw-medium">
+                        <%= message %>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <% } %>
+
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-white py-3 px-4 border-bottom">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h5 class="mb-0 fw-bold text-dark">
+                                    <%= t('adminUsersList.list_title') %>
+                                </h5>
+                            </div>
+                            <div class="col text-end">
+                                <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill">
+                                    <i class="bi bi-person-check me-1"></i>
+                                    <%= users.length %>
+                                        <%= t('adminUsersList.registered_count') %>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0 align-middle">
+                                <thead class="bg-light-subtle">
+                                    <tr>
+                                        <th class="ps-4 py-3 text-uppercase fw-semibold text-muted"
+                                            style="font-size: 0.75rem;">
+                                            <%= t('adminUsersList.th_user') %>
+                                        </th>
+                                        <th class="py-3 text-uppercase fw-semibold text-muted"
+                                            style="font-size: 0.75rem;">
+                                            <%= t('adminUsersList.th_email') %>
+                                        </th>
+                                        <th class="py-3 text-uppercase fw-semibold text-muted"
+                                            style="font-size: 0.75rem;">
+                                            <%= t('adminUsersList.th_role') %>
+                                        </th>
+                                        <th class="py-3 text-uppercase fw-semibold text-muted"
+                                            style="font-size: 0.75rem;">
+                                            <%= t('adminUsersList.th_location') %>
+                                        </th>
+                                        <th class="py-3 text-uppercase fw-semibold text-muted text-center"
+                                            style="font-size: 0.75rem;">
+                                            <%= t('adminUsersList.th_actions') %>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% users.forEach(user=> { %>
+                                        <tr>
+                                            <td class="ps-4 py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm me-3 bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center"
+                                                        style="width: 42px; height: 42px; font-weight: 600;">
+                                                        <%= user.name.charAt(0).toUpperCase() %>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold text-dark">
+                                                            <%= user.name %>
+                                                        </div>
+                                                        <small class="text-muted d-block" style="font-size: 0.7rem;">ID:
+                                                            #<%= user.id %></small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><span class="text-dark">
+                                                    <%= user.email %>
+                                                </span></td>
+                                            <td>
+                                                <% if (user.role==='ADMIN' ) { %>
+                                                    <span
+                                                        class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle px-3 py-1 fw-semibold">
+                                                        <i class="bi bi-shield-check me-1"></i>
+                                                        <%= t('adminUsersList.role_admin') %>
+                                                    </span>
+                                                    <% } else { %>
+                                                        <span
+                                                            class="badge rounded-pill bg-info-subtle text-info border border-info-subtle px-3 py-1 fw-semibold">
+                                                            <i class="bi bi-person me-1"></i>
+                                                            <%= t('adminUsersList.role_client') %>
+                                                        </span>
+                                                        <% } %>
+                                            </td>
+                                            <td>
+                                                <div class="text-truncate d-flex align-items-center text-muted"
+                                                    style="max-width: 200px;" title="<%= user.default_address %>">
+                                                    <i class="bi bi-geo-alt me-1 text-primary opacity-75"></i>
+                                                    <%= user.default_address || t('adminUsersList.no_address') %>
+                                                </div>
+                                            </td>
+                                            <td class="pe-4 text-center">
+                                                <div class="d-flex justify-content-center gap-2">
+                                                    <a href="/admin/users/update/<%= user.id %>"
+                                                        class="btn btn-white btn-sm px-3 hover-bg-light border shadow-sm"
+                                                        title="<%= t('adminUsersList.btn_edit') %>">
+                                                        <i class="bi bi-pencil-square text-primary"></i>
+                                                    </a>
+                                                    <form action="/admin/users/delete/<%= user.email %>" method="POST"
+                                                        onsubmit="return confirmDelete(event, '<%= user.name %>')">
+                                                        <input type="hidden" name="id" value="<%= user.id %>">
+                                                        <input type="hidden" name="email" value="<%= user.email %>">
+                                                        <button type="submit"
+                                                            class="btn btn-white btn-sm px-3 border shadow-sm">
+                                                            <i class="bi bi-trash3 text-danger"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+    </main>
+
+    <script>
+        function confirmDelete(event, userName) {
+            // Obtenemos el mensaje traducido desde el motor de EJS
+            const message = "<%= t('adminUsersList.delete_confirm') %>";
+
+            // Mostramos el cuadro de confirmación
+            if (confirm(message)) {
+                return true; // Continúa con el envío del formulario
+            } else {
+                event.preventDefault(); // Detiene el envío
+                return false;
+            }
+        }
+    </script>

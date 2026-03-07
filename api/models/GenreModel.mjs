@@ -1,4 +1,4 @@
-export class Genre {
+export default class Genre {
   constructor({ id, name, created_at, updated_at } = {}) {
     this.id = id;
     this.name = name;

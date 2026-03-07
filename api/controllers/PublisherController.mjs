@@ -1,4 +1,4 @@
-import PublisherRepository from "../Repositories/PublisherRepository";
+import PublisherRepository from "../Repositories/PublisherRepository.mjs";
 
 async function createPublisher(req, res) {
   try {
@@ -34,7 +34,8 @@ async function getPublisherByName(req, res) {
 
 async function updatePublisher(req, res) {
   try {
-    const publisher = await PublisherRepository.updatePublisher(req.body);
+    const update_data = { id: req.params.id, ...req.body }; // Crea un objeto que añade el id al resto de parámetros del body
+    const publisher = await PublisherRepository.updatePublisher(update_data);
     res.status(200).json(publisher);
   } catch (error) {
     console.error(error);
@@ -74,6 +75,16 @@ async function getPublisherByCountry(req, res) {
   }
 }
 
+async function getPublishersMostSold(req, res) {
+  try {
+    const publishers = await PublisherRepository.getPublishersMostSold();
+    res.status(200).json(publishers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los editores" });
+  }
+}
+
 export default {
   createPublisher,
   getPublisherById,
@@ -82,4 +93,5 @@ export default {
   deletePublisher,
   getAllPublishers,
   getPublisherByCountry,
+  getPublishersMostSold,
 };

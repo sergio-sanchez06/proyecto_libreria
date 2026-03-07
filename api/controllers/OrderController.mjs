@@ -1,12 +1,19 @@
-import OrderRepository from "../Repositories/OrderRepository";
+import OrderRepository from "../Repositories/OrderRepository.mjs";
 
 async function createOrder(req, res) {
+  const { items } = req.body;
+  const user_id = req.user.id;
+
+  if (!items || items.length === 0) {
+    return res.status(400).json({ error: "El carrito está vacío" });
+  }
+
   try {
-    const order = await OrderRepository.createOrder(req.body);
+    const order = await OrderRepository.createOrder({ items, user_id });
     res.status(201).json(order);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error al crear el autor" });
+    res.status(500).json({ error: "Error al crear el pedido" });
   }
 }
 
@@ -32,7 +39,8 @@ async function getOrdersByUser(req, res) {
 
 async function updateOrder(req, res) {
   try {
-    const order = await OrderRepository.updateOrder(req.body);
+    const update_data = { id: req.params.id, ...req.body }; // Crea un objeto que añade el id al resto de parámetros del body
+    const order = await OrderRepository.updateOrder(update_data);
     res.status(200).json(order);
   } catch (error) {
     console.error(error);

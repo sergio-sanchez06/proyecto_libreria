@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= t('addAuthor.page_title') %>
+    </title>
+    <link rel="stylesheet" href="/css/add_author.css">
+</head>
+
+<body>
+
+    <%- include("../layout/header") %>
+
+        <main class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header text-white" style="background-color: #006d33;">
+                            <h2 class="mb-0 h4">
+                                <%= t('addAuthor.title') %>
+                            </h2>
+                        </div>
+                        <div class="card-body p-4">
+                            <% if (locals.error) { %>
+                                <div class="alert alert-danger border-0 shadow-sm">
+                                    <i class="bi bi-exclamation-circle me-2"></i>
+                                    <%= error %>
+                                </div>
+                                <% } %>
+
+                                    <form action="/authors/author/create" method="POST" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label fw-bold">
+                                                <%= t('addAuthor.label_name') %> *
+                                            </label>
+                                            <input type="text" name="name" id="name" class="form-control" required
+                                                placeholder="<%= t('addAuthor.placeholder_name') %>">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="country" class="form-label fw-bold">
+                                                <%= t('addAuthor.label_country') %>
+                                            </label>
+                                            <input type="text" name="country" id="country" class="form-control"
+                                                placeholder="<%= t('addAuthor.placeholder_country') %>">
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="biography" class="form-label fw-bold">
+                                                <%= t('addAuthor.label_biography') %>
+                                            </label>
+                                            <textarea name="biography" id="biography" rows="5" class="form-control"
+                                                placeholder="<%= t('addAuthor.placeholder_biography') %>"></textarea>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="photo" class="form-label fw-bold">
+                                                <%= t('addAuthor.label_photo') %>
+                                            </label>
+                                            <input type="file" name="photo" id="photo" class="form-control"
+                                                accept="image/*">
+                                            <small class="form-text text-muted">
+                                                <%= t('addAuthor.photo_help') %>
+                                            </small>
+                                        </div>
+
+                                        <div class="d-flex justify-content-center gap-2 mt-4">
+                                            <button type="submit" class="btn btn-success px-4">
+                                                <%= t('addAuthor.btn_submit') %>
+                                            </button>
+                                            <a href="/admin/dashboard" class="btn btn-secondary px-4">
+                                                <%= t('addAuthor.btn_cancel') %>
+                                            </a>
+                                        </div>
+                                    </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <%- include("../layout/footer") %>
+</body>
+
+</html>

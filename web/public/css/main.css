@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f4f7f6;
@@ -160,3 +161,174 @@ header:not(.main-header) {
     margin-bottom: 40px;
     border-radius: 0 0 20px 20px;
 }
+=======
+/* --- 1. CONFIGURACIÓN GENERAL (Paleta Casa del Libro) --- */
+:root {
+  --primary-green: #006d33; /* Verde principal */
+  --hover-green: #005628; /* Verde más oscuro */
+  --accent-yellow: #fecb00; /* Amarillo detalle */
+  --bg-cream: #fdfdfb; /* Fondo cálido */
+
+  --text-dark: #2d2d2d;
+  --text-muted: #666666;
+  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+body {
+  background-color: var(--bg-cream);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+/* --- 2. HEADER Y TÍTULOS --- */
+.hero-header {
+  background: var(--primary-green);
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 0; /* Más sobrio, estilo librería clásica */
+  box-shadow: var(--shadow-soft);
+  border-bottom: 5px solid var(--accent-yellow);
+}
+
+.section-title {
+  font-weight: 700;
+  margin-bottom: 40px;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-left: 6px solid var(--primary-green); /* Detalle verde lateral */
+  padding-left: 15px;
+}
+
+/* --- 3. TARJETAS DE LIBROS (Estructura Pro + Colores Librería) --- */
+.book-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #eee !important;
+  background: #fff;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.book-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover) !important;
+}
+
+.book-card img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: contain; /* Cambiado a contain para ver portadas completas */
+  background: #f9f9f9;
+  padding: 10px; /* Espacio para que la portada no toque los bordes */
+  transition: transform 0.5s ease;
+  border-bottom: 1px solid #eee;
+}
+
+.book-card:hover img {
+  transform: scale(1.05);
+}
+
+.book-card .card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  height: 2.6em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 10px;
+  color: var(--text-dark);
+}
+
+/* --- 4. TARJETAS DE AUTORES Y EDITORIALES --- */
+.author-card img {
+  width: 140px;
+  height: 140px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid var(--primary-green);
+  margin: 0 auto 15px;
+  display: block;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 109, 51, 0.2);
+}
+
+.author-card:hover img {
+  border-color: var(--accent-yellow);
+  transform: scale(1.05);
+}
+
+/* --- 5. COMPONENTES DE INTERFAZ --- */
+.btn-primary {
+  background-color: var(--primary-green) !important;
+  border: none !important;
+  color: white !important;
+  border-radius: 50px !important; /* Estilo píldora */
+  font-weight: 700 !important;
+  padding: 10px 25px !important;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  transition: background 0.3s;
+}
+
+.btn-books {
+  background-color: #1041f2 !important;
+  border: none !important;
+  color: white !important;
+  border-radius: none !important; /* Estilo píldora */
+  padding: 5px !important;
+  transition: background 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: var(--hover-green) !important;
+}
+
+.btn-warning {
+  background-color: var(--accent-yellow) !important;
+  border: none !important;
+  color: var(--text-dark) !important;
+  font-weight: 700 !important;
+  border-radius: 50px !important;
+}
+
+/* Carrusel */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-color: var(--primary-green);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  opacity: 0.8;
+}
+
+/* Badge de Libros */
+.badge.bg-secondary {
+  background-color: #f1f1f1 !important;
+  color: var(--primary-green);
+  border: 1px solid var(--primary-green);
+  font-weight: 600;
+}
+
+/* Lista de Géneros/Editoriales (Estilo lead-custom) */
+.list-group-item-custom {
+  background: white !important;
+  border-left: 6px solid var(--primary-green) !important;
+  margin-bottom: 10px;
+  border-radius: 4px !important;
+  transition: all 0.2s;
+}
+
+.list-group-item-custom:hover {
+  background: #f0f7f3 !important;
+  transform: translateX(5px);
+}
+
+a {
+  text-decoration: none;
+}
+>>>>>>> api

@@ -1,0 +1,35 @@
+<script type="module">
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    
+    const auth = getAuth();
+
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPassword').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                window.location.href = "/perfil";
+            } catch (err) {
+                alert("Error al entrar: " + err.message);
+            }
+        });
+    }
+
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('regEmail').value;
+            const pass = document.getElementById('regPassword').value;
+            try {
+                await createUserWithEmailAndPassword(auth, email, pass);
+                alert("Cuenta creada con éxito");
+                window.location.href = "/perfil";
+            } catch (err) {
+                alert("Error al registrarse: " + err.message);
+            }
+        });
+    }</script>

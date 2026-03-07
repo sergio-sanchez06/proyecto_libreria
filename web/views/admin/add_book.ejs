@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= t('addBook.page_title') %></title>
+    <link rel="stylesheet" href="/css/add_book.css">
+</head>
+
+<body>
+
+    <%- include('../layout/header') %>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header text-white" style="background-color: #006d33;">
+                        <h2 class="mb-0 h4"><%= t('addBook.title') %></h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <% if (locals.error) { %>
+                            <div class="alert alert-danger border-0 shadow-sm">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %>
+                            </div>
+                        <% } %>
+
+                        <form action="/admin/books/create" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-8 mb-3">
+                                    <label for="title" class="form-label fw-bold"><%= t('addBook.label_title') %> *</label>
+                                    <input type="text" name="title" id="title" class="form-control" required>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="isbn" class="form-label fw-bold"><%= t('addBook.label_isbn') %></label>
+                                    <input type="text" name="isbn" id="isbn" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="price" class="form-label fw-bold"><%= t('addBook.label_price') %> *</label>
+                                    <input type="number" step="0.01" name="price" id="price" class="form-control" required>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <label for="stock" class="form-label fw-bold"><%= t('addBook.label_stock') %> *</label>
+                                    <input type="number" name="stock" id="stock" class="form-control" min="0" required>
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <label for="released_year" class="form-label fw-bold"><%= t('addBook.label_year') %></label>
+                                    <input type="number" name="releashed_year" id="releashed_year" class="form-control" min="1000" max="2100">
+                                </div>
+
+                                <div class="col-md-3 mb-3">
+                                    <label for="pages" class="form-label fw-bold"><%= t('addBook.label_pages') %></label>
+                                    <input type="number" name="pages" id="pages" class="form-control" min="1">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="format" class="form-label fw-bold"><%= t('addBook.label_format') %></label>
+                                    <select name="format" id="format" class="form-select">
+                                        <option value=""><%= t('addBook.select_format') %></option>
+                                        <option value="Paperback">Paperback</option>
+                                        <option value="Hardcover">Hardcover</option>
+                                        <option value="eBook">Ebook</option>
+                                        <option value="AudioBook">Audiobook</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="language" class="form-label fw-bold"><%= t('addBook.label_language') %></label>
+                                    <input type="text" name="language" id="language" class="form-control" value="Español">
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="publisher_id" class="form-label fw-bold"><%= t('addBook.label_publisher') %> *</label>
+                                    <select name="publisher_id" id="publisher_id" class="form-select" required>
+                                        <option value=""><%= t('addBook.select_publisher') %></option>
+                                        <% publishers.forEach(publisher => { %>
+                                            <option value="<%= publisher.id %>"><%= publisher.name %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="synopsis" class="form-label fw-bold"><%= t('addBook.label_synopsis') %></label>
+                                <textarea name="synopsis" id="synopsis" rows="6" class="form-control"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="author_ids" class="form-label fw-bold"><%= t('addBook.label_authors') %></label>
+                                <select name="author_ids[]" id="author_ids" class="form-select" multiple size="6">
+                                    <% authors.forEach(author => { %>
+                                        <option value="<%= author.id %>"><%= author.name %></option>
+                                    <% }) %>
+                                </select>
+                                <small class="form-text text-muted"><%= t('addBook.multiple_help') %></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="genre_ids" class="form-label fw-bold"><%= t('addBook.label_genres') %></label>
+                                <select name="genre_ids[]" id="genre_ids" class="form-select" multiple size="6">
+                                    <% genres.forEach(genre => { %>
+                                        <option value="<%= genre.id %>"><%= genre.name %></option>
+                                    <% }) %>
+                                </select>
+                                <small class="form-text text-muted"><%= t('addBook.multiple_help') %></small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cover" class="form-label fw-bold"><%= t('addBook.label_cover') %></label>
+                                <input type="file" name="cover" id="cover" class="form-control" accept="image/*">
+                                <small class="form-text text-muted"><%= t('addBook.cover_help') %></small>
+                            </div>
+
+                            <div class="d-flex justify-content-center gap-2 mt-4">
+                                <button type="submit" class="btn px-4 text-white" style="background-color: #006d33;">
+                                    <%= t('addBook.btn_submit') %>
+                                </button>
+                                <a href="/admin/dashboard" class="btn btn-secondary px-4">
+                                    <%= t('addUser.btn_cancel') %>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../layout/footer') %>
+
+</body>
+</html>

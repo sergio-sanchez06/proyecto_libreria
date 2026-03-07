@@ -4,12 +4,18 @@
 *.gif
 *.bmp
 *.svg
+*.avif
+*.zip
+*.rar
 *.webp
 *.tiff
 *.env
 *.sql
 *.vscode
 
+web/public/js/firebaseConfig.mjs
+
+*.json
 .env
 .env.local
 .env.*.local

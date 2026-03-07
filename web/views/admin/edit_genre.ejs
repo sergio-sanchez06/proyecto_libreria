@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= t('editGenre.page_title') %></title>
+    <link rel="stylesheet" href="/css/add_genre.css">
+</head>
+
+<body>
+
+    <%- include("../layout/header") %>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header text-white text-center" style="background-color: #006d33;">
+                        <h2 class="mb-0 h4">
+                            <%= t('editGenre.title') %>: <%= genre.name %>
+                        </h2>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <% if (locals.error) { %>
+                            <div class="alert alert-danger border-0 shadow-sm">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i><%= error %>
+                            </div>
+                        <% } %>
+
+                        <form action="/genres/update/<%= genre.id %>" method="POST">
+                            <div class="mb-4">
+                                <label for="name" class="form-label fw-bold"><%= t('addGenre.label_name') %> *</label>
+                                <input type="text" name="name" id="name" value="<%= genre.name %>"
+                                    class="form-control" placeholder="<%= t('addGenre.placeholder_name') %>"
+                                    required>
+                                <small class="text-muted"><%= t('editGenre.help_text') %></small>
+                                <input type="hidden" name="id" value="<%= genre.id %>">
+                            </div>
+
+                            <div class="d-flex justify-content-center gap-2 mt-4">
+                                <button type="submit" class="btn btn-lg text-white px-4" style="background-color: #006d33;">
+                                    <%= t('editAuthor.btn_save') %>
+                                </button>
+                                <a href="/genres/<%= genre.name %>" class="btn btn-secondary btn-lg px-4">
+                                    <%= t('addAuthor.btn_cancel') %>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include ("../layout/footer") %>
+</body>
+</html>

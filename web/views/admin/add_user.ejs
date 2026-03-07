@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+
+<head>
+    <link rel="stylesheet" href="/css/add_genre.css">
+    <title>
+        <%= t('addUser.page_title') %>
+    </title>
+</head>
+
+<body>
+
+    <%- include ("../layout/header") %>
+
+        <main class="container-small">
+            <h1 style="background-color: #006d33; color: white">
+                <%= t('addUser.title') %>
+            </h1>
+            <p class="subtitle text-center">
+                <%= t('addUser.subtitle') %>
+            </p>
+
+            <% if (locals.error) { %>
+                <div class="alert-error">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <form action="/admin/users/create" method="POST" class="form-admin">
+                        <div class="form-group">
+                            <label for="name">
+                                <%= t('addUser.label_name') %>:
+                            </label>
+                            <input type="text" id="name" name="name" required
+                                placeholder="<%= t('addUser.placeholder_name') %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">
+                                <%= t('addUser.label_email') %>:
+                            </label>
+                            <input type="email" id="email" name="email" required
+                                placeholder="<%= t('addUser.placeholder_email') %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">
+                                <%= t('addUser.label_password') %>:
+                            </label>
+                            <input type="password" id="password" name="password" required minlength="6">
+                            <small>
+                                <%= t('addUser.password_help') %>
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="role">
+                                <%= t('addUser.label_role') %>:
+                            </label>
+                            <select id="role" name="role">
+                                <option value="CLIENT">
+                                    <%= t('addUser.role_client') %>
+                                </option>
+                                <option value="ADMIN">
+                                    <%= t('addUser.role_admin') %>
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="default_address">
+                                <%= t('addUser.label_address_default') %>:
+                            </label>
+                            <input type="text" id="default_address" name="default_address" required
+                                placeholder="<%= t('addUser.placeholder_address') %>">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="optional_address">
+                                <%= t('addUser.label_address_optional') %>:
+                            </label>
+                            <input type="text" id="optional_address" name="optional_address"
+                                placeholder="<%= t('addUser.placeholder_address') %>">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">
+                                <%= t('addUser.btn_submit') %>
+                            </button>
+                            <a href="/admin/users" class="btn-secondary">
+                                <%= t('addUser.btn_cancel') %>
+                            </a>
+                        </div>
+                    </form>
+        </main>
+
+        <%- include ("../layout/footer") %>
+
+</body>
+
+</html>

@@ -1,5 +1,6 @@
-import Book from "../models/BookModel";
-import pool from "../config/db";
+import Book from "../models/BookModel.mjs";
+import pool from "../config/database.mjs";
+import axios from "axios";
 
 async function createBook(book) {
   const client = await pool.connect();
@@ -34,14 +35,12 @@ async function createBook(book) {
 async function getBookById(id) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
-    const result = await client.query("SELECT * FROM books WHERE id = $1", [
-      id,
-    ]);
-    await client.query("COMMIT");
+    const result = await client.query(
+      "SELECT b.* FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.id = $1",
+      [id]
+    );
     return new Book(result.rows[0]);
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -51,26 +50,42 @@ async function getBookById(id) {
 async function getBookByTitle(title) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
-    const result = await client.query("SELECT * FROM books WHERE title = $1", [
-      title,
-    ]);
-    await client.query("COMMIT");
+    const result = await client.query(
+      "SELECT b.* FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.title = $1",
+      [title]
+    );
     return new Book(result.rows[0]);
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
   }
 }
 
-async function updateBook(book) {
+async function updateBook(id, book) {
   const client = await pool.connect();
+
+  console.log(`Datos del libro a modificar: ${book}`);
+
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "UPDATE books SET title = $1, isbn = $2, price = $3, stock = $4, releashed_year = $5, format = $6, language = $7, pages = $8, synopsis = $9, cover_url = $10, publisher_id = $11 WHERE id = $12 RETURNING *",
+      `UPDATE books 
+       SET 
+         title = COALESCE($1, title),
+         isbn = COALESCE($2, isbn),
+         price = COALESCE($3, price),
+         stock = COALESCE($4, stock),
+         releashed_year = COALESCE($5, releashed_year),
+         format = COALESCE($6, format),
+         language = COALESCE($7, language),
+         pages = COALESCE($8, pages),
+         synopsis = COALESCE($9, synopsis),
+         cover_url = COALESCE($10, cover_url),
+         publisher_id = COALESCE($11, publisher_id),
+         updated_at = NOW()
+       WHERE id = $12 
+       RETURNING *`,
       [
         book.title,
         book.isbn,
@@ -83,7 +98,7 @@ async function updateBook(book) {
         book.synopsis,
         book.cover_url,
         book.publisher_id,
-        book.id,
+        id,
       ]
     );
     await client.query("COMMIT");
@@ -110,16 +125,151 @@ async function deleteBook(id) {
   }
 }
 
-async function getAllBooks() {
+async function getBooksByPublisherId(publisher_id) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      "SELECT b.*, p.name as publisher_name FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.publisher_id = $1",
+      [publisher_id]
+    );
+    return result.rows.map((book) => new Book(book));
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function updateAllCovers() {
+  const client = await pool.connect();
+  try {
+    // 1. Obtener todos los libros que no tienen portada o tienen una vacía
+    const { rows: books } = await client.query(
+      "SELECT id, isbn FROM books WHERE cover_url IS NULL OR cover_url = ''"
+    );
+
+    console.log(`Se encontraron ${books.length} libros para actualizar.`);
+
+    const updatedBooks = [];
+
+    // 2. Recorrer cada libro y buscar su portada en Google
+    for (const book of books) {
+      if (book.isbn) {
+        try {
+          // Reutilizamos la lógica de buscar en Google (puedes extraerla a una función aparte)
+          const { data } = await axios.get(
+            `https://www.googleapis.com/books/v1/volumes?q=isbn:${book.isbn}`
+          );
+
+          if (data.totalItems > 0 && data.items[0].volumeInfo.imageLinks) {
+            const url = data.items[0].volumeInfo.imageLinks.thumbnail.replace(
+              "http://",
+              "https://"
+            );
+
+            // 3. Actualizar este libro específico en la BBDD
+            const updateRes = await client.query(
+              "UPDATE books SET cover_url = $1 WHERE id = $2 RETURNING *",
+              [url, book.id]
+            );
+
+            updatedBooks.push(updateRes.rows[0]);
+            console.log(`Portada actualizada para ID: ${book.id}`);
+          }
+
+          // Opcional: Pequeña pausa para no saturar la API de Google (Rate Limiting)
+          await new Promise((resolve) => setTimeout(resolve, 200));
+        } catch (err) {
+          console.error(`Error con el libro ${book.id}: ${err.message}`);
+        }
+      }
+    }
+    return updatedBooks;
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function getBookByFeatures(features) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const result = await client.query("SELECT * FROM books");
+    const result = await client.query(
+      `
+      SELECT b.id, b.title, b.cover_url, b.price, a.name AS author_name
+      FROM public.books b
+      INNER JOIN public.book_authors ba ON b.id = ba.book_id
+      INNER JOIN public.authors a ON ba.author_id = a.id
+      ORDER BY b.created_at DESC
+      LIMIT $1
+      `,
+      [5]
+    );
     await client.query("COMMIT");
     return result.rows.map((book) => new Book(book));
   } catch (error) {
     await client.query("ROLLBACK");
     console.log(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function getAllBooks() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query("SELECT * FROM books");
+    return result.rows.map((book) => new Book(book));
+  } catch (error) {
+    console.log(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function updateStock(book_id, quantity, client) {
+  await client.query("UPDATE books SET stock = stock - $1 WHERE id = $2", [
+    quantity,
+    book_id,
+  ]);
+}
+
+async function getBooksByIds(bookIds) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      "SELECT * FROM books WHERE id = ANY($1)",
+      [bookIds]
+    );
+    return result.rows.map((book) => new Book(book));
+  } catch (error) {
+    console.log(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function getBooksMostSold() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `select b.*, sum(oi.quantity) as total_sold 
+      from books b right join order_items oi on b.id = oi.book_id 
+      group by b.id 
+      order by total_sold desc
+      LIMIT 5;`
+    );
+    return result.rows.map((row) => {
+      const book = new Book(row);
+      book.totalSold = row.total_sold;
+      return book;
+    });
+  } catch (error) {
     throw error;
   } finally {
     client.release();
@@ -132,5 +282,11 @@ export default {
   getBookByTitle,
   updateBook,
   deleteBook,
+  updateAllCovers,
+  getBookByFeatures,
   getAllBooks,
+  getBooksByPublisherId,
+  updateStock,
+  getBooksByIds,
+  getBooksMostSold,
 };

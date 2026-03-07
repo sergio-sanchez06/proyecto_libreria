@@ -1,0 +1,57 @@
+/* Estilos específicos para la vista de Géneros */
+body {
+  background-color: #f4f7f9;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.container h1 {
+  font-weight: 700;
+  color: #2c3e50;
+  margin-top: 30px;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #667eea;
+  display: inline-block;
+}
+
+/* Rediseño de la clase .lead para que parezca una tarjeta */
+.genre-row {
+  background: white;
+  margin-bottom: 12px;
+  padding: 15px 20px;
+  border-radius: 10px;
+  border: 1px solid #e1e8ed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.genre-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.15);
+  border-color: #667eea;
+}
+
+.genre-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin: 0;
+}
+
+/* Botón personalizado */
+.btn-view-more {
+  background-color: #667eea;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 20px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.btn-view-more:hover {
+  background-color: #5567d5;
+  color: white;
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= t('editPublisher.page_title') %> - <%= publisher.name %></title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+
+    <%- include('../layout/header') %>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header text-white text-center" style="background-color: #006d33;">
+                        <h2 class="mb-0 h4"><%= t('editPublisher.title') %>: <%= publisher.name %></h2>
+                    </div>
+                    <div class="card-body p-4">
+
+                        <% if (publisher.image_url) { %>
+                            <div class="text-center mb-4">
+                                <label class="form-label d-block fw-bold text-muted small"><%= t('editBook.current_cover') %></label>
+                                <img src="<%= publisher.image_url %>" alt="Logo <%= publisher.name %>"
+                                    class="img-fluid rounded shadow-sm" style="max-height: 150px; object-fit: contain;">
+                            </div>
+                        <% } %>
+
+                        <form action="/publisher/update/<%= publisher.id %>" method="POST" enctype="multipart/form-data">
+                            
+                            <div class="mb-3">
+                                <label for="name" class="form-label fw-bold"><%= t('addPublisher.label_name') %> *</label>
+                                <input type="text" name="name" id="name" value="<%= publisher.name %>"
+                                    class="form-control" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="country" class="form-label fw-bold"><%= t('addPublisher.label_country') %></label>
+                                <input type="text" name="country" id="country"
+                                    value="<%= publisher.country || '' %>" class="form-control">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label fw-bold"><%= t('addPublisher.label_description') %></label>
+                                <textarea name="descripcion" id="descripcion" rows="5"
+                                    class="form-control"><%= publisher.descripcion || '' %></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="publisher_logo" class="form-label fw-bold"><%= t('editPublisher.label_new_logo') %></label>
+                                <input type="file" name="publisher_logo" id="publisher_logo"
+                                    class="form-control" accept="image/*">
+                                <small class="form-text text-muted"><%= t('editPublisher.logo_help_edit') %></small>
+                            </div>
+
+                            <div class="d-flex justify-content-center gap-2 mt-4">
+                                <button type="submit" class="btn text-white px-4" style="background-color: #006d33;">
+                                    <%= t('editAuthor.btn_save') %>
+                                </button>
+                                <a href="/publisher/<%= publisher.id %>" class="btn btn-secondary px-4">
+                                    <%= t('addAuthor.btn_cancel') %>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../layout/footer') %>
+</body>
+</html>

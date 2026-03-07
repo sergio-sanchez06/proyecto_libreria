@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= t('addGenre.page_title') %></title>
+    <link rel="stylesheet" href="/css/add_genre.css">
+</head>
+
+<body>
+
+    <%- include ("../layout/header") %>
+
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header text-white" style="background-color: #006d33;">
+                        <h2 class="mb-0 h4"><i class="bi bi-tags me-2"></i><%= t('addGenre.title') %></h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <% if (locals.error) { %>
+                            <div class="alert alert-danger border-0 shadow-sm">
+                                <i class="bi bi-exclamation-circle me-2"></i><%= error %>
+                            </div>
+                        <% } %>
+
+                        <form action="/genres/create" method="POST">
+                            <div class="mb-4">
+                                <label for="name" class="form-label fw-bold"><%= t('addGenre.label_name') %> *</label>
+                                <input type="text" name="name" id="name" class="form-control" 
+                                       placeholder="<%= t('addGenre.placeholder_name') %>" required>
+                            </div>
+
+                            <div class="d-flex justify-content-center gap-2">
+                                <button type="submit" class="btn px-4 text-white" style="background-color: #006d33;">
+                                    <%= t('addGenre.btn_submit') %>
+                                </button>
+                                <a href="/admin/dashboard" class="btn btn-secondary px-4">
+                                    <%= t('addAuthor.btn_cancel') %>
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include ("../layout/footer") %>
+</body>
+</html>

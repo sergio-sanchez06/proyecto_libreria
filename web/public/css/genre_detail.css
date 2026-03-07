@@ -1,0 +1,62 @@
+/* Contenedor de la tarjeta de libro */
+.book-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%; /* Para que todas midan lo mismo en la fila */
+  border: 1px solid #e1e8ed;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Imagen de la portada */
+.book-cover-container {
+  height: 300px;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+.book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ajusta la imagen sin deformarla */
+}
+
+/* Cuerpo de la tarjeta */
+.book-body {
+  padding: 1.25rem;
+}
+
+.book-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Corta el texto a 2 líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-synopsis {
+  font-size: 0.9rem;
+  color: #636e72;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Corta la sinopsis a 3 líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Botones de administración (parte inferior) */
+.admin-actions {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 30px;
+  border: 1px dashed #d63031;
+}

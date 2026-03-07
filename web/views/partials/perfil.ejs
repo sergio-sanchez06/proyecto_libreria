@@ -1,0 +1,85 @@
+<%- include('../layout/header') %>
+
+    <div class="container mt-5">
+        <div class="card shadow-sm mx-auto border-0" style="max-width: 600px;">
+            <div class="card-header text-white d-flex justify-content-between align-items-center py-3"
+                style="background-color: #006c33; border-radius: 0.5rem 0.5rem 0 0;">
+                <h4 class="mb-0 fw-bold">
+                    <%= t('profile.title') %>
+                </h4>
+                <a href="/user/edit/<%= user.id %>" class="btn btn-light btn-sm rounded-pill px-3">
+                    <i class="bi bi-pencil"></i>
+                    <%= t('profile.edit_data') %>
+                </a>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="rounded-circle bg-light d-inline-block p-4 mb-2 shadow-sm">
+                        <i class="bi bi-person-fill fs-1 text-secondary"></i>
+                    </div>
+                    <h5 class="fw-bold mt-2">
+                        <%= user.name %>
+                    </h5>
+                    <span class="badge rounded-pill bg-info text-dark">
+                        <%= user.role==='ADMIN' ? 'ADMIN' : t('profile.role_client') %>
+                    </span>
+                </div>
+
+                <ul class="list-group list-group-flush border-top border-bottom">
+                    <li class="list-group-item py-3">
+                        <i class="bi bi-envelope me-2 text-muted"></i>
+                        <strong>
+                            <%= t('profile.email') %>:
+                        </strong>
+                        <span class="ms-1">
+                            <%= user.email %>
+                        </span>
+                    </li>
+                    <li class="list-group-item py-3">
+                        <i class="bi bi-geo-alt me-2 text-muted"></i>
+                        <strong>
+                            <%= t('profile.address_main') %>:
+                        </strong>
+                        <span class="ms-1">
+                            <%= user.default_address || t('profile.not_defined') %>
+                        </span>
+                    </li>
+                    <li class="list-group-item py-3">
+                        <i class="bi bi-geo me-2 text-muted"></i>
+                        <strong>
+                            <%= t('profile.address_opt') %>:
+                        </strong>
+                        <span class="ms-1 text-muted small italic">
+                            <%= user.optional_address || t('profile.not_defined') %>
+                        </span>
+                    </li>
+                    <li class="list-group-item py-3 text-muted small bg-light-subtle">
+                        <strong>Firebase UID:</strong>
+                        <div class="mt-1"><code class="user-select-all"><%= user.firebase_uid %></code></div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-footer text-center bg-white border-0 pb-0">
+                <a href="/user/myOrders" class="btn btn-outline-primary rounded-pill px-4 w-100">
+                    <i class="bi bi-bag-check me-2"></i>
+                    <%= t('profile.view_orders') %>
+                </a>
+            </div>
+
+            <div class="card-footer text-center bg-white border-0 pt-3 pb-4">
+                <% const confirmDel=t('profile.delete_confirm'); %>
+                    <form action="/user/dismissSelf" method="post">
+                        <input type="hidden" name="id" value="<%= user.id %>">
+                        <button type="submit" class="btn btn-link text-danger text-decoration-none small"
+                            onclick="return confirm('<%= confirmDel %>')">
+                            <i class="bi bi-person-x me-1"></i>
+                            <%= t('profile.delete_account') %>
+                        </button>
+                    </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../layout/footer') %>

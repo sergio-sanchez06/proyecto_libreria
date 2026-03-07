@@ -1,4 +1,4 @@
-export class User {
+export default class User {
   constructor({
     id,
     name,
@@ -19,5 +19,12 @@ export class User {
     this.optional_address = optional_address;
     this.created_at = created_at;
     this.updated_at = updated_at;
+  }
+  isAdmin() {
+    return this.role === "ADMIN";
+  }
+
+  isClient() {
+    return this.role === "CLIENT";
   }
 }
