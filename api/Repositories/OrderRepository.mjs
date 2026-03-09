@@ -22,7 +22,7 @@ async function createOrder({ user_id, items }) {
       if (!book) throw new Error(`Libro no encontrado: ID ${item.book_id}`);
       if (book.stock < item.quantity) {
         throw new Error(
-          `Stock insuficiente para "${book.title}". Disponible: ${book.stock}`
+          `Stock insuficiente para "${book.title}". Disponible: ${book.stock}`,
         );
       }
       total += book.price * item.quantity;
@@ -31,7 +31,7 @@ async function createOrder({ user_id, items }) {
 
     const orderResult = await client.query(
       "INSERT INTO orders (user_id, total, status) VALUES ($1, $2, 'PENDIENTE') RETURNING *",
-      [user_id, total]
+      [user_id, total],
     );
     const order = new Order(orderResult.rows[0]);
 
@@ -44,7 +44,7 @@ async function createOrder({ user_id, items }) {
           quantity: item.quantity,
           price_at_time: item.currentPrice,
         },
-        client
+        client,
       );
       await BookRepository.updateStock(item.book_id, item.quantity, client);
     }
@@ -68,7 +68,7 @@ async function getOrderById(id) {
 async function getOrdersByUser(userId) {
   const result = await pool.query(
     "SELECT * FROM orders WHERE user_id = $1 ORDER BY created_at DESC",
-    [userId]
+    [userId],
   );
   return result.rows.map((row) => new Order(row));
 }
@@ -82,7 +82,7 @@ async function updateOrder(order) {
          updated_at = NOW()
      WHERE id = $4 
      RETURNING *`,
-    [order.user_id, order.total, order.status, order.id]
+    [order.user_id, order.total, order.status, order.id],
   );
   return result.rows[0] ? new Order(result.rows[0]) : null;
 }
@@ -105,7 +105,7 @@ async function deleteOrder(id) {
 
 async function getAllOrders() {
   const result = await pool.query(
-    "SELECT * FROM orders ORDER BY created_at DESC"
+    "SELECT * FROM orders ORDER BY created_at DESC",
   );
   return result.rows.map((row) => new Order(row));
 }

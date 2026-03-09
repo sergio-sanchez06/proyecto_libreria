@@ -23,19 +23,32 @@ async function getManageOrders(req, res) {
     const response = await api.get("/orders");
     const orders = response.data;
 
-    // 2. En lugar de un FOR con AWAIT, lanzamos todas las peticiones a la vez
-    // Promise.all permite que el pooler de Supabase gestione la cola
-    await Promise.all(
-      orders.map(async (order) => {
+    const batchSize = 5; // Límite de seguridad para el pool
+    for (let i = 0; i < orders.length; i += batchSize) {
+      const batch = orders.slice(i, i + batchSize);
+      await Promise.all(batch.map(async (order) => {
         try {
           const resItems = await api.get("/orderItems/" + order.id);
-          console.log(resItems.data);
-          order.items = resItems.data;
+          order.items = resItems.data; // Aquí se inyectan los OrderItem
         } catch (err) {
-          order.items = []; // Evitamos que un error en un pedido rompa todo
+          order.items = [];
         }
-      }),
-    );
+      }));
+    }
+
+    // 2. En lugar de un FOR con AWAIT, lanzamos todas las peticiones a la vez
+    // Promise.all permite que el pooler de Supabase gestione la cola
+    // await Promise.all(
+    //   orders.map(async (order) => {
+    //     try {
+    //       const resItems = await api.get("/orderItems/" + order.id);
+    //       console.log(resItems.data);
+    //       order.items = resItems.data;
+    //     } catch (err) {
+    //       order.items = []; // Evitamos que un error en un pedido rompa todo
+    //     }
+    //   }),
+    // );
 
     res.render("admin/orders", { orders, lang: req.session.lang });
   } catch (error) {
