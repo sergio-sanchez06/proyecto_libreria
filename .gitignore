@@ -21,3 +21,8 @@ web/public/js/firebaseConfig.mjs
 .env.*.local
 .env.*
 /node_modules
+
+!es.json
+!ca.json
+!gl.json
+!eu.json
