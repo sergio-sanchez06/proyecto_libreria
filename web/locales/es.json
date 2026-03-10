@@ -179,7 +179,13 @@
     "table_subtotal": "Subtotal",
     "loading_details": "Cargando detalles...",
     "empty_msg": "Aún no has realizado ningún pedido",
-    "btn_shop": "Ir a la tienda"
+    "btn_shop": "Ir a la tienda",
+    "status_pending": "Pendiente",
+    "status_paid": "Pagado",
+    "status_processing": "Procesando",
+    "status_shipped": "Enviado",
+    "status_delivered": "Entregado",
+    "status_cancelled": "Cancelado"
   },
   "adminOrders": {
     "title": "Gestión de Pedidos",

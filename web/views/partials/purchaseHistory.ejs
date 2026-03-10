@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= lang %>">
+<html lang="<%= currentLanguage %>">
 
 <head>
     <meta charset="UTF-8">
@@ -46,17 +46,26 @@
                                 </span>
                                 <h5 class="mb-0 fw-bold">
                                     <%= t('orders.date_label') %>:
-                                        <%= new Date(order.created_at).toLocaleDateString(lang==='eu' ? 'eu-ES' :
-                                            lang==='ca' ? 'ca-ES' : lang==='gl' ? 'gl-ES' : 'es-ES' ) %>
+                                        <%= new Date(order.created_at).toLocaleDateString(currentLanguage==='eu'
+                                            ? 'eu-ES' : currentLanguage==='ca' ? 'ca-ES' : currentLanguage==='gl'
+                                            ? 'gl-ES' : 'es-ES' ) %>
                                 </h5>
                             </div>
                             <div class="text-end">
-                                <span class="badge bg-primary rounded-pill status-badge mb-1 px-3">
-                                    <%= order.status %>
-                                </span>
-                                <p class="h5 mb-0 text-success fw-bold">
-                                    <%= order.total %>€
-                                </p>
+                                <% let statusKey='status_pending' ; let badgeClass='bg-warning text-dark' ;
+                                    switch(order.status) { case 'PENDIENTE' : statusKey='status_pending' ;
+                                    badgeClass='bg-warning text-dark' ; break; case 'PAGADO' : statusKey='status_paid' ;
+                                    badgeClass='bg-info text-white' ; break; case 'PROCESANDO' :
+                                    statusKey='status_processing' ; badgeClass='bg-primary' ; break; case 'ENVIADO' :
+                                    statusKey='status_shipped' ; badgeClass='bg-primary' ; break; case 'ENTREGADO' :
+                                    statusKey='status_delivered' ; badgeClass='bg-success' ; break; case 'CANCELADO' :
+                                    statusKey='status_cancelled' ; badgeClass='bg-danger' ; break; } %>
+                                    <span class="badge <%= badgeClass %> rounded-pill status-badge mb-1 px-3">
+                                        <%= t('orders.' + statusKey) %>
+                                    </span>
+                                    <p class="h5 mb-0 text-success fw-bold">
+                                        <%= order.total %>€
+                                    </p>
                             </div>
                         </div>
 

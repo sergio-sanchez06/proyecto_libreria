@@ -14,7 +14,7 @@ import controlUserAgent from "./middlewares/controlUserAgent.mjs";
 import i18next from "i18next";
 import i18nextHttpMiddleware from "i18next-http-middleware";
 import i18nextFsBackend from "i18next-fs-backend";
-
+import * as useragent from "express-useragent";
 import cookieParser from "cookie-parser";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -22,14 +22,14 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Middleware de detección de User Agent
+app.use(useragent.express());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-
-// Middleware para detectar el User Agent y filtrar los accesos de agentes de IA
-app.use(controlUserAgent.filterUserAgent);
 
 // Servir archivos estáticos de public/
 app.use(express.static(path.join(__dirname, "public")));
@@ -66,6 +66,10 @@ i18next
 
 // Middleware para manejar la internacionalización
 app.use(i18nextHttpMiddleware.handle(i18next));
+
+// Middleware para detectar el User Agent y filtrar los accesos de agentes de IA
+app.use(controlUserAgent.filterIA);
+app.use(controlUserAgent.apiLimiter);
 
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null; // disponible en TODAS las vistas

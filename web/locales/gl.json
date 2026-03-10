@@ -179,7 +179,13 @@
     "table_subtotal": "Subtotal",
     "loading_details": "Cargando detalles...",
     "empty_msg": "Aínda non realizaches ningún pedido",
-    "btn_shop": "Ir á tenda"
+    "btn_shop": "Ir á tenda",
+    "status_pending": "Pendente",
+    "status_paid": "Pagado",
+    "status_processing": "Procesando",
+    "status_shipped": "Enviado",
+    "status_delivered": "Entregado",
+    "status_cancelled": "Cancelado"
   },
   "adminOrders": {
     "title": "Xestión de Pedidos",

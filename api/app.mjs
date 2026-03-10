@@ -10,16 +10,22 @@ import userRouter from "./router/UserRouter.mjs";
 import bookAuthorRouter from "./router/BookAuthorRouter.mjs";
 import bookGenreRouter from "./router/BookGenreRouter.mjs";
 import orderItemRouter from "./router/OrderItemRouter.mjs";
+import apiSecurity from "./middlewares/controlUserAgent.mjs";
+import * as userAgent from "express-useragent";
 
 const port = 3000;
 const app = express();
+
+app.use(userAgent.express());
+app.use(apiSecurity.filterIA);
+app.use(apiSecurity.apiLimiter);
 
 // app.use(cors());
 app.use(
   cors({
     origin: "http://localhost:3001",
     credentials: true,
-  })
+  }),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

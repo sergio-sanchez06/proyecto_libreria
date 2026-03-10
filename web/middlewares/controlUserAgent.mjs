@@ -1,30 +1,57 @@
-async function filterUserAgent(req, res, next) {
-  const USERAGENTS = [
-    "gptbot",
-    "chatgpt-user",
-    "claudebot",
-    "applebot-extended",
-    "ccbot",
-    "imagesiftbot",
-    "perplexitybot",
-  ];
+import rateLimit from "express-rate-limit";
 
-  let userAgent = req.get("User-Agent") || "";
+/**
+ * CONFIGURACIÓN DE RATE LIMIT
+ * Se define como una constante que ejecuta la función rateLimit()
+ * para que la instancia se cree al inicializar la aplicación.
+ */
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: (req, res) => {
+    // Si el usuario está logueado y es ADMIN, le damos manga ancha (ej. 1000 peticiones)
+    if (req.session && req.session?.user?.role === "ADMIN") {
+      return 1000;
+    }
+    // Para el resto de usuarios o anónimos, el límite estándar
+    return 100;
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    status: 429,
+    error: "Too Many Requests",
+    message: "Límite de peticiones excedido. Inténtalo de nuevo más tarde.",
+  },
+});
 
-  userAgent = userAgent.toLowerCase();
+/**
+ * MIDDLEWARE DE FILTRADO DE AGENTES
+ */
+function filterIA(req, res, next) {
+  const ua = req.useragent;
 
-  const isAI = USERAGENTS.some((bot) => userAgent.includes(bot.toLowerCase())); // Filtra en el conjunto de datos
+  // Si por alguna razón el middleware de useragent no cargó en app.mjs
+  if (!ua) {
+    return next();
+  }
 
-  if (isAI) {
-    console.log("IA detectada");
-    return res
-      .status(403)
-      .send("El acceso de la libreria está restringido a las IAs");
+  const aiKeywords =
+    /gptbot|chatgpt-user|claudebot|perplexitybot|applebot-extended/i;
+
+  if (ua.isBot || aiKeywords.test(ua.source)) {
+    console.warn(`[SECURITY ALERT] IA Bloqueada: ${ua.source} | IP: ${req.ip}`);
+
+    return res.status(403).json({
+      status: 403,
+      error: "Forbidden",
+      message: "El acceso automatizado a la librería está restringido.",
+    });
   }
 
   next();
 }
 
 export default {
-  filterUserAgent,
+  apiLimiter,
+  filterIA,
 };

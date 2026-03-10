@@ -179,7 +179,13 @@
     "table_subtotal": "Azpitotala",
     "loading_details": "Xehetasunak kargatzen...",
     "empty_msg": "Oraindik ez duzu eskaerarik egin",
-    "btn_shop": "Dendara joan"
+    "btn_shop": "Dendara joan",
+    "status_pending": "Z zain",
+    "status_paid": "Ordaindua",
+    "status_processing": "Prozesatzen",
+    "status_shipped": "Bidalia",
+    "status_delivered": "Entregatua",
+    "status_cancelled": "Ezeztatua"
   },
   "adminOrders": {
     "title": "Eskaeren Kudeaketa",

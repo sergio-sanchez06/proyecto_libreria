@@ -179,7 +179,13 @@
     "table_subtotal": "Subtotal",
     "loading_details": "Carregant detalls...",
     "empty_msg": "Encara no has realitzat cap comanda",
-    "btn_shop": "Anar a la botiga"
+    "btn_shop": "Anar a la botiga",
+    "status_pending": "Pendent",
+    "status_paid": "Pagat",
+    "status_processing": "Processant",
+    "status_shipped": "Enviat",
+    "status_delivered": "Entregat",
+    "status_cancelled": "Cancel·lat"
   },
   "adminOrders": {
     "title": "Gestió de Comandes",

@@ -67,7 +67,6 @@ async function getPurchaseHistory(req, res) {
       title: "Mis compras",
       user: req.session.user,
       orders: orders,
-      lang: req.session.lang,
     });
   } catch (error) {
     console.error("Error en getPurchaseHistory:", error.message);
