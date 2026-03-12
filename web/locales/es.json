@@ -42,7 +42,8 @@
   "admin": {
     "edit": "Editar Libro",
     "delete": "Eliminar",
-    "confirm": "¿Seguro?"
+    "confirm": "¿Seguro?",
+    "panel": "Opciones de administración"
   },
   "author_detail": {
     "biography": "Biografía",

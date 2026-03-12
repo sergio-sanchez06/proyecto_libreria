@@ -42,7 +42,8 @@
   "admin": {
     "edit": "Liburua editatu",
     "delete": "Ezabatu",
-    "confirm": "Ziur zaude?"
+    "confirm": "Ziur zaude?",
+    "panel": "Kudeaketa aukerak"
   },
   "author_detail": {
     "biography": "Biografia",

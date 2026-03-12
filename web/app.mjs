@@ -50,9 +50,9 @@ i18next
   .use(i18nextFsBackend)
   .use(i18nextHttpMiddleware.LanguageDetector)
   .init({
-    preload: ["es", "ca", "gl", "eu"],
+    preload: ["es", "ca", "gl", "eu", "mu", "an"],
     fallbackLng: "es",
-    ns: ["es", "ca", "gl", "eu"], // <--- Añade los nombres de tus archivos aquí
+    ns: ["es", "ca", "gl", "eu", "mu", "an"], // <--- Añade los nombres de tus archivos aquí
     defaultNS: "es", // <--- El archivo por defecto es es.json
     backend: {
       loadPath: path.join(__dirname, "locales/{{lng}}.json"),
@@ -69,7 +69,7 @@ app.use(i18nextHttpMiddleware.handle(i18next));
 
 // Middleware para detectar el User Agent y filtrar los accesos de agentes de IA
 app.use(controlUserAgent.filterIA);
-app.use(controlUserAgent.apiLimiter);
+// app.use(controlUserAgent.apiLimiter);
 
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null; // disponible en TODAS las vistas

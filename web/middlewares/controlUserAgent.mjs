@@ -17,6 +17,11 @@ const apiLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    // return req.ip === '127.0.0.1'; // Ejemplo para desarrollo local
+    const trustedIPs = ["::1", "127.0.0.1", "::ffff:127.0.0.1"];
+    return trustedIPs.includes(req.ip);
+  },
   message: {
     status: 429,
     error: "Too Many Requests",
