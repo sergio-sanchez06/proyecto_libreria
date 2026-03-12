@@ -106,7 +106,7 @@ body {
   border-radius: 50px !important; /* Estilo píldora */
   font-weight: 700 !important;
   padding: 10px 25px !important;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   font-size: 0.85rem;
   transition: background 0.3s;
 }

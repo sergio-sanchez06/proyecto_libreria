@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,6 @@
 </head>
 
 <body>
-
     <%- include("../layout/header") %>
 
     <main class="container py-5">
@@ -37,8 +36,7 @@
                             
                             <div class="mb-3">
                                 <label for="title" class="form-label fw-bold"><%= t('addBook.label_title') %> *</label>
-                                <input type="text" name="title" id="title" value="<%= book.title %>"
-                                    class="form-control" required>
+                                <input type="text" name="title" id="title" value="<%= book.title %>" class="form-control" required>
                             </div>
 
                             <div class="mb-3">
@@ -49,20 +47,45 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="price" class="form-label fw-bold"><%= t('addBook.label_price') %> *</label>
-                                    <input type="number" step="0.01" name="price" id="price"
-                                        value="<%= book.price %>" class="form-control" required>
+                                    <input type="number" step="0.01" name="price" id="price" value="<%= book.price %>" class="form-control" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
+                                    <label for="stock" class="form-label fw-bold"><%= t('addBook.label_stock') %> *</label>
+                                    <input type="number" name="stock" id="stock" value="<%= book.stock %>" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
                                     <label for="releashed_year" class="form-label fw-bold"><%= t('addBook.label_year') %></label>
-                                    <input type="number" name="releashed_year" id="releashed_year"
-                                        value="<%= book.releashed_year %>" class="form-control">
+                                    <input type="number" name="releashed_year" id="releashed_year" value="<%= book.releashed_year %>" class="form-control">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="pages" class="form-label fw-bold"><%= t('addBook.label_pages') %></label>
+                                    <input type="number" name="pages" id="pages" value="<%= book.pages %>" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="format" class="form-label fw-bold"><%= t('addBook.label_format') %></label>
+                                    <select name="format" id="format" class="form-select">
+                                        <option value=""><%= t('addBook.select_format') %></option>
+                                        <option value="Paperback" <%= book.format === 'Tapa Blanda' ? 'selected' : '' %>>Tapa Blanda</option>
+                                        <option value="Hardcover" <%= book.format === 'Tapa Dura' ? 'selected' : '' %>>Tapa Dura</option>
+                                        <option value="eBook" <%= book.format === 'Ebook' ? 'selected' : '' %>>Ebook</option>
+                                        <option value="AudioBook" <%= book.format === 'Ebook' ? 'selected' : '' %>>AudioLibro</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="language" class="form-label fw-bold"><%= t('addBook.label_language') %></label>
+                                    <input type="text" name="language" id="language" value="<%= book.language %>" class="form-control">
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="synopsis" class="form-label fw-bold"><%= t('addBook.label_synopsis') %></label>
-                                <textarea name="synopsis" id="synopsis" rows="5"
-                                    class="form-control"><%= book.synopsis || '' %></textarea>
+                                <textarea name="synopsis" id="synopsis" rows="5" class="form-control"><%= book.synopsis || '' %></textarea>
                             </div>
 
                             <div class="mb-3">

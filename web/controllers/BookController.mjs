@@ -159,6 +159,7 @@ async function updateBook(req, res) {
     res.redirect(`/books/book/${id}`);
   } catch (error) {
     res.status(500).send("Error al actualizar el libro");
+    console.log(error)
   }
 }
 
