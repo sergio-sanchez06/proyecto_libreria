@@ -121,13 +121,20 @@ async function socialLogin(req, res) {
     const { user } = apiResponse.data;
 
     // 2. CREAR SESIÓN: Guardamos al usuario en la sesión de la web
-    // Esto es lo que permite que el usuario siga logueado al navegar
     req.session.user = user;
     req.session.idToken = idToken;
     await req.session.save();
 
     // 3. Redirigimos al Home o al Perfil
-    res.redirect("/");
+    req.session.save((err) => {
+      if (err) {
+        console.error("Error al guardar sesión:", err);
+        return res.redirect("/login?error=session_error");
+      }
+
+      // Solo cuando el store confirma el guardado, se redirecciona al usuario
+      return res.redirect("/");
+    });
   } catch (error) {
     console.error(
       "Error en puente Web-API:",
