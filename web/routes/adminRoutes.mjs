@@ -15,80 +15,101 @@ router.get(
   "/books/create",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  bookController.getCreateBook
+  bookController.getCreateBook,
 );
 router.post(
   "/books/create",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("cover"),
-  bookController.createBook
+  bookController.createBook,
 );
 router.get(
   "/books/update/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  bookController.getEditBook
+  bookController.getEditBook,
 );
 router.post(
   "/books/update/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("cover"),
-  bookController.updateBook
+  bookController.updateBook,
 );
 router.post(
   "/books/delete/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  bookController.deleteBook
+  bookController.deleteBook,
 );
 
 router.get(
   "/users",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  AdminController.listUsers
+  AdminController.listUsers,
 );
 router.get(
   "/users/create",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  AdminController.getCreateUserForm
+  AdminController.getCreateUserForm,
 );
 router.post(
   "/users/create",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  AdminController.createUser
+  AdminController.createUser,
 );
 router.get(
   "/users/update/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  AdminController.getUpdateUserForm
+  AdminController.getUpdateUserForm,
 );
 router.post(
   "/users/update/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  AdminController.updateUser
+  AdminController.updateUser,
 );
 router.post(
   "/users/delete/:email",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  AdminController.deleteUser
+  AdminController.deleteUser,
 );
 
 router.get(
   "/orders",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  AdminController.getManageOrders
+  AdminController.getManageOrders,
 );
 
 router.post("/orders/updateStatus", AdminController.updateOrderStatus);
 router.post("/orders/delete", AdminController.deleteOrder);
+
+router.get(
+  "/reviews",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  AdminController.getManageReviews,
+);
+
+router.post(
+  "/review/update/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  AdminController.updateReview,
+);
+
+router.post(
+  "/review/delete/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  AdminController.deleteReview,
+);
 
 export default router;

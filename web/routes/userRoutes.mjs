@@ -8,23 +8,30 @@ router.get("/profile", protectMiddleware.protect, UserController.getProfile);
 router.get(
   "/myOrders",
   protectMiddleware.protect,
-  UserController.getPurchaseHistory
+  UserController.getPurchaseHistory,
 );
 router.get(
   "/edit/:id",
   protectMiddleware.protect,
-  UserController.getEditProfileForm
+  UserController.getEditProfileForm,
 );
 router.post(
   "/edit/:id",
   protectMiddleware.protect,
-  UserController.updateProfile
+  UserController.updateProfile,
 );
 
 router.post(
   "/dismissSelf",
   protectMiddleware.protect,
-  UserController.dismissSelf
+  UserController.dismissSelf,
+);
+
+router.get(
+  // Adicion de ruta para obtener las reseñas del usuario
+  "/myReviews",
+  protectMiddleware.protect,
+  UserController.getMyReviews,
 );
 
 export default router;

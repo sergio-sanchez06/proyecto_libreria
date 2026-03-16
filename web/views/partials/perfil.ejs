@@ -68,6 +68,13 @@
                 </a>
             </div>
 
+            <div class="card-footer text-center bg-white border-0 pb-0">
+                <a href="/user/myReviews" class="btn btn-outline-primary rounded-pill px-4 w-100">
+                    <i class="bi bi-chat-square-dots me-2"></i>
+                    <%= t('profile.view_reviews') %>
+                </a>
+            </div>
+
             <div class="card-footer text-center bg-white border-0 pt-3 pb-4">
                 <% const confirmDel=t('profile.delete_confirm'); %>
                     <form action="/user/dismissSelf" method="post">

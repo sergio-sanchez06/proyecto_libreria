@@ -46,15 +46,22 @@ async function getBookById(req, res) {
       `/publishers/${bookResponse.data.publisher_id}`
     );
 
+    const reviewsResponse = await apiClient.get(
+      `/review/book/${bookResponse.data.id}`
+    );
+
     const book = bookResponse.data;
     const authors = authorsResponse.data;
     const genres = genresResponse.data;
     const publisher = publisherResponse.data;
+    const reviews = reviewsResponse.data;
+    console.log(reviews);
     res.render("partials/libro_detalle", {
       book,
       authors,
       genres,
       publisher,
+      reviews,
       user: req.session.user || null,
     });
   } catch (error) {

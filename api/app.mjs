@@ -5,6 +5,7 @@ import authorRouter from "./router/AuthorRouter.mjs";
 import genreRouter from "./router/GenreRouter.mjs";
 import publisherRouter from "./router/PublisherRouter.mjs";
 import orderRouter from "./router/OrdersRouter.mjs";
+import reviewRouter from "./router/ReviewRouter.mjs";
 import authRouter from "./router/AuthRouter.mjs";
 import userRouter from "./router/UserRouter.mjs";
 import bookAuthorRouter from "./router/BookAuthorRouter.mjs";
@@ -38,6 +39,7 @@ app.use("/orders", orderRouter);
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/orderItems", orderItemRouter);
+app.use("/review", reviewRouter);
 
 app.use("/bookAuthor", bookAuthorRouter);
 app.use("/bookGenre", bookGenreRouter);

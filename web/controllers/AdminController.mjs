@@ -26,14 +26,16 @@ async function getManageOrders(req, res) {
     const batchSize = 5; // Límite de seguridad para el pool
     for (let i = 0; i < orders.length; i += batchSize) {
       const batch = orders.slice(i, i + batchSize);
-      await Promise.all(batch.map(async (order) => {
-        try {
-          const resItems = await api.get("/orderItems/" + order.id);
-          order.items = resItems.data; // Aquí se inyectan los OrderItem
-        } catch (err) {
-          order.items = [];
-        }
-      }));
+      await Promise.all(
+        batch.map(async (order) => {
+          try {
+            const resItems = await api.get("/orderItems/" + order.id);
+            order.items = resItems.data; // Aquí se inyectan los OrderItem
+          } catch (err) {
+            order.items = [];
+          }
+        }),
+      );
     }
 
     // 2. En lugar de un FOR con AWAIT, lanzamos todas las peticiones a la vez
@@ -187,6 +189,58 @@ async function deleteOrder(req, res) {
   }
 }
 
+async function getManageReviews(req, res) {
+  try {
+    const api = getAuthenticatedClient(req.session.idToken);
+    const response = await api.get("/review/all");
+    const reviews = response.data;
+    res.render("admin/reviewsTable", {
+      reviews: reviews,
+      message: req.query.msg || null,
+    });
+  } catch (error) {
+    console.error("Error al cargar reseñas:", error);
+    res.render("errors/500", { error: "No se pudieron cargar las reseñas" });
+  }
+}
+
+async function deleteReview(req, res) {
+  console.log(req.params.id);
+  console.log(req.session.user.id);
+
+  try {
+    const api = getAuthenticatedClient(req.session.idToken);
+    const response = await api.delete(`/review/admin/delete/${req.params.id}`);
+    const review = response.data;
+    res.redirect("/admin/reviews");
+  } catch (error) {
+    console.error("Error al eliminar reseña:", error);
+    res.status(500).send("Error al eliminar reseña");
+  }
+}
+
+async function updateReview(req, res) {
+  const { id } = req.params;
+  const { rating, comment } = req.body;
+
+  console.log(id);
+  console.log(rating);
+  console.log(comment);
+
+  try {
+    const api = getAuthenticatedClient(req.session.idToken);
+    const response = await api.put(`/review/admin/update/${id}`, {
+      rating,
+      comment,
+    });
+    const review = response.data;
+    res.redirect("/admin/reviews");
+  } catch (error) {
+    console.error("Error al actualizar reseña:", error);
+    res.status(500).send("Error al actualizar reseña");
+  }
+}
+
 export default {
   getManageBooks,
   getForm,
@@ -200,4 +254,7 @@ export default {
   getDashboard,
   updateOrderStatus,
   deleteOrder,
+  getManageReviews,
+  deleteReview,
+  updateReview,
 };

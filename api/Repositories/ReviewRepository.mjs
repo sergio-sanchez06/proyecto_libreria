@@ -6,11 +6,17 @@ async function createReview(review) {
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "INSERT INTO reviews (book_id, user_id, rating, comment) VALUES ($1, $2, $3, $4) RETURNING *",
-      [review.book_id, review.user_id, review.rating, review.comment]
+      "INSERT INTO reviews (book_id, user_id, user_email, rating, comment) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [
+        review.book_id,
+        review.user_id,
+        review.user_email,
+        review.rating,
+        review.comment,
+      ],
     );
     await client.query("COMMIT");
-    return result.rows[0];
+    return result.rows.map((review) => new ReviewModel(review));
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
@@ -27,7 +33,7 @@ async function getReviewById(id) {
       id,
     ]);
     await client.query("COMMIT");
-    return result.rows[0];
+    return new ReviewModel(result.rows[0]);
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
@@ -41,10 +47,10 @@ async function getReviewByBookId(book_id) {
     await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM reviews WHERE book_id = $1",
-      [name]
+      [book_id],
     );
     await client.query("COMMIT");
-    return new PublisherModel(result.rows[0]);
+    return result.rows.map((review) => new ReviewModel(review));
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
@@ -54,23 +60,25 @@ async function getReviewByBookId(book_id) {
 }
 
 async function updateReview(review) {
+  console.log("Id de la reseña: ", review.id);
+  console.log("Rating: ", review.rating);
+  console.log("Comment: ", review.comment);
+
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
     const result = await client.query(
       `UPDATE reviews 
        SET 
-         book_id = COALESCE($1, book_id),
-         user_id = COALESCE($2, user_id),
-         rating = COALESCE($3, rating),
-         comment = COALESCE($4, comment),
+         rating = COALESCE($1, rating),
+         comment = COALESCE($2, comment),
          updated_at = NOW()
-       WHERE id = $5 
+       WHERE id = $3 
        RETURNING *`,
-      [review.book_id, review.user_id, review.rating, review.comment, review.id]
+      [review.rating, review.comment, Number(review.id)],
     );
     await client.query("COMMIT");
-    return result.rows[0];
+    return result.rows.map((review) => new ReviewModel(review));
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
@@ -80,12 +88,13 @@ async function updateReview(review) {
 }
 
 async function deleteReview(id) {
+  console.log("Id de la reseña desde el repo: ", id);
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
     const result = await client.query(
       "DELETE FROM reviews WHERE id = $1 RETURNING *",
-      [id]
+      [id],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -103,7 +112,7 @@ async function getAllReviews() {
     await client.query("BEGIN");
     const result = await client.query("SELECT * FROM reviews");
     await client.query("COMMIT");
-    return result.rows.map((publisher) => new PublisherModel(publisher));
+    return result.rows.map((review) => new ReviewModel(review));
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
@@ -112,16 +121,16 @@ async function getAllReviews() {
   }
 }
 
-async function getReviewByUserId(user_id) {
+async function getReviewsByUserId(user_id) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM reviews WHERE user_id = $1",
-      [country]
+      [user_id],
     );
     await client.query("COMMIT");
-    return result.rows.map((publisher) => new PublisherModel(publisher));
+    return result.rows.map((review) => new ReviewModel(review));
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
@@ -137,5 +146,5 @@ export default {
   updateReview,
   deleteReview,
   getAllReviews,
-  getReviewByUserId,
+  getReviewsByUserId,
 };

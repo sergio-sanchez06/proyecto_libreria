@@ -172,10 +172,43 @@ async function dismissSelf(req, res) {
   }
 }
 
+async function getMyReviews(req, res) {
+  console.log("Hemos entrado al controlador de mis reseñas");
+
+  if (!req.session.user || !req.session.idToken) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    const response = await api.get("/review/user/" + req.session.user.id);
+    const reviews = response.data;
+
+    console.log("reviews", reviews);
+
+    res.render("partials/myReviews", {
+      title: "Mis reseñas",
+      user: req.session.user,
+      reviews: reviews,
+    });
+  } catch (error) {
+    console.error("Error en getMyReviews:", error.message);
+    res.render("partials/myReviews", {
+      title: "Mis reseñas",
+      user: req.session.user,
+      reviews: [],
+      error: "Error al cargar las reseñas.",
+    });
+  }
+}
+
 export default {
   getProfile,
   getPurchaseHistory,
   getEditProfileForm,
   updateProfile,
   dismissSelf,
+  getMyReviews,
 };

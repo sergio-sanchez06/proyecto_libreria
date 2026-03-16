@@ -1,0 +1,291 @@
+<%- include("../layout/header") %>
+
+    <style>
+        /* Estilos específicos para la gestión de reseñas */
+        .admin-main {
+            padding: 2.5rem 1rem;
+            background-color: #f8f9fa;
+            min-height: 85vh;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 1rem;
+            border: none;
+        }
+
+        /* Cabecera de tabla elegante */
+        .table thead th {
+            background-color: #f1f3f5;
+            color: #495057;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            border: none;
+            padding: 1.25rem 1rem;
+        }
+
+        .table tbody td {
+            padding: 1.25rem 1rem;
+            color: #343a40;
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+        /* Efecto hover en filas */
+        .table-hover tbody tr:hover {
+            background-color: #f8f9ff;
+            transition: background-color 0.2s ease;
+        }
+
+        /* Estrellas de puntuación */
+        .star-rating {
+            color: #ffc107;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .star-muted {
+            color: #dee2e6 !important;
+        }
+
+        /* Truncado de comentarios */
+        .comment-text {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        /* Botones de acción */
+        .action-btn-group .btn {
+            border-radius: 0.5rem;
+            margin: 0 2px;
+            padding: 0.4rem 0.6rem;
+            transition: all 0.2s;
+        }
+
+        /* Estilo de los Modales */
+        .modal-content {
+            border: none;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .modal-header-danger {
+            background: linear-gradient(45deg, #dc3545, #ff4d5a);
+            color: white;
+        }
+
+        .modal-header-primary {
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+            color: white;
+        }
+    </style>
+
+    <main class="admin-main">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-dark">
+                    <i class="bi bi-chat-left-text-fill text-primary me-2"></i>
+                    Gestión de Reseñas
+                </h2>
+                <span class="badge bg-primary rounded-pill px-3 py-2">
+                    <%= reviews.length %> Reseñas totales
+                </span>
+            </div>
+
+            <div class="table-responsive shadow-sm table-container p-2">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-3">
+                                <%= t('review.id') || 'ID' %>
+                            </th>
+                            <th>
+                                <%= t('book.title') || 'Libro' %>
+                            </th>
+                            <th>
+                                <%= t('review.user') || 'Usuario' %>
+                            </th>
+                            <th>
+                                <%= t('review.rating') || 'Puntuación' %>
+                            </th>
+                            <th>
+                                <%= t('review.comment') || 'Comentario' %>
+                            </th>
+                            <th>
+                                <%= t('admin.date') || 'Fecha' %>
+                            </th>
+                            <th class="text-end pe-3 text-nowrap">
+                                <%= t('admin.actions') || 'Acciones' %>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (reviews && reviews.length> 0) { %>
+                            <% reviews.forEach(review=> { %>
+                                <tr>
+                                    <td class="ps-3 text-muted small fw-bold">#<%= review.id %>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark">
+                                            <%= review.book_title %>
+                                        </div>
+                                        <small class="text-muted text-nowrap">ID Libro: <%= review.book_id %></small>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-light text-primary me-2 d-flex align-items-center justify-content-center rounded-circle"
+                                                style="width: 32px; height: 32px; font-size: 0.8rem; flex-shrink: 0;">
+                                                <%= review.user_email.charAt(0).toUpperCase() %>
+                                            </div>
+                                            <span class="small text-truncate" style="max-width: 150px;">
+                                                <%= review.user_email %>
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="star-rating">
+                                            <% for(let i=0; i<5; i++) { %>
+                                                <i
+                                                    class="bi bi-star-fill <%= i < review.rating ? '' : 'star-muted' %>"></i>
+                                                <% } %>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="comment-text" title="<%= review.comment %>">
+                                            <%= review.comment %>
+                                        </div>
+                                    </td>
+                                    <td class="small text-muted text-nowrap">
+                                        <%= new Date(review.created_at).toLocaleDateString() %>
+                                    </td>
+                                    <td class="text-end pe-3">
+                                        <div class="action-btn-group d-flex justify-content-end">
+                                            <a href="/books/book/<%= review.book_id %>"
+                                                class="btn btn-outline-primary btn-sm" title="Ver Libro">
+                                                <i class="bi bi-eye"></i> Ver libro
+                                            </a>
+                                            <button type="button" class="btn btn-outline-info btn-sm"
+                                                onclick="openEditModal('<%= review.id %>', '<%= review.rating %>', this.getAttribute('data-comment'))"
+                                                data-comment="<%= review.comment %>" title="Editar">
+                                                <i class="bi bi-pencil"></i> Modificar reseña
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                                onclick="openDeleteModal('<%= review.id %>')" title="Eliminar">
+                                                <i class="bi bi-trash"></i> Eliminar reseña
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="7" class="text-center py-5">
+                                                <i class="bi bi-chat-square-dots text-muted display-4"></i>
+                                                <p class="text-muted mt-3">No se encontraron reseñas.</p>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header modal-header-primary border-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Editar Reseña</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="editReviewForm" method="POST">
+                    <div class="modal-body p-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Puntuación</label>
+                            <select name="rating" id="editRating" class="form-select shadow-sm">
+                                <option value="1">1 Estrella</option>
+                                <option value="2">2 Estrellas</option>
+                                <option value="3">3 Estrellas</option>
+                                <option value="4">4 Estrellas</option>
+                                <option value="5">5 Estrellas</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Comentario</label>
+                            <textarea name="comment" id="editComment" class="form-control shadow-sm" rows="4"
+                                required></textarea>
+                        </div>
+                        <input type="hidden" name="review_id" id="editReviewId">
+                    </div>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm">Guardar
+                            Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalEliminar" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header modal-header-danger border-0">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Confirmar
+                        Borrado</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <p class="fs-5">¿Estás seguro de que quieres eliminar esta reseña?</p>
+                    <p class="text-muted small">Esta acción es irreversible y afectará al promedio del libro.</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-light rounded-pill px-4"
+                        data-bs-dismiss="modal">Cancelar</button>
+                    <form id="deleteForm" method="POST">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 shadow-sm">
+                            Eliminar permanentemente
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../layout/footer") %>
+
+        <script>
+            const bDeleteModal = new bootstrap.Modal(document.getElementById('modalEliminar'));
+            const bEditModal = new bootstrap.Modal(document.getElementById('modalEditar'));
+
+            const deleteForm = document.getElementById('deleteForm');
+            const editForm = document.getElementById('editReviewForm');
+            const editRating = document.getElementById('editRating');
+            const editComment = document.getElementById('editComment');
+
+            // Función para abrir modal de borrado
+            function openDeleteModal(id) {
+                deleteForm.action = `/admin/review/delete/${id}`;
+
+                bDeleteModal.show();
+            }
+
+            // Función para abrir modal de edición e inyectar datos
+            function openEditModal(id, rating, comment) {
+                // Configuramos la acción del formulario dinámicamente
+                // Suponiendo que tu ruta de backend es POST /review/update/:id
+                editForm.action = `/admin/review/update/${id}`;
+
+                // Rellenamos los campos
+                editRating.value = rating;
+                editComment.value = comment;
+
+                bEditModal.show();
+            }
+        </script>

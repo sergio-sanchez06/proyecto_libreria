@@ -10,6 +10,7 @@ import genreRoutes from "./routes/genresRouter.mjs";
 import bookRoutes from "./routes/bookRoutes.mjs";
 import cartRoutes from "./routes/cartRouter.mjs";
 import adminRoutes from "./routes/adminRoutes.mjs";
+import reviewRoutes from "./routes/reviewRouter.mjs";
 import controlUserAgent from "./middlewares/controlUserAgent.mjs";
 import i18next from "i18next";
 import i18nextHttpMiddleware from "i18next-http-middleware";
@@ -86,6 +87,7 @@ app.use("/user", userRoutes);
 app.use("/authors", authorRoutes);
 app.use("/genres", genreRoutes);
 app.use("/cart", cartRoutes);
+app.use("/review", reviewRoutes);
 
 const port = 3001;
 app.listen(port, () => {
