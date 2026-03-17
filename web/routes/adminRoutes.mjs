@@ -4,6 +4,7 @@ import userController from "../controllers/UserController.mjs";
 import protectMiddleware from "../middlewares/protect.mjs";
 import bookController from "../controllers/BookController.mjs";
 import upload from "../utils/upload.mjs";
+import { checkToxicity } from "../middlewares/reviewModeration.mjs";
 
 const router = express.Router();
 
@@ -102,6 +103,7 @@ router.post(
   "/review/update/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
+  checkToxicity,
   AdminController.updateReview,
 );
 
@@ -109,6 +111,7 @@ router.post(
   "/review/delete/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
+  checkToxicity,
   AdminController.deleteReview,
 );
 

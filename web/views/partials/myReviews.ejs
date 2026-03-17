@@ -101,8 +101,10 @@
                                                         <%= t('common.view') || 'Ver' %>
                                                     </a>
                                                     <button type="button"
-                                                        class="btn btn-outline-info btn-sm rounded-pill px-3"
-                                                        onclick="openEditModal('<%= review.id %>', '<%= review.book_id %>', '<%= review.rating %>', '<%= review.comment %>')">
+                                                        class="btn btn-outline-info btn-sm rounded-pill px-3 edit-btn"
+                                                        data-id="<%= review.id %>" data-bookid="<%= review.book_id %>"
+                                                        data-rating="<%= review.rating %>"
+                                                        data-comment="<%= review.comment %>">
                                                         <i class="bi bi-pencil"></i>
                                                         <%= t('common.edit') || 'Editar' %>
                                                     </button>
@@ -207,13 +209,27 @@
             const deleteForm = document.getElementById('deleteForm');
 
             // Función para Editar
-            function openEditModal(id, book_id, rating, comment) {
-                editForm.action = `/review/update/${id}?_method=PUT`;
-                document.getElementById('editRating').value = rating;
-                document.getElementById('editComment').value = comment;
-                document.getElementById('editBookId').value = book_id;
-                bEditModal.show();
-            }
+            document.addEventListener('click', function (e) {
+                const btn = e.target.closest('.edit-btn');
+                if (btn) {
+                    // Extraemos los datos de los atributos 'data-'
+                    const id = btn.dataset.id;
+                    const bookId = btn.dataset.bookid;
+                    const rating = btn.dataset.rating;
+                    const comment = btn.dataset.comment;
+
+                    // Configuramos el formulario
+                    editForm.action = `/review/update/${id}?_method=PUT`;
+
+                    // Rellenamos los campos del modal
+                    document.getElementById('editRating').value = rating;
+                    document.getElementById('editComment').value = comment;
+                    document.getElementById('editBookId').value = bookId;
+
+                    // Mostramos el modal
+                    bEditModal.show();
+                }
+            });
 
             // Función para Eliminar
             function openDeleteModal(id, book_id) {

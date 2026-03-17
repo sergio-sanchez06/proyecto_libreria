@@ -1,7 +1,10 @@
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 async function createReview(req, res) {
+  const origin = req.headers.referer || "/";
+
   const { book_id, rating, comment } = req.body;
+
   const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
 
   const api = getAuthenticatedClient(cleanToken);
@@ -14,10 +17,10 @@ async function createReview(req, res) {
       rating,
       comment,
     });
-    res.redirect(`/books/book/${book_id}`);
+    res.redirect(origin);
   } catch (error) {
     console.error("Error al crear reseña:", error);
-    res.redirect(`/books/book/${book_id}`);
+    res.redirect(origin);
   }
 }
 
@@ -38,6 +41,7 @@ async function getReviewsByBookId(req, res) {
 }
 
 async function deleteReview(req, res) {
+  const origin = req.headers.referer || "/";
   const { book_id } = req.body;
 
   console.log("book_id", book_id);
@@ -52,14 +56,15 @@ async function deleteReview(req, res) {
         user_id: req.session.user.id,
       },
     });
-    res.redirect(`/books/book/${book_id}`);
+    res.redirect(origin);
   } catch (error) {
     console.error("Error al eliminar reseña:", error);
-    res.redirect(`/books/book/${book_id}`);
+    res.redirect(origin);
   }
 }
 
 async function updateReview(req, res) {
+  const origin = req.headers.referer || "/";
   const { id } = req.params;
   const { book_id, rating, comment } = req.body;
   const client = getAuthenticatedClient(req, res);
@@ -71,10 +76,12 @@ async function updateReview(req, res) {
       rating,
       comment,
     });
-    res.redirect(`/books/book/${book_id}`);
+    res.redirect(origin);
+    // res.redirect(`/books/book/${book_id}`);
   } catch (error) {
     console.error("Error al actualizar reseña:", error);
-    res.redirect(`/books/book/${book_id}`);
+    res.redirect(origin);
+    // res.redirect(`/books/book/${book_id}`);
   }
 }
 

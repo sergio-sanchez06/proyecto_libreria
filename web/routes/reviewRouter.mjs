@@ -1,10 +1,16 @@
 import express from "express";
 import ReviewController from "../controllers/ReviewController.mjs";
 import authMiddleware from "../middlewares/protect.mjs";
+import { checkToxicity } from "../middlewares/reviewModeration.mjs";
 
 const router = express.Router();
 
-router.post("/create", authMiddleware.protect, ReviewController.createReview);
+router.post(
+  "/create",
+  authMiddleware.protect,
+  checkToxicity,
+  ReviewController.createReview,
+);
 
 router.get("/book/:book_id", ReviewController.getReviewsByBookId);
 
@@ -17,6 +23,7 @@ router.post(
 router.post(
   "/update/:id",
   authMiddleware.protect,
+  checkToxicity,
   ReviewController.updateReview,
 );
 

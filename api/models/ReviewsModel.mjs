@@ -6,6 +6,8 @@ export default class Review {
     user_email,
     rating,
     comment,
+    book_title,
+    book_cover,
     created_at,
     updated_at,
     deleted_at,
@@ -16,6 +18,8 @@ export default class Review {
     this.user_email = user_email;
     this.rating = rating;
     this.comment = comment;
+    this.book_title = book_title || null;
+    this.book_cover = book_cover || null;
     this.created_at = created_at;
     this.updated_at = updated_at;
     this.deleted_at = deleted_at;

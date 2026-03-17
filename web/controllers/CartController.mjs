@@ -37,7 +37,8 @@ async function addToCart(req, res) {
     secure: false,
   });
 
-  res.redirect("/cart/view");
+  res.redirect("back");
+  // res.redirect("/cart/view");
 }
 
 async function viewCart(req, res) {

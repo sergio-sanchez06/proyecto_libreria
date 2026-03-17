@@ -1,4 +1,5 @@
 import express from "express";
+import "dotenv/config";
 import cors from "cors";
 import bookRouter from "./router/BookRouter.mjs";
 import authorRouter from "./router/AuthorRouter.mjs";

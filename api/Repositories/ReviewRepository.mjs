@@ -28,14 +28,11 @@ async function createReview(review) {
 async function getReviewById(id) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query("SELECT * FROM reviews WHERE id = $1", [
       id,
     ]);
-    await client.query("COMMIT");
     return new ReviewModel(result.rows[0]);
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -44,15 +41,12 @@ async function getReviewById(id) {
 async function getReviewByBookId(book_id) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM reviews WHERE book_id = $1",
       [book_id],
     );
-    await client.query("COMMIT");
     return result.rows.map((review) => new ReviewModel(review));
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -109,12 +103,12 @@ async function deleteReview(id) {
 async function getAllReviews() {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
-    const result = await client.query("SELECT * FROM reviews");
-    await client.query("COMMIT");
+    const result = await client.query(
+      `SELECT r.*, b.title as book_title, b.cover_url as book_cover 
+       FROM reviews r JOIN books b ON r.book_id = b.id`,
+    );
     return result.rows.map((review) => new ReviewModel(review));
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -124,15 +118,15 @@ async function getAllReviews() {
 async function getReviewsByUserId(user_id) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
-      "SELECT * FROM reviews WHERE user_id = $1",
+      `SELECT r.*, b.title as book_title, b.cover_url as book_cover 
+       FROM reviews r JOIN books b ON r.book_id = b.id 
+       WHERE r.user_id = $1`,
       [user_id],
     );
-    await client.query("COMMIT");
+    console.log("Fila cruda de la BD:", result.rows[0]);
     return result.rows.map((review) => new ReviewModel(review));
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();

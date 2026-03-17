@@ -95,6 +95,29 @@
             border-left: 5px solid #48bb78 !important;
             background: white;
         }
+
+        .synopsis-text {
+            overflow: hidden;
+            line-height: 1.5em;
+            height: 4.5em;
+            /* 1.5em * 3 líneas = altura fija inicial */
+        }
+
+        .synopsis-text.expanded {
+            height: auto;
+        }
+
+        #toggle-synopsis {
+            background: none;
+            font-size: 16px;
+            border: none;
+            color: #007bff;
+            cursor: pointer;
+            padding: 0;
+            font-weight: bold;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -186,14 +209,14 @@
                         </div>
                     </div>
 
-                    <div class="mb-5 px-1">
-                        <h4 class="fw-bold text-uppercase small letter-spacing-lg mb-3 text-muted"
-                            style="letter-spacing: 2px;">
-                            <%= t('book.synopsis') %>
-                        </h4>
-                        <p class="text-dark lh-lg fs-5" style="text-align: justify; opacity: 0.9;">
-                            <%= book.synopsis || t('book.no_synopsis') %>
+                    <div class="synopsis-container">
+                        <p>
+                            <%= book.synopsis.substring(0, 300) %>...
+                                <span id="extra-text" style="display:none;">
+                                    <%= book.synopsis.substring(300) %>
+                                </span>
                         </p>
+                        <button id="toggle-synopsis" class="btn btn-outline-primary btn-sm">Leer más</button>
                     </div>
 
                     <div class="row g-3 mb-5">
@@ -430,7 +453,23 @@
 
 </html>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    $(document).ready(function () {
+        $('#toggle-synopsis').click(function () {
+            const btn = $(this);
+            // 500ms de duración
+            $('#extra-text').slideToggle(1000, function () {
+                // Al terminar el slide, cambiamos el texto del botón
+                if ($(this).is(':visible')) {
+                    btn.text('Leer menos');
+                } else {
+                    btn.text('Leer más');
+                }
+            });
+        });
+
+    });
 
     // Función que permite mostrar y ocultar el formulario de edición de una reseña
 
@@ -446,4 +485,5 @@
             editFormDiv.style.display = "none";
         }
     }
+
 </script>
