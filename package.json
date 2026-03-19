@@ -7,11 +7,8 @@
     "ejs": "^3.1.10",
     "express": "^5.2.1",
     "express-session": "^1.18.2",
-<<<<<<< HEAD
-=======
     "express-useragent": "^2.1.0",
     "firebase": "^12.7.0",
->>>>>>> api
     "firebase-admin": "^13.6.0",
     "fs": "^0.0.1-security",
     "http-proxy-middleware": "^3.0.5",
