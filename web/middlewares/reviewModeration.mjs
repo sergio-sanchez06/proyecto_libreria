@@ -1,7 +1,6 @@
 import { blacklist } from "../utils/blacklist.mjs";
 
 const MAPA_SIMBOLOS_TEXTO = {
-  // Solo símbolos NO numéricos — se aplican siempre
   "@": "a",
   α: "a",
   а: "a",
@@ -34,7 +33,6 @@ const MAPA_SIMBOLOS_TEXTO = {
 };
 
 const MAPA_SIMBOLOS_NUMERICO = {
-  // Dígitos — SOLO se aplican si están mezclados con letras
   4: "a",
   3: "e",
   1: "i",
@@ -60,17 +58,14 @@ const normalizarParaFiltro = (texto) => {
   }
 
   // 2b. Reemplazar dígitos SOLO si están adyacentes a letras (evasión)
-  //     "1d10ta" → "idiota" ✅
-  //     "10 de 10" → sin cambio ✅
-  //     "m13rda" → "mierda" ✅
+  //     "1d10ta" → "idiota" ✅  |  "10 de 10" → sin cambio ✅
   procesado = procesado.replace(
     /([a-z])([34578410])(?=[a-z])|(?<=[a-z])([34578410])([a-z])|([34578410])(?=[a-z]{2,})/g,
-    (match) => {
-      return match
+    (match) =>
+      match
         .split("")
         .map((c) => MAPA_SIMBOLOS_NUMERICO[c] ?? c)
-        .join("");
-    },
+        .join(""),
   );
 
   // 3. Quitar tildes restantes
@@ -79,17 +74,16 @@ const normalizarParaFiltro = (texto) => {
   // 4. Colapsar "p u t a" → "puta" SOLO si son letras sueltas
   procesado = procesado.replace(
     /(?<![a-z])([a-z]\s){2,}[a-z](?![a-z])/g,
-    (match) => {
-      return match.replace(/\s+/g, "");
-    },
+    (match) => match.replace(/\s+/g, ""),
   );
 
+  // 5. Normalizar typos de mensajería
   procesado = procesado
     .replace(/\bw[h]?ts[a]?p[p]?\b/g, "whatsapp")
     .replace(/\bw[h]?as[a]?p[p]?\b/g, "whatsapp")
     .replace(/\btlgr[a]?m\b/g, "telegram");
 
-  // 5. Limpieza final
+  // 6. Limpieza final — solo letras y espacios
   return procesado
     .replace(/[^a-z\s]/g, "")
     .replace(/\s+/g, " ")
@@ -97,40 +91,58 @@ const normalizarParaFiltro = (texto) => {
 };
 
 const PATRONES_CRITICOS = [
+  // Deseos de muerte (ES + EN)
   /ojala?\s+(te\s+)?(mueras?|palmes?|revientes?|pudras?)/i,
   /espero\s+(que\s+)?(te\s+)?(mueras?|palmes?)/i,
   /\b(pudrete|muerete)\b/i,
   /\bkys\b/i,
   /\bgo\s+kill\s+yourself\b/i,
-  /(gana[r]?|ingresos|sueldo|trabajo|dinero|dolares|euros).*(whatsapp|telegram|escribeme|contactame|perfil|bio)/i,
-  /(whatsapp|telegram|contactame).*\d{9,}/i,
+
+  // Spam de dinero + canal de contacto
+  // .{0,40} limita el salto para reducir falsos positivos
+  /(gana[r]?|ingresos?|sueldo|trabajo|dinero|dolares?|euros?).{0,40}(whatsapp|telegram|escribeme|contactame|perfil|bio)/i,
+
+  // Canal de contacto + teléfono (teléfono solo con contexto, nunca suelto)
+  // Eliminados /\b\d{9}\b/ y /\b\d{3}[\s.\-]\d{3}.../ — causaban falsos positivos
+  // con "10 de 10", "página 300", etc. Los teléfonos sueltos los caza Sightengine.
+  /(whatsapp|telegram|contactame|escribeme).{0,20}\d{9,}/i,
 ];
 
+// Palabras que SOLO bloquean con intención explícita de daño
+// "mi madre tuvo cancer" → pasa ✅  |  "ojala pilles cancer" → bloqueado ✅
 const PALABRAS_CON_CONTEXTO = ["cancer", "sida", "enfermedad"];
 
 async function checkToxicity(req, res, next) {
   const { comment } = req.body;
-  if (!comment) return next();
+
+  // Guard defensivo: corta si no pasó por validateReview
+  if (!comment || typeof comment !== "string") return next();
+  if (comment.length > 2000) {
+    return res.status(400).json({ error: "El comentario es demasiado largo." });
+  }
 
   const textoLimpio = normalizarParaFiltro(comment);
 
+  // ── 1. Blacklist ────────────────────────────────────────────────────────
+  // Palabras cortas (≤5 chars): boundary estricto para evitar subcadenas falsas.
+  // "rat" no debe pillar "rato", "con" no debe pillar "contar".
+  // Palabras largas (>5 chars): includes() es suficientemente preciso.
   const blacklistNormalizada = blacklist
     .map((w) => normalizarParaFiltro(w))
     .filter(Boolean);
 
   const tieneBlacklist = blacklistNormalizada.some((palabra) => {
     if (!palabra || palabra.length < 3) return false;
-    // Palabras cortas o compuestas: boundary estricto
-    // Palabras largas (>6 chars): includes() es suficientemente preciso
     if (palabra.length <= 5) {
-      const regex = new RegExp(`(?<![a-z])${palabra}(?![a-z])`);
-      return regex.test(textoLimpio);
+      return new RegExp(`(?<![a-z])${palabra}(?![a-z])`).test(textoLimpio);
     }
     return textoLimpio.includes(palabra);
   });
 
+  // ── 2. Patrones críticos ────────────────────────────────────────────────
   const tienePatronCritico = PATRONES_CRITICOS.some((p) => p.test(textoLimpio));
 
+  // ── 3. Ataque de salud con intención explícita ──────────────────────────
   const tieneDeseo = /ojala|espero|pilles|tengas|quiero|mueras/i.test(
     textoLimpio,
   );
