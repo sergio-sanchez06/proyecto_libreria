@@ -110,6 +110,45 @@ async function getAllOrders() {
   return result.rows.map((row) => new Order(row));
 }
 
+async function getAllOrdersPag(page = null, limit = null) {
+  const client = await pool.connect();
+  try {
+    let query = "SELECT * FROM orders ORDER BY name ASC ";
+    let params = [];
+
+    if (page !== null && limit !== null) {
+      const p = Math.max(1, parseInt(page));
+      const l = parseInt(limit);
+      const offset = (p - 1) * l;
+
+      query += "LIMIT $1 OFFSET $2";
+      params = [l, offset];
+    }
+
+    const result = await client.query(query, params);
+    
+    const authors = result.rows; 
+
+    if (page !== null) {
+      const countRes = await client.query("SELECT COUNT(*) FROM orders");
+      const totalItems = parseInt(countRes.rows[0].count);
+      
+      return {
+        data: authors,
+        totalItems,
+        totalPages: Math.ceil(totalItems / (limit || 4)),
+        currentPage: parseInt(page)
+      };
+    }
+    return authors;
+  } catch (error) {
+    console.error("Error en OrderRepository:", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createOrder,
   getOrderById,
@@ -117,4 +156,5 @@ export default {
   updateOrder,
   deleteOrder,
   getAllOrders,
+  getAllOrdersPag
 };

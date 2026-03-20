@@ -113,4 +113,12 @@ class AuthorController {
   }
 }
 
-export default new AuthorController();
+export default {
+  getAuthorById,
+  getEditAuthor,
+  updateAuthor,
+  deleteAuthor,
+  createAuthor,
+  getAuthors,
+  getCreateAuthor,
+};

@@ -68,6 +68,19 @@ async function getAllOrders(req, res) {
   }
 }
 
+async function getAllOrdersPag(req, res) {
+  try {
+    const page = req.query.page || null;
+    const limit = req.query.limit || null;
+
+    const orders = await OrderRepository.getAllOrdersPag(page, limit);
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los autores" });
+  }
+}
+
 export default {
   createOrder,
   getOrderById,
@@ -75,4 +88,5 @@ export default {
   updateOrder,
   deleteOrder,
   getAllOrders,
+  getAllOrdersPag
 };

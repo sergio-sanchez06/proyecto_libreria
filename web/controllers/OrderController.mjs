@@ -14,6 +14,17 @@ class OrderController {
     }
   }
 
+  async getAllOrdersPag(page, limit) {
+    try {
+      const response = await fetch(`${this.apiUrl}?page=${page}&limit=${limit}`);
+      if (!response.ok) throw new Error(`Error: ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+      throw error;
+    }
+  }
+
   async getOrderById(id) {
     try {
       const response = await fetch(`${this.apiUrl}/${id}`);
@@ -228,6 +239,47 @@ class OrderController {
       container.innerHTML = "<p style='color: red;'>Error loading orders.</p>";
     }
   }
+
+
+  // async renderOrdersPag(containerId = "order-container") {
+
+  //   const page = req.query.page || 1;
+  //   const limit = 4; 
+
+    
+  //   try {
+  //     const response = await this.getAllOrdersPag(page, limit)
+
+  //     const container = document.getElementById(containerId);
+  //     if (!container) return;
+
+
+  //     if (orders.length === 0) {
+  //       container.innerHTML = "<p>No orders found.</p>";
+  //       return;
+  //     }
+
+  //     orders.forEach((order) => {
+  //       const div = document.createElement("div");
+  //       div.className = "order-card";
+  //       div.innerHTML = `
+  //           <h3>Order #${order.id}</h3>
+  //           <p><strong>Total:</strong> ${parseFloat(order.total).toFixed(
+  //             2
+  //           )} €</p>
+  //           <p><strong>Status:</strong> ${order.status}</p>
+  //           <div class="actions">
+  //               <button onclick="window.location.href='/orders/${
+  //                 order.id
+  //               }'">View Details</button>
+  //           </div>
+  //       `;
+  //       container.appendChild(div);
+  //     });
+  //   } catch (error) {
+  //     container.innerHTML = "<p style='color: red;'>Error loading orders.</p>";
+  //   }
+  // }
 }
 
 // Exponer al window para que se pueda llamar desde el HTML (onclick)
