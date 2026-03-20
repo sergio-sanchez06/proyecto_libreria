@@ -29,7 +29,7 @@ async function getPublishers(req, res, next) {
   }
 }
 
-async function showAllPublishers(req, res, next) {
+/*async function showAllPublishers(req, res, next) {
   try {
     const response = await apiClient.get("/publishers");
     res.locals.publishers = response.data;
@@ -44,6 +44,32 @@ async function showAllPublishers(req, res, next) {
     res.render("partials/publishersTable", {
       publishers: [],
       user: res.locals.user,
+    });
+  }
+}*/
+
+async function showAllPublishers(req, res, next) {
+  try {
+    const page = req.query.page || 1;
+    const limit = 4; 
+
+    const response = await apiClient.get(`/publishers?page=${page}&limit=${limit}`);
+
+    res.locals.user = req.session.user || null;
+    
+    res.render("partials/publishersTable", {
+      publishers: response.data.data,      
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      user: res.locals.user,
+    });
+  } catch (error) {
+    console.error("Error cargando editoriales:", error);
+    res.render("partials/publishersTable", {
+      publishers: [],
+      currentPage: 1,
+      totalPages: 1,
+      user: req.session.user || null,
     });
   }
 }

@@ -218,13 +218,46 @@ async function getBookByFeatures(features) {
   }
 }
 
-async function getAllBooks() {
+/*async function getAllBooks() {
   const client = await pool.connect();
   try {
     const result = await client.query("SELECT * FROM books");
     return result.rows.map((book) => new Book(book));
   } catch (error) {
     console.log(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}*/
+
+async function getAllBooks(page = 1, limit = 4) {
+  const client = await pool.connect();
+  try {
+    const p = Math.max(1, parseInt(page) || 1);
+    const l = 4; 
+    const offset = (p - 1) * l;
+
+    const query = `SELECT * FROM books ORDER BY created_at DESC LIMIT ${l} OFFSET ${offset}`;
+    
+    console.log("--- DEBUG API ---");
+    console.log("Página solicitada:", p);
+    console.log("SQL ejecutado:", query);
+
+    const result = await client.query(query);
+    const books = result.rows;
+
+    const countRes = await client.query("SELECT COUNT(*) FROM books");
+    const totalItems = parseInt(countRes.rows[0].count);
+
+    return {
+      data: books,
+      totalItems,
+      totalPages: Math.ceil(totalItems / l),
+      currentPage: p
+    };
+  } catch (error) {
+    console.error("Error en Repository:", error);
     throw error;
   } finally {
     client.release();

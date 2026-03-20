@@ -3,7 +3,7 @@ import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 // --- FUNCIONES PÚBLICAS (Lectura) ---
 
-async function getAllBooks(req, res) {
+/*async function getAllBooks(req, res) {
   try {
     const response = await apiClient.get("/books");
     res.render("index", {
@@ -27,6 +27,44 @@ async function showAllBooks(req, res) {
     console.error("Error al obtener libros:", error);
     res.status(500).render("error", { message: "Error al cargar el catálogo" });
   }
+}*/
+
+async function getAllBooks(req, res) {
+  try {
+    const page = req.query.page || 1;
+    const limit = 4; // <--- Unificado a 4
+
+    const response = await apiClient.get(`/books?page=${page}&limit=${limit}`);
+
+    res.render("index", {
+      books: response.data.data,
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error al obtener libros: ", error);
+    res.status(500).render("error", { message: "Error al cargar el catálogo"});
+  }
+}
+
+async function showAllBooks(req, res) {
+  try {
+    const page = req.query.page || 1;
+    const limit = 4; 
+
+    const response = await apiClient.get(`/books?page=${page}&limit=${limit}`);
+
+    res.render("partials/booksTable", {
+      books: response.data.data,
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error al obtener libros en partial: ", error);
+    res.status(500).render("error", { message: "Error al cargar el catálogo"});
+  }
 }
 
 async function getBookById(req, res) {
@@ -46,22 +84,15 @@ async function getBookById(req, res) {
       `/publishers/${bookResponse.data.publisher_id}`
     );
 
-    const reviewsResponse = await apiClient.get(
-      `/review/book/${bookResponse.data.id}`
-    );
-
     const book = bookResponse.data;
     const authors = authorsResponse.data;
     const genres = genresResponse.data;
     const publisher = publisherResponse.data;
-    const reviews = reviewsResponse.data;
-    console.log(reviews);
     res.render("partials/libro_detalle", {
       book,
       authors,
       genres,
       publisher,
-      reviews,
       user: req.session.user || null,
     });
   } catch (error) {
@@ -166,7 +197,6 @@ async function updateBook(req, res) {
     res.redirect(`/books/book/${id}`);
   } catch (error) {
     res.status(500).send("Error al actualizar el libro");
-    console.log(error)
   }
 }
 

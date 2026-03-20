@@ -3,7 +3,7 @@ import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 // --- FUNCIONES PÚBLICAS (Lectura) ---
 
-async function getAuthors(req, res) {
+/*async function getAuthors(req, res) {
   try {
     const response = await apiClient.get("/authors");
     res.render("partials/authorsTable", {
@@ -13,6 +13,25 @@ async function getAuthors(req, res) {
   } catch (error) {
     console.error("Error al obtener los autores:", error);
     res.status(500).send("Error al obtener los autores");
+  }
+}*/
+
+async function getAuthors(req, res) {
+  try {
+    const page = req.query.page || 1;
+    const limit = 4; 
+
+    const response = await apiClient.get(`/authors?page=${page}&limit=${limit}`);
+
+    res.render("partials/authorsTable", {
+      authors: response.data.data,       
+      currentPage: response.data.currentPage, 
+      totalPages: response.data.totalPages,   
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error al obtener los autores:", error);
+    res.status(500).render("error", { message: "Error al obtener los autores" });
   }
 }
 
