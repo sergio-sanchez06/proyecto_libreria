@@ -117,6 +117,45 @@ async function deleteItem(id) {
   }
 }
 
+async function getAllOrderItemsPag(page = null, limit = null) {
+  const client = await pool.connect();
+  try {
+    let query = "SELECT * FROM order_items ORDER BY name ASC ";
+    let params = [];
+
+    if (page !== null && limit !== null) {
+      const p = Math.max(1, parseInt(page));
+      const l = parseInt(limit);
+      const offset = (p - 1) * l;
+
+      query += "LIMIT $1 OFFSET $2";
+      params = [l, offset];
+    }
+
+    const result = await client.query(query, params);
+    
+    const authors = result.rows; 
+
+    if (page !== null) {
+      const countRes = await client.query("SELECT COUNT(*) FROM order_items");
+      const totalItems = parseInt(countRes.rows[0].count);
+      
+      return {
+        data: authors,
+        totalItems,
+        totalPages: Math.ceil(totalItems / (limit || 4)),
+        currentPage: parseInt(page)
+      };
+    }
+    return authors;
+  } catch (error) {
+    console.error("Error en OrderItemsRepository:", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   create,
   getById,
@@ -124,4 +163,5 @@ export default {
   update,
   getItemsByOrderId,
   deleteItem,
+  getAllOrderItemsPag
 };

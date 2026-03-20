@@ -79,6 +79,19 @@ async function deleteItem(req, res) {
   }
 }
 
+async function getAllOrderItemsPag(req, res) {
+  try {
+    const page = req.query.page || null;
+    const limit = req.query.limit || null;
+
+    const orders = await OrderItemRepository.getAllOrderItemsPag(page, limit);
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los autores" });
+  }
+}
+
 export default {
   create,
   getById,
@@ -86,4 +99,5 @@ export default {
   update,
   getItemsByOrderId,
   deleteItem,
+  getAllOrderItemsPag
 };

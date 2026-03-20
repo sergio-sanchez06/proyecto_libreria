@@ -30,4 +30,13 @@ router.get(
   OrderController.getAllOrders
 );
 
+// Comentado para evitar conflictos hasta saber la respuesta
+
+// router.get(
+//   "/",
+//   AuthMiddleware.authenticate,
+//   AuthMiddleware.requireAdmin,
+//   OrderController.getAllOrdersPag
+// );
+
 export default router;

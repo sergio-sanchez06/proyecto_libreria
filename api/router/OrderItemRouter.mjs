@@ -11,6 +11,16 @@ router.get(
   AuthMiddleware.requireAdmin,
   orderItemController.getAll
 );
+
+// Comentado para evitar conflictos hasta saber la respuesta
+
+// router.get(
+//   "/",
+//   AuthMiddleware.authenticate,
+//   AuthMiddleware.requireAdmin,
+//   orderItemController.getAllOrderItemsPag
+// );
+
 // router.get("/:id", orderItemController.getById);
 router.get("/:id", orderItemController.getItemsByOrderId);
 router.post(
