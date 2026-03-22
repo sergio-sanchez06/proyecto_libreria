@@ -62,7 +62,10 @@
     "subtitle": "Titulu guztiak arakatu",
     "view_details": "Ikusi xehetasunak",
     "add_to_cart": "Gehitu",
-    "no_stock": "Stockik gabe"
+    "no_stock": "Stockik gabe",
+    "filters": "Iragazi honen arabera",
+    "all_genres": "Genero guztiak",
+    "search_placeholder": "Liburuaren izena"
   },
   "index": {
     "welcome_msg": "Ezagutu momentuko liburu eta idazle onenak",

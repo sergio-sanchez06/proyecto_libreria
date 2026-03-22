@@ -1,0 +1,105 @@
+/* catalog.css - DISEÑO PROFESIONAL CENTRADO Y FIJACIÓN DE DROPDOWNS */
+
+/* 1. ESTRUCTURA GLOBAL Y CENTRADO */
+.content-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.container-fluid.px-lg-5 > .row {
+    max-width: 1400px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-content: center;
+    overflow: visible !important;
+}
+
+/* 2. BARRA LATERAL (ASIDE) Y FILTROS
+   Aumentamos el z-index para que el menú flote sobre las cartas de libros */
+.filter-sidebar {
+    background: #ffffff;
+    border: 1px solid #eef0f2 !important;
+    position: sticky;
+    top: 20px;
+    z-index: 100; 
+    overflow: visible !important; 
+}
+
+/* Ajuste para que el texto del selector no se vea tan apretado */
+.form-select-sm {
+    font-size: 0.8rem !important;
+    padding-right: 25px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 3. OPTIMIZACIÓN DE TARJETAS (CARDS) */
+.card-custom {
+    transition: transform 0.2s, box-shadow 0.2s;
+    background-color: #fff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Asegura que todas las cartas de una fila midan lo mismo */
+}
+
+.card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+}
+
+/* 4. IMÁGENES DE LIBROS */
+.book-img-container {
+    height: 180px; 
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.book-img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* 5. TÍTULOS (LECTURA MEJORADA)
+   Reducimos fuente y fijamos altura para que los botones siempre estén alineados */
+.card-title {
+    font-size: 0.82rem !important; 
+    line-height: 1.3;
+    color: #333;
+    margin-bottom: 8px;
+    
+    /* Control de 2 líneas con puntos suspensivos */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 2.2rem; /* Clave para que todas las cards se vean iguales */
+}
+
+/* 6. PRECIO Y BOTONES */
+.book-price {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #198754;
+    margin-top: auto; /* Empuja el precio al fondo si el título es corto */
+    margin-bottom: 10px;
+}
+
+.qty-input {
+    width: 50px !important;
+    font-size: 0.8rem;
+    padding: 0.2rem;
+    text-align: center;
+}
+
+.btn-sm-custom {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}

@@ -62,7 +62,10 @@
     "subtitle": "Explora tots els títols",
     "view_details": "Veure detalls",
     "add_to_cart": "Afegir",
-    "no_stock": "Sense estoc"
+    "no_stock": "Sense estoc",
+    "filters": "Filtrar per",
+    "all_genres": "Tots els gèneres",
+    "search_placeholder": "Nom del llibre"
   },
   "index": {
     "welcome_msg": "Descobreix els millors llibres i autors del moment",

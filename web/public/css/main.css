@@ -1,9 +1,9 @@
-/* --- 1. CONFIGURACIÓN GENERAL (Paleta Casa del Libro) --- */
+/* --- 1. CONFIGURACIÓN GENERAL --- */
 :root {
-  --primary-green: #006d33; /* Verde principal */
-  --hover-green: #005628; /* Verde más oscuro */
-  --accent-yellow: #fecb00; /* Amarillo detalle */
-  --bg-cream: #fdfdfb; /* Fondo cálido */
+  --primary-green: #006d33; 
+  --hover-green: #005628; 
+  --accent-yellow: #fecb00; 
+  --bg-cream: #fdfdfb; 
 
   --text-dark: #2d2d2d;
   --text-muted: #666666;
@@ -16,6 +16,7 @@ body {
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   color: var(--text-dark);
   line-height: 1.6;
+  overflow-x: hidden; 
 }
 
 /* --- 2. HEADER Y TÍTULOS --- */
@@ -24,7 +25,7 @@ body {
   color: white;
   padding: 60px 20px;
   text-align: center;
-  border-radius: 0; /* Más sobrio, estilo librería clásica */
+  border-radius: 0; 
   box-shadow: var(--shadow-soft);
   border-bottom: 5px solid var(--accent-yellow);
 }
@@ -35,17 +36,21 @@ body {
   color: var(--text-dark);
   text-transform: uppercase;
   letter-spacing: 1px;
-  border-left: 6px solid var(--primary-green); /* Detalle verde lateral */
+  border-left: 6px solid var(--primary-green); 
   padding-left: 15px;
+  font-size: clamp(1.1rem, 3vw, 1.5rem); 
 }
 
-/* --- 3. TARJETAS DE LIBROS (Estructura Pro + Colores Librería) --- */
+/* --- 3. TARJETAS DE LIBROS  --- */
 .book-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: 1px solid #eee !important;
   background: #fff;
   overflow: hidden;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .book-card:hover {
@@ -55,10 +60,10 @@ body {
 
 .book-card img {
   width: 100%;
-  aspect-ratio: 2 / 3;
-  object-fit: contain; /* Cambiado a contain para ver portadas completas */
+  aspect-ratio: 2 / 3; 
+  object-fit: contain; 
   background: #f9f9f9;
-  padding: 10px; /* Espacio para que la portada no toque los bordes */
+  padding: 10px; 
   transition: transform 0.5s ease;
   border-bottom: 1px solid #eee;
 }
@@ -83,6 +88,7 @@ body {
 .author-card img {
   width: 140px;
   height: 140px;
+  max-width: 100%; 
   aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 50%;
@@ -103,10 +109,9 @@ body {
   background-color: var(--primary-green) !important;
   border: none !important;
   color: white !important;
-  border-radius: 50px !important; /* Estilo píldora */
+  border-radius: 50px !important; 
   font-weight: 700 !important;
   padding: 10px 25px !important;
-  /* text-transform: uppercase; */
   font-size: 0.85rem;
   transition: background 0.3s;
 }
@@ -115,7 +120,7 @@ body {
   background-color: #1041f2 !important;
   border: none !important;
   color: white !important;
-  border-radius: none !important; /* Estilo píldora */
+  border-radius: none !important; 
   padding: 5px !important;
   transition: background 0.3s;
 }
@@ -132,7 +137,6 @@ body {
   border-radius: 50px !important;
 }
 
-/* Carrusel */
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
   background-color: var(--primary-green);
@@ -142,7 +146,6 @@ body {
   opacity: 0.8;
 }
 
-/* Badge de Libros */
 .badge.bg-secondary {
   background-color: #f1f1f1 !important;
   color: var(--primary-green);
@@ -150,7 +153,6 @@ body {
   font-weight: 600;
 }
 
-/* Lista de Géneros/Editoriales (Estilo lead-custom) */
 .list-group-item-custom {
   background: white !important;
   border-left: 6px solid var(--primary-green) !important;
@@ -166,4 +168,59 @@ body {
 
 a {
   text-decoration: none;
+}
+
+/* --- 6. REGLAS DE ADAPTABILIDAD (RESPONSIVE) --- */
+
+.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+@media (max-width: 992px) {
+  .hero-header {
+    padding: 40px 15px;
+  }
+  .author-card img {
+    width: 110px;
+    height: 110px;
+  }
+}
+
+@media (max-width: 576px) {
+  .section-title {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+  }
+  
+  .book-card img {
+    padding: 5px;
+  }
+
+  .btn-primary {
+    padding: 8px 15px !important;
+    font-size: 0.8rem;
+  }
+
+  .col-md-4, .col-lg-3 {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+.ranking-img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
 }

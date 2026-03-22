@@ -1,0 +1,159 @@
+/* =========================================
+   VARIABLES Y REGLAS GLOBALES (MODO APP)
+   ========================================= */
+:root {
+    --primary-green: #006d33;
+    --accent-yellow: #fecb00;
+    --dark-bg: #1a1a1a;
+    --text-muted: #bbbbbb;
+    --footer-height-compact: 1.2rem;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* ESTRUCTURA GLOBAL (STICKY FOOTER) */
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #fcfcfc;
+}
+
+/* Modo App: Bloqueo de scroll */
+html.no-scroll-html,
+body.no-scroll {
+    overflow: hidden !important;
+    height: 100vh;
+}
+
+/* Contenedor principal: Se estira para empujar el footer al fondo */
+.content-wrapper {
+    flex: 1; 
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+}
+
+body.no-scroll .content-wrapper {
+    overflow: hidden; /* El scroll se gestionaría internamente */
+}
+
+/* Forzar que las filas internas ocupen toda la altura solo en modo no-scroll */
+body.no-scroll .content-wrapper > .container-fluid,
+body.no-scroll .content-wrapper > .container-fluid > .row {
+    height: 100%;
+}
+
+/* =========================================
+   HEADER (HERO-HEADER) - FIJO
+   ========================================= */
+.hero-header {
+    background-color: var(--primary-green) !important;
+    border-bottom: 4px solid var(--accent-yellow);
+    padding: 0.4rem 0; /* Un poco más fino para ganar espacio vertical */
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    flex-shrink: 0; /* Evita que el header se aplaste */
+}
+
+.header-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.header-logo {
+    height: 40px; 
+    width: auto;
+    display: block;
+}
+
+.main-nav {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+}
+
+.main-nav a {
+    color: white !important;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+
+.main-nav a:hover {
+    color: var(--accent-yellow) !important;
+}
+
+/* =========================================
+   FOOTER (DISEÑO ULTRA COMPACTO) - FIJO
+   ========================================= */
+.main-footer {
+    background-color: var(--dark-bg);
+    color: #ffffff !important;
+    padding: 0.6rem 0 !important; /* Reducción máxima para portátiles */
+    margin-top: auto;
+    flex-shrink: 0; /* Evita que el footer desaparezca */
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.main-footer h5 {
+    color: var(--accent-yellow);
+    font-size: 0.8rem !important;
+    font-weight: 700;
+    margin-bottom: 0.3rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.main-footer p, 
+.main-footer .footer-links a {
+    color: var(--text-muted) !important;
+    font-size: 0.72rem !important;
+    text-decoration: none;
+    line-height: 1.1 !important;
+    margin-bottom: 2px;
+}
+
+/* Ocultamos elementos sobrantes para evitar scroll */
+.footer-bottom {
+    display: none; 
+}
+
+/* =========================================
+   RESPONSIVE (PORTÁTILES Y TABLETS)
+   ========================================= */
+
+@media (max-width: 1200px) {
+    .header-logo { height: 32px; }
+    .main-nav { gap: 0.7rem; }
+    .main-nav a { font-size: 0.78rem; }
+}
+
+@media (max-width: 991.98px) {
+    /* Permitimos scroll en móviles porque el modo app no funciona igual en vertical */
+    html, body {
+        overflow: auto;
+        height: auto;
+    }
+    .header-wrapper {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .main-nav {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+    }
+}

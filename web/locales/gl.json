@@ -62,7 +62,10 @@
     "subtitle": "Explora todos os títulos",
     "view_details": "Ver detalles",
     "add_to_cart": "Engadir",
-    "no_stock": "Sen stock"
+    "no_stock": "Sen stock",
+    "filters": "Filtrar por",
+    "all_genres": "Todos os xéneros",
+    "search_placeholder": "Nome do libro"
   },
   "index": {
     "welcome_msg": "Descobre os mellores libros e autores do momento",

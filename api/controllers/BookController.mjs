@@ -162,28 +162,36 @@ async function updateAllCovers(req, res) {
   }
 }
 
-/*async function getAllBooks(req, res) {
-  // Controlador de obtención de todos los libros
-  try {
-    const books = await RepoBook.getAllBooks();
-    res.status(200).json(books);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al obtener los libros" });
-  }
-}*/
+// async function getAllBooks(req, res) {
+//   try {
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.page) || 10;
+
+//     const result = await RepoBook.getAllBooks(page, limit);
+
+//     res.status(200).json(result);
+//   } catch (error) {
+//     console.error("Error al obtener los libros: ", error);
+//     res.status(500).json({ error: "Error al obtener los libros"});
+//   }
+// }
 
 async function getAllBooks(req, res) {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.page) || 10;
+    
+    const filters = {
+      q: req.query.q || null,
+      maxPrice: req.query.maxPrice || null,
+      genre: req.query.genre || null
+    };
 
-    const result = await RepoBook.getAllBooks(page, limit);
+    const result = await RepoBook.getAllBooks(page, filters);
 
     res.status(200).json(result);
   } catch (error) {
-    console.error("Error al obtener los libros: ", error);
-    res.status(500).json({ error: "Error al obtener los libros"});
+    console.error("Error al obtener los libros en API Controller: ", error);
+    res.status(500).json({ error: "Error al obtener los libros" });
   }
 }
 

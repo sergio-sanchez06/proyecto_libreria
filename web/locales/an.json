@@ -62,7 +62,10 @@
     "subtitle": "Bichea todas las cositas",
     "view_details": "Mirar bien",
     "add_to_cart": "Pa' la saca",
-    "no_stock": "Se ha acabao"
+    "no_stock": "Se ha acabao",
+    "filters": "Bichear por...",
+    "all_genres": "Todos los palos",
+    "search_placeholder": "Nombre del libro"
   },
   "index": {
     "welcome_msg": "Los mejores libros, de verdad te lo digo, mírame a los ojos",

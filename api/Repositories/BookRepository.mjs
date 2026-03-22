@@ -218,46 +218,90 @@ async function getBookByFeatures(features) {
   }
 }
 
-/*async function getAllBooks() {
-  const client = await pool.connect();
-  try {
-    const result = await client.query("SELECT * FROM books");
-    return result.rows.map((book) => new Book(book));
-  } catch (error) {
-    console.log(error);
-    throw error;
-  } finally {
-    client.release();
-  }
-}*/
+// async function getAllBooks(page = 1, limit = 4) {
+//   const client = await pool.connect();
+//   try {
+//     const p = Math.max(1, parseInt(page) || 1);
+//     const l = 4; 
+//     const offset = (p - 1) * l;
 
-async function getAllBooks(page = 1, limit = 4) {
+//     const query = `SELECT * FROM books ORDER BY created_at DESC LIMIT ${l} OFFSET ${offset}`;
+    
+//     console.log("--- DEBUG API ---");
+//     console.log("Página solicitada:", p);
+//     console.log("SQL ejecutado:", query);
+
+//     const result = await client.query(query);
+//     const books = result.rows;
+
+//     const countRes = await client.query("SELECT COUNT(*) FROM books");
+//     const totalItems = parseInt(countRes.rows[0].count);
+
+//     return {
+//       data: books,
+//       totalItems,
+//       totalPages: Math.ceil(totalItems / l),
+//       currentPage: p
+//     };
+//   } catch (error) {
+//     console.error("Error en Repository:", error);
+//     throw error;
+//   } finally {
+//     client.release();
+//   }
+// }
+
+// api/Repositories/BookRepository.mjs
+
+async function getAllBooks(page = 1, filters = {}) {
   const client = await pool.connect();
   try {
     const p = Math.max(1, parseInt(page) || 1);
     const l = 4; 
     const offset = (p - 1) * l;
 
-    const query = `SELECT * FROM books ORDER BY created_at DESC LIMIT ${l} OFFSET ${offset}`;
-    
-    console.log("--- DEBUG API ---");
-    console.log("Página solicitada:", p);
-    console.log("SQL ejecutado:", query);
+    let queryBase = "SELECT b.* FROM books b";
+    let countBase = "SELECT COUNT(*) FROM books b";
+    let whereClauses = [];
+    let values = [];
 
-    const result = await client.query(query);
-    const books = result.rows;
+    if (filters.q) {
+      whereClauses.push(`b.title ILIKE $${values.length + 1}`);
+      values.push(`%${filters.q}%`);
+    }
 
-    const countRes = await client.query("SELECT COUNT(*) FROM books");
+    if (filters.maxPrice) {
+      whereClauses.push(`b.price <= $${values.length + 1}`);
+      values.push(filters.maxPrice);
+    }
+
+    if (filters.genre) {
+      whereClauses.push(`b.id IN (SELECT book_id FROM book_genres WHERE genre_id = $${values.length + 1})`);
+      values.push(filters.genre);
+    }
+
+    const whereSQL = whereClauses.length > 0 
+      ? " WHERE " + whereClauses.join(" AND ") 
+      : "";
+
+    const finalQuery = `${queryBase} ${whereSQL} ORDER BY b.created_at DESC LIMIT ${l} OFFSET ${offset}`;
+    const finalCount = `${countBase} ${whereSQL}`;
+
+    const [result, countRes] = await Promise.all([
+      client.query(finalQuery, values),
+      client.query(finalCount, values)
+    ]);
+
     const totalItems = parseInt(countRes.rows[0].count);
 
     return {
-      data: books,
+      data: result.rows,
       totalItems,
       totalPages: Math.ceil(totalItems / l),
       currentPage: p
     };
   } catch (error) {
-    console.error("Error en Repository:", error);
+    console.error("Error en getAllBooks (Repository):", error);
     throw error;
   } finally {
     client.release();

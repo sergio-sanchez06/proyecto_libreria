@@ -62,7 +62,10 @@
     "subtitle": "Bichea todo lo que tenemos",
     "view_details": "Mirar bien",
     "add_to_cart": "Pa' la saca",
-    "no_stock": "Se ha acabado, pijo"
+    "no_stock": "Se ha acabado, pijo",
+    "filters": "Cribar por",
+    "all_genres": "Todos los palos",
+    "search_placeholder": "Nombre del libro"
   },
   "index": {
     "welcome_msg": "Los mejores libros que hay, de verdad te lo digo",

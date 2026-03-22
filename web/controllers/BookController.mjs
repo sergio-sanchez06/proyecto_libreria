@@ -3,44 +3,30 @@ import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 // --- FUNCIONES PÚBLICAS (Lectura) ---
 
-/*async function getAllBooks(req, res) {
-  try {
-    const response = await apiClient.get("/books");
-    res.render("index", {
-      books: response.data,
-      user: req.session.user || null,
-    });
-  } catch (error) {
-    console.error("Error al obtener libros:", error);
-    res.status(500).render("error", { message: "Error al cargar el catálogo" });
-  }
-}
-
-async function showAllBooks(req, res) {
-  try {
-    const response = await apiClient.get("/books");
-    res.render("partials/booksTable", {
-      books: response.data,
-      user: req.session.user || null,
-    });
-  } catch (error) {
-    console.error("Error al obtener libros:", error);
-    res.status(500).render("error", { message: "Error al cargar el catálogo" });
-  }
-}*/
+// web/controllers/bookController.mjs
 
 async function getAllBooks(req, res) {
   try {
     const page = req.query.page || 1;
-    const limit = 4; // <--- Unificado a 4
+    const q = req.query.q || '';
+    const maxPrice = req.query.maxPrice || '';
+    const genre = req.query.genre || '';
 
-    const response = await apiClient.get(`/books?page=${page}&limit=${limit}`);
+    const [booksResponse, genresResponse] = await Promise.all([
+      apiClient.get(`/books`, { 
+        params: { page, q, maxPrice, genre } 
+      }),
+      apiClient.get("/genres")
+    ]);
 
-    res.render("index", {
-      books: response.data.data,
-      currentPage: response.data.currentPage,
-      totalPages: response.data.totalPages,
+    res.render("partials/booksTable", {
+      books: booksResponse.data.data,
+      genres: genresResponse.data.data || genresResponse.data,
+      currentPage: booksResponse.data.currentPage,
+      totalPages: booksResponse.data.totalPages,
+      query: req.query, 
       user: req.session.user || null,
+      noScroll: true,
     });
   } catch (error) {
     console.error("Error al obtener libros: ", error);
@@ -48,18 +34,30 @@ async function getAllBooks(req, res) {
   }
 }
 
+// web/controllers/bookController.mjs
+
 async function showAllBooks(req, res) {
   try {
     const page = req.query.page || 1;
-    const limit = 4; 
+    const q = req.query.q || '';
+    const maxPrice = req.query.maxPrice || '';
+    const genre = req.query.genre || '';
 
-    const response = await apiClient.get(`/books?page=${page}&limit=${limit}`);
+    const [booksResponse, genresResponse] = await Promise.all([
+      apiClient.get(`/books`, { 
+        params: { page, q, maxPrice, genre } 
+      }),
+      apiClient.get("/genres") // <-- Nueva petición para llenar el filtro
+    ]);
 
     res.render("partials/booksTable", {
-      books: response.data.data,
-      currentPage: response.data.currentPage,
-      totalPages: response.data.totalPages,
+      books: booksResponse.data.data,
+      genres: genresResponse.data, // <-- Pasamos los datos de géneros al EJS
+      currentPage: booksResponse.data.currentPage,
+      totalPages: booksResponse.data.totalPages,
+      query: req.query,
       user: req.session.user || null,
+      noScroll: true,
     });
   } catch (error) {
     console.error("Error al obtener libros en partial: ", error);

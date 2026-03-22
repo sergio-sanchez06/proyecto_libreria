@@ -1,126 +1,128 @@
-<style>
-    /* Control de la imagen del libro */
-    .book-img-container {
-        height: 300px;
-        overflow: hidden;
-        background-color: #f8f9fa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .book-img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        padding: 10px;
-    }
-
-    .card-custom {
-        transition: transform 0.2s;
-    }
-
-    .card-custom:hover {
-        transform: scale(1.02);
-    }
-    
-    .pagination .page-link {
-        color: #0d6efd;
-        border-radius: 5px;
-        margin: 0 2px;
-    }
-    .pagination .page-item.active .page-link {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
-    }
-</style>
-
 <%- include('../layout/header') %>
 
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h1 class="display-4 fw-bold">
+<div class="container py-3">
+    <div class="text-center mb-3">
+        <h2 class="fw-bold text-dark mb-1">
             <%= t('catalog.title') %>
-        </h1>
-        <p class="lead text-muted">
+        </h2>
+        <p class="text-muted small">
             <%= t('catalog.subtitle') %>
         </p>
     </div>
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        <% books.forEach(book => { %>
-            <div class="col">
-                <div class="card h-100 card-custom shadow-sm border-0">
-                    <div class="book-img-container">
-                        <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
-                            class="card-img-top book-img" alt="<%= book.title %>">
-                    </div>
-
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title text-truncate" title="<%= book.title %>">
-                            <%= book.title %>
-                        </h5>
-
-                        <p class="precio mt-auto fw-bold text-primary fs-5 mb-0">
-                            <%= book.price %>€
-                        </p>
-
-                        <div class="d-grid gap-2 mt-3">
-                            <a href="/books/book/<%= book.id %>" class="btn btn-outline-primary btn-sm">
-                                <%= t('catalog.view_details') %>
-                            </a>
-
-                            <form action="/cart/add" method="POST" class="w-100">
-                                <input type="hidden" name="book_id" value="<%= book.id %>">
-
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="input-group input-group-sm" style="width: 80px;">
-                                        <input type="number" name="quantity" value="1" min="1"
-                                            max="<%= book.stock %>" class="form-control" <%= book.stock <= 0 ? 'disabled' : '' %>>
-                                    </div>
-
-                                    <button type="submit" class="btn btn-success btn-sm flex-grow-1" <%= book.stock <= 0 ? 'disabled' : '' %>
-                                        title="<%= book.stock <= 0 ? t('catalog.no_stock') : t('catalog.add_to_cart') %>">
-                                        <% if (book.stock <= 0) { %>
-                                            <%= t('catalog.no_stock') %>
-                                        <% } else { %>
-                                            <%= t('catalog.add_to_cart') %> 🛒
-                                        <% } %>
-                                    </button>
-                                </div>
-                            </form>
+    <div class="row">
+        <aside class="col-lg-3 mb-4">
+            <div class="filter-sidebar p-4 shadow-sm bg-light rounded-3">
+                <h5 class="mb-4 d-flex align-items-center border-bottom pb-2">
+                    <i class="bi bi-sliders me-2"></i> <%= t('catalog.filters') || 'Filtrar por' %>
+                </h5>
+                
+                <form action="/books/showAllBooks" method="GET"> 
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">Nombre del libro</label>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                            <input type="text" name="q" class="form-control border-start-0" 
+                                   placeholder="Buscar..." value="<%= query.q || '' %>">
                         </div>
                     </div>
-                </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">Categoría</label>
+                        <select name="genre" class="form-select form-select-sm">
+                            <option value=""><%= t('catalog.all_genres') || 'Todos los géneros' %></option>
+                            <% if (typeof genres !== 'undefined' && genres) { %>
+                                <% genres.forEach(g => { %>
+                                    <option value="<%= g.id %>" <%= query.genre == g.id ? 'selected' : '' %>>
+                                        <%= g.name %>
+                                    </option>
+                                <% }) %>
+                            <% } %>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">
+                            Precio máx: <span id="priceVal" class="text-success"><%= query.maxPrice || 100 %></span>€
+                        </label>
+                        <input type="range" name="maxPrice" class="form-range" min="0" max="150" step="5" 
+                               id="priceRange" value="<%= query.maxPrice || 100 %>"
+                               oninput="document.getElementById('priceVal').innerText = this.value">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-sm fw-bold">Aplicar</button>
+                        <a href="/books/showAllBooks" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+                    </div>
+                </form>
             </div>
-        <% }) %>
-    </div>
+        </aside>
 
-    <% if (totalPages > 1) { %>
-        <nav aria-label="Navegación de catálogo" class="mt-5">
-            <ul class="pagination justify-content-center">
-                
-                <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                    <a class="page-link" href="?page=<%= parseInt(currentPage) - 1 %>">
-                        &laquo; <%= t('catalog.previous') || 'Anterior' %>
-                    </a>
-                </li>
+        <main class="col-lg-9">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
+                <% if (books && books.length > 0) { %>
+                    <% books.forEach(book => { %>
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border-0 rounded-3">
+                                <div style="height: 180px; overflow: hidden; background: #f8f9fa;" class="rounded-top d-flex align-items-center justify-content-center">
+                                    <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
+                                         class="mh-100 mw-100" style="object-fit: contain; padding: 5px;" alt="<%= book.title %>">
+                                </div>
 
-                <% for(let i = 1; i <= totalPages; i++) { %>
-                    <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                    </li>
+                                <div class="card-body d-flex flex-column p-2">
+                                    <h6 class="card-title fw-bold mb-1" style="font-size: 0.85rem; height: 2.4rem; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;" title="<%= book.title %>">
+                                        <%= book.title %>
+                                    </h6>
+                                    
+                                    <p class="text-success fw-bold mb-2" style="font-size: 1rem;">
+                                        <%= book.price %>€
+                                    </p>
+
+                                    <div class="mt-auto">
+                                        <div class="d-grid gap-1">
+                                            <a href="/books/book/<%= book.id %>" class="btn btn-outline-dark btn-sm py-1" style="font-size: 0.75rem;">Detalles</a>
+                                            
+                                            <form action="/cart/add" method="POST" class="d-flex gap-1">
+                                                <input type="hidden" name="book_id" value="<%= book.id %>">
+                                                <input type="number" name="quantity" value="1" min="1" 
+                                                       class="form-control form-control-sm px-1" style="width: 40px; font-size: 0.75rem;">
+                                                <button type="submit" class="btn btn-success btn-sm flex-grow-1 py-1" style="font-size: 0.75rem;">
+                                                    Añadir 🛒
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-emoji-frown display-1 text-muted"></i>
+                        <p class="mt-3 fs-5 text-muted">No hay resultados para esta búsqueda.</p>
+                    </div>
                 <% } %>
+            </div>
 
-                <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-                    <a class="page-link" href="?page=<%= parseInt(currentPage) + 1 %>">
-                        <%= t('catalog.next') || 'Siguiente' %> &raquo;
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    <% } %>
-
+            <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+                <nav class="mt-5">
+                    <ul class="pagination pagination-sm justify-content-center">
+                        <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="?page=<%= parseInt(currentPage) - 1 %>">&laquo;</a>
+                        </li>
+                        <% for(let i = 1; i <= totalPages; i++) { %>
+                            <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                            </li>
+                        <% } %>
+                        <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                            <a class="page-link" href="?page=<%= parseInt(currentPage) + 1 %>">&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
+            <% } %>
+        </main>
+    </div>
 </div>
 
 <%- include('../layout/footer') %>

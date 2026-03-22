@@ -28,6 +28,7 @@ async function getAuthors(req, res) {
       currentPage: response.data.currentPage, 
       totalPages: response.data.totalPages,   
       user: req.session.user || null,
+      noScroll: true,
     });
   } catch (error) {
     console.error("Error al obtener los autores:", error);

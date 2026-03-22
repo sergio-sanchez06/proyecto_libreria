@@ -35,6 +35,8 @@ app.set("views", path.join(__dirname, "views"));
 // Servir archivos estáticos de public/
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.use(
   session({
     secret: "tu-secret-super-seguro",

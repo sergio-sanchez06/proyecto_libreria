@@ -62,7 +62,10 @@
     "subtitle": "Explora todos nuestros titulos",
     "view_details": "Ver detalles",
     "add_to_cart": "Añadir",
-    "no_stock": "Sin stock"
+    "no_stock": "Sin stock",
+    "filters": "Filtrar por",
+    "all_genres": "Todos los géneros",
+    "search_placeholder": "Nombre del libro"
   },
   "index": {
     "welcome_msg": "Descubre los mejores libros y autores del momento",
