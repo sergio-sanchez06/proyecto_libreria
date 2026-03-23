@@ -95,27 +95,27 @@ async function deleteAuthor(req, res) {
   }
 }
 
-/*async function getAllAuthors(req, res) {
-  // Controlador de obtención de todos los autores
+async function getAllAuthors(req, res) {
   try {
-    const authors = await AuthorRepository.getAllAuthors();
+    const page = req.query.page || null;
+    const limit = req.query.limit || null;
+    const country = req.query.country || null;
+
+    const authors = await AuthorRepository.getAllAuthors(page, limit, country);
     res.status(200).json(authors);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al obtener los autores" });
   }
-}*/
+}
 
-async function getAllAuthors(req, res) {
+async function getUniqueCountries(req, res) {
   try {
-    const page = req.query.page || null;
-    const limit = req.query.limit || null;
-
-    const authors = await AuthorRepository.getAllAuthors(page, limit);
-    res.status(200).json(authors);
+    const countries = await AuthorRepository.getUniqueCountries();
+    res.status(200).json(countries);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error al obtener los autores" });
+    res.status(500).json({ error: "Error al obtener los países" });
   }
 }
 
@@ -141,4 +141,5 @@ export default {
   deleteAuthor,
   getAllAuthors,
   getAuthorsMostSold,
+  getUniqueCountries,
 };

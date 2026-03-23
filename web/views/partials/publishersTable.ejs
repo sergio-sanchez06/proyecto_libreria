@@ -35,22 +35,14 @@
         <% }) %>
     </div>
 
-    <div class="d-flex justify-content-center mt-5">
+    <div class="mt-5">
         <nav aria-label="Navegación de editoriales">
-            <ul class="pagination shadow-sm">
+            <ul class="pagination pagination-sm justify-content-center">
                 <% const miRuta = "/publisher/showAllPublishers"; %>
                 
-                <% if (currentPage > 1) { %>
-                    <li class="page-item">
-                        <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) - 1 %>">
-                            &laquo; <%= t('es:catalog.previous') %>
-                        </a>
-                    </li>
-                <% } else { %>
-                    <li class="page-item disabled">
-                        <span class="page-link">&laquo; <%= t('es:catalog.previous') %></span>
-                    </li>
-                <% } %>
+                <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) - 1 %>">&laquo;</a>
+                </li>
 
                 <% for(let i = 1; i <= totalPages; i++) { %>
                     <li class="page-item <%= currentPage == i ? 'active' : '' %>">
@@ -58,17 +50,9 @@
                     </li>
                 <% } %>
 
-                <% if (currentPage < totalPages) { %>
-                    <li class="page-item">
-                        <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) + 1 %>">
-                            <%= t('es:catalog.next') %> &raquo;
-                        </a>
-                    </li>
-                <% } else { %>
-                    <li class="page-item disabled">
-                        <span class="page-link"><%= t('es:catalog.next') %> &raquo;</span>
-                    </li>
-                <% } %>
+                <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                    <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) + 1 %>">&raquo;</a>
+                </li>
             </ul>
         </nav>
     </div>

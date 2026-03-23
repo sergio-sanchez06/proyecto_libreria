@@ -62,7 +62,6 @@ async function showAllPublishers(req, res, next) {
       currentPage: response.data.currentPage,
       totalPages: response.data.totalPages,
       user: res.locals.user,
-      noScroll: true,
     });
   } catch (error) {
     console.error("Error cargando editoriales:", error);

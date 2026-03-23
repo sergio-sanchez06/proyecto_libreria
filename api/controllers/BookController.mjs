@@ -183,7 +183,8 @@ async function getAllBooks(req, res) {
     const filters = {
       q: req.query.q || null,
       maxPrice: req.query.maxPrice || null,
-      genre: req.query.genre || null
+      genre: req.query.genre || null,
+      author: req.query.author || null
     };
 
     const result = await RepoBook.getAllBooks(page, filters);

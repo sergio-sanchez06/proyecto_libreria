@@ -11,22 +11,24 @@ async function getAllBooks(req, res) {
     const q = req.query.q || "";
     const maxPrice = req.query.maxPrice || "";
     const genre = req.query.genre || "";
+    const author = req.query.author || "";
 
-    const [booksResponse, genresResponse] = await Promise.all([
+    const [booksResponse, genresResponse, authorsResponse] = await Promise.all([
       apiClient.get(`/books`, {
-        params: { page, q, maxPrice, genre },
+        params: { page, q, maxPrice, genre, author },
       }),
       apiClient.get("/genres"),
+      apiClient.get("/authors"),
     ]);
 
     res.render("partials/booksTable", {
       books: booksResponse.data.data,
       genres: genresResponse.data.data || genresResponse.data,
+      authors: authorsResponse.data,
       currentPage: booksResponse.data.currentPage,
       totalPages: booksResponse.data.totalPages,
       query: req.query,
       user: req.session.user || null,
-      noScroll: true,
     });
   } catch (error) {
     console.error("Error al obtener libros: ", error);
@@ -42,22 +44,24 @@ async function showAllBooks(req, res) {
     const q = req.query.q || "";
     const maxPrice = req.query.maxPrice || "";
     const genre = req.query.genre || "";
+    const author = req.query.author || "";
 
-    const [booksResponse, genresResponse] = await Promise.all([
+    const [booksResponse, genresResponse, authorsResponse] = await Promise.all([
       apiClient.get(`/books`, {
-        params: { page, q, maxPrice, genre },
+        params: { page, q, maxPrice, genre, author },
       }),
-      apiClient.get("/genres"), // <-- Nueva petición para llenar el filtro
+      apiClient.get("/genres"),
+      apiClient.get("/authors"),
     ]);
 
     res.render("partials/booksTable", {
       books: booksResponse.data.data,
-      genres: genresResponse.data, // <-- Pasamos los datos de géneros al EJS
+      genres: genresResponse.data,
+      authors: authorsResponse.data,
       currentPage: booksResponse.data.currentPage,
       totalPages: booksResponse.data.totalPages,
       query: req.query,
       user: req.session.user || null,
-      noScroll: true,
     });
   } catch (error) {
     console.error("Error al obtener libros en partial: ", error);

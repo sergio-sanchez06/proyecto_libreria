@@ -15,39 +15,24 @@
 
 /* ESTRUCTURA GLOBAL (STICKY FOOTER) */
 html, body {
-    height: 100%;
+    height: auto !important;
+    min-height: 100vh !important;
     margin: 0;
+    padding: 0;
+    overflow-y: auto !important;
+}
+
+body {
     display: flex;
     flex-direction: column;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background-color: #fcfcfc;
+    overflow-x: hidden;
 }
 
-/* Modo App: Bloqueo de scroll */
-html.no-scroll-html,
-body.no-scroll {
-    overflow: hidden !important;
-    height: 100vh;
-}
-
-/* Contenedor principal: Se estira para empujar el footer al fondo */
 .content-wrapper {
-    flex: 1; 
+    flex: 1 0 auto;
     width: 100%;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 0 !important;
-}
-
-body.no-scroll .content-wrapper {
-    overflow: hidden; /* El scroll se gestionaría internamente */
-}
-
-/* Forzar que las filas internas ocupen toda la altura solo en modo no-scroll */
-body.no-scroll .content-wrapper > .container-fluid,
-body.no-scroll .content-wrapper > .container-fluid > .row {
-    height: 100%;
 }
 
 /* =========================================
@@ -101,7 +86,7 @@ body.no-scroll .content-wrapper > .container-fluid > .row {
 .main-footer {
     background-color: var(--dark-bg);
     color: #ffffff !important;
-    padding: 0.6rem 0 !important; /* Reducción máxima para portátiles */
+    padding: 0.4rem 0 !important; /* Reducción máxima para portátiles */
     margin-top: auto;
     flex-shrink: 0; /* Evita que el footer desaparezca */
     border-top: 1px solid rgba(255,255,255,0.05);
@@ -143,7 +128,6 @@ body.no-scroll .content-wrapper > .container-fluid > .row {
 @media (max-width: 991.98px) {
     /* Permitimos scroll en móviles porque el modo app no funciona igual en vertical */
     html, body {
-        overflow: auto;
         height: auto;
     }
     .header-wrapper {
