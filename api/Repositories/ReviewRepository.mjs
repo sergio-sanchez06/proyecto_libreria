@@ -42,7 +42,7 @@ async function getReviewByBookId(book_id) {
   const client = await pool.connect();
   try {
     const result = await client.query(
-      "SELECT * FROM reviews WHERE book_id = $1",
+      "SELECT * FROM reviews WHERE book_id = $1 order by id desc",
       [book_id],
     );
     return result.rows.map((review) => new ReviewModel(review));
@@ -105,7 +105,8 @@ async function getAllReviews() {
   try {
     const result = await client.query(
       `SELECT r.*, b.title as book_title, b.cover_url as book_cover 
-       FROM reviews r JOIN books b ON r.book_id = b.id`,
+       FROM reviews r JOIN books b ON r.book_id = b.id
+       order by r.id desc`,
     );
     return result.rows.map((review) => new ReviewModel(review));
   } catch (error) {
@@ -121,7 +122,8 @@ async function getReviewsByUserId(user_id) {
     const result = await client.query(
       `SELECT r.*, b.title as book_title, b.cover_url as book_cover 
        FROM reviews r JOIN books b ON r.book_id = b.id 
-       WHERE r.user_id = $1`,
+       WHERE r.user_id = $1
+       order by r.id desc`,
       [user_id],
     );
     console.log("Fila cruda de la BD:", result.rows[0]);

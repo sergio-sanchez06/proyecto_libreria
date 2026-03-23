@@ -173,7 +173,7 @@
                                                 <i class="bi bi-eye"></i> Ver libro
                                             </a>
                                             <button type="button" class="btn btn-outline-info btn-sm"
-                                                onclick="openEditModal('<%= review.id %>', '<%= review.rating %>', this.getAttribute('data-comment'))"
+                                                onclick="openEditModal('<%= review.id %>', '<%= review.rating %>', this.getAttribute('data-comment'), '<%= review.book_id %>')"
                                                 data-comment="<%= review.comment %>" title="Editar">
                                                 <i class="bi bi-pencil"></i> Modificar reseña
                                             </button>
@@ -224,6 +224,7 @@
                                 required></textarea>
                         </div>
                         <input type="hidden" name="review_id" id="editReviewId">
+                        <input type="hidden" name="book_id" id="book_id">
                     </div>
                     <div class="modal-footer border-0">
                         <button type="button" class="btn btn-light rounded-pill px-4"
@@ -271,6 +272,7 @@
             const editForm = document.getElementById('editReviewForm');
             const editRating = document.getElementById('editRating');
             const editComment = document.getElementById('editComment');
+            const book_id_review = document.getElementById('book_id');
 
             // Función para abrir modal de borrado
             function openDeleteModal(id) {
@@ -280,7 +282,7 @@
             }
 
             // Función para abrir modal de edición e inyectar datos
-            function openEditModal(id, rating, comment) {
+            function openEditModal(id, rating, comment, book_id) {
                 // Configuramos la acción del formulario dinámicamente
                 // Suponiendo que tu ruta de backend es POST /review/update/:id
                 editForm.action = `/admin/review/update/${id}`;
@@ -288,6 +290,7 @@
                 // Rellenamos los campos
                 editRating.value = rating;
                 editComment.value = comment;
+                book_id_review.value = book_id;
 
                 bEditModal.show();
             }

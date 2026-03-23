@@ -194,6 +194,7 @@ async function getManageReviews(req, res) {
     const api = getAuthenticatedClient(req.session.idToken);
     const response = await api.get("/review/all");
     const reviews = response.data;
+    console.log(reviews);
     res.render("admin/reviewsTable", {
       reviews: reviews,
       message: req.query.msg || null,
