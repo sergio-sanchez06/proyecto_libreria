@@ -20,7 +20,7 @@ async function createBook(book) {
         book.synopsis,
         book.cover_url,
         book.publisher_id,
-      ]
+      ],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -37,7 +37,7 @@ async function getBookById(id) {
   try {
     const result = await client.query(
       "SELECT b.* FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.id = $1",
-      [id]
+      [id],
     );
     return new Book(result.rows[0]);
   } catch (error) {
@@ -52,7 +52,7 @@ async function getBookByTitle(title) {
   try {
     const result = await client.query(
       "SELECT b.* FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.title = $1",
-      [title]
+      [title],
     );
     return new Book(result.rows[0]);
   } catch (error) {
@@ -99,7 +99,7 @@ async function updateBook(id, book) {
         book.cover_url,
         book.publisher_id,
         id,
-      ]
+      ],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -130,7 +130,7 @@ async function getBooksByPublisherId(publisher_id) {
   try {
     const result = await client.query(
       "SELECT b.*, p.name as publisher_name FROM books b right join publishers p ON b.publisher_id = p.id WHERE b.publisher_id = $1",
-      [publisher_id]
+      [publisher_id],
     );
     return result.rows.map((book) => new Book(book));
   } catch (error) {
@@ -145,7 +145,7 @@ async function updateAllCovers() {
   try {
     // 1. Obtener todos los libros que no tienen portada o tienen una vacía
     const { rows: books } = await client.query(
-      "SELECT id, isbn FROM books WHERE cover_url IS NULL OR cover_url = ''"
+      "SELECT id, isbn FROM books WHERE cover_url IS NULL OR cover_url = ''",
     );
 
     console.log(`Se encontraron ${books.length} libros para actualizar.`);
@@ -158,19 +158,19 @@ async function updateAllCovers() {
         try {
           // Reutilizamos la lógica de buscar en Google (puedes extraerla a una función aparte)
           const { data } = await axios.get(
-            `https://www.googleapis.com/books/v1/volumes?q=isbn:${book.isbn}`
+            `https://www.googleapis.com/books/v1/volumes?q=isbn:${book.isbn}`,
           );
 
           if (data.totalItems > 0 && data.items[0].volumeInfo.imageLinks) {
             const url = data.items[0].volumeInfo.imageLinks.thumbnail.replace(
               "http://",
-              "https://"
+              "https://",
             );
 
             // 3. Actualizar este libro específico en la BBDD
             const updateRes = await client.query(
               "UPDATE books SET cover_url = $1 WHERE id = $2 RETURNING *",
-              [url, book.id]
+              [url, book.id],
             );
 
             updatedBooks.push(updateRes.rows[0]);
@@ -205,7 +205,7 @@ async function getBookByFeatures(features) {
       ORDER BY b.created_at DESC
       LIMIT $1
       `,
-      [5]
+      [5],
     );
     await client.query("COMMIT");
     return result.rows.map((book) => new Book(book));
@@ -222,11 +222,11 @@ async function getBookByFeatures(features) {
 //   const client = await pool.connect();
 //   try {
 //     const p = Math.max(1, parseInt(page) || 1);
-//     const l = 4; 
+//     const l = 4;
 //     const offset = (p - 1) * l;
 
 //     const query = `SELECT * FROM books ORDER BY created_at DESC LIMIT ${l} OFFSET ${offset}`;
-    
+
 //     console.log("--- DEBUG API ---");
 //     console.log("Página solicitada:", p);
 //     console.log("SQL ejecutado:", query);
@@ -253,11 +253,24 @@ async function getBookByFeatures(features) {
 
 // api/Repositories/BookRepository.mjs
 
+async function getBooksCarrusel() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query("SELECT * FROM books");
+    return result.rows.map((book) => new Book(book));
+  } catch (error) {
+    console.log(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 async function getAllBooks(page = 1, filters = {}) {
   const client = await pool.connect();
   try {
     const p = Math.max(1, parseInt(page) || 1);
-    const l = 8; 
+    const l = 8;
     const offset = (p - 1) * l;
 
     let queryBase = "SELECT b.* FROM books b";
@@ -276,25 +289,28 @@ async function getAllBooks(page = 1, filters = {}) {
     }
 
     if (filters.genre) {
-      whereClauses.push(`b.id IN (SELECT book_id FROM book_genres WHERE genre_id = $${values.length + 1})`);
+      whereClauses.push(
+        `b.id IN (SELECT book_id FROM book_genres WHERE genre_id = $${values.length + 1})`,
+      );
       values.push(filters.genre);
     }
 
     if (filters.author) {
-      whereClauses.push(`b.id IN (SELECT book_id FROM book_authors WHERE author_id = $${values.length + 1})`);
+      whereClauses.push(
+        `b.id IN (SELECT book_id FROM book_authors WHERE author_id = $${values.length + 1})`,
+      );
       values.push(filters.author);
     }
 
-    const whereSQL = whereClauses.length > 0 
-      ? " WHERE " + whereClauses.join(" AND ") 
-      : "";
+    const whereSQL =
+      whereClauses.length > 0 ? " WHERE " + whereClauses.join(" AND ") : "";
 
     const finalQuery = `${queryBase} ${whereSQL} ORDER BY b.created_at DESC LIMIT ${l} OFFSET ${offset}`;
     const finalCount = `${countBase} ${whereSQL}`;
 
     const [result, countRes] = await Promise.all([
       client.query(finalQuery, values),
-      client.query(finalCount, values)
+      client.query(finalCount, values),
     ]);
 
     const totalItems = parseInt(countRes.rows[0].count);
@@ -303,7 +319,7 @@ async function getAllBooks(page = 1, filters = {}) {
       data: result.rows,
       totalItems,
       totalPages: Math.ceil(totalItems / l),
-      currentPage: p
+      currentPage: p,
     };
   } catch (error) {
     console.error("Error en getAllBooks (Repository):", error);
@@ -325,7 +341,7 @@ async function getBooksByIds(bookIds) {
   try {
     const result = await client.query(
       "SELECT * FROM books WHERE id = ANY($1)",
-      [bookIds]
+      [bookIds],
     );
     return result.rows.map((book) => new Book(book));
   } catch (error) {
@@ -344,7 +360,7 @@ async function getBooksMostSold() {
       from books b right join order_items oi on b.id = oi.book_id 
       group by b.id 
       order by total_sold desc
-      LIMIT 5;`
+      LIMIT 5;`,
     );
     return result.rows.map((row) => {
       const book = new Book(row);
@@ -371,4 +387,5 @@ export default {
   updateStock,
   getBooksByIds,
   getBooksMostSold,
+  getBooksCarrusel,
 };

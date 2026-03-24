@@ -37,13 +37,16 @@
     "back": "← Tirar p'atrás",
     "edit_book": "Retocar el libro",
     "delete_book": "Borrar esta locura",
-    "confirm_delete": "¿Te lo vas a cargar de verdad? Increíble..."
+    "confirm_delete": "¿Te lo vas a cargar de verdad? Increíble...",
+    "title": "Títol"
   },
   "admin": {
     "edit": "Editar",
     "delete": "F12 y borrar",
     "confirm": "¿Seguro, hermano?",
-    "panel": "Panel del Jefe"
+    "panel": "Panel del Jefe",
+    "actions": "Accions",
+    "date": "Calendata"
   },
   "author_detail": {
     "biography": "Su vida",
@@ -85,7 +88,10 @@
     "search": "Bichear...",
     "save": "Guardar",
     "cancel": "Quita, quita",
-    "back": "Volver"
+    "back": "Volver",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Veyer"
   },
   "genres": {
     "title": "Palos Literarios",
@@ -157,7 +163,9 @@
     "not_defined": "Ni idea",
     "view_orders": "Ver mis mandados",
     "delete_account": "Borrar cuenta",
-    "delete_confirm": "¿Seguro que te quieres ir? No seas malaje..."
+    "delete_confirm": "¿Seguro que te quieres ir? No seas malaje...",
+    "activity_title": "A mia actividat",
+    "view_reviews": "Veyer as mias ressenyas"
   },
   "cart": {
     "title": "Tu inventario",
@@ -249,7 +257,10 @@
     "stats_title": "Cómo va el chiringuito",
     "stats_users": "Peñita total",
     "stats_orders": "Pedidos totales",
-    "stats_status": "Estado Firebase"
+    "stats_status": "Estado Firebase",
+    "card_reviews": "Ressenyas",
+    "card_reviews_text": "Xestión de valoracions y comentarios.",
+    "sec_reviews": "Xestión de Ressenyas"
   },
   "adminUsersList": {
     "title": "Manejo de Usuarios",
@@ -372,5 +383,18 @@
     "title": "Retocar Editorial",
     "label_new_logo": "Logo nuevo",
     "logo_help_edit": "Elige otra imagen si quieres."
+  },
+  "review": {
+    "add_review": "Adhibir ressenya",
+    "cancel": "Cancelar",
+    "comment": "Comentario",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "id": "ID",
+    "no_reviews_yet": "Encara no i ha ressenyas ta este libro.",
+    "rating": "Puntuación",
+    "reviews": "Ressenyas",
+    "save": "Alzar",
+    "user": "Usuario"
   }
 }

@@ -37,13 +37,16 @@
     "back": "← Itzuli hasierara",
     "edit_book": "Liburua editatu",
     "delete_book": "Liburua ezabatu",
-    "confirm_delete": "Ziur al zaude liburu hau ezabatu nahi duzula?"
+    "confirm_delete": "Ziur al zaude liburu hau ezabatu nahi duzula?",
+    "title": "Izenburua"
   },
   "admin": {
     "edit": "Liburua editatu",
     "delete": "Ezabatu",
     "confirm": "Ziur zaude?",
-    "panel": "Kudeaketa aukerak"
+    "panel": "Kudeaketa aukerak",
+    "actions": "Ekintzak",
+    "date": "Data"
   },
   "author_detail": {
     "biography": "Biografia",
@@ -85,7 +88,10 @@
     "search": "Liburuak bilatu...",
     "save": "Gorde",
     "cancel": "Utzi",
-    "back": "Bueltatu"
+    "back": "Bueltatu",
+    "delete": "Ezabatu",
+    "edit": "Editatu",
+    "view": "Ikusi"
   },
   "genres": {
     "title": "Literatura Generoak",
@@ -157,7 +163,9 @@
     "not_defined": "Zehaztu gabe",
     "view_orders": "Nire eskaerak ikusi",
     "delete_account": "Kontua Ezabatu",
-    "delete_confirm": "Ziur zaude zure kontua ezabatu nahi duzula? Ekintza hau ezin da desegin."
+    "delete_confirm": "Ziur zaude zure kontua ezabatu nahi duzula? Ekintza hau ezin da desegin.",
+    "activity_title": "Nire Jarduera",
+    "view_reviews": "Nire iritziak ikusi"
   },
   "cart": {
     "title": "Zure saskia",
@@ -249,7 +257,10 @@
     "stats_title": "Jardueraren laburpena",
     "stats_users": "Erabiltzaileak Guztira",
     "stats_orders": "Eskaerak Guztira",
-    "stats_status": "Firebase Egoera"
+    "stats_status": "Firebase Egoera",
+    "card_reviews": "Iritziak",
+    "card_reviews_text": "Balorazioen eta iruzkineen kudeaketa.",
+    "sec_reviews": "Iritzien Kudeaketa"
   },
   "adminUsersList": {
     "title": "Erabiltzaileen Kudeaketa",
@@ -372,5 +383,18 @@
     "title": "Argitaletxea Editatu",
     "label_new_logo": "Logotipo berria",
     "logo_help_edit": "Hautatu irudi berri bat oraingoa aldatu nahi baduzu."
+  },
+  "review": {
+    "add_review": "Iritzia gehitu",
+    "cancel": "Utzi",
+    "comment": "Iruzkina",
+    "delete": "Ezabatu",
+    "edit": "Editatu",
+    "id": "ID",
+    "no_reviews_yet": "Oraindik ez dago liburu honentzako iritzirik.",
+    "rating": "Puntuazioa",
+    "reviews": "Iritziak",
+    "save": "Gorde",
+    "user": "Erabiltzailea"
   }
 }

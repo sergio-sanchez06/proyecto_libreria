@@ -37,13 +37,16 @@
     "back": "← Anda p'atrás",
     "edit_book": "Arreglar el libro",
     "delete_book": "Mandarlo a la huerta",
-    "confirm_delete": "¿Seguro que quieres borrar esto? No seas rasmia..."
+    "confirm_delete": "¿Seguro que quieres borrar esto? No seas rasmia...",
+    "title": "Título"
   },
   "admin": {
     "edit": "Retocar",
     "delete": "Limpiar",
     "confirm": "¿Tú verás?",
-    "panel": "Manejo de la barraca"
+    "panel": "Manejo de la barraca",
+    "actions": "Acciones",
+    "date": "Fecha"
   },
   "author_detail": {
     "biography": "Su vida",
@@ -85,7 +88,10 @@
     "search": "Bichear libros...",
     "save": "Guardar",
     "cancel": "Quita, quita",
-    "back": "Volver"
+    "back": "Volver",
+    "delete": "Borrar",
+    "edit": "Editar",
+    "view": "Ver"
   },
   "genres": {
     "title": "Palos Literarios",
@@ -157,7 +163,9 @@
     "not_defined": "Ni idea",
     "view_orders": "Ver mis mandados",
     "delete_account": "Borrar cuenta",
-    "delete_confirm": "¿Seguro que te quieres ir? No seas malaje..."
+    "delete_confirm": "¿Seguro que te quieres ir? No seas malaje...",
+    "activity_title": "Mi Activiá",
+    "view_reviews": "Ver mis reseñas"
   },
   "cart": {
     "title": "Tu capazo",
@@ -249,7 +257,10 @@
     "stats_title": "Cómo va el chiringuito",
     "stats_users": "Peñita total",
     "stats_orders": "Pedidos totales",
-    "stats_status": "Estado de Firebase"
+    "stats_status": "Estado de Firebase",
+    "card_reviews": "Reseñas",
+    "card_reviews_text": "Gestión de valoraciones y comentarios.",
+    "sec_reviews": "Gestión de Reseñas"
   },
   "adminUsersList": {
     "title": "Manejo de Usuarios",
@@ -372,5 +383,18 @@
     "title": "Retocar Editorial",
     "label_new_logo": "Logo nuevo",
     "logo_help_edit": "Elige otro dibujo si quieres cambiar el de ahora."
+  },
+  "review": {
+    "add_review": "Añadir reseña",
+    "cancel": "Cancelar",
+    "comment": "Comentario",
+    "delete": "Borrar",
+    "edit": "Editar",
+    "id": "ID",
+    "no_reviews_yet": "Tovia no hay reseñas pa este libro.",
+    "rating": "Puntuación",
+    "reviews": "Reseñas",
+    "save": "Guardar",
+    "user": "Usuario"
   }
 }

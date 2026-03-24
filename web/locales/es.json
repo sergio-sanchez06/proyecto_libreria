@@ -37,13 +37,16 @@
     "back": "← Volver al inicio",
     "edit_book": "Editar libro",
     "delete_book": "Eliminar libro",
-    "confirm_delete": "¿Estás seguro de que deseas eliminar este libro?"
+    "confirm_delete": "¿Estás seguro de que deseas eliminar este libro?",
+    "title": "Título"
   },
   "admin": {
     "edit": "Editar Libro",
     "delete": "Eliminar",
     "confirm": "¿Seguro?",
-    "panel": "Opciones de administración"
+    "panel": "Opciones de administración",
+    "actions": "Acciones",
+    "date": "Fecha"
   },
   "author_detail": {
     "biography": "Biografía",
@@ -85,7 +88,10 @@
     "search": "Buscar libros...",
     "save": "Guardar",
     "cancel": "Cancelar",
-    "back": "Volver"
+    "back": "Volver",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Ver"
   },
   "genres": {
     "title": "Géneros Literarios",
@@ -157,7 +163,9 @@
     "not_defined": "No definida",
     "view_orders": "Ver mis pedidos",
     "delete_account": "Eliminar Cuenta",
-    "delete_confirm": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer."
+    "delete_confirm": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
+    "activity_title": "Mi Actividad",
+    "view_reviews": "Ver mis reseñas"
   },
   "cart": {
     "title": "Tu carrito",
@@ -249,7 +257,10 @@
     "stats_title": "Resumen de actividad",
     "stats_users": "Usuarios Totales",
     "stats_orders": "Pedidos Totales",
-    "stats_status": "Estado Firebase"
+    "stats_status": "Estado Firebase",
+    "card_reviews": "Reseñas",
+    "card_reviews_text": "Gestión de valoraciones y comentarios.",
+    "sec_reviews": "Gestión de Reseñas"
   },
   "adminUsersList": {
     "title": "Gestión de Usuarios",
@@ -372,5 +383,18 @@
     "title": "Editar Editorial",
     "label_new_logo": "Nuevo logo",
     "logo_help_edit": "Selecciona una nueva imagen si deseas cambiar la actual."
+  },
+  "review": {
+    "add_review": "Añadir reseña",
+    "cancel": "Cancelar",
+    "comment": "Comentario",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "id": "ID",
+    "no_reviews_yet": "Aún no hay reseñas para este libro.",
+    "rating": "Puntuación",
+    "reviews": "Reseñas",
+    "save": "Guardar",
+    "user": "Usuario"
   }
 }

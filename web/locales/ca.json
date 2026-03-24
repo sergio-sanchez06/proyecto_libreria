@@ -37,13 +37,16 @@
     "back": "← Tornar a l'inici",
     "edit_book": "Editar llibre",
     "delete_book": "Eliminar llibre",
-    "confirm_delete": "Estàs segur que vols eliminar aquest llibre?"
+    "confirm_delete": "Estàs segur que vols eliminar aquest llibre?",
+    "title": "Títol"
   },
   "admin": {
     "edit": "Editar Llibre",
     "delete": "Eliminar",
     "confirm": "N'estàs segur?",
-    "panel": "Opcions d'administració"
+    "panel": "Opcions d'administració",
+    "actions": "Accions",
+    "date": "Data"
   },
   "author_detail": {
     "biography": "Biografia",
@@ -85,7 +88,10 @@
     "search": "Cercar llibres...",
     "save": "Desar",
     "cancel": "Cancel·lar",
-    "back": "Tornar"
+    "back": "Tornar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "view": "Veure"
   },
   "genres": {
     "title": "Gèneres Literaris",
@@ -157,7 +163,9 @@
     "not_defined": "No definida",
     "view_orders": "Veure les meves comandes",
     "delete_account": "Eliminar Compte",
-    "delete_confirm": "Estàs segur que vols eliminar el teu compte? Aquesta acció no es pot desfer."
+    "delete_confirm": "Estàs segur que vols eliminar el teu compte? Aquesta acció no es pot desfer.",
+    "activity_title": "La meva activitat",
+    "view_reviews": "Veure les meves ressenyes"
   },
   "cart": {
     "title": "El teu carret",
@@ -249,7 +257,10 @@
     "stats_title": "Resum d'activitat",
     "stats_users": "Usuaris Totals",
     "stats_orders": "Comandes Totals",
-    "stats_status": "Estat Firebase"
+    "stats_status": "Estat Firebase",
+    "card_reviews": "Ressenyes",
+    "card_reviews_text": "Gestió de valoracions i comentaris.",
+    "sec_reviews": "Gestió de Ressenyes"
   },
   "adminUsersList": {
     "title": "Gestió d'Usuaris",
@@ -372,5 +383,18 @@
     "title": "Editar Editorial",
     "label_new_logo": "Nou logotip",
     "logo_help_edit": "Selecciona una nova imatge si vols canviar l'actual."
+  },
+  "review": {
+    "add_review": "Afegir ressenya",
+    "cancel": "Cancel·lar",
+    "comment": "Comentari",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "id": "ID",
+    "no_reviews_yet": "Encara no hi ha ressenyes per a aquest llibre.",
+    "rating": "Puntuació",
+    "reviews": "Ressenyes",
+    "save": "Desar",
+    "user": "Usuari"
   }
 }

@@ -4,6 +4,7 @@ const router = express.Router();
 
 router.post("/", PublisherController.createPublisher);
 router.get("/mostSold", PublisherController.getPublishersMostSold);
+router.get("/allPublishers", PublisherController.getPublishers);
 router.get("/:id", PublisherController.getPublisherById);
 router.get("/name/:name", PublisherController.getPublisherByName);
 router.get("/country/:country", PublisherController.getPublisherByCountry);

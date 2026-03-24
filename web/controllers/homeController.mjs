@@ -12,7 +12,7 @@ async function getBooksAndAuthors(req, res, next) {
   try {
     // const response = await apiClient.get("/books");
     // const authorsResponse = await apiClient.get("/authors");
-    const responseBooks = await apiClient.get("/books");
+    const responseBooks = await apiClient.get("/books/carrusel");
     const responseAuthors = await apiClient.get("/authors");
     const responseBookAuthors = await apiClient.get("/bookAuthor");
     const responseBooksAuthorCount = await apiClient.get("/bookAuthor/count");
@@ -25,6 +25,12 @@ async function getBooksAndAuthors(req, res, next) {
     res.locals.bookAuthorsCount = booksAuthorsCount;
     res.locals.books = books;
     res.locals.authors = authors;
+
+    // console.log(res.locals.bookAuthors);
+    // console.log(res.locals.bookAuthorsCount);
+    // console.log(res.locals.books);
+    // console.log(res.locals.authors);
+
     next();
   } catch (error) {
     res.locals.bookAuthors = [];
@@ -52,8 +58,6 @@ async function index(req, res) {
   const response = await apiClient.get("/books/mostSold");
   const booksMostSold = response.data;
 
-  // console.log(booksMostSold[0].totalSold);
-
   const responseAuthors = await apiClient.get("/authors/authors/mostSold");
   const authorsMostSold = responseAuthors.data;
 
@@ -63,7 +67,7 @@ async function index(req, res) {
   const responseGenres = await apiClient.get("/genres/mostSold");
   const genresMostSold = responseGenres.data;
 
-  // console.log(res.locals.bookAuthors);
+  console.log(res.locals.books);
 
   res.render("partials/index", {
     books: res.locals.books,

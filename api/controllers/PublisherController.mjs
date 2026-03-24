@@ -99,6 +99,16 @@ async function getPublishersMostSold(req, res) {
   }
 }
 
+async function getPublishers(req, res) {
+  try {
+    const publishers = await PublisherRepository.getPublishers();
+    res.status(200).json(publishers);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los editores" });
+  }
+}
+
 export default {
   createPublisher,
   getPublisherById,
@@ -108,4 +118,5 @@ export default {
   getAllPublishers,
   getPublisherByCountry,
   getPublishersMostSold,
+  getPublishers,
 };

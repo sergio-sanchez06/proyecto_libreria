@@ -176,15 +176,25 @@ async function updateAllCovers(req, res) {
 //   }
 // }
 
+async function getBooksCarrusel(req, res) {
+  try {
+    const books = await RepoBook.getBooksCarrusel();
+    res.status(200).json(books);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los libros" });
+  }
+}
+
 async function getAllBooks(req, res) {
   try {
     const page = parseInt(req.query.page) || 1;
-    
+
     const filters = {
       q: req.query.q || null,
       maxPrice: req.query.maxPrice || null,
       genre: req.query.genre || null,
-      author: req.query.author || null
+      author: req.query.author || null,
     };
 
     const result = await RepoBook.getAllBooks(page, filters);
@@ -217,4 +227,5 @@ export default {
   getBooksByPublisherId,
   getAllBooks,
   getMostSoldBooks,
+  getBooksCarrusel,
 };

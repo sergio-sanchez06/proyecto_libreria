@@ -172,7 +172,7 @@ async function getEditBook(req, res) {
       apiClient.get(`/books/${id}`),
       apiClient.get("/authors"),
       apiClient.get("/genres"),
-      apiClient.get("/publishers"),
+      apiClient.get("/publishers/allPublishers"),
     ]);
 
     res.render("admin/edit_book", {
@@ -205,6 +205,7 @@ async function updateBook(req, res) {
     await api.put(`/books/${id}`, updateData);
     res.redirect(`/books/book/${id}`);
   } catch (error) {
+    console.log(error);
     res.status(500).send("Error al actualizar el libro");
   }
 }

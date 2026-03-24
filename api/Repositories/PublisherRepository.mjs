@@ -13,7 +13,7 @@ async function createPublisher(publisher) {
         publisher.website,
         publisher.description,
         publisher.image_url,
-      ]
+      ],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -31,7 +31,7 @@ async function getPublisherById(id) {
     await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM publishers WHERE id = $1",
-      [id]
+      [id],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -48,7 +48,7 @@ async function getPublisherByName(name) {
     await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM publishers WHERE name = $1",
-      [name]
+      [name],
     );
     await client.query("COMMIT");
     return new PublisherModel(result.rows[0]);
@@ -84,7 +84,7 @@ async function updatePublisher(publisher) {
         publisher.descripcion,
         publisher.logo_url,
         publisher.id,
-      ]
+      ],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -102,7 +102,7 @@ async function deletePublisher(id) {
     await client.query("BEGIN");
     const result = await client.query(
       "DELETE FROM publishers WHERE id = $1 RETURNING *",
-      [id]
+      [id],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -139,14 +139,14 @@ async function getAllPublishers(page = 1, limit = 4) {
 
     const result = await client.query(
       "SELECT * FROM publishers ORDER BY name LIMIT $1 OFFSET $2",
-      [limit, offset]
+      [limit, offset],
     );
 
     return {
       data: result.rows.map((publisher) => new PublisherModel(publisher)),
       totalItems: totalItems,
       totalPages: Math.ceil(totalItems / limit),
-      currentPage: parseInt(page)
+      currentPage: parseInt(page),
     };
   } catch (error) {
     throw error;
@@ -161,7 +161,7 @@ async function getPublisherByCountry(country) {
     await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM publishers WHERE country = $1",
-      [country]
+      [country],
     );
     await client.query("COMMIT");
     return result.rows.map((publisher) => new PublisherModel(publisher));
@@ -183,13 +183,25 @@ async function getPublishersMostSold() {
         join order_items oi on oi.book_id = b.id 
       group by p.id 
       order by total_sold desc
-      LIMIT 5;`
+      LIMIT 5;`,
     );
     return result.rows.map((row) => {
       const publisher = new PublisherModel(row);
       publisher.totalSold = row.total_sold;
       return publisher;
     });
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function getPublishers() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query("SELECT * FROM publishers order by name");
+    return result.rows.map((publisher) => new PublisherModel(publisher));
   } catch (error) {
     throw error;
   } finally {
@@ -206,4 +218,5 @@ export default {
   updatePublisher,
   deletePublisher,
   getPublishersMostSold,
+  getPublishers,
 };
