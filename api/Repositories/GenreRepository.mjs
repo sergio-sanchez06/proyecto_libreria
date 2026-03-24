@@ -25,8 +25,9 @@ async function getGenreById(id) {
     const result = await client.query("SELECT * FROM genres WHERE id = $1", [
       id,
     ]);
-    return result.rows[0];
+    return result.rows[0] ? new GenreModel(result.rows[0]) : null;
   } catch (error) {
+    console.log("Error en getGenreById", error);
     throw error;
   } finally {
     client.release();
@@ -48,8 +49,9 @@ async function getGenreByName(name) {
       console.log("No encontrado");
     }
 
-    return new GenreModel(result.rows[0]);
+    return result.rows[0] ? new GenreModel(result.rows[0]) : null;
   } catch (error) {
+    console.log("Error en getGenreByName", error);
     throw error;
   } finally {
     client.release();
@@ -62,6 +64,7 @@ async function getAllGenres() {
     const result = await client.query("SELECT * FROM genres");
     return result.rows.map((genre) => new GenreModel(genre));
   } catch (error) {
+    console.log("Error en getAllGenres", error);
     throw error;
   } finally {
     client.release();
@@ -84,6 +87,7 @@ async function updateGenre(genre) {
     await client.query("COMMIT");
     return result.rows[0];
   } catch (error) {
+    console.log("Error en updateGenre", error);
     await client.query("ROLLBACK");
     throw error;
   } finally {
@@ -102,6 +106,7 @@ async function deleteGenre(id) {
     await client.query("COMMIT");
     return result.rows[0];
   } catch (error) {
+    console.log("Error en deleteGenre", error);
     await client.query("ROLLBACK");
     throw error;
   } finally {
@@ -126,6 +131,7 @@ async function getGenresMostSold() {
       return genre;
     });
   } catch (error) {
+    console.log("Error en getGenresMostSold", error);
     throw error;
   } finally {
     client.release();

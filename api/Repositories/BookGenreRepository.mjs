@@ -1,103 +1,111 @@
 import pool from "../config/database.mjs";
 import BookGenre from "../models/BookGenreModel.mjs";
 
-async function createBookGenre(bookGenre) {
-  const client = await pool.connect();
+/**
+ * Crea una asociación individual.
+ * Soporta transacciones externas (útil para createBook).
+ */
+async function createBookGenre(bookGenre, externalClient = null) {
+  const client = externalClient || (await pool.connect());
   try {
-    await client.query("BEGIN");
+    if (!externalClient) await client.query("BEGIN");
+
     const result = await client.query(
-      "INSERT INTO book_genres (book_id, genre_id) VALUES ($1, $2) RETURNING *",
-      [bookGenre.book_id, bookGenre.genre_id]
+      "INSERT INTO book_genres (book_id, genre_id) VALUES ($1, $2) ON CONFLICT DO NOTHING RETURNING *",
+      [bookGenre.book_id, bookGenre.genre_id],
     );
-    await client.query("COMMIT");
+
+    if (!externalClient) await client.query("COMMIT");
     return result.rows[0];
   } catch (error) {
-    await client.query("ROLLBACK");
+    if (!externalClient) await client.query("ROLLBACK");
     throw error;
   } finally {
-    client.release();
+    if (!externalClient) client.release();
+  }
+}
+
+/**
+ * SINCRONIZACIÓN: Borra todos los géneros de un libro y añade los nuevos.
+ * Este es el método que llamarás desde BookRepository.updateBook.
+ */
+async function syncBookGenres(bookId, genreIds, externalClient = null) {
+  const client = externalClient || (await pool.connect());
+  try {
+    if (!externalClient) await client.query("BEGIN");
+
+    // 1. Limpiamos la "pizarra"
+    await client.query("DELETE FROM book_genres WHERE book_id = $1", [bookId]);
+
+    // 2. Insertamos los nuevos IDs
+    if (genreIds && genreIds.length > 0) {
+      for (const genreId of genreIds) {
+        await client.query(
+          "INSERT INTO book_genres (book_id, genre_id) VALUES ($1, $2)",
+          [bookId, genreId],
+        );
+      }
+    }
+
+    if (!externalClient) await client.query("COMMIT");
+  } catch (error) {
+    if (!externalClient) await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    if (!externalClient) client.release();
   }
 }
 
 async function getBookGenreById(book_id, genre_id) {
-  const client = await pool.connect();
   try {
-    const result = await client.query(
+    const result = await pool.query(
       "SELECT * FROM book_genres WHERE book_id = $1 AND genre_id = $2",
-      [book_id]
+      [book_id, genre_id],
     );
-    return new BookGenreModel(result.rows[0]);
+    return result.rows[0] ? new BookGenre(result.rows[0]) : null;
   } catch (error) {
+    console.error("Error en getBookGenreById:", error);
     throw error;
-  } finally {
-    client.release();
   }
 }
 
 async function getBookGenresByBook(id) {
-  const client = await pool.connect();
   try {
-    console.log(id);
-
-    const result = await client.query(
-      `SELECT 
-                bg.book_id, bg.genre_id,
-                b.title,
-                g.name
-            FROM book_genres bg
-            INNER JOIN books b ON bg.book_id = b.id
-            INNER JOIN genres g ON bg.genre_id = g.id
-            WHERE b.id = $1`,
-      [id]
+    const result = await pool.query(
+      `SELECT bg.book_id, bg.genre_id, b.title, g.name
+       FROM book_genres bg
+       INNER JOIN books b ON bg.book_id = b.id
+       INNER JOIN genres g ON bg.genre_id = g.id
+       WHERE b.id = $1`,
+      [id],
     );
-
-    if (result.rows.length === 0) {
-      console.log("No se encontraron géneros para el libro especificado");
-    }
 
     return result.rows.map(
       (row) =>
         new BookGenre({
           book_id: row.book_id,
           genre_id: row.genre_id,
-          book: {
-            title: row.title,
-            id: row.book_id,
-          },
-          genre: {
-            name: row.name,
-            id: row.genre_id,
-          },
-        })
+          book: { title: row.title, id: row.book_id },
+          genre: { name: row.name, id: row.genre_id },
+        }),
     );
   } catch (error) {
+    console.error("Error en getBookGenresByBook:", error);
     throw error;
-  } finally {
-    client.release();
   }
 }
 
 async function getBookGenresByGenre(genreName) {
-  const client = await pool.connect();
   try {
-    const result = await client.query(
-      `SELECT 
-        bg.book_id, bg.genre_id,
-        b.title AS book_title,
-        b.id AS book_id,
-        b.cover_url,
-        g.name AS genre_name,
-        g.id AS genre_id
-      FROM public.book_genres bg
-      INNER JOIN public.books b ON bg.book_id = b.id
-      INNER JOIN public.genres g ON bg.genre_id = g.id
-      WHERE g.name ILIKE $1`,
-      [`%${genreName}%`]
+    const result = await pool.query(
+      `SELECT bg.book_id, bg.genre_id, b.title AS book_title, b.id AS book_id,
+              b.cover_url, g.name AS genre_name, g.id AS genre_id
+       FROM public.book_genres bg
+       INNER JOIN public.books b ON bg.book_id = b.id
+       INNER JOIN public.genres g ON bg.genre_id = g.id
+       WHERE g.name ILIKE $1`,
+      [`%${genreName}%`],
     );
-
-    if (result.rows.length === 0) {
-      console.log("No se encontraron libros con el género especificado");
-    }
 
     return result.rows.map(
       (row) =>
@@ -109,79 +117,43 @@ async function getBookGenresByGenre(genreName) {
             id: row.book_id,
             cover_url: row.cover_url,
           },
-          genre: {
-            name: row.genre_name,
-            id: row.genre_id,
-          },
-        })
+          genre: { name: row.genre_name, id: row.genre_id },
+        }),
     );
   } catch (error) {
+    console.error("Error en getBookGenresByGenre:", error);
     throw error;
-  } finally {
-    client.release();
   }
 }
 
-async function updateBookGenre(bookGenre) {
-  const client = await pool.connect();
+async function deleteByBookId(book_id, externalClient = null) {
+  const client = externalClient || (await pool.connect());
   try {
-    await client.query("BEGIN");
-    const result = await client.query(
-      "UPDATE book_genres SET book_id = $1, genre_id = $2 WHERE id = $3 AND book_id = $4 AND genre_id = $5 RETURNING *",
-      [
-        bookGenre.book_id,
-        bookGenre.genre_id,
-        bookGenre.book_id,
-        bookGenre.genre_id,
-      ]
-    );
-    await client.query("COMMIT");
-    return new BookGenreModel(result.rows[0]);
-  } catch (error) {
-    await client.query("ROLLBACK");
-    throw error;
-  } finally {
-    client.release();
-  }
-}
-
-async function deleteByBookId(book_id) {
-  const client = await pool.connect();
-  try {
-    await client.query("BEGIN");
     await client.query("DELETE FROM book_genres WHERE book_id = $1", [book_id]);
-    await client.query("COMMIT");
-  } catch (error) {
-    await client.query("ROLLBACK");
-    throw error;
   } finally {
-    client.release();
+    if (!externalClient) client.release();
   }
 }
 
 async function deleteBookGenre(book_id, genre_id) {
-  const client = await pool.connect();
   try {
-    await client.query("BEGIN");
-    await client.query(
+    await pool.query(
       "DELETE FROM book_genres WHERE book_id = $1 AND genre_id = $2",
-      [book_id, genre_id]
+      [book_id, genre_id],
     );
-    await client.query("COMMIT");
+    return true;
   } catch (error) {
-    await client.query("ROLLBACK");
+    console.error("Error en deleteBookGenre:", error);
     throw error;
-  } finally {
-    client.release();
   }
 }
 
 export default {
   createBookGenre,
+  syncBookGenres, // Nueva función estrella para updates
   getBookGenreById,
   getBookGenresByBook,
   getBookGenresByGenre,
-  updateBookGenre,
   deleteBookGenre,
   deleteByBookId,
 };

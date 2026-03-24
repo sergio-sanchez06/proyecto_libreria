@@ -12,7 +12,11 @@ async function createOrder({ user_id, items }) {
     if (!items || items.length === 0) throw new Error("El carrito está vacío");
 
     const bookIds = items.map((item) => item.book_id);
-    const books = await BookRepository.getBooksByIds(bookIds);
+
+    // Se pone true para bloquear las filas hasta que haga commit
+    // Evita que otro usuario compre el mismo libro al mismo tiempo
+    // Tambien pasamos la conexión actual para que todo se haga en la misma transacción
+    const books = await BookRepository.getBooksByIds(bookIds, client, true);
 
     let total = 0;
     const validatedItems = [];
@@ -25,7 +29,10 @@ async function createOrder({ user_id, items }) {
           `Stock insuficiente para "${book.title}". Disponible: ${book.stock}`,
         );
       }
-      total += book.price * item.quantity;
+
+      // Ponemos Number() para evitar errores de tipo por si postgre devuelve string
+
+      total += Number(book.price) * item.quantity;
       validatedItems.push({ ...item, currentPrice: book.price });
     }
 

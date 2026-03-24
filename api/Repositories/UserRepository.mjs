@@ -12,31 +12,28 @@ async function upsertFromFirebase({
 }) {
   const client = await pool.connect();
   try {
+    // Nota: No usamos BEGIN/COMMIT aquí porque es una sola sentencia ON CONFLICT (atómica por defecto)
     const result = await client.query(
       `
     INSERT INTO public.users (
       firebase_uid, email, name, role, default_address, optional_address
     ) VALUES ($1, $2, $3, $4, $5, $6)
     ON CONFLICT (firebase_uid) DO UPDATE SET
-      -- El email y el nombre sí los actualizamos por si cambian en la red social
       email = EXCLUDED.email,
-      name = EXCLUDED.name,
+      -- IMPORTANTE: Aquí es donde decides si el nombre de Google sobreescribe al de la BBDD
+      name = EXCLUDED.name, 
       
-      -- El ROL solo se actualiza si el valor nuevo NO es 'ADMIN' (protección de admin)
       role = CASE 
                WHEN public.users.role = 'ADMIN' THEN 'ADMIN' 
                ELSE EXCLUDED.role 
              END,
 
-      -- Actualizamos la dirección si la actual es la de por defecto
       default_address = CASE 
                           WHEN public.users.default_address = 'Pendiente de completar' THEN EXCLUDED.default_address
                           ELSE public.users.default_address 
                         END,
 
-      -- Mantenemos la dirección opcional si ya existe una
       optional_address = COALESCE(public.users.optional_address, EXCLUDED.optional_address),
-      
       updated_at = NOW()
     RETURNING *
   `,
@@ -44,10 +41,14 @@ async function upsertFromFirebase({
     );
 
     return new UserModel(result.rows[0]);
+  } catch (error) {
+    console.error("Error en upsertFromFirebase:", error);
+    throw error;
   } finally {
     client.release();
   }
 }
+
 // async function upsertFromFirebase({
 //   firebase_uid,
 //   email,
@@ -89,13 +90,15 @@ async function getUserByFirebaseUid(firebase_uid) {
       [firebase_uid],
     );
     return result.rows.length ? new UserModel(result.rows[0]) : null;
+  } catch (error) {
+    console.error("Error en getUserByFirebaseUid:", error);
+    throw error;
   } finally {
     client.release();
   }
 }
 
 async function getUserById(id) {
-  console.log("Recuperando perfil del usuario en la bbdd");
   const client = await pool.connect();
   try {
     const result = await client.query(
@@ -103,6 +106,9 @@ async function getUserById(id) {
       [id],
     );
     return result.rows.length ? new UserModel(result.rows[0]) : null;
+  } catch (error) {
+    console.error("Error en getUserById:", error);
+    throw error;
   } finally {
     client.release();
   }
@@ -116,6 +122,9 @@ async function getUserByEmail(email) {
       [email],
     );
     return result.rows.length ? new UserModel(result.rows[0]) : null;
+  } catch (error) {
+    console.error("Error en getUserByEmail:", error);
+    throw error;
   } finally {
     client.release();
   }
@@ -128,18 +137,16 @@ async function getAllUsers() {
       "SELECT * FROM public.users ORDER BY created_at DESC",
     );
     return result.rows.map((row) => new UserModel(row));
+  } catch (error) {
+    console.error("Error en getAllUsers:", error);
+    throw error;
   } finally {
     client.release();
   }
 }
 
 async function updateProfile(updates) {
-  console.log("Actualizando perfil del usuario en la bbdd");
-
-  console.log(updates);
-
   const { id, name, default_address, optional_address, role } = updates || {};
-
   if (!id) throw new Error("ID del usuario requerido");
 
   const client = await pool.connect();
@@ -178,7 +185,6 @@ async function deleteUser(id) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    // Obtenemos el UID antes de borrar para devolvérselo al controlador
     const res = await client.query(
       "SELECT firebase_uid FROM public.users WHERE id = $1",
       [id],
@@ -190,7 +196,7 @@ async function deleteUser(id) {
     await client.query("DELETE FROM public.users WHERE id = $1", [id]);
     await client.query("COMMIT");
 
-    return { firebase_uid }; // Importante para que el controlador borre en Firebase
+    return { firebase_uid };
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;

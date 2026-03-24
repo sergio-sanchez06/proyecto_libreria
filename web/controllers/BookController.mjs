@@ -190,23 +190,48 @@ async function getEditBook(req, res) {
 
 async function updateBook(req, res) {
   const { id } = req.params;
-  const updateData = req.body;
+  const updateData = { ...req.body };
 
   if (req.file) {
     updateData.cover_url = `/uploads/covers/${req.file.filename}`;
+  } else {
+    delete updateData.cover_url;
   }
 
-  console.log(updateData);
+  const normalizeIds = (field) => {
+    const value = updateData[field];
+
+    // Si el campo NO está en el body se envia undefined
+    // DEVOLVEMOS UNDEFINED para que la API no borre ni generos ni autores asociados al libro
+    if (value === undefined) return undefined;
+
+    // Si el campo está pero vacío (depende de cómo envíe el form si desmarcas todo)
+    if (!value || value.length === 0) return [];
+
+    const array = Array.isArray(value) ? value : [value];
+    return array.map((id) => parseInt(id, 10));
+  };
+
+  const finalPayload = {
+    ...updateData,
+    author_ids: normalizeIds("author_ids"),
+    genre_ids: normalizeIds("genre_ids"),
+  };
+
+  // Limpieza para no enviar basura a la API
+  if (finalPayload.author_ids === undefined) delete finalPayload.author_ids;
+  if (finalPayload.genre_ids === undefined) delete finalPayload.genre_ids;
 
   try {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    await api.put(`/books/${id}`, updateData);
+    // Enviamos a la API
+    await api.put(`/books/${id}`, finalPayload);
     res.redirect(`/books/book/${id}`);
   } catch (error) {
-    console.log(error);
-    res.status(500).send("Error al actualizar el libro");
+    console.error("Error:", error.message);
+    res.status(500).send("Error");
   }
 }
 

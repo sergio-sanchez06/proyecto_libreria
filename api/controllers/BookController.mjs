@@ -77,43 +77,19 @@ async function getBooksByPublisherId(req, res) {
 }
 
 async function updateBook(req, res) {
-  // Controlador de actualización de libro
   const bookId = req.params.id;
-  const updateData = req.body;
-
-  console.log(updateData);
+  const { author_ids, genre_ids, ...bookData } = req.body;
 
   try {
-    // Actualiza campos básicos del libro
-    await RepoBook.updateBook(bookId, updateData);
+    // 1. Llamamos a una única función que se encarga de TODO en una transacción
+    await RepoBook.updateBook(bookId, bookData, genre_ids, author_ids);
 
-    // Actualiza autores si se enviaron
-    if (updateData.author_ids !== undefined) {
-      await BookAuthor.deleteByBookId(bookId); // borra antiguas
-      for (const authorId of updateData.author_ids) {
-        await BookAuthor.createBookAuthor({
-          book_id: bookId,
-          author_id: authorId,
-        });
-      }
-    }
+    // 2. Recuperamos el libro actualizado con sus nuevas relaciones
+    const updatedBook = await RepoBook.getBookById(bookId);
 
-    // Actualiza géneros si se enviaron
-    if (updateData.genre_ids !== undefined) {
-      await BookGenre.deleteByBookId(bookId); // borra antiguas
-      for (const genreId of updateData.genre_ids) {
-        await BookGenre.createBookGenre({
-          book_id: bookId,
-          genre_id: genreId,
-        });
-      }
-    }
-
-    const updatedBook = await RepoBook.getBookById(bookId, {
-      withRelations: true,
-    });
     res.json(updatedBook);
   } catch (error) {
+    console.error("Error actualizando libro:", error);
     res.status(400).json({ message: error.message });
   }
 }

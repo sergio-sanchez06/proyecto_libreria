@@ -19,6 +19,7 @@ async function createPublisher(publisher) {
     return result.rows[0];
   } catch (error) {
     await client.query("ROLLBACK");
+    console.error("Error en createPublisher:", error);
     throw error;
   } finally {
     client.release();
@@ -28,15 +29,13 @@ async function createPublisher(publisher) {
 async function getPublisherById(id) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM publishers WHERE id = $1",
       [id],
     );
-    await client.query("COMMIT");
     return result.rows[0];
   } catch (error) {
-    await client.query("ROLLBACK");
+    console.error("Error en getPublisherById:", error);
     throw error;
   } finally {
     client.release();
@@ -45,15 +44,13 @@ async function getPublisherById(id) {
 async function getPublisherByName(name) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM publishers WHERE name = $1",
       [name],
     );
-    await client.query("COMMIT");
     return new PublisherModel(result.rows[0]);
   } catch (error) {
-    await client.query("ROLLBACK");
+    console.error("Error en getPublisherByName:", error);
     throw error;
   } finally {
     client.release();
@@ -90,6 +87,7 @@ async function updatePublisher(publisher) {
     return result.rows[0];
   } catch (error) {
     await client.query("ROLLBACK");
+    console.error("Error en updatePublisher:", error);
     throw error;
   } finally {
     client.release();
@@ -108,6 +106,7 @@ async function deletePublisher(id) {
     return result.rows[0];
   } catch (error) {
     await client.query("ROLLBACK");
+    console.error("Error en deletePublisher:", error);
     throw error;
   } finally {
     client.release();
@@ -123,6 +122,7 @@ async function deletePublisher(id) {
     return result.rows.map((publisher) => new PublisherModel(publisher));
   } catch (error) {
     await client.query("ROLLBACK");
+    console.error("Error en getAllPublishers:", error);
     throw error;
   } finally {
     client.release();
@@ -149,6 +149,7 @@ async function getAllPublishers(page = 1, limit = 4) {
       currentPage: parseInt(page),
     };
   } catch (error) {
+    console.error("Error en getAllPublishers:", error);
     throw error;
   } finally {
     client.release();
@@ -158,15 +159,13 @@ async function getAllPublishers(page = 1, limit = 4) {
 async function getPublisherByCountry(country) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       "SELECT * FROM publishers WHERE country = $1",
       [country],
     );
-    await client.query("COMMIT");
     return result.rows.map((publisher) => new PublisherModel(publisher));
   } catch (error) {
-    await client.query("ROLLBACK");
+    console.error("Error en getPublisherByCountry:", error);
     throw error;
   } finally {
     client.release();
@@ -176,7 +175,6 @@ async function getPublisherByCountry(country) {
 async function getPublishersMostSold() {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       `select p.*, sum(oi.quantity) as total_sold 
       from publishers p left join books b on p.id = b.publisher_id 
@@ -191,6 +189,7 @@ async function getPublishersMostSold() {
       return publisher;
     });
   } catch (error) {
+    console.error("Error en getPublishersMostSold:", error);
     throw error;
   } finally {
     client.release();
@@ -203,6 +202,7 @@ async function getPublishers() {
     const result = await client.query("SELECT * FROM publishers order by name");
     return result.rows.map((publisher) => new PublisherModel(publisher));
   } catch (error) {
+    console.error("Error en getPublishers:", error);
     throw error;
   } finally {
     client.release();
