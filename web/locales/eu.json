@@ -194,7 +194,7 @@
   "adminOrders": {
     "title": "Eskaeren Kudeaketa",
     "total_count": "Guztira: {{count}} eskaera",
-    "table_id": "ID",
+    "table_id": "Kudeaketa ID",
     "table_date": "Data",
     "table_user": "Erabiltzailea (ID)",
     "table_total": "Guztira",

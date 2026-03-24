@@ -194,9 +194,9 @@
   "adminOrders": {
     "title": "Xestión de Pedidos",
     "total_count": "Total: {{count}} pedidos",
-    "table_id": "ID",
+    "table_id": "Pedido ID",
     "table_date": "Data",
-    "table_user": "Usuario (ID)",
+    "table_user": "Usuario (Email)",
     "table_total": "Total",
     "table_status": "Estado",
     "table_actions": "Accións",

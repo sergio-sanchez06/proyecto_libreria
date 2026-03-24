@@ -105,9 +105,16 @@ async function deleteOrder(id) {
 
 async function getAllOrders() {
   const result = await pool.query(
-    "SELECT * FROM orders ORDER BY created_at DESC",
+    "SELECT o.*, u.email as user_email FROM orders o JOIN users u ON o.user_id = u.id ORDER BY created_at DESC",
   );
-  return result.rows.map((row) => new Order(row));
+
+  const orders = result.rows.map((row) => {
+    const order = new Order(row);
+    order.user_email = row.user_email;
+    return order;
+  });
+
+  return orders;
 }
 
 export default {

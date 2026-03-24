@@ -194,9 +194,9 @@
   "adminOrders": {
     "title": "Gestió de Comandes",
     "total_count": "Total: {{count}} comandes",
-    "table_id": "ID",
+    "table_id": "Comande ID",
     "table_date": "Data",
-    "table_user": "Usuari (ID)",
+    "table_user": "Usuari (Email)",
     "table_total": "Total",
     "table_status": "Estat",
     "table_actions": "Accions",
