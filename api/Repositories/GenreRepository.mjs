@@ -58,13 +58,40 @@ async function getGenreByName(name) {
   }
 }
 
-async function getAllGenres() {
+async function getAllGenres(page = 1, limit = 10) {
   const client = await pool.connect();
   try {
-    const result = await client.query("SELECT * FROM genres");
+    const offset = (page - 1) * limit;
+
+    const countRes = await client.query("SELECT COUNT(*) FROM genres");
+    const totalItems = parseInt(countRes.rows[0].count);
+
+    const result = await client.query(
+      "SELECT * FROM genres ORDER BY name LIMIT $1 OFFSET $2",
+      [limit, offset]
+    );
+
+    return {
+      data: result.rows.map((genre) => new GenreModel(genre)),
+      totalItems: totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+      currentPage: parseInt(page),
+    };
+  } catch (error) {
+    console.log("Error en getAllGenres (paginado)", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function getGenres() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query("SELECT * FROM genres ORDER BY name");
     return result.rows.map((genre) => new GenreModel(genre));
   } catch (error) {
-    console.log("Error en getAllGenres", error);
+    console.log("Error en getGenres (completo)", error);
     throw error;
   } finally {
     client.release();
@@ -119,11 +146,11 @@ async function getGenresMostSold() {
   try {
     const result = await client.query(
       `select name, sum(oi.quantity) as total_sold 
-      from genres g join book_genres bg on g.id = bg.genre_id 
-        join order_items oi on bg.book_id = oi.book_id 
-      group by g.id, g.name 
-      order by 2 desc 
-      limit 5;`,
+       from genres g join book_genres bg on g.id = bg.genre_id 
+         join order_items oi on bg.book_id = oi.book_id 
+       group by g.id, g.name 
+       order by 2 desc 
+       limit 5;`
     );
     return result.rows.map((row) => {
       const genre = new GenreModel(row);
@@ -143,6 +170,7 @@ export default {
   getGenreById,
   getGenreByName,
   getAllGenres,
+  getGenres,
   updateGenre,
   deleteGenre,
   getGenresMostSold,

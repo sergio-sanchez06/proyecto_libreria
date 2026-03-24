@@ -36,11 +36,24 @@ async function getGenreByName(req, res) {
 
 async function getAllGenres(req, res) {
   try {
-    const genres = await GenreRepository.getAllGenres();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const genresData = await GenreRepository.getAllGenres(page, limit);
+    res.status(200).json(genresData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los géneros paginados" });
+  }
+}
+
+async function getGenres(req, res) {
+  try {
+    const genres = await GenreRepository.getGenres();
     res.status(200).json(genres);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error al obtener los géneros" });
+    res.status(500).json({ error: "Error al obtener el listado completo de géneros" });
   }
 }
 
@@ -90,6 +103,7 @@ export default {
   getGenreById,
   getGenreByName,
   getAllGenres,
+  getGenres,
   updateGenre,
   deleteGenre,
   getGenreByCountry,

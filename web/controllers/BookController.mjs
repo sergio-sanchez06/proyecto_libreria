@@ -3,8 +3,6 @@ import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 // --- FUNCIONES PÚBLICAS (Lectura) ---
 
-// web/controllers/bookController.mjs
-
 async function getAllBooks(req, res) {
   try {
     const page = req.query.page || 1;
@@ -17,13 +15,15 @@ async function getAllBooks(req, res) {
       apiClient.get(`/books`, {
         params: { page, q, maxPrice, genre, author },
       }),
-      apiClient.get("/genres"),
+      apiClient.get("/genres"), // Esta ruta ahora devuelve un objeto paginado
       apiClient.get("/authors"),
     ]);
 
     res.render("partials/booksTable", {
       books: booksResponse.data.data,
-      genres: genresResponse.data.data || genresResponse.data,
+      // CORRECCIÓN: Accedemos a .data.data porque el middleware de la API 
+      // ahora devuelve los géneros dentro de una estructura de paginación
+      genres: genresResponse.data.data, 
       authors: authorsResponse.data,
       currentPage: booksResponse.data.currentPage,
       totalPages: booksResponse.data.totalPages,
@@ -35,8 +35,6 @@ async function getAllBooks(req, res) {
     res.status(500).render("error", { message: "Error al cargar el catálogo" });
   }
 }
-
-// web/controllers/bookController.mjs
 
 async function showAllBooks(req, res) {
   try {
@@ -56,7 +54,8 @@ async function showAllBooks(req, res) {
 
     res.render("partials/booksTable", {
       books: booksResponse.data.data,
-      genres: genresResponse.data,
+      // CORRECCIÓN: Igual que arriba, para evitar el error de .forEach
+      genres: genresResponse.data.data, 
       authors: authorsResponse.data,
       currentPage: booksResponse.data.currentPage,
       totalPages: booksResponse.data.totalPages,
@@ -75,19 +74,19 @@ async function getBookById(req, res) {
     const bookResponse = await apiClient.get(`/books/${id}`);
 
     const authorsResponse = await apiClient.get(
-      `/bookAuthor/book/id/${bookResponse.data.id}`,
+      `/bookAuthor/book/id/${bookResponse.data.id}`
     );
 
     const genresResponse = await apiClient.get(
-      `/bookGenre/book/${bookResponse.data.id}`,
+      `/bookGenre/book/${bookResponse.data.id}`
     );
 
     const publisherResponse = await apiClient.get(
-      `/publishers/${bookResponse.data.publisher_id}`,
+      `/publishers/${bookResponse.data.publisher_id}`
     );
 
     const reviewsResponse = await apiClient.get(
-      `/review/book/${bookResponse.data.id}`,
+      `/review/book/${bookResponse.data.id}`
     );
 
     const book = bookResponse.data;
@@ -95,7 +94,7 @@ async function getBookById(req, res) {
     const genres = genresResponse.data;
     const publisher = publisherResponse.data;
     const reviews = reviewsResponse.data;
-    console.log(reviews);
+    
     res.render("partials/libro_detalle", {
       book,
       authors,
@@ -116,11 +115,10 @@ async function getCreateBook(req, res) {
     return res.redirect("/");
 
   try {
-    // Cargamos autores, géneros y editoriales para los selects del formulario
     const [authors, genres, publishers] = await Promise.all([
       apiClient.get("/authors"),
-      apiClient.get("/genres"),
-      apiClient.get("/publishers"),
+      apiClient.get("/genres/all"), // CAMBIO: Pedimos todos los géneros (sin paginar)
+      apiClient.get("/publishers/all"), // CAMBIO: Pedimos todas las editoriales
     ]);
 
     res.render("admin/add_book", {
@@ -142,8 +140,6 @@ async function createBook(req, res) {
     bookData.cover_url = `/uploads/covers/${req.file.filename}`;
   }
 
-  console.log(bookData);
-
   try {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
@@ -152,9 +148,6 @@ async function createBook(req, res) {
     res.redirect("/books/showAllBooks");
   } catch (error) {
     console.log("Error al crear libro:", error);
-    console.log(error);
-
-    // Si falla, volvemos a cargar el formulario con el error
     res.render("admin/add_book", {
       error: error.response?.data?.message || "Error al crear libro",
       user: req.session.user,
@@ -171,8 +164,8 @@ async function getEditBook(req, res) {
     const [bookRes, authors, genres, publishers] = await Promise.all([
       apiClient.get(`/books/${id}`),
       apiClient.get("/authors"),
-      apiClient.get("/genres"),
-      apiClient.get("/publishers/allPublishers"),
+      apiClient.get("/genres/all"), // CAMBIO: Pedimos todos los géneros
+      apiClient.get("/publishers/all"), // CAMBIO: Pedimos todas las editoriales
     ]);
 
     res.render("admin/edit_book", {
@@ -200,12 +193,7 @@ async function updateBook(req, res) {
 
   const normalizeIds = (field) => {
     const value = updateData[field];
-
-    // Si el campo NO está en el body se envia undefined
-    // DEVOLVEMOS UNDEFINED para que la API no borre ni generos ni autores asociados al libro
     if (value === undefined) return undefined;
-
-    // Si el campo está pero vacío (depende de cómo envíe el form si desmarcas todo)
     if (!value || value.length === 0) return [];
 
     const array = Array.isArray(value) ? value : [value];
@@ -218,7 +206,6 @@ async function updateBook(req, res) {
     genre_ids: normalizeIds("genre_ids"),
   };
 
-  // Limpieza para no enviar basura a la API
   if (finalPayload.author_ids === undefined) delete finalPayload.author_ids;
   if (finalPayload.genre_ids === undefined) delete finalPayload.genre_ids;
 
@@ -226,12 +213,11 @@ async function updateBook(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    // Enviamos a la API
     await api.put(`/books/${id}`, finalPayload);
     res.redirect(`/books/book/${id}`);
   } catch (error) {
     console.error("Error:", error.message);
-    res.status(500).send("Error");
+    res.status(500).send("Error al actualizar libro");
   }
 }
 

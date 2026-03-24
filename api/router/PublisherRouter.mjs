@@ -2,13 +2,24 @@ import express from "express";
 import PublisherController from "../controllers/PublisherController.mjs";
 const router = express.Router();
 
-router.post("/", PublisherController.createPublisher);
-router.get("/mostSold", PublisherController.getPublishersMostSold);
+// --- RUTAS DE LISTADO ---
+router.get("/all", PublisherController.getPublishers);
 router.get("/allPublishers", PublisherController.getPublishers);
-router.get("/:id", PublisherController.getPublisherById);
+
+// ---  RUTAS DE CATÁLOGO  ---
+router.get("/paginated", PublisherController.getAllPublishers);
+router.get("/", PublisherController.getAllPublishers);
+
+
+// --- RUTAS DE CONSULTA Y FILTROS ---
+router.get("/mostSold", PublisherController.getPublishersMostSold);
 router.get("/name/:name", PublisherController.getPublisherByName);
 router.get("/country/:country", PublisherController.getPublisherByCountry);
-router.get("/", PublisherController.getAllPublishers);
+router.get("/:id", PublisherController.getPublisherById);
+
+
+// --- RUTAS DE ESCRITURA (POST, PUT, DELETE) ---
+router.post("/", PublisherController.createPublisher);
 router.put("/:id", PublisherController.updatePublisher);
 router.delete("/:id", PublisherController.deletePublisher);
 
