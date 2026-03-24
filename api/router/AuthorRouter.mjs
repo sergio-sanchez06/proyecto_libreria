@@ -5,6 +5,7 @@ import uploadImage from "../middlewares/uploadMiddlewares.mjs";
 const router = express.Router();
 
 router.post("/", AuthorController.createAuthor);
+router.get("/countries", AuthorController.getUniqueCountries);
 router.get("/:id", AuthorController.getAuthorById);
 router.get("/name/:name", AuthorController.getAuthorByName);
 router.get("/country/:country", AuthorController.getAuthorByCountry);

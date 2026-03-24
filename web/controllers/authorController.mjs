@@ -19,16 +19,23 @@ import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 async function getAuthors(req, res) {
   try {
     const page = req.query.page || 1;
+    const country = req.query.country || null;
     const limit = 4; 
 
-    const response = await apiClient.get(`/authors?page=${page}&limit=${limit}`);
+    // Peticiones paralelas para mayor eficiencia
+    const [authorsRes, countriesRes] = await Promise.all([
+      apiClient.get(`/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}`),
+      apiClient.get("/authors/countries")
+    ]);
 
     res.render("partials/authorsTable", {
-      authors: response.data.data,       
-      currentPage: response.data.currentPage, 
-      totalPages: response.data.totalPages,   
+      authors: authorsRes.data.data,       
+      currentPage: authorsRes.data.currentPage, 
+      totalPages: authorsRes.data.totalPages,   
+      countries: countriesRes.data,
+      selectedCountry: country,
+      query: req.query,
       user: req.session.user || null,
-      noScroll: true,
     });
   } catch (error) {
     console.error("Error al obtener los autores:", error);

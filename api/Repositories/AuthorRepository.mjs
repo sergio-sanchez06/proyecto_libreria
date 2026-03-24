@@ -130,34 +130,31 @@ client.release();
 }
 }
 
-/*async function getAllAuthors() {
- const client = await pool.connect();
- try {
-   await client.query("BEGIN");
-   const result = await client.query("SELECT * FROM authors");
-   await client.query("COMMIT");
-   return result.rows.map((author) => new authorModel(author));
- } catch (error) {
-   await client.query("ROLLBACK");
-   throw error;
- } finally {
-   client.release();
- }
-}*/
-
-async function getAllAuthors(page = null, limit = null) {
+async function getAllAuthors(page = null, limit = null, country = null) {
   const client = await pool.connect();
   try {
-    let query = "SELECT * FROM authors ORDER BY name ASC ";
+    let query = "SELECT * FROM authors ";
+    let whereClauses = [];
     let params = [];
+
+    if (country) {
+      whereClauses.push("country = $" + (params.length + 1));
+      params.push(country);
+    }
+
+    if (whereClauses.length > 0) {
+      query += " WHERE " + whereClauses.join(" AND ");
+    }
+
+    query += " ORDER BY name ASC ";
 
     if (page !== null && limit !== null) {
       const p = Math.max(1, parseInt(page));
       const l = parseInt(limit);
       const offset = (p - 1) * l;
 
-      query += "LIMIT $1 OFFSET $2";
-      params = [l, offset];
+      query += " LIMIT $" + (params.length + 1) + " OFFSET $" + (params.length + 2);
+      params.push(l, offset);
     }
 
     const result = await client.query(query, params);
@@ -165,7 +162,13 @@ async function getAllAuthors(page = null, limit = null) {
     const authors = result.rows; 
 
     if (page !== null) {
-      const countRes = await client.query("SELECT COUNT(*) FROM authors");
+      let countQuery = "SELECT COUNT(*) FROM authors";
+      let countParams = [];
+      if (country) {
+        countQuery += " WHERE country = $1";
+        countParams.push(country);
+      }
+      const countRes = await client.query(countQuery, countParams);
       const totalItems = parseInt(countRes.rows[0].count);
       
       return {
@@ -178,6 +181,21 @@ async function getAllAuthors(page = null, limit = null) {
     return authors;
   } catch (error) {
     console.error("Error en AuthorRepository:", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function getUniqueCountries() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      "SELECT DISTINCT country FROM authors WHERE country IS NOT NULL AND country <> '' ORDER BY country ASC"
+    );
+    return result.rows.map((row) => row.country);
+  } catch (error) {
+    console.error("Error en getUniqueCountries:", error);
     throw error;
   } finally {
     client.release();
@@ -235,4 +253,5 @@ deleteAuthor,
 getAllAuthors,
 updatePhoto,
 getAuthorsMostSold,
+getUniqueCountries,
 };

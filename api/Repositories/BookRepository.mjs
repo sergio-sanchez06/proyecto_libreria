@@ -257,7 +257,7 @@ async function getAllBooks(page = 1, filters = {}) {
   const client = await pool.connect();
   try {
     const p = Math.max(1, parseInt(page) || 1);
-    const l = 4; 
+    const l = 8; 
     const offset = (p - 1) * l;
 
     let queryBase = "SELECT b.* FROM books b";
@@ -278,6 +278,11 @@ async function getAllBooks(page = 1, filters = {}) {
     if (filters.genre) {
       whereClauses.push(`b.id IN (SELECT book_id FROM book_genres WHERE genre_id = $${values.length + 1})`);
       values.push(filters.genre);
+    }
+
+    if (filters.author) {
+      whereClauses.push(`b.id IN (SELECT book_id FROM book_authors WHERE author_id = $${values.length + 1})`);
+      values.push(filters.author);
     }
 
     const whereSQL = whereClauses.length > 0 
