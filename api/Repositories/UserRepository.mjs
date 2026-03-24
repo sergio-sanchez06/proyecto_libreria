@@ -144,7 +144,7 @@ async function updateProfile(updates) {
 
   const client = await pool.connect();
   try {
-    client.query("BEGIN");
+    await client.query("BEGIN");
     const result = await client.query(
       `
       UPDATE public.users
@@ -163,10 +163,10 @@ async function updateProfile(updates) {
     if (result.rowCount === 0) {
       throw new Error("Usuario no encontrado");
     }
-    client.query("COMMIT");
+    await client.query("COMMIT");
     return new UserModel(result.rows[0]);
   } catch (error) {
-    client.query("ROLLBACK");
+    await client.query("ROLLBACK");
     console.error("Error actualizando usuario:", error);
     throw error;
   } finally {

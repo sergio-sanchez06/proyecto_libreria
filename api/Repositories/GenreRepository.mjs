@@ -7,7 +7,7 @@ async function createGenre(genre) {
     await client.query("BEGIN");
     const result = await client.query(
       "INSERT INTO genres (name) VALUES ($1) RETURNING *",
-      [genre.name]
+      [genre.name],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -22,14 +22,11 @@ async function createGenre(genre) {
 async function getGenreById(id) {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query("SELECT * FROM genres WHERE id = $1", [
       id,
     ]);
-    await client.query("COMMIT");
     return result.rows[0];
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -40,7 +37,6 @@ async function getGenreByName(name) {
   const client = await pool.connect();
   console.log("Tipo de dato de nombre: " + typeof name);
   try {
-    await client.query("BEGIN");
     const result = await client.query("SELECT * FROM genres WHERE name = $1", [
       name,
     ]);
@@ -52,10 +48,8 @@ async function getGenreByName(name) {
       console.log("No encontrado");
     }
 
-    await client.query("COMMIT");
     return new GenreModel(result.rows[0]);
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -65,12 +59,9 @@ async function getGenreByName(name) {
 async function getAllGenres() {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query("SELECT * FROM genres");
-    await client.query("COMMIT");
     return result.rows.map((genre) => new GenreModel(genre));
   } catch (error) {
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
@@ -88,7 +79,7 @@ async function updateGenre(genre) {
          updated_at = NOW()
        WHERE id = $2 
        RETURNING *`,
-      [genre.name, genre.id]
+      [genre.name, genre.id],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -106,7 +97,7 @@ async function deleteGenre(id) {
     await client.query("BEGIN");
     const result = await client.query(
       "DELETE FROM genres WHERE id = $1 RETURNING *",
-      [id]
+      [id],
     );
     await client.query("COMMIT");
     return result.rows[0];
@@ -121,14 +112,13 @@ async function deleteGenre(id) {
 async function getGenresMostSold() {
   const client = await pool.connect();
   try {
-    await client.query("BEGIN");
     const result = await client.query(
       `select name, sum(oi.quantity) as total_sold 
       from genres g join book_genres bg on g.id = bg.genre_id 
         join order_items oi on bg.book_id = oi.book_id 
       group by g.id, g.name 
       order by 2 desc 
-      limit 5;`
+      limit 5;`,
     );
     return result.rows.map((row) => {
       const genre = new GenreModel(row);
