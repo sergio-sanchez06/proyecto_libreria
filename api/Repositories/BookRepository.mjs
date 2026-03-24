@@ -253,16 +253,28 @@ async function getBookByFeatures(features) {
 
 // api/Repositories/BookRepository.mjs
 
-async function getBooksCarrusel() {
-  const client = await pool.connect();
+async function getBooksCarrusel(ids = null) {
   try {
-    const result = await client.query("SELECT * FROM books");
+    let query = "SELECT * FROM books";
+    let params = [];
+
+    if (ids) {
+      const idArray = ids
+        .split(",")
+        .map((id) => parseInt(id))
+        .filter((id) => !isNaN(id));
+
+      if (idArray.length > 0) {
+        const placeholders = idArray.map((_, i) => `$${i + 1}`).join(",");
+        query += ` WHERE id IN (${placeholders})`;
+        params = idArray;
+      }
+    }
+
+    const result = await pool.query(query, params);
     return result.rows.map((book) => new Book(book));
   } catch (error) {
-    console.log(error);
     throw error;
-  } finally {
-    client.release();
   }
 }
 

@@ -178,10 +178,15 @@ async function updateAllCovers(req, res) {
 
 async function getBooksCarrusel(req, res) {
   try {
-    const books = await RepoBook.getBooksCarrusel();
+    // Capturamos el string de la URL (?ids=1,2,3)
+    const { ids } = req.query;
+
+    // Se lo pasamos al método del repositorio
+    const books = await RepoBook.getBooksCarrusel(ids);
+
     res.status(200).json(books);
   } catch (error) {
-    console.error(error);
+    console.error("Error en getBooksCarrusel:", error);
     res.status(500).json({ error: "Error al obtener los libros" });
   }
 }
