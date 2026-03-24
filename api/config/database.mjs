@@ -9,6 +9,11 @@ const pool = new Pool({
     max: 20, // este es nuestro máximo de conexiones
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
+    ssl: {
+        // 'rejectUnauthorized: false' es vital para entornos de desarrollo
+        // permite conectar sin necesidad de un archivo de certificado local (.crt)
+        rejectUnauthorized: false,
+    },
 })
 
 export default pool
