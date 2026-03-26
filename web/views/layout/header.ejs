@@ -23,70 +23,92 @@
                     </a>
                 </div>
 
-                <nav class="main-nav">
-                    <a href="/">
-                        <%= t('nav.home') %>
-                    </a>
-                    <a href="/books/showAllBooks">
-                        <%= t('nav.catalog') %>
-                    </a>
-                    <a href="/authors/showAllAuthors">
-                        <%= t('nav.authors') %>
-                    </a>
-                    <a href="/publisher/showAllPublishers">
-                        <%= t('nav.publishers') %>
-                    </a>
-                    <a href="/genres">
-                        <%= t('nav.genres') %>
-                    </a>
-                    <a href="/cart/view" class="position-relative">
-                        <%= t('cart.title') %>
-                            <i class="bi bi-cart3"></i>
-                    </a>
-                </nav>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Abrir menú" onclick="toggleMenu()">
+                    <i class="bi bi-list" id="menuIcon"></i>
+                </button>
 
-                <div class="header-right-zone">
-                    <div class="language-selector">
-                        <form action="/language" method="get">
-                            <select name="lng" class="form-select form-select-sm" onchange="this.form.submit()">
-                                <option value="es" <%=i18n.language.startsWith('es') ? 'selected' : '' %>>ES</option>
-                                <option value="ca" <%=i18n.language.startsWith('ca') ? 'selected' : '' %>>CA</option>
-                                <option value="gl" <%=i18n.language.startsWith('gl') ? 'selected' : '' %>>GL</option>
-                                <option value="eu" <%=i18n.language.startsWith('eu') ? 'selected' : '' %>>EU</option>
-                            </select>
-                        </form>
-                    </div>
+                <div class="collapsible-menu" id="collapsibleMenu">
+                    <nav class="main-nav">
+                        <a href="/">
+                            <%= t('nav.home') %>
+                        </a>
+                        <a href="/books/showAllBooks">
+                            <%= t('nav.catalog') %>
+                        </a>
+                        <a href="/authors/showAllAuthors">
+                            <%= t('nav.authors') %>
+                        </a>
+                        <a href="/publisher/showAllPublishers">
+                            <%= t('nav.publishers') %>
+                        </a>
+                        <a href="/genres">
+                            <%= t('nav.genres') %>
+                        </a>
+                        <a href="/cart/view" class="position-relative">
+                            <%= t('cart.title') %>
+                                <i class="bi bi-cart3"></i>
+                        </a>
+                    </nav>
 
-                    <div class="auth-group">
-                        <% if (user) { %>
-                            <div class="dropdown">
-                                <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown">
-                                    <%= user.name || 'User' %>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="/user/profile">Mi Perfil</a></li>
-                                    <% if(user.role==='ADMIN' ) { %>
-                                        <li><a class="dropdown-item fw-bold text-success" href="/admin/dashboard">
-                                                <%= t('nav.admin') %>
-                                            </a></li>
-                                        <% } %>
-                                            <li>
-                                                <hr class="dropdown-divider">
-                                            </li>
-                                            <li><a class="dropdown-item text-danger" href="/logout">
-                                                    <%= t('auth.logout') %>
+                    <div class="header-right-zone">
+                        <div class="language-selector">
+                            <form action="/language" method="get">
+                                <select name="lng" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option value="es" <%=i18n.language.startsWith('es') ? 'selected' : '' %>>ES</option>
+                                    <option value="ca" <%=i18n.language.startsWith('ca') ? 'selected' : '' %>>CA</option>
+                                    <option value="gl" <%=i18n.language.startsWith('gl') ? 'selected' : '' %>>GL</option>
+                                    <option value="eu" <%=i18n.language.startsWith('eu') ? 'selected' : '' %>>EU</option>
+                                </select>
+                            </form>
+                        </div>
+
+                        <div class="auth-group">
+                            <% if (user) { %>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown">
+                                        <%= user.name || 'User' %>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="/user/profile">Mi Perfil</a></li>
+                                        <% if(user.role==='ADMIN' ) { %>
+                                            <li><a class="dropdown-item fw-bold text-success" href="/admin/dashboard">
+                                                    <%= t('nav.admin') %>
                                                 </a></li>
-                                </ul>
-                            </div>
-                            <% } else { %>
-                                <a href="/login" class="btn btn-outline-light btn-sm border-0">Log In</a>
-                                <a href="/register" class="btn btn-warning btn-sm fw-bold">Registro</a>
-                                <% } %>
+                                            <% } %>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li><a class="dropdown-item text-danger" href="/logout">
+                                                        <%= t('auth.logout') %>
+                                                    </a></li>
+                                    </ul>
+                                </div>
+                                <% } else { %>
+                                    <a href="/login" class="btn btn-outline-light btn-sm border-0">Log In</a>
+                                    <a href="/register" class="btn btn-warning btn-sm fw-bold">Registro</a>
+                                    <% } %>
+                        </div>
                     </div>
                 </div>
 
             </div>
+
+            <script>
+                function toggleMenu() {
+                    const menu = document.getElementById('collapsibleMenu');
+                    const icon = document.getElementById('menuIcon');
+                    menu.classList.toggle('open');
+                    
+                    if (menu.classList.contains('open')) {
+                        icon.classList.remove('bi-list');
+                        icon.classList.add('bi-x-lg');
+                    } else {
+                        icon.classList.remove('bi-x-lg');
+                        icon.classList.add('bi-list');
+                    }
+                }
+            </script>
         </div>
     </header>
 
