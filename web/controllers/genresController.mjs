@@ -6,7 +6,10 @@ import { getAuthenticatedClient } from "../utils/apiClient.mjs"; // Asegúrate d
 
 async function getGenres(req, res) {
   try {
-    const response = await apiClient.get("/genres");
+    const response = await apiClient.get("/genres/all");
+
+    console.log("Generos: ", response.data);
+
     res.render("partials/genres", {
       genres: response.data,
       user: req.session.user || null,
@@ -14,6 +17,18 @@ async function getGenres(req, res) {
   } catch (error) {
     res.status(500).send("Error al obtener los géneros");
   }
+  // try {
+  //   const response = await apiClient.get("/genres");
+
+  //   console.log("Generos: ", response.data.data);
+
+  //   res.render("partials/genres", {
+  //     genres: response.data.data,
+  //     user: req.session.user || null,
+  //   });
+  // } catch (error) {
+  //   res.status(500).send("Error al obtener los géneros");
+  // }
 }
 
 async function getGenreBooksByGenreName(req, res) {
