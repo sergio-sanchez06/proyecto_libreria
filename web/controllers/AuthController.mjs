@@ -123,7 +123,6 @@ async function socialLogin(req, res) {
     // 2. CREAR SESIÓN: Guardamos al usuario en la sesión de la web
     req.session.user = user;
     req.session.idToken = idToken;
-    await req.session.save();
 
     // 3. Redirigimos al Home o al Perfil
     req.session.save((err) => {

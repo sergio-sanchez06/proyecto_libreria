@@ -55,4 +55,8 @@ router.post("/register", authController.register);
 
 router.post("/login-social", authController.socialLogin);
 
+router.get("/aviso-legal", homeController.legalNotice);
+router.get("/cookies", homeController.cookiesPolicy);
+router.get("/privacidad", homeController.privacyPolicy);
+
 export default router;

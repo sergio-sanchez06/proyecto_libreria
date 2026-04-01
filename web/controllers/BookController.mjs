@@ -15,15 +15,13 @@ async function getAllBooks(req, res) {
       apiClient.get(`/books`, {
         params: { page, q, maxPrice, genre, author },
       }),
-      apiClient.get("/genres"), // Esta ruta ahora devuelve un objeto paginado
+      apiClient.get("/genres"), //Ruta paginada
       apiClient.get("/authors"),
     ]);
 
     res.render("partials/booksTable", {
       books: booksResponse.data.data,
-      // CORRECCIÓN: Accedemos a .data.data porque el middleware de la API 
-      // ahora devuelve los géneros dentro de una estructura de paginación
-      genres: genresResponse.data.data, 
+      genres: genresResponse.data.data,
       authors: authorsResponse.data,
       currentPage: booksResponse.data.currentPage,
       totalPages: booksResponse.data.totalPages,
@@ -55,7 +53,7 @@ async function showAllBooks(req, res) {
     res.render("partials/booksTable", {
       books: booksResponse.data.data,
       // CORRECCIÓN: Igual que arriba, para evitar el error de .forEach
-      genres: genresResponse.data.data, 
+      genres: genresResponse.data.data,
       authors: authorsResponse.data,
       currentPage: booksResponse.data.currentPage,
       totalPages: booksResponse.data.totalPages,
@@ -74,19 +72,19 @@ async function getBookById(req, res) {
     const bookResponse = await apiClient.get(`/books/${id}`);
 
     const authorsResponse = await apiClient.get(
-      `/bookAuthor/book/id/${bookResponse.data.id}`
+      `/bookAuthor/book/id/${bookResponse.data.id}`,
     );
 
     const genresResponse = await apiClient.get(
-      `/bookGenre/book/${bookResponse.data.id}`
+      `/bookGenre/book/${bookResponse.data.id}`,
     );
 
     const publisherResponse = await apiClient.get(
-      `/publishers/${bookResponse.data.publisher_id}`
+      `/publishers/${bookResponse.data.publisher_id}`,
     );
 
     const reviewsResponse = await apiClient.get(
-      `/review/book/${bookResponse.data.id}`
+      `/review/book/${bookResponse.data.id}`,
     );
 
     const book = bookResponse.data;
@@ -94,7 +92,7 @@ async function getBookById(req, res) {
     const genres = genresResponse.data;
     const publisher = publisherResponse.data;
     const reviews = reviewsResponse.data;
-    
+
     res.render("partials/libro_detalle", {
       book,
       authors,
@@ -145,13 +143,30 @@ async function createBook(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.post("/books", bookData);
-    res.redirect("/books/showAllBooks");
+    res.redirect("/books/showAllBooks?success=true");
   } catch (error) {
-    console.log("Error al crear libro:", error);
-    res.render("admin/add_book", {
-      error: error.response?.data?.message || "Error al crear libro",
-      user: req.session.user,
-    });
+    console.error("Error al crear libro:", error);
+
+    // RE-CARGA DE CATÁLOGOS para que los <select> de autores, generos y editoriales no fallen
+    try {
+      const [authors, genres, publishers] = await Promise.all([
+        apiClient.get("/authors"),
+        apiClient.get("/genres/all"),
+        apiClient.get("/publishers/all"), // Rutas que muestran todos los datos sin paginar
+      ]);
+
+      res.render("admin/add_book", {
+        authors: authors.data,
+        genres: genres.data,
+        publishers: publishers.data,
+        user: req.session.user,
+        bookData: req.body, // Enviamos los datos recibidos de vuelta para que no se pierdan
+        error: error.response?.data?.message || "No se pudo crear el libro.",
+        success: null,
+      });
+    } catch (fetchError) {
+      res.status(500).send("Error crítico al recargar el formulario");
+    }
   }
 }
 
@@ -164,8 +179,8 @@ async function getEditBook(req, res) {
     const [bookRes, authors, genres, publishers] = await Promise.all([
       apiClient.get(`/books/${id}`),
       apiClient.get("/authors"),
-      apiClient.get("/genres/all"), // CAMBIO: Pedimos todos los géneros
-      apiClient.get("/publishers/all"), // CAMBIO: Pedimos todas las editoriales
+      apiClient.get("/genres/all"), // Pedimos todos los géneros
+      apiClient.get("/publishers/all"), // Pedimos todas las editoriales
     ]);
 
     res.render("admin/edit_book", {
@@ -185,23 +200,32 @@ async function updateBook(req, res) {
   const { id } = req.params;
   const updateData = { ...req.body };
 
+  // 1. Manejo de la imagen
   if (req.file) {
     updateData.cover_url = `/uploads/covers/${req.file.filename}`;
   } else {
     delete updateData.cover_url;
   }
 
+  // 2. Normalización de IDs (Autores y Géneros)
   const normalizeIds = (field) => {
     const value = updateData[field];
     if (value === undefined) return undefined;
     if (!value || value.length === 0) return [];
-
     const array = Array.isArray(value) ? value : [value];
     return array.map((id) => parseInt(id, 10));
   };
 
+  // 3. PROCESAMIENTO DEL AÑO (releashed_year)
+  // Si viene vacío o es "0", lo enviamos como null a la API para mantener consistencia de los datos
+  const yearValue =
+    updateData.releashed_year && updateData.releashed_year.trim() !== ""
+      ? parseInt(updateData.releashed_year, 10)
+      : null;
+
   const finalPayload = {
     ...updateData,
+    releashed_year: yearValue, // Asignamos el valor procesado del año
     author_ids: normalizeIds("author_ids"),
     genre_ids: normalizeIds("genre_ids"),
   };
@@ -214,12 +238,80 @@ async function updateBook(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.put(`/books/${id}`, finalPayload);
-    res.redirect(`/books/book/${id}`);
+
+    //Redireccionamos a la vista del libro con un parámetro de éxito para que se muestre el modal de exito
+
+    res.redirect(`/books/book/${id}?success=true`);
   } catch (error) {
     console.error("Error:", error.message);
-    res.status(500).send("Error al actualizar libro");
+
+    // ERROR: En lugar de un .send(500), recargamos la vista de edición
+    // pasando el error y los datos para que el modal se active.
+    try {
+      const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+      const api = getAuthenticatedClient(cleanToken);
+
+      // Recargamos los datos para los selectores
+      const [publishers, authors, genres] = await Promise.all([
+        api.get("/publishers/allPublishers"),
+        api.get("/authors"),
+        api.get("/genres/all"),
+      ]);
+
+      res.render("admin/edit_book", {
+        book: { id, ...finalPayload }, // Devolvemos los datos del formulario
+        publishers: publishers.data,
+        authors: authors.data,
+        genres: genres.data,
+        error:
+          "No se pudo actualizar el libro: " + error.response?.data?.message ||
+          error.message,
+      });
+    } catch (e) {
+      res.status(500).send("Error crítico al recargar el formulario");
+    }
   }
 }
+
+// async function updateBook(req, res) {
+//   const { id } = req.params;
+//   const updateData = { ...req.body };
+
+//   if (req.file) {
+//     updateData.cover_url = `/uploads/covers/${req.file.filename}`;
+//   } else {
+//     delete updateData.cover_url;
+//   }
+
+//   const normalizeIds = (field) => {
+//     const value = updateData[field];
+//     if (value === undefined) return undefined;
+//     if (!value || value.length === 0) return [];
+
+//     const array = Array.isArray(value) ? value : [value];
+//     return array.map((id) => parseInt(id, 10));
+//   };
+
+//   const finalPayload = {
+//     ...updateData,
+//     author_ids: normalizeIds("author_ids"),
+//     genre_ids: normalizeIds("genre_ids"),
+//   };
+
+//   if (finalPayload.author_ids === undefined) delete finalPayload.author_ids;
+//   if (finalPayload.genre_ids === undefined) delete finalPayload.genre_ids;
+
+//   try {
+//     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+//     const api = getAuthenticatedClient(cleanToken);
+
+//     await api.put(`/books/${id}`, finalPayload);
+//     res.redirect(`/books/book/${id}`);
+//   } catch (error) {
+//     console.error("Error:", error.message);
+//     res.status(500).send("Error al actualizar libro");
+//   }
+// }
 
 async function deleteBook(req, res) {
   try {

@@ -116,10 +116,27 @@ async function publisher(req, res) {
   });
 }
 
+//Inclusion de rutas a las vistas con información legal
+
+function legalNotice(req, res) {
+  res.render("legal/legal-notice");
+}
+
+function cookiesPolicy(req, res) {
+  res.render("legal/cookies-policy");
+}
+
+function privacyPolicy(req, res) {
+  res.render("legal/privacy-policy");
+}
+
 export default {
   getBooksAndAuthors,
   getBookById,
   index,
   getBooksByPublisherId,
   publisher,
+  legalNotice,
+  cookiesPolicy,
+  privacyPolicy,
 };
