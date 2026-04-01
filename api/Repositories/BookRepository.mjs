@@ -4,6 +4,8 @@ import BookGenreRepository from "./BookGenreRepository.mjs";
 import BookAuthorRepository from "./BookAuthorRepository.mjs";
 import axios from "axios";
 
+// En esta funcion se crea un libro, en el año de lanzamiento si es 0 se guarda como null para mantener la consistencia de los datos
+
 async function createBook(book) {
   const client = await pool.connect();
   try {
@@ -15,7 +17,7 @@ async function createBook(book) {
         book.isbn,
         book.price,
         book.stock,
-        book.releashed_year,
+        book.releashed_year || null,
         book.format,
         book.language,
         book.pages,

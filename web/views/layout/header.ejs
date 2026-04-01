@@ -54,10 +54,14 @@
                         <div class="language-selector">
                             <form action="/language" method="get">
                                 <select name="lng" class="form-select form-select-sm" onchange="this.form.submit()">
-                                    <option value="es" <%=i18n.language.startsWith('es') ? 'selected' : '' %>>ES</option>
-                                    <option value="ca" <%=i18n.language.startsWith('ca') ? 'selected' : '' %>>CA</option>
-                                    <option value="gl" <%=i18n.language.startsWith('gl') ? 'selected' : '' %>>GL</option>
-                                    <option value="eu" <%=i18n.language.startsWith('eu') ? 'selected' : '' %>>EU</option>
+                                    <option value="es" <%=i18n.language.startsWith('es') ? 'selected' : '' %>>ES
+                                    </option>
+                                    <option value="ca" <%=i18n.language.startsWith('ca') ? 'selected' : '' %>>CA
+                                    </option>
+                                    <option value="gl" <%=i18n.language.startsWith('gl') ? 'selected' : '' %>>GL
+                                    </option>
+                                    <option value="eu" <%=i18n.language.startsWith('eu') ? 'selected' : '' %>>EU
+                                    </option>
                                 </select>
                             </form>
                         </div>
@@ -99,7 +103,7 @@
                     const menu = document.getElementById('collapsibleMenu');
                     const icon = document.getElementById('menuIcon');
                     menu.classList.toggle('open');
-                    
+
                     if (menu.classList.contains('open')) {
                         icon.classList.remove('bi-list');
                         icon.classList.add('bi-x-lg');

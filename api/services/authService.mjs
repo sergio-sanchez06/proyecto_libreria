@@ -29,20 +29,6 @@ async function createUser(userData) {
       displayName: name,
     });
   } catch (error) {
-    // 4. Ahora sí podemos preguntar si firebaseUser existe
-    if (firebaseUser && firebaseUser.uid) {
-      console.error(
-        `Error en BBDD local. Eliminando rastro de Firebase para UID: ${firebaseUser.uid}`,
-      );
-      try {
-        await admin.auth().deleteUser(firebaseUser.uid);
-      } catch (deleteError) {
-        console.error(
-          "Error crítico: No se pudo limpiar el usuario de Firebase",
-          deleteError,
-        );
-      }
-    }
     // Lanzamos el mensaje original del error para saber qué falló en SQL
     throw new Error("Error en AuthService (Admin): " + error.message);
   }
@@ -128,10 +114,12 @@ async function createUser(userData) {
 async function registerWithToken(data) {
   const { idToken, name, email, default_address, optional_address } = data;
 
+  let firebase_uid = null;
+
   try {
     // 1. En lugar de crear al usuario, VERIFICAMOS el token que creó el cliente
     const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const firebase_uid = decodedToken.uid;
+    firebase_uid = decodedToken.uid;
 
     // 2. Ahora que tenemos el UID real de Firebase, guardamos en nuestras 3 tablas
     return await UserRepository.upsertFromFirebase({
@@ -145,12 +133,12 @@ async function registerWithToken(data) {
   } catch (error) {
     console.error("Error verificando token en registro:", error);
 
-    if (firebaseUid) {
+    if (firebase_uid) {
       console.error(
-        `Error en BBDD local. Eliminando rastro de Firebase para UID: ${firebaseUid}`,
+        `Error en BBDD local. Eliminando rastro de Firebase para UID: ${firebase_uid}`,
       );
       try {
-        await admin.auth().deleteUser(firebaseUid);
+        await admin.auth().deleteUser(firebase_uid);
       } catch (deleteError) {
         console.error(
           "Error crítico: No se pudo limpiar el usuario de Firebase",
@@ -167,33 +155,69 @@ async function verifyTokenAndGetUser(idToken) {
     throw new Error("Token requerido y debe ser string");
   }
 
+  let decodedToken;
+
+  // Bloque 1: solo errores de Firebase
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-
-    console.log("Token verificado correctamente para:", decodedToken.email);
-
-    const firebase_uid = decodedToken.uid;
-    const user = await UserRepository.getUserByFirebaseUid(firebase_uid);
-
-    if (!user) {
-      throw new Error("Usuario no encontrado. Regístrate primero.");
-    }
-
-    return user;
+    decodedToken = await admin.auth().verifyIdToken(idToken);
+    console.log("Token verificado para:", decodedToken.email);
   } catch (error) {
     console.error("Error verificando ID token:", error.code, error.message);
 
-    if (error.code === "auth/id-token-expired") {
+    if (error.code === "auth/id-token-expired")
       throw new Error("Token expirado");
-    } else if (error.code === "auth/argument-error") {
+    if (error.code === "auth/argument-error")
       throw new Error("Token mal formado");
-    } else if (error.code === "auth/invalid-id-token") {
+    if (error.code === "auth/invalid-id-token")
       throw new Error("Token inválido");
-    } else {
-      throw new Error("Error en autenticación");
-    }
+    throw new Error("Error en autenticación");
   }
+
+  // Sincronizamos con la DB
+  // - Primera vez → INSERT (crea el usuario)
+  // - Siguientes  → UPDATE solo email y updated_at
+  return await UserRepository.upsertFromFirebase({
+    firebase_uid: decodedToken.uid,
+    email: decodedToken.email,
+    name: decodedToken.name || decodedToken.email.split("@")[0],
+    role: "CLIENT", // el upsert protege el rol actual en DB
+    default_address: "Pendiente de completar", // Se establece este valor en caso de que la dirección por defecto no se haya establecido
+    optional_address: null,
+  });
 }
+
+// async function verifyTokenAndGetUser(idToken) {
+//   if (!idToken || typeof idToken !== "string") {
+//     throw new Error("Token requerido y debe ser string");
+//   }
+
+//   try {
+//     const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+//     console.log("Token verificado correctamente para:", decodedToken.email);
+
+//     const firebase_uid = decodedToken.uid;
+//     const user = await UserRepository.getUserByFirebaseUid(firebase_uid);
+
+//     if (!user) {
+//       throw new Error("Usuario no encontrado. Regístrate primero.");
+//     }
+
+//     return user;
+//   } catch (error) {
+//     console.error("Error verificando ID token:", error.code, error.message);
+
+//     if (error.code === "auth/id-token-expired") {
+//       throw new Error("Token expirado");
+//     } else if (error.code === "auth/argument-error") {
+//       throw new Error("Token mal formado");
+//     } else if (error.code === "auth/invalid-id-token") {
+//       throw new Error("Token inválido");
+//     } else {
+//       throw new Error("Error en autenticación");
+//     }
+//   }
+// }
 
 async function deleteAuthUser(firebase_uid) {
   try {
