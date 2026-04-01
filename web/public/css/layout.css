@@ -2,8 +2,9 @@
    VARIABLES Y REGLAS GLOBALES (MODO APP)
    ========================================= */
 :root {
-    --primary-green: #006d33;
-    --accent-yellow: #fecb00;
+    --brand-teal: #0d5c63;  /* Teal profundo y moderno */
+    --brand-gold: #c2973b;  /* Dorado premium mate */
+    --brand-light: #fcfaf7;
     --dark-bg: #1a1a1a;
     --text-muted: #bbbbbb;
     --footer-height-compact: 1.2rem;
@@ -39,13 +40,13 @@ body {
    HEADER (HERO-HEADER) - FIJO
    ========================================= */
 .hero-header {
-    background-color: var(--primary-green) !important;
-    border-bottom: 4px solid var(--accent-yellow);
-    padding: 0.4rem 0; /* Un poco más fino para ganar espacio vertical */
+    background-color: var(--brand-teal) !important;
+    border-bottom: 3px solid var(--brand-gold);
+    padding: 0.6rem 0;
     width: 100%;
     z-index: 1000;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    flex-shrink: 0; /* Evita que el header se aplaste */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    flex-shrink: 0;
 }
 
 .header-wrapper {
@@ -56,24 +57,57 @@ body {
 }
 
 .header-logo {
-    height: 40px; 
+    height: 45px; 
     width: auto;
     display: block;
+}
+
+/* BRANDING SECTION */
+.brand-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.brand-container:hover {
+    transform: scale(1.02);
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+}
+
+.brand-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: -0.5px;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    margin: 0;
+    line-height: 1;
+    display: flex;
+    align-items: center;
 }
 
 /* La regla .main-nav se define más abajo junto al layout colapsable */
 
 .main-nav a {
-    color: white !important;
+    color: rgba(255, 255, 255, 0.9) !important;
     text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
     white-space: nowrap;
-    transition: color 0.2s;
+    transition: all 0.2s;
+    letter-spacing: 0.3px;
 }
 
 .main-nav a:hover {
-    color: var(--accent-yellow) !important;
+    color: var(--brand-gold) !important;
+    transform: translateY(-1px);
 }
 
 /* =========================================
@@ -82,19 +116,19 @@ body {
 .main-footer {
     background-color: var(--dark-bg);
     color: #ffffff !important;
-    padding: 0.4rem 0 !important; /* Reducción máxima para portátiles */
+    padding: 0.8rem 0 !important;
     margin-top: auto;
-    flex-shrink: 0; /* Evita que el footer desaparezca */
-    border-top: 1px solid rgba(255,255,255,0.05);
+    flex-shrink: 0;
+    border-top: 2px solid var(--brand-teal);
 }
 
 .main-footer h5 {
-    color: var(--accent-yellow);
-    font-size: 0.8rem !important;
+    color: var(--brand-gold);
+    font-size: 0.85rem !important;
     font-weight: 700;
-    margin-bottom: 0.3rem !important;
+    margin-bottom: 0.4rem !important;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
+    letter-spacing: 1px;
 }
 
 .main-footer p, 

@@ -1,27 +1,31 @@
-Contenedor Principal .container {
-  max-width: 1000px; /* Un poco más ancho para las dos columnas */
+/* Contenedor Principal */
+.container {
+  max-width: 1000px; 
   margin: 40px auto;
-  padding: 30px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 /* Título */
 h1 {
-  color: #2c3e50;
-  font-size: 2.5rem;
-  font-weight: 700;
+  color: var(--brand-teal);
+  font-size: 2.8rem;
+  font-weight: 800;
   margin-bottom: 30px;
-  border-bottom: 2px solid #f1f1f1;
+  border-bottom: 4px solid var(--brand-gold);
   padding-bottom: 15px;
+  letter-spacing: -1px;
 }
 
 /* Layout de dos columnas */
 .book-details-wrapper {
   display: flex;
-  gap: 40px;
-  flex-wrap: wrap; /* Responsivo para móviles */
+  gap: 50px;
+  flex-wrap: wrap; 
 }
 
 .book-cover-column {
@@ -37,25 +41,30 @@ h1 {
 /* Imagen de la portada */
 .book-cover-column img {
   width: 100%;
-  max-width: 250px;
+  max-width: 280px;
   height: auto;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
   display: block;
   margin: 0 auto;
+  transition: transform 0.4s ease;
+}
+
+.book-cover-column img:hover {
+    transform: scale(1.03);
 }
 
 /* Estilo de los párrafos y etiquetas */
 p {
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: #555;
-  margin-bottom: 15px;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #4a5568;
+  margin-bottom: 18px;
 }
 
 strong {
-  color: var(--primary-green);
-  font-weight: 600;
+  color: var(--brand-teal);
+  font-weight: 700;
   margin-right: 5px;
 }
 
@@ -64,46 +73,61 @@ strong {
   text-decoration: none !important;
   display: inline-flex;
   align-items: center;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
 }
 
 .badge a {
   color: white !important;
   margin-top: 0;
   margin-left: 10px;
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 2px 8px;
-  border-radius: 4px;
+  font-size: 0.8rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.badge a:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 /* Formulario de Compra */
 .cart-section {
-  background: #f8f9fa;
-  padding: 20px;
-  border-radius: 10px;
-  margin: 25px 0;
-  border-left: 5px solid #28a745;
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  margin: 30px 0;
+  border-left: 6px solid var(--brand-gold);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
 
 .input-group {
-  width: 250px !important; /* Ajuste para que quepa el texto y el botón */
+  width: 280px !important; 
 }
 
 /* Botones de Administración */
 .admin-controls {
   display: flex;
   gap: 15px;
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px dashed #ddd;
+  margin-top: 40px;
+  padding-top: 25px;
+  border-top: 1px dashed rgba(0,0,0,0.1);
 }
 
 /* Enlaces */
 .back-link-nav {
-  display: block;
-  margin-top: 20px;
-  color: #006d33;
-  font-weight: 600;
+  display: inline-block;
+  margin-top: 30px;
+  color: var(--brand-teal);
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.back-link-nav:hover {
+    color: var(--brand-teal-hover);
+    transform: translateX(-5px);
 }
 
 /* Responsividad */

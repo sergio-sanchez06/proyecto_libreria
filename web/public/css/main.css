@@ -1,19 +1,19 @@
 /* --- 1. CONFIGURACIÓN GENERAL --- */
 :root {
-  --primary-green: #006d33; 
-  --hover-green: #005628; 
-  --accent-yellow: #fecb00; 
-  --bg-cream: #fdfdfb; 
+  --brand-teal: #0d5c63; 
+  --brand-teal-hover: #0a494e; 
+  --brand-gold: #c2973b; 
+  --bg-cream: #fcfaf7; 
 
-  --text-dark: #2d2d2d;
-  --text-muted: #666666;
-  --shadow-soft: 0 4px 15px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.12);
+  --text-dark: #1a2a2c;
+  --text-muted: #718096;
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.1);
 }
 
 body {
   background-color: var(--bg-cream);
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', "Segoe UI", system-ui, sans-serif;
   color: var(--text-dark);
   line-height: 1.6;
   overflow-x: hidden; 
@@ -21,36 +21,36 @@ body {
 
 /* --- 2. HEADER Y TÍTULOS --- */
 .hero-header {
-  background: var(--primary-green);
+  background: var(--brand-teal);
   color: white;
   padding: 60px 20px;
   text-align: center;
-  border-radius: 0; 
   box-shadow: var(--shadow-soft);
-  border-bottom: 5px solid var(--accent-yellow);
+  border-bottom: 4px solid var(--brand-gold);
 }
 
 .section-title {
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 40px;
-  color: var(--text-dark);
+  color: var(--brand-teal);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  border-left: 6px solid var(--primary-green); 
+  letter-spacing: 1.2px;
+  border-left: 6px solid var(--brand-gold); 
   padding-left: 15px;
-  font-size: clamp(1.1rem, 3vw, 1.5rem); 
+  font-size: clamp(1.2rem, 3vw, 1.8rem); 
 }
 
 /* --- 3. TARJETAS DE LIBROS  --- */
 .book-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 1px solid #eee !important;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border: 1px solid rgba(0,0,0,0.05) !important;
   background: #fff;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 16px;
   display: flex;
   flex-direction: column;
   height: 100%;
+  box-shadow: var(--shadow-soft);
 }
 
 .book-card:hover {
@@ -62,10 +62,10 @@ body {
   width: 100%;
   aspect-ratio: 2 / 3; 
   object-fit: contain; 
-  background: #f9f9f9;
-  padding: 10px; 
-  transition: transform 0.5s ease;
-  border-bottom: 1px solid #eee;
+  background: #fff;
+  padding: 20px; 
+  transition: transform 0.6s ease;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .book-card:hover img {
@@ -88,32 +88,55 @@ body {
 .author-card img {
   width: 140px;
   height: 140px;
-  max-width: 100%; 
-  aspect-ratio: 1 / 1;
   object-fit: cover;
   border-radius: 50%;
-  border: 4px solid var(--primary-green);
+  border: 4px solid var(--brand-teal);
   margin: 0 auto 15px;
   display: block;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0, 109, 51, 0.2);
+  box-shadow: 0 8px 20px rgba(13, 92, 99, 0.15);
 }
 
 .author-card:hover img {
-  border-color: var(--accent-yellow);
+  border-color: var(--brand-gold);
   transform: scale(1.05);
 }
 
-/* --- 5. COMPONENTES DE INTERFAZ --- */
-.btn-primary {
-  background-color: var(--primary-green) !important;
+/* --- 5. COMPONENTES DE INTERFAZ E OVERRIDES DE BOOTSTRAP --- */
+.btn-primary, .btn-success {
+  background-color: var(--brand-teal) !important;
   border: none !important;
   color: white !important;
-  border-radius: 50px !important; 
+  border-radius: 12px !important; 
   font-weight: 700 !important;
-  padding: 10px 25px !important;
-  font-size: 0.85rem;
-  transition: background 0.3s;
+  padding: 12px 28px !important;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover, .btn-success:hover {
+  background-color: var(--brand-teal-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(13, 92, 99, 0.2);
+}
+
+.btn-outline-success {
+  color: var(--brand-teal) !important;
+  border-color: var(--brand-teal) !important;
+  border-radius: 12px !important;
+}
+
+.btn-outline-success:hover {
+  background-color: var(--brand-teal) !important;
+  color: white !important;
+}
+
+.text-success {
+  color: var(--brand-teal) !important;
+}
+
+.bg-success {
+  background-color: var(--brand-teal) !important;
 }
 
 .btn-books {
@@ -125,45 +148,42 @@ body {
   transition: background 0.3s;
 }
 
-.btn-primary:hover {
-  background-color: var(--hover-green) !important;
+.btn-warning {
+  background-color: var(--brand-gold) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 700 !important;
+  border-radius: 12px !important;
 }
 
-.btn-warning {
-  background-color: var(--accent-yellow) !important;
-  border: none !important;
-  color: var(--text-dark) !important;
-  font-weight: 700 !important;
-  border-radius: 50px !important;
+.btn-warning:hover {
+  background-color: #a67f2e !important;
 }
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  background-color: var(--primary-green);
+  background-color: var(--brand-teal);
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  opacity: 0.8;
+  width: 45px;
+  height: 45px;
 }
 
-.badge.bg-secondary {
-  background-color: #f1f1f1 !important;
-  color: var(--primary-green);
-  border: 1px solid var(--primary-green);
-  font-weight: 600;
+.badge.bg-success {
+  background-color: var(--brand-teal) !important;
 }
 
 .list-group-item-custom {
   background: white !important;
-  border-left: 6px solid var(--primary-green) !important;
-  margin-bottom: 10px;
-  border-radius: 4px !important;
-  transition: all 0.2s;
+  border-left: 6px solid var(--brand-teal) !important;
+  margin-bottom: 12px;
+  border-radius: 8px !important;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
 }
 
 .list-group-item-custom:hover {
-  background: #f0f7f3 !important;
-  transform: translateX(5px);
+  background: rgba(13, 92, 99, 0.02) !important;
+  transform: translateX(8px);
 }
 
 a {

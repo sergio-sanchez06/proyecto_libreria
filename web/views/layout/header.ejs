@@ -18,8 +18,11 @@
             <div class="header-wrapper">
 
                 <div class="logo-container">
-                    <a href="/" class="text-decoration-none">
-                        <img src="/uploads/publishers/logo.svg" alt="Logo de la Librería" class="header-logo">
+                    <a href="/" class="brand-container" style="text-decoration: none;">
+                        <img src="/images/bookly_icon_transparent.png" 
+                             alt="BOOKLY logo" 
+                             style="height: 44px; width: auto; display: block; flex-shrink: 0;">
+                        <span class="brand-text">BOOKLY</span>
                     </a>
                 </div>
 
@@ -72,7 +75,7 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li><a class="dropdown-item" href="/user/profile">Mi Perfil</a></li>
                                         <% if(user.role==='ADMIN' ) { %>
-                                            <li><a class="dropdown-item fw-bold text-success" href="/admin/dashboard">
+                                            <li><a class="dropdown-item fw-bold" href="/admin/dashboard" style="color: var(--brand-teal);">
                                                     <%= t('nav.admin') %>
                                                 </a></li>
                                             <% } %>
@@ -86,7 +89,7 @@
                                 </div>
                                 <% } else { %>
                                     <a href="/login" class="btn btn-outline-light btn-sm border-0">Log In</a>
-                                    <a href="/register" class="btn btn-warning btn-sm fw-bold">Registro</a>
+                                    <a href="/register" class="btn btn-sm fw-bold px-3" style="background-color: var(--brand-gold); color: white; border-radius: 20px;">Registro</a>
                                     <% } %>
                         </div>
                     </div>

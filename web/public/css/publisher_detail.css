@@ -1,122 +1,136 @@
-/* --- Variables de Color para coherencia --- */
-:root {
-  --primary-blue: #0d6efd; /* Azul Bootstrap de tu cabecera */
-  --accent-purple: #764ba2;
-  --bg-light: #f8f9fa;
-  --text-dark: #212529;
-}
-
-body {
-  background-color: var(--bg-light);
-  color: var(--text-dark);
-}
-
 /* --- Cabecera de la Editorial --- */
 .publisher-header {
-  background: linear-gradient(135deg, #006d33 0%, #006d33 100%);
+  background: var(--brand-teal);
   color: white;
-  padding: 60px 20px;
+  padding: 80px 20px;
   text-align: center;
-  border-radius: 15px;
+  border-radius: 24px;
   margin-bottom: 40px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
+  border-bottom: 6px solid var(--brand-gold);
 }
 
 .publisher-header h1 {
   font-size: 3.5rem;
   font-weight: 800;
   margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  letter-spacing: -1px;
 }
 
 .publisher-header p {
-  font-size: 1.2rem;
-  opacity: 0.95;
-  font-weight: 300;
+  font-size: 1.25rem;
+  opacity: 0.9;
+  font-weight: 400;
 }
 
 /* --- Caja de Información --- */
 .publisher-info {
   background: white;
-  padding: 35px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 50px;
-  border-top: 5px solid #006d33;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  margin-bottom: 60px;
+  border-top: 6px solid var(--brand-gold);
+  position: relative;
 }
 
 .publisher-info h3 {
-  color: #006d33;
-  font-weight: 700;
-  margin-bottom: 20px;
+  color: var(--brand-teal);
+  font-weight: 800;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .publisher-info a {
-  color: var(--primary-blue);
-  font-weight: 600;
-  transition: color 0.2s;
+  color: var(--brand-teal);
+  font-weight: 700;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.publisher-info a:hover {
+    color: var(--brand-gold);
+    border-bottom-color: var(--brand-gold);
 }
 
 .publisher-info img {
-  max-height: 150px;
-  margin-top: 15px;
-  border-radius: 8px;
-  border: 1px solid #eee;
+  max-height: 180px;
+  margin-top: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.05);
+  padding: 15px;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.02);
 }
 
 /* --- Títulos de Sección --- */
 .books-title {
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
-  margin-bottom: 40px;
-  color: #333;
+  margin-bottom: 50px;
+  color: var(--brand-teal);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
 }
 
 /* --- Estilo de Tarjetas de Libros --- */
 .book-card {
   border: none;
-  border-radius: 10px;
+  border-radius: 16px;
   overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: var(--shadow-soft);
 }
 
 .book-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: var(--shadow-hover) !important;
 }
 
 .book-card img {
-  height: 250px;
+  height: 280px;
   object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.book-card:hover img {
+    transform: scale(1.05);
 }
 
 .book-card .card-title {
   font-size: 1.1rem;
   font-weight: 700;
+  color: var(--brand-teal);
 }
 
 .book-card .btn-primary {
-  background-color: var(--primary-blue);
+  background-color: var(--brand-teal) !important;
   border: none;
-  font-weight: 600;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 10px 20px;
 }
 
 /* --- Enlace de Volver --- */
 .back-link {
   text-align: center;
-  margin-top: 50px;
-  padding-bottom: 30px;
+  margin-top: 60px;
+  padding-bottom: 40px;
 }
 
 .back-link a {
-  color: #666;
+  color: var(--brand-teal);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 700;
+  transition: all 0.3s ease;
 }
 
 .back-link a:hover {
-  color: var(--primary-blue);
-  text-decoration: underline;
+  color: var(--brand-gold);
+  transform: translateX(-5px);
 }
 
 /* --- Ajustes para Admin --- */

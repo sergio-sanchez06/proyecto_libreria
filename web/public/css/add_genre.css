@@ -24,14 +24,11 @@
 /* Encabezados de formulario (Géneros y Editoriales usan card-header) */
 .card-header.bg-success,
 .container-small h1 {
-  background: var(
-    --primary-gradient,
-    linear-gradient(135deg, #667eea 0%, #764ba2 100%)
-  ) !important;
+  background: var(--brand-teal) !important;
   color: white !important;
-  padding: 2rem 1rem;
+  padding: 2.5rem 1rem;
   text-align: center;
-  border: none;
+  border-bottom: 4px solid var(--brand-gold) !important;
   margin: 0;
 }
 
@@ -39,12 +36,13 @@
 .container-small h1 {
   border-radius: 20px 20px 0 0;
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .subtitle {
   text-align: center;
-  color: #666;
+  color: var(--text-muted);
   margin: 1.5rem 0;
   font-size: 0.9rem;
 }
@@ -60,7 +58,7 @@
 .form-group label,
 label {
   font-weight: 700;
-  color: #2d3436;
+  color: var(--brand-teal);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.8px;
@@ -75,31 +73,31 @@ label {
 .form-admin select,
 .form-admin textarea {
   width: 100%;
-  border: 1.5px solid #eef0f2;
-  border-radius: 10px;
+  border: 1.5px solid rgba(0,0,0,0.1);
+  border-radius: 12px;
   padding: 12px 15px;
-  background-color: #f8f9fc;
+  background-color: #fcfaf7;
   transition: all 0.3s ease;
-  margin-bottom: 1rem; /* Para la vista de usuarios */
+  margin-bottom: 1rem;
 }
 
 .form-control:focus,
 .form-admin input:focus {
   background-color: #fff;
-  border-color: #667eea;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  border-color: var(--brand-gold);
+  box-shadow: 0 0 0 4px rgba(194, 151, 59, 0.15);
   outline: 0;
 }
 
-/* --- BOTONES (ESTILO PASTILLA) --- */
+/* --- BOTONES (ESTILO PREMIUM) --- */
 .btn-success,
 .btn-primary,
 .btn-primary-admin {
-  background: var(--accent-color, #667eea) !important;
+  background: var(--brand-teal) !important;
   border: none !important;
-  padding: 12px 30px;
+  padding: 14px 30px;
   font-weight: 700;
-  border-radius: 50px;
+  border-radius: 12px;
   text-transform: uppercase;
   color: white;
   transition: all 0.3s ease;
@@ -109,12 +107,12 @@ label {
 }
 
 .btn-secondary {
-  background-color: #ecf0f1 !important;
-  color: #7f8c8d !important;
+  background-color: #f1f3f5 !important;
+  color: #6c757d !important;
   border: none;
-  padding: 12px 30px;
+  padding: 14px 30px;
   font-weight: 700;
-  border-radius: 50px;
+  border-radius: 12px;
   text-transform: uppercase;
   transition: all 0.2s;
 }

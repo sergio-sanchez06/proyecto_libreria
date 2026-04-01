@@ -11,11 +11,11 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-gradient: linear-gradient(135deg, var(--brand-teal) 0%, var(--brand-teal-hover) 100%);
         }
 
         body {
-            background-color: #f8f9fa;
+            background-color: var(--bg-cream);
         }
 
         /* Contenedor de la Portada */
@@ -34,8 +34,8 @@
 
         /* Detalles Estéticos */
         .book-title {
-            font-weight: 800;
-            color: #1a202c;
+            font-weight: 850;
+            color: var(--brand-teal);
             letter-spacing: -0.025em;
         }
 
@@ -80,11 +80,11 @@
         }
 
         .badge-genre {
-            background-color: #82baff;
-            color: #4c51bf;
-            border: 1px solid #c3dafe;
-            font-weight: 600;
-            transition: all 0.2s;
+            background-color: white;
+            color: var(--brand-teal);
+            border: 1px solid var(--brand-gold);
+            font-weight: 700;
+            transition: all 0.3s ease;
         }
 
         .badge-genre:hover {
@@ -92,8 +92,9 @@
         }
 
         .review-card {
-            border-left: 5px solid #48bb78 !important;
+            border-left: 6px solid var(--brand-gold) !important;
             background: white;
+            box-shadow: var(--shadow-soft);
         }
 
         .synopsis-text {
@@ -153,7 +154,7 @@
                             <%= t('book.author') %>:
                         </span>
                         <% authors.forEach((author, index)=> { %>
-                            <a href="/author/<%= author.id %>" class="text-primary fw-bold fs-5 text-decoration-none">
+                            <a href="/author/<%= author.id %>" class="fw-bold fs-5 text-decoration-none" style="color: var(--brand-teal);">
                                 <%= author.name %>
                                     <%= index < authors.length - 1 ? ', ' : '' %>
                             </a>
@@ -176,9 +177,9 @@
                                 <h2 class="price-display mb-0">
                                     <%= book.price %>€
                                 </h2>
-                                <div class="mt-2">
+                                <div class="mt-2 text-center text-md-start">
                                     <span
-                                        class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                                        class="badge px-4 py-2 rounded-pill" style="background-color: var(--brand-teal); font-weight: 700;">
                                         <i class="bi bi-box-seam me-1"></i>
                                         <%= book.stock> 0 ? 'Stock Disponible' : 'Agotado' %>
                                     </span>
@@ -198,7 +199,8 @@
                                         </div>
                                         <div class="col-8 d-flex align-items-end">
                                             <button type="submit"
-                                                class="btn btn-success btn-lg w-100 fw-bold shadow-sm py-3"
+                                                class="btn btn-lg w-100 fw-bold shadow-sm py-3 text-white"
+                                                style="background-color: var(--brand-teal); border-radius: 12px;"
                                                 <%=book.stock <=0 ? 'disabled' : '' %>>
                                                 <%= t('book.add_to_cart') %> 🛒
                                             </button>
@@ -216,7 +218,7 @@
                                     <%= book.synopsis.substring(300) %>
                                 </span>
                         </p>
-                        <button id="toggle-synopsis" class="btn btn-outline-primary btn-sm">Leer más</button>
+                        <button id="toggle-synopsis" class="btn btn-sm fw-bold" style="color: var(--brand-teal); border: 1px solid var(--brand-gold); border-radius: 20px; padding: 5px 20px;">Leer más</button>
                     </div>
 
                     <div class="row g-3 mb-5">
@@ -236,7 +238,7 @@
                                     <%= t('book.publisher') %>
                                 </span>
                                 <a href="/publisher/<%= publisher.id %>"
-                                    class="spec-value text-primary text-decoration-none">
+                                    class="spec-value text-decoration-none" style="color: var(--brand-teal);">
                                     <%= publisher.name %>
                                 </a>
                             </div>
@@ -312,7 +314,7 @@
                                         <textarea name="comment" class="form-control border-light bg-light" rows="4"
                                             required></textarea>
                                     </div>
-                                    <button type="submit" class="btn btn-dark w-100 rounded-pill py-3 fw-bold">
+                                    <button type="submit" class="btn w-100 rounded-pill py-3 fw-bold text-white" style="background-color: var(--brand-teal);">
                                         <%= t('review.add_review') %> ✍️
                                     </button>
                                 </form>
@@ -321,10 +323,10 @@
 
                         <div class="col-md-7">
                             <div class="d-flex justify-content-between align-items-center mb-4">
-                                <h3 class="fw-bold m-0">
+                                <h3 class="fw-bold m-0" style="color: var(--brand-teal);">
                                     <%= t('review.reviews') %>
                                 </h3>
-                                <span class="badge bg-dark rounded-pill px-3">
+                                <span class="badge rounded-pill px-3" style="background-color: var(--brand-gold);">
                                     <%= reviews.length %>
                                 </span>
                             </div>
@@ -333,7 +335,7 @@
                                     <% reviews.forEach(review=> { %>
                                         <div class="card border-0 shadow-sm mb-3 rounded-4 p-3 review-card">
                                             <div class="d-flex justify-content-between">
-                                                <h6 class="fw-bold text-primary m-0">
+                                                <h6 class="fw-bold m-0" style="color: var(--brand-teal);">
                                                     <%= review.user_email %>
                                                 </h6>
 
@@ -424,20 +426,20 @@
 
                     <% if(user && user.role==="ADMIN" ) { %>
                         <div
-                            class="mt-5 p-4 bg-dark text-white rounded-4 shadow-lg d-flex align-items-center justify-content-between">
+                            class="mt-5 p-4 text-white rounded-4 shadow-lg d-flex align-items-center justify-content-between" style="background-color: var(--brand-teal); border-left: 6px solid var(--brand-gold);">
                             <div>
-                                <h5 class="fw-bold m-0"><i class="bi bi-shield-check me-2"></i>
+                                <h5 class="fw-bold m-0"><i class="bi bi-shield-lock-fill me-2"></i>
                                     <%= t('admin.panel') %>
                                 </h5>
                                 <p class="small text-white-50 m-0">Opciones de gestión exclusivas para administradores
                                 </p>
                             </div>
                             <div class="d-flex gap-2">
-                                <a href="/books/edit/<%= book.id %>" class="btn btn-primary rounded-pill px-4">
+                                <a href="/books/edit/<%= book.id %>" class="btn btn-light rounded-pill px-4 fw-bold" style="color: var(--brand-teal);">
                                     <i class="bi bi-pencil me-1"></i>
                                     <%= t('book.edit_book') %>
                                 </a>
-                                <a href="/books/delete/<%= book.id %>" class="btn btn-danger rounded-pill px-4">
+                                <a href="/books/delete/<%= book.id %>" class="btn btn-outline-light rounded-pill px-4 fw-bold">
                                     <i class="bi bi-trash me-1"></i>
                                     <%= t('book.delete_book') %>
                                 </a>
