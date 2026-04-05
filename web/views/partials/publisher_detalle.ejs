@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
-            background-color: #f8f9fa;
+            background-color: var(--bg-cream);
         }
 
         .publisher-hero-card {
@@ -165,19 +165,26 @@
 
             <% if(user && user.role==="ADMIN" ) { %>
                 <div
-                    class="p-4 bg-dark text-white rounded-4 shadow-lg d-flex align-items-center justify-content-between">
-                    <h5 class="fw-bold m-0"><i class="bi bi-shield-lock me-2"></i>Admin Mode</h5>
+                    class="mt-5 p-4 text-white rounded-4 shadow-lg d-flex align-items-center justify-content-between" style="background-color: var(--brand-teal); border-left: 6px solid var(--brand-gold);">
+                    <div>
+                        <h5 class="fw-bold m-0"><i class="bi bi-shield-lock-fill me-2"></i>
+                            Admin Mode
+                        </h5>
+                        <p class="small text-white-50 m-0">Opciones de gestión exclusivas para administradores
+                        </p>
+                    </div>
                     <div class="d-flex gap-2">
-                        <a href="/publisher/edit/<%= publisher.id %>" class="btn btn-outline-light rounded-pill px-4">
+                        <a href="/publisher/edit/<%= publisher.id %>" class="btn btn-light rounded-pill px-4 fw-bold" style="color: var(--brand-teal);">
+                            <i class="bi bi-pencil me-1"></i>
                             <%= t('publisher_detail.edit') %>
                         </a>
                         <% const confirmMsgPub=t('admin.confirm').replace(/'/g, "\\'" ); %>
-                            <form action="/publisher/delete/<%= publisher.id %>" method="POST" class="d-inline">
-                                <button type="submit" class="btn btn-danger rounded-pill px-4"
-                                    onclick="return confirm('<%= confirmMsgPub %>')">
-                                    <%= t('publisher_detail.delete') %>
-                                </button>
-                            </form>
+                        <form action="/publisher/delete/<%= publisher.id %>" method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-outline-light rounded-pill px-4 fw-bold" onclick="return confirm('<%= confirmMsgPub %>')">
+                                <i class="bi bi-trash me-1"></i>
+                                <%= t('publisher_detail.delete') %>
+                            </button>
+                        </form>
                     </div>
                 </div>
                 <% } %>

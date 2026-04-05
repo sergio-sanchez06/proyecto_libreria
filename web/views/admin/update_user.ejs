@@ -1,95 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= t('editUser.title') %>
+    </title>
+    <link rel="stylesheet" href="/css/add_book.css">
+</head>
+
+<body>
 <%- include ("../layout/header") %>
 
-<main class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="mb-4">
-                <a href="/admin/users" class="text-decoration-none text-muted">
-                    <i class="bi bi-arrow-left"></i> <%= t('editUser.back_to_list') %>
-                </a>
-            </div>
-
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-bottom py-3">
-                    <h2 class="h4 mb-0 fw-bold text-dark">
-                        <i class="bi bi-pencil-square me-2" style="color: var(--brand-teal);"></i><%= t('editUser.title') %>
-                    </h2>
+<main class="admin-form-page bg-pattern-general">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="mb-3">
+                    <a href="/admin/users" class="text-decoration-none text-muted small fw-bold">
+                        <i class="bi bi-arrow-left me-1"></i> <%= t('editUser.back_to_list') %>
+                    </a>
                 </div>
 
-                <div class="card-body p-4">
-                    <% if (locals.error) { %>
-                        <div class="alert alert-danger border-0 shadow-sm">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            <%= error %>
-                        </div>
-                    <% } %>
+                <div class="card brand-card">
+                    <div class="card-header brand-card-header text-center">
+                        <h2 class="mb-0 h3 fw-bold">
+                            <i class="bi bi-person-check-fill me-2"></i>
+                            <%= t('editUser.title') %>
+                        </h2>
+                    </div>
 
-                    <form action="/admin/users/update/<%= user.id %>" method="POST">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small fw-bold"><%= t('addUser.label_email') %> (<%= t('editUser.not_editable') %>)</label>
-                                <input type="email" class="form-control bg-light" value="<%= user.email %>" readonly>
+                    <div class="card-body p-4">
+                        <% if (locals.error) { %>
+                            <div class="alert alert-danger border-0 shadow-sm mb-4">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <%= error %>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label text-muted small fw-bold">Firebase UID</label>
-                                <input type="text" class="form-control bg-light font-monospace"
-                                    style="font-size: 0.8rem;" value="<%= user.firebase_uid %>" readonly>
-                            </div>
+                        <% } %>
 
-                            <hr class="my-4 text-muted opacity-25">
+                        <form action="/admin/users/update/<%= user.id %>" method="POST">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small fw-bold"><%= t('addUser.label_email') %> (<%= t('editUser.not_editable') %>)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-0"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" class="form-control bg-light border-0" value="<%= user.email %>" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-muted small fw-bold">Firebase UID</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-0"><i class="bi bi-shield-lock"></i></span>
+                                        <input type="text" class="form-control bg-light border-0 font-monospace small" value="<%= user.firebase_uid %>" readonly>
+                                    </div>
+                                </div>
 
-                            <div class="col-md-8">
-                                <label for="name" class="form-label fw-bold"><%= t('addUser.label_name') %></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white"><i class="bi bi-person"></i></span>
+                                <div class="col-12 mt-4 mb-2">
+                                    <h5 class="fw-bold border-bottom pb-2" style="color: var(--brand-teal)"><%= t('addUser.subtitle') %></h5>
+                                </div>
+
+                                <div class="col-md-8">
+                                    <label for="name" class="form-label fw-bold"><%= t('addUser.label_name') %> *</label>
                                     <input type="text" name="name" id="name" class="form-control"
                                         value="<%= user.name %>" required>
                                 </div>
-                            </div>
 
-                            <div class="col-md-4">
-                                <label for="role" class="form-label fw-bold"><%= t('addUser.label_role') %></label>
-                                <select name="role" id="role" class="form-select">
-                                    <option value="CLIENT" <%= user.role === 'CLIENT' ? 'selected' : '' %>><%= t('addUser.role_client') %></option>
-                                    <option value="ADMIN" <%= user.role === 'ADMIN' ? 'selected' : '' %>><%= t('addUser.role_admin') %></option>
-                                </select>
-                            </div>
+                                <div class="col-md-4">
+                                    <label for="role" class="form-label fw-bold"><%= t('addUser.label_role') %></label>
+                                    <select name="role" id="role" class="form-select">
+                                        <option value="CLIENT" <%= user.role === 'CLIENT' ? 'selected' : '' %>><%= t('addUser.role_client') %></option>
+                                        <option value="ADMIN" <%= user.role === 'ADMIN' ? 'selected' : '' %>><%= t('addUser.role_admin') %></option>
+                                    </select>
+                                </div>
 
-                            <div class="col-12">
-                                <label for="default_address" class="form-label fw-bold"><%= t('addUser.label_address_default') %></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white"><i class="bi bi-geo-alt"></i></span>
+                                <div class="col-12">
+                                    <label for="default_address" class="form-label fw-bold"><%= t('addUser.label_address_default') %> *</label>
                                     <textarea name="default_address" id="default_address"
                                         class="form-control" rows="2" required><%= user.default_address %></textarea>
                                 </div>
-                            </div>
 
-                            <div class="col-12">
-                                <label for="optional_address" class="form-label fw-bold">
-                                    <%= t('addUser.label_address_optional') %> 
-                                    <span class="text-muted fw-normal small">(<%= t('editUser.optional_mark') %>)</span>
-                                </label>
-                                <textarea name="optional_address" id="optional_address" class="form-control"
-                                    rows="2"><%= user.optional_address %></textarea>
-                            </div>
+                                <div class="col-12">
+                                    <label for="optional_address" class="form-label fw-bold">
+                                        <%= t('addUser.label_address_optional') %> 
+                                        <span class="text-muted fw-normal small">(<%= t('editUser.optional_mark') %>)</span>
+                                    </label>
+                                    <textarea name="optional_address" id="optional_address" class="form-control"
+                                        rows="2"><%= user.optional_address %></textarea>
+                                </div>
 
-                            <div class="col-12 d-flex justify-content-end gap-2 mt-4">
-                                <a href="/admin/users" class="btn btn-light px-4 border"><%= t('addUser.btn_cancel') %></a>
-                                <button type="submit" class="btn px-5 shadow-sm text-white" style="background-color: var(--brand-teal); border-radius: 12px; font-weight: 700;">
-                                    <i class="bi bi-save me-1"></i> <%= t('editUser.btn_save') %>
-                                </button>
+                                <div class="col-12 d-flex justify-content-center gap-3 mt-4">
+                                    <button type="submit" class="btn btn-brand-teal px-5 py-2 fw-bold rounded-pill">
+                                        <i class="bi bi-save-fill me-2"></i> <%= t('editUser.btn_save') %>
+                                    </button>
+                                    <a href="/admin/users" class="btn btn-secondary px-4 rounded-pill">
+                                        <%= t('addUser.btn_cancel') %>
+                                    </a>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-            <div class="card border-0 shadow-sm mt-4 bg-light">
-                <div class="card-body d-flex align-items-center">
-                    <i class="bi bi-shield-check fs-2 me-3" style="color: var(--brand-teal);"></i>
-                    <div>
-                        <h6 class="mb-0 fw-bold"><%= t('editUser.security_title') %></h6>
-                        <small class="text-muted"><%= t('editUser.security_info') %></small>
+                <div class="card border-0 shadow-sm mt-4 brand-card" style="background-color: rgba(13, 92, 99, 0.05);">
+                    <div class="card-body d-flex align-items-center">
+                        <i class="bi bi-shield-check fs-2 me-3" style="color: var(--brand-teal);"></i>
+                        <div>
+                            <h6 class="mb-0 fw-bold"><%= t('editUser.security_title') %></h6>
+                            <small class="text-muted"><%= t('editUser.security_info') %></small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -97,14 +116,6 @@
     </div>
 </main>
 
-<style>
-    body { background-color: var(--bg-cream); }
-    .form-control:focus, .form-select:focus {
-        border-color: var(--brand-gold);
-        box-shadow: 0 0 0 0.25rem rgba(194, 151, 59, 0.15);
-    }
-    .input-group-text { border-right: none; color: var(--brand-teal); }
-    .input-group .form-control { border-left: none; }
-</style>
-
 <%- include('../layout/footer') %>
+</body>
+</html>

@@ -10,13 +10,13 @@
 <body>
 
     <%- include ("../layout/header") %>
-
-    <main class="container py-5">
+    <main class="admin-form-page bg-pattern-general">
+        <div class="container py-4">
         <div class="row justify-content-center">
             <div class="col-md-8 col-lg-6">
-                <div class="card shadow-sm border-0">
-                    <div class="card-header text-white" style="background-color: #0d5c63;">
-                        <h2 class="mb-0 h4"><%= t('addPublisher.title') %></h2>
+                <div class="card brand-card">
+                    <div class="card-header brand-card-header text-center">
+                        <h2 class="mb-0 h3 fw-bold"><i class="bi bi-building-fill me-2"></i><%= t('addPublisher.title') %></h2>
                     </div>
                     <div class="card-body p-4">
                         <% if (locals.error) { %>
@@ -54,17 +54,20 @@
                                 <small class="form-text text-muted"><%= t('addPublisher.logo_help') %></small>
                             </div>
 
-                            <div class="d-flex justify-content-center gap-2 mt-4">
-                                <button type="submit" class="btn text-white px-4" style="background-color: #0d5c63;">
+                            <div class="d-flex justify-content-center gap-3 mt-4">
+                                <button type="submit" class="btn btn-brand-teal px-5 py-2 fw-bold rounded-pill">
+                                    <i class="bi bi-plus-circle-fill me-2"></i>
                                     <%= t('addPublisher.btn_submit') %>
                                 </button>
-                                <a href="/admin/dashboard" class="btn btn-secondary px-4">
+                                <a href="/admin/dashboard" class="btn btn-secondary px-4 rounded-pill">
                                     <%= t('addAuthor.btn_cancel') %>
                                 </a>
                             </div>
                         </form>
                     </div>
                 </div>
+            </div>
+        </div>
             </div>
         </div>
     </main>

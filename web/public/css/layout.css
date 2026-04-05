@@ -272,3 +272,69 @@ body {
         flex-wrap: wrap;
     }
 }
+
+/* =========================================
+   ESTILOS PARA FORMULARIOS ADMINISTRATIVOS
+   ========================================= */
+
+.admin-form-page {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: center;
+    padding: 40px 0;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.bg-pattern-books {
+    background-image: linear-gradient(rgba(252, 250, 247, 0.92), rgba(252, 250, 247, 0.92)), url('/images/book_drawing_pattern.png');
+}
+
+.bg-pattern-authors {
+    background-image: linear-gradient(rgba(252, 250, 247, 0.92), rgba(252, 250, 247, 0.92)), url('/images/author_drawing_pattern.png');
+}
+
+.bg-pattern-general {
+    background-image: linear-gradient(rgba(252, 250, 247, 0.92), rgba(252, 250, 247, 0.92)), url('/images/book_pattern.png');
+}
+
+.brand-card {
+    border: none !important;
+    border-radius: 15px !important;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+}
+
+.brand-card-header {
+    background-color: var(--brand-teal) !important;
+    border-bottom: 3px solid var(--brand-gold) !important;
+    color: white !important;
+    padding: 1.25rem !important;
+}
+
+.btn-brand-teal {
+    background-color: var(--brand-teal) !important;
+    color: white !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-brand-teal:hover {
+    background-color: #0b4a50 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(13, 92, 99, 0.2);
+}
+
+.btn-brand-gold {
+    background-color: var(--brand-gold) !important;
+    color: white !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-brand-gold:hover {
+    background-color: #a88232 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(194, 151, 59, 0.2);
+}
