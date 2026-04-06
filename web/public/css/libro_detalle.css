@@ -1,6 +1,6 @@
 /* Contenedor Principal */
 .book-detail-main {
-  max-width: 1000px; 
+  max-width: 1200px; 
   margin: 40px auto;
   padding: 40px;
   background: rgba(255, 255, 255, 0.95);
@@ -11,7 +11,7 @@
 }
 
 /* Título */
-h1 {
+.book-detail-main h1 {
   color: var(--brand-teal);
   font-size: 2.8rem;
   font-weight: 800;
@@ -22,24 +22,24 @@ h1 {
 }
 
 /* Layout de dos columnas */
-.book-details-wrapper {
+.book-detail-main .book-details-wrapper {
   display: flex;
   gap: 50px;
   flex-wrap: wrap; 
 }
 
-.book-cover-column {
+.book-detail-main .book-cover-column {
   flex: 1;
   min-width: 300px;
 }
 
-.book-info-column {
+.book-detail-main .book-info-column {
   flex: 2;
   min-width: 300px;
 }
 
 /* Imagen de la portada */
-.book-cover-column img {
+.book-detail-main .book-cover-column img {
   width: 100%;
   max-width: 280px;
   height: auto;
@@ -50,26 +50,26 @@ h1 {
   transition: transform 0.4s ease;
 }
 
-.book-cover-column img:hover {
+.book-detail-main .book-cover-column img:hover {
     transform: scale(1.03);
 }
 
 /* Estilo de los párrafos y etiquetas */
-p {
+.book-detail-main p {
   font-size: 1.1rem;
   line-height: 1.7;
   color: #4a5568;
   margin-bottom: 18px;
 }
 
-strong {
+.book-detail-main strong {
   color: var(--brand-teal);
   font-weight: 700;
   margin-right: 5px;
 }
 
 /* Badges de Géneros */
-.badge {
+.book-detail-main .badge {
   text-decoration: none !important;
   display: inline-flex;
   align-items: center;
@@ -77,7 +77,7 @@ strong {
   padding: 8px 12px !important;
 }
 
-.badge a {
+.book-detail-main .badge a {
   color: white !important;
   margin-top: 0;
   margin-left: 10px;
@@ -88,12 +88,12 @@ strong {
   transition: all 0.2s ease;
 }
 
-.badge a:hover {
+.book-detail-main .badge a:hover {
     background: rgba(255, 255, 255, 0.3);
 }
 
 /* Formulario de Compra */
-.cart-section {
+.book-detail-main .cart-section {
   background: white;
   padding: 25px;
   border-radius: 16px;
@@ -102,12 +102,12 @@ strong {
   box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
 
-.input-group {
+.book-detail-main .input-group {
   width: 280px !important; 
 }
 
 /* Botones de Administración */
-.admin-controls {
+.book-detail-main .admin-controls {
   display: flex;
   gap: 15px;
   margin-top: 40px;
@@ -116,7 +116,7 @@ strong {
 }
 
 /* Enlaces */
-.back-link-nav {
+.book-detail-main .back-link-nav {
   display: inline-block;
   margin-top: 30px;
   color: var(--brand-teal);
@@ -125,17 +125,17 @@ strong {
   transition: all 0.3s ease;
 }
 
-.back-link-nav:hover {
+.book-detail-main .back-link-nav:hover {
     color: var(--brand-teal-hover);
     transform: translateX(-5px);
 }
 
 /* Responsividad */
 @media (max-width: 768px) {
-  .book-details-wrapper {
+  .book-detail-main .book-details-wrapper {
     flex-direction: column;
   }
-  .book-cover-column img {
+  .book-detail-main .book-cover-column img {
     max-width: 250px;
   }
 }

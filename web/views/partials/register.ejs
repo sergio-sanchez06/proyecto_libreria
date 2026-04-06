@@ -1,232 +1,204 @@
-<!DOCTYPE html>
-<html lang="es">
+<%- include('../layout/header') %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-image: url('/images/auth_drawing_pattern.png');
-            background-repeat: repeat;
-            background-size: 400px;
-            background-attachment: fixed;
-            background-color: #fcfaf7;
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+<style>
+    body {
+        background-image: url('/images/auth_drawing_pattern.png');
+        background-repeat: repeat;
+        background-size: 400px;
+        background-attachment: fixed;
+        background-color: #fcfaf7;
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
 
-        /* Overlay to ensure text readability against the background image */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(252, 250, 247, 0.85); /* Semi-transparent beige */
-            z-index: -1;
-        }
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(252, 250, 247, 0.85); 
+        z-index: -1;
+    }
 
-        main {
-            flex: 1;
-            padding-top: 3rem;
-            padding-bottom: 3rem;
-        }
+    main {
+        flex: 1;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-        }
+    .card {
+        border: none;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
 
-        .row {
-            width: 100%;
-            margin: 0;
-            justify-content: center;
-        }
+    .card-header {
+        background: transparent !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+        padding: 2rem 1rem 1rem !important;
+    }
 
-        .card {
-            border: none;
-            border-radius: 24px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-        }
+    .card-header h2 {
+        color: var(--brand-teal);
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
 
-        .card-header {
-            background: transparent !important;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-            padding: 2rem 1rem 1rem !important;
-        }
+    .form-label {
+        font-weight: 700;
+        color: #4a5568;
+        font-size: 0.85rem;
+        margin-bottom: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
 
-        .card-header h2 {
-            color: var(--brand-teal);
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
+    .form-control {
+        border-radius: 12px;
+        padding: 10px 16px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.6);
+        transition: all 0.3s ease;
+    }
 
-        .form-label {
-            font-weight: 700;
-            color: #4a5568;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .form-control:focus {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: var(--brand-teal);
+        box-shadow: 0 0 0 4px rgba(13, 92, 99, 0.15);
+    }
 
-        .form-control {
-            border-radius: 12px;
-            padding: 10px 16px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            background: rgba(255, 255, 255, 0.6);
-            transition: all 0.3s ease;
-        }
+    .btn-success {
+        background-color: var(--brand-teal) !important;
+        border: none;
+        padding: 14px;
+        font-weight: 700;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
 
-        .form-control:focus {
-            background: rgba(255, 255, 255, 0.9);
-            border-color: var(--brand-teal);
-            box-shadow: 0 0 0 4px rgba(13, 92, 99, 0.15);
-        }
+    .btn-success:hover {
+        background-color: var(--brand-teal-hover) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(13, 92, 99, 0.2);
+    }
 
-        .btn-success {
-            background-color: var(--brand-teal) !important;
-            border: none;
-            padding: 14px;
-            font-weight: 700;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
+    .card-footer {
+        background: rgba(0, 0, 0, 0.02) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+        padding: 1.5rem !important;
+    }
 
-        .btn-success:hover {
-            background-color: var(--brand-teal-hover) !important;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(13, 92, 99, 0.2);
-        }
+    .form-text {
+        font-size: 0.75rem;
+        color: #718096;
+    }
 
-        .card-footer {
-            background: rgba(0, 0, 0, 0.02) !important;
-            border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
-            padding: 1.5rem !important;
-        }
+    textarea.form-control {
+        min-height: 80px;
+    }
+</style>
 
-        .form-text {
-            font-size: 0.75rem;
-            color: #718096;
-        }
-
-        textarea.form-control {
-            min-height: 80px;
-        }
-    </style>
-</head>
-
-<body>
-
-    <%- include('../layout/header') %>
-
-        <main class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-6">
-                    <div class="card shadow-sm border-0">
-                        <div class="card-header text-center">
-                            <h2 class="mb-0">
-                                <%= t('register.title') %>
-                            </h2>
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header text-center">
+                    <h2 class="mb-0">
+                        <%= t('register.title') %>
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <% if (error) { %>
+                        <div class="alert alert-danger">
+                            <%= error %>
                         </div>
-                        <div class="card-body p-4">
-                            <% if (error) { %>
-                                <div class="alert alert-danger">
-                                    <%= error %>
-                                </div>
-                                <% } %>
+                    <% } %>
 
-                                    <form action="/register" method="POST" id="register-form">
-
-                                        <div class="mb-3">
-                                            <label for="name" class="form-label fw-bold">
-                                                <%= t('register.name') %>
-                                                    <%= t('register.required_mark') %>
-                                            </label>
-                                            <input type="text" name="name" id="name" class="form-control"
-                                                value="<%= formData ? formData.name : '' %>" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="email" class="form-label fw-bold">
-                                                <%= t('register.email') %>
-                                                    <%= t('register.required_mark') %>
-                                            </label>
-                                            <input type="email" name="email" id="email" class="form-control"
-                                                value="<%= formData ? formData.email : '' %>" required>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="password" class="form-label fw-bold">
-                                                <%= t('register.password') %>
-                                                    <%= t('register.required_mark') %>
-                                            </label>
-                                            <input type="password" name="password" id="password" class="form-control"
-                                                required minlength="6">
-                                            <div class="form-text">
-                                                <%= t('register.password_hint') %>
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="default_address" class="form-label fw-bold">
-                                                <%= t('register.address_main') %>
-                                                    <%= t('register.required_mark') %>
-                                            </label>
-                                            <textarea name="default_address" id="default_address" class="form-control"
-                                                rows="2"
-                                                required><%= formData ? formData.default_address : '' %></textarea>
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <label for="optional_address" class="form-label fw-bold">
-                                                <%= t('register.address_optional') %>
-                                            </label>
-                                            <textarea name="optional_address" id="optional_address" class="form-control"
-                                                rows="2"><%= formData ? formData.optional_address : '' %></textarea>
-                                        </div>
-
-                                        <div class="d-grid gap-2">
-                                            <button type="submit" id="register-btn"
-                                                class="btn btn-success btn-lg rounded-pill">
-                                                <span id="btn-text">
-                                                    <%= t('register.submit') %>
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </form>
+                    <form action="/register" method="POST" id="register-form">
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">
+                                <%= t('register.name') %>
+                                <%= t('register.required_mark') %>
+                            </label>
+                            <input type="text" name="name" id="name" class="form-control"
+                                value="<%= formData ? formData.name : '' %>" required>
                         </div>
-                        <div class="card-footer text-center bg-light py-3">
-                            <p class="mb-0">
-                                <%= t('register.already_account') %>
-                                    <a href="/login" class="text-success fw-bold text-decoration-none">
-                                        <%= t('register.login_link') %>
-                                    </a>
-                            </p>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">
+                                <%= t('register.email') %>
+                                <%= t('register.required_mark') %>
+                            </label>
+                            <input type="email" name="email" id="email" class="form-control"
+                                value="<%= formData ? formData.email : '' %>" required>
                         </div>
-                    </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label fw-bold">
+                                <%= t('register.password') %>
+                                <%= t('register.required_mark') %>
+                            </label>
+                            <input type="password" name="password" id="password" class="form-control"
+                                required minlength="6">
+                            <div class="form-text">
+                                <%= t('register.password_hint') %>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="default_address" class="form-label fw-bold">
+                                <%= t('register.address_main') %>
+                                <%= t('register.required_mark') %>
+                            </label>
+                            <textarea name="default_address" id="default_address" class="form-control"
+                                rows="2"
+                                required><%= formData ? formData.default_address : '' %></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="optional_address" class="form-label fw-bold">
+                                <%= t('register.address_optional') %>
+                            </label>
+                            <textarea name="optional_address" id="optional_address" class="form-control"
+                                rows="2"><%= formData ? formData.optional_address : '' %></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" id="register-btn"
+                                class="btn btn-success btn-lg rounded-pill">
+                                <span id="btn-text">
+                                    <%= t('register.submit') %>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center bg-light py-3">
+                    <p class="mb-0">
+                        <%= t('register.already_account') %>
+                        <a href="/login" class="text-success fw-bold text-decoration-none">
+                            <%= t('register.login_link') %>
+                        </a>
+                    </p>
                 </div>
             </div>
-        </main>
+        </div>
+    </div>
+</main>
 
-        <%- include('../layout/footer') %>
+<%- include('../layout/footer') %>
 
-            <script>
-                document.getElementById('register-form').addEventListener('submit', function () {
-                    const btn = document.getElementById('register-btn');
-                    const btnText = document.getElementById('btn-text');
-                    btn.disabled = true;
-                    btnText.textContent = "Procesando registro...";
-                });
-            </script>
-
-</body>
-
-</html>
+<script>
+    document.getElementById('register-form').addEventListener('submit', function () {
+        const btn = document.getElementById('register-btn');
+        const btnText = document.getElementById('btn-text');
+        btn.disabled = true;
+        btnText.textContent = "Procesando registro...";
+    });
+</script>
