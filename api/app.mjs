@@ -60,6 +60,15 @@ app.use("/bookGenre", bookGenreRouter);
 //   orderRouter
 // );
 
+// Captura errores asíncronos no manejados — evita que nodemon reinicie el servidor
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("⚠️ Unhandled Rejection:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("⚠️ Uncaught Exception:", error);
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

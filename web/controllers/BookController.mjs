@@ -132,7 +132,7 @@ async function getCreateBook(req, res) {
 }
 
 async function createBook(req, res) {
-  const bookData = req.body;
+  const bookData = req.body; // YA ESTÁ LIMPIO Y TIPADO
 
   if (req.file) {
     bookData.cover_url = `/uploads/covers/${req.file.filename}`;
@@ -145,30 +145,53 @@ async function createBook(req, res) {
     await api.post("/books", bookData);
     res.redirect("/books/showAllBooks?success=true");
   } catch (error) {
-    console.error("Error al crear libro:", error);
-
-    // RE-CARGA DE CATÁLOGOS para que los <select> de autores, generos y editoriales no fallen
-    try {
-      const [authors, genres, publishers] = await Promise.all([
-        apiClient.get("/authors"),
-        apiClient.get("/genres/all"),
-        apiClient.get("/publishers/all"), // Rutas que muestran todos los datos sin paginar
-      ]);
-
-      res.render("admin/add_book", {
-        authors: authors.data,
-        genres: genres.data,
-        publishers: publishers.data,
-        user: req.session.user,
-        bookData: req.body, // Enviamos los datos recibidos de vuelta para que no se pierdan
-        error: error.response?.data?.message || "No se pudo crear el libro.",
-        success: null,
-      });
-    } catch (fetchError) {
-      res.status(500).send("Error crítico al recargar el formulario");
-    }
+    // Si la API falla (ej: ISBN duplicado en BD), recargamos usando el util
+    const extraData = await getBookFormData(req);
+    res.render("admin/add_book", {
+      ...extraData,
+      bookData: req.body,
+      error: error.response?.data?.message || "Error en la base de datos",
+    });
   }
 }
+// async function createBook(req, res) {
+//   const bookData = req.body;
+
+//   if (req.file) {
+//     bookData.cover_url = `/uploads/covers/${req.file.filename}`;
+//   }
+
+//   try {
+//     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+//     const api = getAuthenticatedClient(cleanToken);
+
+//     await api.post("/books", bookData);
+//     res.redirect("/books/showAllBooks?success=true");
+//   } catch (error) {
+//     console.error("Error al crear libro:", error);
+
+//     // RE-CARGA DE CATÁLOGOS para que los <select> de autores, generos y editoriales no fallen
+//     try {
+//       const [authors, genres, publishers] = await Promise.all([
+//         apiClient.get("/authors"),
+//         apiClient.get("/genres/all"),
+//         apiClient.get("/publishers/all"), // Rutas que muestran todos los datos sin paginar
+//       ]);
+
+//       res.render("admin/add_book", {
+//         authors: authors.data,
+//         genres: genres.data,
+//         publishers: publishers.data,
+//         user: req.session.user,
+//         bookData: req.body, // Enviamos los datos recibidos de vuelta para que no se pierdan
+//         error: error.response?.data?.message || "No se pudo crear el libro.",
+//         success: null,
+//       });
+//     } catch (fetchError) {
+//       res.status(500).send("Error crítico al recargar el formulario");
+//     }
+//   }
+// }
 
 async function getEditBook(req, res) {
   if (!req.session.user || req.session.user.role !== "ADMIN")
@@ -198,80 +221,117 @@ async function getEditBook(req, res) {
 
 async function updateBook(req, res) {
   const { id } = req.params;
+  // req.body YA VIENE NORMALIZADO por el Schema de Zod (ints, arrays, etc.)
   const updateData = { ...req.body };
 
-  // 1. Manejo de la imagen
+  const finalPayload = Object.fromEntries(
+    Object.entries(req.body).filter(
+      ([key, value]) => value !== undefined && key !== "id",
+    ),
+  );
+
+  // Manejo de la imagen (esto sigue siendo responsabilidad del controller)
   if (req.file) {
     updateData.cover_url = `/uploads/covers/${req.file.filename}`;
-  } else {
-    delete updateData.cover_url;
   }
-
-  // 2. Normalización de IDs (Autores y Géneros)
-  const normalizeIds = (field) => {
-    const value = updateData[field];
-    if (value === undefined) return undefined;
-    if (!value || value.length === 0) return [];
-    const array = Array.isArray(value) ? value : [value];
-    return array.map((id) => parseInt(id, 10));
-  };
-
-  // 3. PROCESAMIENTO DEL AÑO (releashed_year)
-  // Si viene vacío o es "0", lo enviamos como null a la API para mantener consistencia de los datos
-  const yearValue =
-    updateData.releashed_year && updateData.releashed_year.trim() !== ""
-      ? parseInt(updateData.releashed_year, 10)
-      : null;
-
-  const finalPayload = {
-    ...updateData,
-    releashed_year: yearValue, // Asignamos el valor procesado del año
-    author_ids: normalizeIds("author_ids"),
-    genre_ids: normalizeIds("genre_ids"),
-  };
-
-  if (finalPayload.author_ids === undefined) delete finalPayload.author_ids;
-  if (finalPayload.genre_ids === undefined) delete finalPayload.genre_ids;
 
   try {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
+    // Enviamos los datos que Zod ya limpió
     await api.put(`/books/${id}`, finalPayload);
-
-    //Redireccionamos a la vista del libro con un parámetro de éxito para que se muestre el modal de exito
 
     res.redirect(`/books/book/${id}?success=true`);
   } catch (error) {
-    console.error("Error:", error.message);
+    console.error("Error API:", error.response?.data || error.message);
 
-    // ERROR: En lugar de un .send(500), recargamos la vista de edición
-    // pasando el error y los datos para que el modal se active.
-    try {
-      const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
-      const api = getAuthenticatedClient(cleanToken);
-
-      // Recargamos los datos para los selectores
-      const [publishers, authors, genres] = await Promise.all([
-        api.get("/publishers/allPublishers"),
-        api.get("/authors"),
-        api.get("/genres/all"),
-      ]);
-
-      res.render("admin/edit_book", {
-        book: { id, ...finalPayload }, // Devolvemos los datos del formulario
-        publishers: publishers.data,
-        authors: authors.data,
-        genres: genres.data,
-        error:
-          "No se pudo actualizar el libro: " + error.response?.data?.message ||
-          error.message,
-      });
-    } catch (e) {
-      res.status(500).send("Error crítico al recargar el formulario");
-    }
+    // Si la API falla (ej: error 500), usamos el mismo sistema de recarga
+    const extraData = await getEditBookData(req);
+    res.render("admin/edit_book", {
+      ...extraData,
+      book: { id, ...updateData },
+      error:
+        error.response?.data?.message || "Error al conectar con el servidor",
+    });
   }
 }
+// async function updateBook(req, res) {
+//   const { id } = req.params;
+//   const updateData = { ...req.body };
+
+//   // 1. Manejo de la imagen
+//   if (req.file) {
+//     updateData.cover_url = `/uploads/covers/${req.file.filename}`;
+//   } else {
+//     delete updateData.cover_url;
+//   }
+
+//   // 2. Normalización de IDs (Autores y Géneros)
+//   const normalizeIds = (field) => {
+//     const value = updateData[field];
+//     if (value === undefined) return undefined;
+//     if (!value || value.length === 0) return [];
+//     const array = Array.isArray(value) ? value : [value];
+//     return array.map((id) => parseInt(id, 10));
+//   };
+
+//   // 3. PROCESAMIENTO DEL AÑO (releashed_year)
+//   // Si viene vacío o es "0", lo enviamos como null a la API para mantener consistencia de los datos
+//   const yearValue =
+//     updateData.releashed_year && updateData.releashed_year.trim() !== ""
+//       ? parseInt(updateData.releashed_year, 10)
+//       : null;
+
+//   const finalPayload = {
+//     ...updateData,
+//     releashed_year: yearValue, // Asignamos el valor procesado del año
+//     author_ids: normalizeIds("author_ids"),
+//     genre_ids: normalizeIds("genre_ids"),
+//   };
+
+//   if (finalPayload.author_ids === undefined) delete finalPayload.author_ids;
+//   if (finalPayload.genre_ids === undefined) delete finalPayload.genre_ids;
+
+//   try {
+//     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+//     const api = getAuthenticatedClient(cleanToken);
+
+//     await api.put(`/books/${id}`, finalPayload);
+
+//     //Redireccionamos a la vista del libro con un parámetro de éxito para que se muestre el modal de exito
+
+//     res.redirect(`/books/book/${id}?success=true`);
+//   } catch (error) {
+//     console.error("Error:", error.message);
+
+//     // ERROR: En lugar de un .send(500), recargamos la vista de edición
+//     // pasando el error y los datos para que el modal se active.
+//     try {
+//       const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+//       const api = getAuthenticatedClient(cleanToken);
+
+//       // Recargamos los datos para los selectores
+//       const [publishers, authors, genres] = await Promise.all([
+//         api.get("/publishers/allPublishers"),
+//         api.get("/authors"),
+//         api.get("/genres/all"),
+//       ]);
+
+//       res.render("admin/edit_book", {
+//         book: { id, ...finalPayload }, // Devolvemos los datos del formulario
+//         publishers: publishers.data,
+//         authors: authors.data,
+//         genres: genres.data,
+//         error:
+//           "No se pudo actualizar el libro: " + error.response?.data?.message ||
+//           error.message,
+//       });
+//     } catch (e) {
+//       res.status(500).send("Error crítico al recargar el formulario");
+//     }
+//   }
+// }
 
 // async function updateBook(req, res) {
 //   const { id } = req.params;

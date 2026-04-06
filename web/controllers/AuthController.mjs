@@ -18,10 +18,7 @@ async function showLogin(req, res) {
 async function login(req, res) {
   const { idToken } = req.body;
 
-  console.log(req.body);
-
   if (!idToken) {
-    console.log("Token requerido");
     return res.render("partials/login", {
       error: "Token requerido",
       user: null,
@@ -32,17 +29,53 @@ async function login(req, res) {
     const response = await apiClient.post("/auth/login", { idToken });
     const { user } = response.data;
 
-    // Crea sesión
     req.session.user = user;
     req.session.idToken = idToken;
-    await req.session.save();
 
-    res.redirect("/");
+    // Usar callback en lugar de await — evita el error no capturado en el primer login
+    req.session.save((err) => {
+      if (err) {
+        console.error("Error al guardar sesión:", err);
+        return res.render("partials/login", {
+          error: "Error al guardar la sesión, inténtalo de nuevo.",
+          user: null,
+        });
+      }
+      res.redirect("/");
+    });
   } catch (error) {
     const message = error.response?.data?.message || "Error al iniciar sesión";
-    res.render("partials/login", { error: message });
+    res.render("partials/login", { error: message, user: null });
   }
 }
+// async function login(req, res) {
+//   const { idToken } = req.body;
+
+//   console.log(req.body);
+
+//   if (!idToken) {
+//     console.log("Token requerido");
+//     return res.render("partials/login", {
+//       error: "Token requerido",
+//       user: null,
+//     });
+//   }
+
+//   try {
+//     const response = await apiClient.post("/auth/login", { idToken });
+//     const { user } = response.data;
+
+//     // Crea sesión
+//     req.session.user = user;
+//     req.session.idToken = idToken;
+//     await req.session.save();
+
+//     res.redirect("/");
+//   } catch (error) {
+//     const message = error.response?.data?.message || "Error al iniciar sesión";
+//     res.render("partials/login", { error: message });
+//   }
+// }
 
 // Logout
 async function logout(req, res) {

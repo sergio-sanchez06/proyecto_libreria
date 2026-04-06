@@ -6,6 +6,9 @@ import bookController from "../controllers/BookController.mjs";
 import upload from "../utils/upload.mjs";
 import { checkToxicity } from "../middlewares/reviewModeration.mjs";
 import { validateReview } from "../middlewares/validateReviewContent.mjs";
+import { validateSchema } from "../middlewares/validator.mjs";
+import { bookSchema } from "../schemas/bookSchema.mjs";
+import { getBookFormData } from "../utils/bookFormData.mjs";
 
 const router = express.Router();
 
@@ -24,8 +27,21 @@ router.post(
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("cover"),
+  (req, res, next) => {
+    req.viewToRender = "admin/add_book";
+    next();
+  },
+  // 2. Pasamos el schema y la función de carga de datos
+  validateSchema(bookSchema, getBookFormData),
   bookController.createBook,
 );
+// router.post(
+//   "/books/create",
+//   protectMiddleware.protect,
+//   protectMiddleware.requireAdmin,
+//   upload.single("cover"),
+//   bookController.createBook,
+// );
 router.get(
   "/books/update/:id",
   protectMiddleware.protect,
@@ -37,6 +53,13 @@ router.post(
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("cover"),
+  (req, res, next) => {
+    req.viewToRender = "admin/edit_book";
+    req.body.id = req.params.id;
+    next();
+  },
+  // 2. Usamos el MISMO schema y la misma utilidad
+  validateSchema(bookSchema, getBookFormData),
   bookController.updateBook,
 );
 router.post(

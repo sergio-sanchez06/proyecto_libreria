@@ -91,6 +91,15 @@ app.use("/genres", genreRoutes);
 app.use("/cart", cartRoutes);
 app.use("/review", reviewRoutes);
 
+// Captura errores asíncronos no manejados — evita que nodemon reinicie el servidor
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("⚠️ Unhandled Rejection:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("⚠️ Uncaught Exception:", error);
+});
+
 const port = 3001;
 app.listen(port, () => {
   console.log(`Web corriendo en http://localhost:${port}`);
