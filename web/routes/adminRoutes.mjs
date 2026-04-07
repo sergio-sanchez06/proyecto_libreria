@@ -14,7 +14,12 @@ const router = express.Router();
 
 router.get("/dashboard", AdminController.getDashboard);
 
-router.get("/admin/libros", AdminController.getManageBooks);
+router.get(
+  "/books/list",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  AdminController.getManageBooks,
+);
 
 router.get(
   "/books/create",
@@ -67,6 +72,13 @@ router.post(
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   bookController.deleteBook,
+);
+
+router.post(
+  "/books/restore/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  bookController.restoreBook,
 );
 
 router.get(

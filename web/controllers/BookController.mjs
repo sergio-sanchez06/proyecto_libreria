@@ -1,6 +1,8 @@
 // web/controllers/bookController.mjs
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
+import { getBookFormData } from "../utils/bookFormData.mjs";
+
 // --- FUNCIONES PÚBLICAS (Lectura) ---
 
 async function getAllBooks(req, res) {
@@ -47,7 +49,9 @@ async function showAllBooks(req, res) {
         params: { page, q, maxPrice, genre, author },
       }),
       apiClient.get("/genres"),
-      apiClient.get("/authors"),
+      apiClient.get("/authors", {
+        params: { onlyWithBooks: true },
+      }),
     ]);
 
     res.render("partials/booksTable", {
@@ -71,6 +75,14 @@ async function getBookById(req, res) {
     const { id } = req.params;
     const bookResponse = await apiClient.get(`/books/${id}`);
 
+    console.log(bookResponse.data);
+
+    if (!bookResponse.data || !bookResponse.data.id) {
+      return res.status(404).render("errors/404", {
+        message: "El libro no existe o ha sido descatalogado.",
+      });
+    }
+
     const authorsResponse = await apiClient.get(
       `/bookAuthor/book/id/${bookResponse.data.id}`,
     );
@@ -93,6 +105,8 @@ async function getBookById(req, res) {
     const publisher = publisherResponse.data;
     const reviews = reviewsResponse.data;
 
+    // console.log(authors);
+
     res.render("partials/libro_detalle", {
       book,
       authors,
@@ -102,7 +116,7 @@ async function getBookById(req, res) {
       user: req.session.user || null,
     });
   } catch (error) {
-    res.status(404).render("error", { message: "Libro no encontrado" });
+    res.status(404).render("errors/404", { message: "Libro no encontrado" });
   }
 }
 
@@ -114,7 +128,12 @@ async function getCreateBook(req, res) {
 
   try {
     const [authors, genres, publishers] = await Promise.all([
-      apiClient.get("/authors"),
+      apiClient.get("/authors", {
+        params: {
+          deleted: false, // No queremos los de la papelera
+          onlyWithBooks: false, // Queremos TODOS los activos (tengan libros previos o no)
+        },
+      }),
       apiClient.get("/genres/all"), // CAMBIO: Pedimos todos los géneros (sin paginar)
       apiClient.get("/publishers/all"), // CAMBIO: Pedimos todas las editoriales
     ]);
@@ -201,7 +220,12 @@ async function getEditBook(req, res) {
     const { id } = req.params;
     const [bookRes, authors, genres, publishers] = await Promise.all([
       apiClient.get(`/books/${id}`),
-      apiClient.get("/authors"),
+      apiClient.get("/authors", {
+        params: {
+          deleted: false, // No queremos los de la papelera
+          onlyWithBooks: false, // Queremos TODOS los activos (tengan libros previos o no)
+        },
+      }),
       apiClient.get("/genres/all"), // Pedimos todos los géneros
       apiClient.get("/publishers/all"), // Pedimos todas las editoriales
     ]);
@@ -378,11 +402,59 @@ async function deleteBook(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    await api.delete(`/books/${req.body.id}`);
-    res.redirect("/books/showAllBooks");
+    await api.delete(`/books/${req.params.id}`);
+    res.redirect("/admin/books/list?success=true");
   } catch (error) {
-    console.error("Error al eliminar libro:", error.response?.data);
-    res.status(500).send("No se pudo eliminar el libro.");
+    const errorMessage =
+      error.response?.data?.error ||
+      "No se pudo eliminar el libro en este momento.";
+
+    console.error("Error al eliminar libro:", errorMessage);
+
+    // IMPORTANTE: Redirigimos a la lista pero pasando el error.
+    // Dependiendo de cómo manejes los mensajes en tu app, puedes usar session flash
+    // o volver a renderizar la vista pasando la variable 'error'.
+
+    // Opción recomendada si usas render para que el footer detecte 'locals.error':
+    const books = await api.get("/books"); // O tu método para recargar la lista
+    res.render("admin/books/list", {
+      books: books.data,
+      error: errorMessage,
+    });
+  }
+}
+
+async function restoreBook(req, res) {
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    const { id } = req.params;
+
+    // Intentamos la restauración en la API
+    await api.put(`/books/restore/${id}`);
+
+    // Si tiene éxito, redirigimos con el parámetro success para el modal verde
+    res.redirect("/admin/books/list?success=true");
+  } catch (error) {
+    // Extraemos el mensaje de error que viene de tu Service/API
+    // Por ejemplo: "No se pudo restaurar el libro porque su editorial ha sido eliminada"
+    const errorMessage =
+      error.response?.data?.error ||
+      "No se pudo restaurar el libro en este momento.";
+
+    console.error("Error al restaurar libro:", errorMessage);
+
+    // IMPORTANTE: Redirigimos a la lista pero pasando el error.
+    // Dependiendo de cómo manejes los mensajes en tu app, puedes usar session flash
+    // o volver a renderizar la vista pasando la variable 'error'.
+
+    // Opción recomendada si usas render para que el footer detecte 'locals.error':
+    const books = await api.get("/books"); // O tu método para recargar la lista
+    res.render("admin/books/list", {
+      books: books.data,
+      error: errorMessage,
+    });
   }
 }
 
@@ -395,4 +467,5 @@ export default {
   getEditBook,
   updateBook,
   deleteBook,
+  restoreBook,
 };

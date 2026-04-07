@@ -14,6 +14,7 @@
 *.vscode
 
 web/public/js/firebaseConfig.mjs
+api/services/PublisherBookService.mjs
 
 *.json
 .env

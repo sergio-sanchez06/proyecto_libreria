@@ -111,6 +111,12 @@
             margin-top: 5px;
             margin-bottom: 10px;
         }
+
+        .author-link:hover {
+            color: #14b8a6 !important;
+            /* Un tono más claro del teal para el hover */
+            text-decoration: underline !important;
+        }
     </style>
 
     <div class="book-detail-main py-5">
@@ -137,17 +143,29 @@
                     <%= book.title || t('book.no_synopsis') %>
                 </h1>
 
-                <div class="d-flex align-items-center mb-4">
+                <div class="d-flex align-items-center mb-4 flex-wrap">
                     <span class="text-muted me-2">
                         <%= t('book.author') %>:
                     </span>
+
                     <% authors.forEach((author, index)=> { %>
-                        <a href="/author/<%= author.id %>" class="fw-bold fs-5 text-decoration-none"
-                            style="color: var(--brand-teal);">
-                            <%= author.name %>
-                                <%= index < authors.length - 1 ? ', ' : '' %>
-                        </a>
-                        <% }) %>
+                        <% if (author.deleted_at) { %>
+                            <span class="fw-bold fs-5 text-secondary opacity-75"
+                                title="Este autor ya no está disponible en el catálogo activo">
+                                <%= author.name %>
+                                    <small class="fw-normal" style="font-size: 0.7rem;">(No disponible)</small>
+                            </span>
+                            <% } else { %>
+                                <a href="/author/<%= author.id %>" class="fw-bold fs-5 text-decoration-none author-link"
+                                    style="color: var(--brand-teal); transition: color 0.2s;">
+                                    <%= author.name %>
+                                </a>
+                                <% } %>
+
+                                    <% if (index < authors.length - 1) { %>
+                                        <span class="me-1">,</span>
+                                        <% } %>
+                                            <% }) %>
                 </div>
 
                 <div class="d-flex flex-wrap gap-2 mb-5">
@@ -226,10 +244,17 @@
                             <span class="spec-label">
                                 <%= t('book.publisher') %>
                             </span>
-                            <a href="/publisher/<%= publisher.id %>" class="spec-value text-decoration-none"
-                                style="color: var(--brand-teal);">
-                                <%= publisher.name %>
-                            </a>
+
+                            <% if(publisher.deleted_at){ %>
+                                <span class="spec-value text-decoration-none" style="color: var(--brand-teal);">
+                                    <%= publisher.name %> (No se encuentra disponible)
+                                </span>
+                                <% }else{ %>
+                                    <a href="/publisher/<%= publisher.id %>" class="spec-value text-decoration-none"
+                                        style="color: var(--brand-teal);">
+                                        <%= publisher.name %>
+                                    </a>
+                                    <% } %>
                         </div>
                     </div>
                     <div class="col-6 col-md-4">
@@ -419,16 +444,17 @@
                             </p>
                         </div>
                         <div class="d-flex gap-2">
-                            <a href="/books/edit/<%= book.id %>" class="btn btn-light rounded-pill px-4 fw-bold"
+                            <a href="/admin/books/update/<%= book.id %>" class="btn btn-light rounded-pill px-4 fw-bold"
                                 style="color: var(--brand-teal);">
                                 <i class="bi bi-pencil me-1"></i>
                                 <%= t('book.edit_book') %>
                             </a>
-                            <a href="/books/delete/<%= book.id %>"
-                                class="btn btn-outline-light rounded-pill px-4 fw-bold">
-                                <i class="bi bi-trash me-1"></i>
-                                <%= t('book.delete_book') %>
-                            </a>
+                            <form action="/admin/books/delete/<%= book.id %>" method="POST">
+                                <button type="submit" class="btn btn-outline-light rounded-pill px-4 fw-bold">
+                                    <i class="bi bi-trash me-1"></i>
+                                    <%= t('book.delete_book') %>
+                                </button>
+                            </form>
                         </div>
                     </div>
                     <% } %>

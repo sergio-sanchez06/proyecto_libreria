@@ -51,14 +51,16 @@ async function getPublishers(req, res, next) {
 async function showAllPublishers(req, res, next) {
   try {
     const page = req.query.page || 1;
-    const limit = 4; 
+    const limit = 4;
 
-    const response = await apiClient.get(`/publishers?page=${page}&limit=${limit}`);
+    const response = await apiClient.get(
+      `/publishers?page=${page}&limit=${limit}`,
+    );
 
     res.locals.user = req.session.user || null;
-    
+
     res.render("partials/publishersTable", {
-      publishers: response.data.data,      
+      publishers: response.data.data,
       currentPage: response.data.currentPage,
       totalPages: response.data.totalPages,
       user: res.locals.user,
@@ -77,10 +79,17 @@ async function showAllPublishers(req, res, next) {
 async function getPublisherById(req, res, next) {
   try {
     const { id } = req.params;
-    const [pubRes, booksRes] = await Promise.all([
-      apiClient.get(`/publishers/${id}`),
-      apiClient.get(`/books/publisher/${id}`),
-    ]);
+
+    const pubRes = await apiClient.get(`/publishers/${id}`);
+    console.log(pubRes.data);
+
+    if (!pubRes.data || !pubRes.data.id) {
+      return res.status(404).render("errors/404", {
+        message: "Editorial no encontrada",
+      });
+    }
+
+    const booksRes = await apiClient.get(`/books/publisher/${id}`);
 
     res.render("partials/publisher_detalle", {
       publisher: pubRes.data,
@@ -168,17 +177,77 @@ async function deletePublisher(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    await api.delete(`/publishers/${req.body.id}`);
-    res.redirect("/publisher/showAllPublishers");
+    console.log(req.params.id);
+
+    await api.delete(`/publishers/${req.params.id}`);
+    res.redirect("/publisher/manage/list?success=true");
   } catch (error) {
     console.error("Error eliminando editorial:", error.response?.data);
     res
       .status(500)
       .send(
-        "No se pudo eliminar la editorial. Verifique si tiene libros asociados."
+        "No se pudo eliminar la editorial. Verifique si tiene libros asociados.",
       );
   }
 }
+
+async function getManagePublishers(req, res) {
+  try {
+    const page = req.query.page || 1;
+    const limit = 4;
+    const deleted = req.query.deleted || false;
+
+    const response = await apiClient.get(
+      `/publishers?page=${page}&limit=${limit}&deleted=${deleted}`,
+    );
+
+    res.locals.user = req.session.user || null;
+
+    res.render("admin/publishers_list", {
+      publishers: response.data.data,
+      currentPage: response.data.currentPage,
+      totalPages: response.data.totalPages,
+      user: res.locals.user,
+    });
+  } catch (error) {
+    console.error("Error cargando editoriales:", error);
+    res.render("admin/publishers_list", {
+      publishers: [],
+      currentPage: 1,
+      totalPages: 1,
+      user: req.session.user || null,
+    });
+  }
+}
+
+async function restorePublisher(req, res) {
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    console.log(req.params.id);
+
+    await api.put(`/publishers/restore/${req.params.id}`);
+    res.redirect("/publisher/manage/list?success=true");
+  } catch (error) {
+    console.error("Error restaurando editorial:", error.response?.data);
+    res.status(500).send("No se pudo restaurar la editorial.");
+  }
+}
+// async function restorePublisher(req, res) {
+//   try {
+//     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+//     const api = getAuthenticatedClient(cleanToken);
+
+//     console.log(req.params.id);
+
+//     await api.put(`/publishers/restore/${req.params.id}`);
+//     res.redirect("/publisher/manage/list?deleted=true");
+//   } catch (error) {
+//     console.error("Error restaurando editorial:", error.response?.data);
+//     res.status(500).send("No se pudo restaurar la editorial.");
+//   }
+// }
 
 export default {
   getPublishers,
@@ -190,4 +259,6 @@ export default {
   createPublisher,
   publisher,
   getPublisherCreateForm,
+  getManagePublishers,
+  restorePublisher,
 };

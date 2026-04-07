@@ -23,7 +23,7 @@ async function getGenreById(req, res) {
 async function getGenreByName(req, res) {
   try {
     console.log(
-      "Tipo de dato de nombre: " + typeof req.params.name + req.params.name
+      "Tipo de dato de nombre: " + typeof req.params.name + req.params.name,
     );
 
     const genre = await GenreRepository.getGenreByName(req.params.name);
@@ -53,7 +53,9 @@ async function getGenres(req, res) {
     res.status(200).json(genres);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error al obtener el listado completo de géneros" });
+    res
+      .status(500)
+      .json({ error: "Error al obtener el listado completo de géneros" });
   }
 }
 

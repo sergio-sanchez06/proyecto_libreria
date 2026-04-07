@@ -7,16 +7,22 @@ const router = express.Router();
 
 router.get("/showAllPublishers", publisherController.showAllPublishers);
 router.get(
+  "/manage/list",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  publisherController.getManagePublishers,
+);
+router.get(
   "/edit/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  publisherController.getPublisherEdit
+  publisherController.getPublisherEdit,
 );
 router.get(
   "/create",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  publisherController.getPublisherCreateForm
+  publisherController.getPublisherCreateForm,
 );
 router.get("/:id", publisherController.getPublisherById);
 router.post(
@@ -24,20 +30,27 @@ router.post(
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("publisher_logo"),
-  publisherController.createPublisher
+  publisherController.createPublisher,
 );
 router.post(
   "/update/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("publisher_logo"),
-  publisherController.updatePublisher
+  publisherController.updatePublisher,
 );
 router.post(
   "/delete/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  publisherController.deletePublisher
+  publisherController.deletePublisher,
+);
+
+router.post(
+  "/restore/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  publisherController.restorePublisher,
 );
 
 export default router;

@@ -1,11 +1,37 @@
 import apiClient from "../utils/apiClient.mjs";
 import { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
-export const getManageBooks = (req, res) => {
-  res.render("admin/libros", {
-    title: "Gestión de Libros",
-  });
-};
+async function getManageBooks(req, res) {
+  try {
+    const page = req.query.page || 1;
+    const q = req.query.q || "";
+    const maxPrice = req.query.maxPrice || "";
+    const genre = req.query.genre || "";
+    const author = req.query.author || "";
+    const deleted = req.query.deleted || "false";
+
+    const [booksResponse, genresResponse, authorsResponse] = await Promise.all([
+      apiClient.get(`/books`, {
+        params: { page, q, maxPrice, genre, author, deleted },
+      }),
+      apiClient.get("/genres"), //Ruta paginada
+      apiClient.get("/authors"),
+    ]);
+
+    res.render("admin/books_list", {
+      books: booksResponse.data.data,
+      genres: genresResponse.data.data,
+      authors: authorsResponse.data,
+      currentPage: booksResponse.data.currentPage,
+      totalPages: booksResponse.data.totalPages,
+      query: req.query,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error al obtener libros: ", error);
+    res.status(500).render("error", { message: "Error al cargar el catálogo" });
+  }
+}
 
 export const getForm = (req, res) => {
   const { type } = req.params;

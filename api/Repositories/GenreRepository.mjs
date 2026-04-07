@@ -68,7 +68,7 @@ async function getAllGenres(page = 1, limit = 10) {
 
     const result = await client.query(
       "SELECT * FROM genres ORDER BY name LIMIT $1 OFFSET $2",
-      [limit, offset]
+      [limit, offset],
     );
 
     return {
@@ -88,7 +88,9 @@ async function getAllGenres(page = 1, limit = 10) {
 async function getGenres() {
   const client = await pool.connect();
   try {
-    const result = await client.query("SELECT * FROM genres ORDER BY name");
+    const result = await client.query(
+      "SELECT * FROM genres WHERE deleted_at IS NULL ORDER BY name",
+    );
     return result.rows.map((genre) => new GenreModel(genre));
   } catch (error) {
     console.log("Error en getGenres (completo)", error);
@@ -150,7 +152,7 @@ async function getGenresMostSold() {
          join order_items oi on bg.book_id = oi.book_id 
        group by g.id, g.name 
        order by 2 desc 
-       limit 5;`
+       limit 5;`,
     );
     return result.rows.map((row) => {
       const genre = new GenreModel(row);

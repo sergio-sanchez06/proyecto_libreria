@@ -11,8 +11,9 @@ router.get("/:id", bookController.getBookById);
 router.get("/title/:title", bookController.getBookByTitle);
 router.put("/:id", bookController.updateBook);
 router.delete("/:id", bookController.deleteBook);
-router.get("/", bookController.getAllBooks);
+router.put("/restore/:id", bookController.restoreBook);
 router.get("/features", bookController.getBookByFeatures);
 router.get("/publisher/:id", bookController.getBooksByPublisherId);
+router.get("/", bookController.getAllBooks);
 
 export default router;

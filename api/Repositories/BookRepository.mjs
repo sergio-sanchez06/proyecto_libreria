@@ -36,18 +36,20 @@ async function createBook(book) {
   }
 }
 
-async function getBookById(id) {
-  const client = await pool.connect();
+async function getBookById(id, client = pool) {
+  console.log("El id es (repo): ", id);
+
   try {
     const result = await client.query(
-      "SELECT b.* FROM books b join publishers p ON b.publisher_id = p.id WHERE b.id = $1",
+      "SELECT b.* FROM books b join publishers p ON b.publisher_id = p.id WHERE b.id = $1 AND b.DELETED_AT IS NULL",
       [id],
     );
+
+    if (result.rows.length === 0) return null;
+
     return new Book(result.rows[0]);
   } catch (error) {
     throw error;
-  } finally {
-    client.release();
   }
 }
 
@@ -142,7 +144,10 @@ async function deleteBook(id) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    await client.query("DELETE FROM books where id = $1", [id]);
+    await client.query("UPDATE books SET deleted_at = NOW() WHERE id = $1", [
+      id,
+    ]);
+    // await client.query("DELETE FROM books where id = $1", [id]);
     await client.query("COMMIT");
   } catch (error) {
     await client.query("ROLLBACK");
@@ -341,6 +346,10 @@ async function getAllBooks(page = 1, filters = {}) {
       values.push(filters.author);
     }
 
+    if (filters.deleted === "true") {
+      whereClauses.push(`b.deleted_at IS NOT NULL`);
+    }
+
     const whereSQL =
       whereClauses.length > 0 ? " WHERE " + whereClauses.join(" AND ") : "";
 
@@ -423,6 +432,63 @@ async function getBooksMostSold() {
   }
 }
 
+async function restoreBook(id, client = pool) {
+  // Nota: 'client' puede ser el objeto 'pool' o un 'client' de una transacción
+  try {
+    const result = await client.query(
+      "UPDATE books SET deleted_at = NULL WHERE id = $1 RETURNING *",
+      [id],
+    );
+
+    if (result.rows.length === 0) {
+      return null; // O puedes lanzar un error si prefieres
+    }
+
+    return result.rows[0];
+  } catch (error) {
+    console.error("Error en restoreBook (Repository): ", error.message);
+    throw error;
+  }
+}
+// async function restoreBook(id) {
+//   const client = await pool.connect();
+//   try {
+//     await client.query("BEGIN");
+//     const result = await client.query(
+//       "UPDATE books SET deleted_at = NULL WHERE id = $1 RETURNING *",
+//       [id],
+//     );
+//     await client.query("COMMIT");
+//     return result.rows[0];
+//   } catch (error) {
+//     await client.query("ROLLBACK");
+//     console.error("Error en restoreBook (Repository): ", error);
+//     throw error;
+//   } finally {
+//     client.release();
+//   }
+// }
+
+async function deleteBooksFromDeletedPublishers(publisherId, connection) {
+  const sql = `
+        UPDATE books 
+        SET deleted_at = NOW() 
+        WHERE publisher_id = $1 AND deleted_at IS NULL
+    `;
+  // Usamos la conexión que nos llega del servicio
+  const result = await connection.query(sql, [publisherId]);
+  return result;
+}
+
+async function restoreBooksFromPublisher(publisherId, client) {
+  const sql = `
+    UPDATE books 
+    SET deleted_at = NULL 
+    WHERE publisher_id = $1 AND deleted_at IS NOT NULL
+  `;
+  return await client.query(sql, [publisherId]);
+}
+
 export default {
   createBook,
   getBookById,
@@ -437,4 +503,7 @@ export default {
   getBooksByIds,
   getBooksMostSold,
   getBooksCarrusel,
+  restoreBook,
+  deleteBooksFromDeletedPublishers,
+  restoreBooksFromPublisher,
 };

@@ -14,14 +14,16 @@ router.get("/authors/mostSold", AuthorController.getAuthorsMostSold);
 router.put(
   "/:id",
   uploadImage.single("author_photo"),
-  AuthorController.updateAuthor
+  AuthorController.updateAuthor,
 );
 router.delete("/:id", AuthorController.deleteAuthor);
 
 router.post(
   "/upload/:id",
   uploadImage.single("author_photo"),
-  AuthorController.updatePhoto
+  AuthorController.updatePhoto,
 );
+
+router.put("/restore/:id", AuthorController.restoreAuthor);
 
 export default router;

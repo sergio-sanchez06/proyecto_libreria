@@ -6,38 +6,51 @@ import protectMiddleware from "../middlewares/protect.mjs";
 const router = express.Router();
 
 router.get("/showAllAuthors", authorController.getAuthors);
+router.get(
+  "/manage/list",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  authorController.getManageAuthors,
+);
 router.get("/:id", authorController.getAuthorById);
 router.get(
   "/author/create",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  authorController.getCreateAuthor
+  authorController.getCreateAuthor,
 );
 router.post(
   "/author/create",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("photo"),
-  authorController.createAuthor
+  authorController.createAuthor,
 );
 router.get(
   "/author/edit/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  authorController.getEditAuthor
+  authorController.getEditAuthor,
 );
 router.post(
   "/author/update/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("photo"),
-  authorController.updateAuthor
+  authorController.updateAuthor,
 );
 router.post(
   "/author/delete/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  authorController.deleteAuthor
+  authorController.deleteAuthor,
+);
+
+router.post(
+  "/author/restore/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  authorController.restoreAuthor,
 );
 
 export default router;

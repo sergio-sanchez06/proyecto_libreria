@@ -26,19 +26,19 @@ async function createPublisher(publisher) {
   }
 }
 
-async function getPublisherById(id) {
-  const client = await pool.connect();
+async function getPublisherById(id, client = pool) {
   try {
     const result = await client.query(
-      "SELECT * FROM publishers WHERE id = $1",
+      "SELECT * FROM publishers WHERE id = $1 AND deleted_at IS NULL",
       [id],
     );
-    return result.rows[0];
+
+    if (result.rows.length === 0) return null;
+
+    return new PublisherModel(result.rows[0]);
   } catch (error) {
     console.error("Error en getPublisherById:", error);
     throw error;
-  } finally {
-    client.release();
   }
 }
 async function getPublisherByName(name) {
@@ -94,12 +94,21 @@ async function updatePublisher(publisher) {
   }
 }
 
+// async function deletePublisher(id, connection) {
+//   const sql = `
+//         UPDATE publishers
+//         SET deleted_at = NOW()
+//         WHERE id = $1
+//     `;
+//   const result = await connection.query(sql, [id]);
+//   return result;
+// }
 async function deletePublisher(id) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
     const result = await client.query(
-      "DELETE FROM publishers WHERE id = $1 RETURNING *",
+      "UPDATE publishers SET deleted_at = NOW() WHERE id = $1 RETURNING *",
       [id],
     );
     await client.query("COMMIT");
@@ -112,6 +121,24 @@ async function deletePublisher(id) {
     client.release();
   }
 }
+// async function deletePublisher(id) {
+//   const client = await pool.connect();
+//   try {
+//     await client.query("BEGIN");
+//     const result = await client.query(
+//       "DELETE FROM publishers WHERE id = $1 RETURNING *",
+//       [id],
+//     );
+//     await client.query("COMMIT");
+//     return result.rows[0];
+//   } catch (error) {
+//     await client.query("ROLLBACK");
+//     console.error("Error en deletePublisher:", error);
+//     throw error;
+//   } finally {
+//     client.release();
+//   }
+// }
 
 /*async function getAllPublishers() {
   const client = await pool.connect();
@@ -199,7 +226,9 @@ async function getPublishersMostSold() {
 async function getPublishers() {
   const client = await pool.connect();
   try {
-    const result = await client.query("SELECT * FROM publishers order by name");
+    const result = await client.query(
+      "SELECT * FROM publishers where deleted_at is null order by name",
+    );
     return result.rows.map((publisher) => new PublisherModel(publisher));
   } catch (error) {
     console.error("Error en getPublishers:", error);
@@ -207,6 +236,17 @@ async function getPublishers() {
   } finally {
     client.release();
   }
+}
+
+async function restorePublisher(id, client = pool) {
+  console.log("id", id);
+
+  const sql = `
+    UPDATE publishers 
+    SET deleted_at = NULL 
+    WHERE id = $1
+  `;
+  return await client.query(sql, [id]);
 }
 
 export default {
@@ -219,4 +259,5 @@ export default {
   deletePublisher,
   getPublishersMostSold,
   getPublishers,
+  restorePublisher,
 };

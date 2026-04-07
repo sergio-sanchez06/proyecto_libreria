@@ -1,141 +1,150 @@
 <%- include('../layout/header') %>
 
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-    body {
-        background-image: url('/images/book_drawing_pattern.png');
-        background-repeat: repeat;
-        background-size: 500px;
-        background-attachment: fixed;
-        background-color: #fcfaf7;
-        font-family: 'Inter', sans-serif;
-    }
+        body {
+            background-image: url('/images/book_drawing_pattern.png');
+            background-repeat: repeat;
+            background-size: 500px;
+            background-attachment: fixed;
+            background-color: #fcfaf7;
+            font-family: 'Inter', sans-serif;
+        }
 
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(252, 250, 247, 0.88);
-        z-index: -1;
-    }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(252, 250, 247, 0.88);
+            z-index: -1;
+        }
 
-    .section-title {
-        font-weight: 800;
-        color: var(--brand-teal);
-        position: relative;
-        padding-bottom: 8px;
-        margin-bottom: 2rem;
-    }
+        .section-title {
+            font-weight: 800;
+            color: var(--brand-teal);
+            position: relative;
+            padding-bottom: 8px;
+            margin-bottom: 2rem;
+        }
 
-    .card {
-        border: none;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(8px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        transition: all 0.3s ease;
-        overflow: hidden;
-    }
+        .card {
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 25px rgba(0,0,0,0.08);
-    }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+        }
 
-    .publisher-logo-container {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto 1.5rem;
-        background: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    }
+        .publisher-logo-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
 
-    .btn-outline-primary { 
-        border-color: var(--brand-teal); 
-        color: var(--brand-teal); 
-        border-radius: 12px;
-        font-weight: 600;
-    }
-    .btn-outline-primary:hover {
-        background: var(--brand-teal);
-        color: #fff;
-    }
-    
-    .pagination .page-link {
-        border: none;
-        border-radius: 8px;
-        margin: 0 3px;
-        color: #2c3e50;
-    }
+        .btn-outline-primary {
+            border-color: var(--brand-teal);
+            color: var(--brand-teal);
+            border-radius: 12px;
+            font-weight: 600;
+        }
 
-    .pagination .page-item.active .page-link {
-        background: #2c3e50;
-    }
-</style>
+        .btn-outline-primary:hover {
+            background: var(--brand-teal);
+            color: #fff;
+        }
 
-<div class="container py-5">
-    <div class="text-center mb-5">
-        <h2 class="section-title text-center">
-            <%= t('publishers.title') %>
-        </h2>
-        <p class="text-muted">
-            <%= t('publishers.subtitle') %>
-        </p>
-    </div>
+        .pagination .page-link {
+            border: none;
+            border-radius: 8px;
+            margin: 0 3px;
+            color: #2c3e50;
+        }
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        <% publishers.forEach(pub=> { %>
-            <div class="col">
-                <div class="card h-100 shadow-sm border-0 p-4">
-                    <div class="card-body d-flex flex-column">
-                        <div class="publisher-logo-container">
-                            <img src="<%= pub.image_url || '/images/default-publisher.jpg' %>" alt="Logo <%= pub.name %>"
-                                class="img-fluid" style="max-height: 50px; object-fit: contain;">
-                        </div>
+        .pagination .page-item.active .page-link {
+            background: #2c3e50;
+        }
+    </style>
 
-                        <h5 class="card-title fw-bold mb-4">
-                            <%= pub.name %>
-                        </h5>
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="section-title text-center">
+                <%= t('publishers.title') %>
+            </h2>
+            <p class="text-muted">
+                <%= t('publishers.subtitle') %>
+            </p>
+        </div>
 
-                        <div class="mt-auto">
-                            <a href="/publisher/<%= pub.id %>"
-                                class="btn btn-outline-primary btn-sm w-100">
-                                <%= t('publishers.view_catalog') %>
-                            </a>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+            <% publishers.forEach(pub=> { %>
+                <% if(!pub.deleted_at) { %>
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-0 p-4">
+                            <div class="card-body d-flex flex-column">
+                                <div class="publisher-logo-container">
+                                    <img src="<%= pub.image_url || '/images/default-publisher.jpg' %>"
+                                        alt="Logo <%= pub.name %>" class="img-fluid"
+                                        style="max-height: 50px; object-fit: contain;">
+                                </div>
+
+                                <h5 class="card-title fw-bold mb-4">
+                                    <%= pub.name %>
+                                </h5>
+
+                                <div class="mt-auto">
+                                    <a href="/publisher/<%= pub.id %>" class="btn btn-outline-primary btn-sm w-100">
+                                        <%= t('publishers.view_catalog') %>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        <% }) %>
+                    <% } %>
+                        <% }) %>
+        </div>
+
+        <div class="mt-5">
+            <nav aria-label="Navegación de editoriales">
+                <ul class="pagination pagination-sm justify-content-center">
+                    <% const miRuta="/publisher/showAllPublishers" ; %>
+
+                        <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) - 1 %>">&laquo;</a>
+                        </li>
+
+                        <% for(let i=1; i <=totalPages; i++) { %>
+                            <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+                                <a class="page-link" href="<%= miRuta %>?page=<%= i %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                            <% } %>
+
+                                <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                                    <a class="page-link"
+                                        href="<%= miRuta %>?page=<%= parseInt(currentPage) + 1 %>">&raquo;</a>
+                                </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 
-    <div class="mt-5">
-        <nav aria-label="Navegación de editoriales">
-            <ul class="pagination pagination-sm justify-content-center">
-                <% const miRuta = "/publisher/showAllPublishers"; %>
-                
-                <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                    <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) - 1 %>">&laquo;</a>
-                </li>
-
-                <% for(let i = 1; i <= totalPages; i++) { %>
-                    <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                        <a class="page-link" href="<%= miRuta %>?page=<%= i %>"><%= i %></a>
-                    </li>
-                <% } %>
-
-                <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-                    <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) + 1 %>">&raquo;</a>
-                </li>
-            </ul>
-        </nav>
-    </div>
-</div>
-
-<%- include('../layout/footer') %>
+    <%- include('../layout/footer') %>

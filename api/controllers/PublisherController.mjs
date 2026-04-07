@@ -23,7 +23,7 @@ async function getPublisherById(req, res) {
 async function getPublisherByName(req, res) {
   try {
     const publisher = await PublisherRepository.getPublisherByName(
-      req.params.name
+      req.params.name,
     );
     res.status(200).json(publisher);
   } catch (error) {
@@ -43,6 +43,23 @@ async function updatePublisher(req, res) {
   }
 }
 
+// async function deletePublisher(req, res) {
+//   const { id } = req.params;
+
+//   try {
+//     await PublisherBookService.archivePublisherAndBooks(id);
+
+//     res.status(200).json({
+//       status: "success",
+//       message: "Editorial y sus libros asociados han sido archivados.",
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       status: "error",
+//       message: error.message,
+//     });
+//   }
+// }
 async function deletePublisher(req, res) {
   try {
     const publisher = await PublisherRepository.deletePublisher(req.params.id);
@@ -68,8 +85,11 @@ async function getAllPublishers(req, res) {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 4;
 
-    const publishersData = await PublisherRepository.getAllPublishers(page, limit);
-    
+    const publishersData = await PublisherRepository.getAllPublishers(
+      page,
+      limit,
+    );
+
     res.status(200).json(publishersData);
   } catch (error) {
     console.error(error);
@@ -80,7 +100,7 @@ async function getAllPublishers(req, res) {
 async function getPublisherByCountry(req, res) {
   try {
     const publishers = await PublisherRepository.getPublisherByCountry(
-      req.params.country
+      req.params.country,
     );
     res.status(200).json(publishers);
   } catch (error) {
@@ -109,6 +129,51 @@ async function getPublishers(req, res) {
   }
 }
 
+async function restorePublisher(req, res) {
+  const { id } = req.params; // El ID de la editorial que viene en la URL
+
+  try {
+    // Llamamos al nuevo método del servicio que coordina la restauración
+    await PublisherRepository.restorePublisher(id);
+
+    // Si todo va bien, respondemos con éxito
+    return res.status(200).json({
+      status: "success",
+      message: "La editorial ha sido restaurada correctamente.",
+    });
+  } catch (error) {
+    console.error("Error al restaurar editorial:", error.message);
+
+    return res.status(500).json({
+      status: "error",
+      message: "No se pudo completar la restauración de la editorial.",
+    });
+  }
+}
+// async function restorePublisher(req, res) {
+//   const { id } = req.params; // El ID de la editorial que viene en la URL
+
+//   try {
+//     // Llamamos al nuevo método del servicio que coordina la restauración
+//     await PublisherBookService.restorePublisherAndBooks(id);
+
+//     // Si todo va bien, respondemos con éxito
+//     return res.status(200).json({
+//       status: "success",
+//       message:
+//         "La editorial y todos sus libros han sido restaurados correctamente.",
+//     });
+//   } catch (error) {
+//     // Si el servicio lanza un error (ej. fallo en la transacción), lo capturamos
+//     console.error("Error al restaurar editorial:", error.message);
+
+//     return res.status(500).json({
+//       status: "error",
+//       message: "No se pudo completar la restauración de la editorial.",
+//     });
+//   }
+// }
+
 export default {
   createPublisher,
   getPublisherById,
@@ -119,4 +184,5 @@ export default {
   getPublisherByCountry,
   getPublishersMostSold,
   getPublishers,
+  restorePublisher,
 };

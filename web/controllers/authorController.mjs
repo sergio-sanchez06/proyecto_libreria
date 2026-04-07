@@ -20,18 +20,20 @@ async function getAuthors(req, res) {
   try {
     const page = req.query.page || 1;
     const country = req.query.country || null;
-    const limit = 4; 
+    const limit = 4;
 
     // Peticiones paralelas para mayor eficiencia
     const [authorsRes, countriesRes] = await Promise.all([
-      apiClient.get(`/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}`),
-      apiClient.get("/authors/countries")
+      apiClient.get(
+        `/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}`,
+      ),
+      apiClient.get("/authors/countries"),
     ]);
 
     res.render("partials/authorsTable", {
-      authors: authorsRes.data.data,       
-      currentPage: authorsRes.data.currentPage, 
-      totalPages: authorsRes.data.totalPages,   
+      authors: authorsRes.data.data,
+      currentPage: authorsRes.data.currentPage,
+      totalPages: authorsRes.data.totalPages,
       countries: countriesRes.data,
       selectedCountry: country,
       query: req.query,
@@ -39,7 +41,9 @@ async function getAuthors(req, res) {
     });
   } catch (error) {
     console.error("Error al obtener los autores:", error);
-    res.status(500).render("error", { message: "Error al obtener los autores" });
+    res
+      .status(500)
+      .render("error", { message: "Error al obtener los autores" });
   }
 }
 
@@ -48,11 +52,21 @@ async function getAuthorById(req, res) {
     const { id } = req.params;
     // Peticiones paralelas para optimizar carga
     const authorResponse = await apiClient.get(`/authors/${id}`);
-    const booksResponse = await apiClient.get(
-      `/bookAuthor/author/${authorResponse.data.name}`
-    );
 
     const author = authorResponse.data;
+
+    console.log(author);
+
+    if (!author || !author.id) {
+      return res
+        .status(404)
+        .render("errors/404", { message: "Autor no encontrado" });
+    }
+
+    const booksResponse = await apiClient.get(
+      `/bookAuthor/author/${authorResponse.data.name}`,
+    );
+
     const books = booksResponse.data;
 
     res.render("partials/autor_detalle", {
@@ -62,7 +76,7 @@ async function getAuthorById(req, res) {
     });
   } catch (error) {
     console.error("Error al obtener el autor:", error);
-    res.status(404).render("error", { message: "Autor no encontrado" });
+    res.status(404).render("errors/404", { message: "Autor no encontrado" });
   }
 }
 
@@ -145,14 +159,60 @@ async function deleteAuthor(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.delete(`/authors/${req.params.id}`);
-    res.redirect("/authors/showAllAuthors");
+    res.redirect("/authors/manage/list");
   } catch (error) {
     console.error("Error al eliminar autor:", error.response?.data);
     res
       .status(500)
       .send(
-        "No se pudo eliminar el autor. Verifique si tiene libros vinculados."
+        "No se pudo eliminar el autor. Verifique si tiene libros vinculados.",
       );
+  }
+}
+
+async function getManageAuthors(req, res) {
+  try {
+    const page = req.query.page || 1;
+    const country = req.query.country || null;
+    const deleted = req.query.deleted || false;
+    const includeAll = !deleted;
+    const limit = 4;
+
+    // Peticiones paralelas para mayor eficiencia
+    const [authorsRes, countriesRes] = await Promise.all([
+      apiClient.get(
+        `/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}${deleted ? `&deleted=${deleted}` : ""}${includeAll ? `&includeAll=${includeAll}` : ""}`,
+      ),
+      apiClient.get("/authors/countries"),
+    ]);
+
+    res.render("admin/authors_list", {
+      authors: authorsRes.data.data,
+      currentPage: authorsRes.data.currentPage,
+      totalPages: authorsRes.data.totalPages,
+      countries: countriesRes.data,
+      selectedCountry: country,
+      query: req.query,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error al obtener los autores:", error);
+    res
+      .status(500)
+      .render("error", { message: "Error al obtener los autores" });
+  }
+}
+
+async function restoreAuthor(req, res) {
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    await api.put(`/authors/restore/${req.params.id}`);
+    res.redirect("/authors/manage/list");
+  } catch (error) {
+    console.error("Error al restaurar autor:", error.response?.data);
+    res.status(500).render("error", { message: "Error al restaurar autor" });
   }
 }
 
@@ -164,4 +224,6 @@ export default {
   createAuthor,
   getAuthors,
   getCreateAuthor,
+  getManageAuthors,
+  restoreAuthor,
 };

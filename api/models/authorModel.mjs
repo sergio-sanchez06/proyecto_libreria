@@ -6,7 +6,8 @@ export default class Author {
     photo_url,
     biography,
     created_at,
-    update_at,
+    updated_at,
+    deleted_at,
   } = {}) {
     this.id = id;
     this.name = name;
@@ -14,6 +15,7 @@ export default class Author {
     this.photo_url = photo_url;
     this.biography = biography;
     this.created_at = created_at;
-    this.update_at = update_at;
+    this.update_at = updated_at;
+    this.deleted_at = deleted_at;
   }
 }

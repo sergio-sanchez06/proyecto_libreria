@@ -37,7 +37,7 @@ async function getAuthorByCountry(req, res) {
   // Controlador de obtención de autor por país
   try {
     const author = await AuthorRepository.getAuthorByCountry(
-      req.params.country
+      req.params.country,
     );
     res.status(200).json(author);
   } catch (error) {
@@ -100,8 +100,18 @@ async function getAllAuthors(req, res) {
     const page = req.query.page || null;
     const limit = req.query.limit || null;
     const country = req.query.country || null;
+    const deleted = req.query.deleted === "true";
+    const onlyWithBooks = req.query.onlyWithBooks === "true";
+    const includeAll = req.query.includeAll === "true";
 
-    const authors = await AuthorRepository.getAllAuthors(page, limit, country);
+    const authors = await AuthorRepository.getAllAuthors(
+      page,
+      limit,
+      country,
+      deleted,
+      onlyWithBooks,
+      includeAll,
+    );
     res.status(200).json(authors);
   } catch (error) {
     console.error(error);
@@ -131,6 +141,16 @@ async function getAuthorsMostSold(req, res) {
   }
 }
 
+async function restoreAuthor(req, res) {
+  try {
+    const author = await AuthorRepository.restoreAuthor(req.params.id);
+    res.status(200).json(author);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al restaurar el autor" });
+  }
+}
+
 export default {
   createAuthor,
   getAuthorById,
@@ -142,4 +162,5 @@ export default {
   getAllAuthors,
   getAuthorsMostSold,
   getUniqueCountries,
+  restoreAuthor,
 };
