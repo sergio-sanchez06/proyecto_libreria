@@ -30,4 +30,6 @@ router.get(
   OrderController.getAllOrders
 );
 
+router.post("/payment", OrderController.paymentAndEmail);
+
 export default router;

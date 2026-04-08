@@ -142,8 +142,10 @@ async function checkout(req, res) {
       },
     );
 
+    var asd = await apiClient.post("/orders/payment",{items: cart, user: req.session.user})
     res.clearCookie("cart");
-    return res.redirect("/user/myOrders");
+    return res.redirect(asd.data.url)
+
   } catch (error) {
     // Manejo de errores (el que ya tenías es correcto)
     res.status(500).send("Error en el proceso de compra");
