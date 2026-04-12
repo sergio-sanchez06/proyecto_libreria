@@ -125,6 +125,13 @@ router.get(
   AdminController.getManageOrders,
 );
 
+router.get(
+  "/orders/pending",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  AdminController.getPendingOrders,
+);
+
 router.post("/orders/updateStatus", AdminController.updateOrderStatus);
 router.post("/orders/delete", AdminController.deleteOrder);
 

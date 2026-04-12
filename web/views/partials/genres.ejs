@@ -1,14 +1,9 @@
-<%- include('../layout/header') %>
+<%- include('../layout/header', { bodyClass: 'bg-main-vistas' }) %>
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
     body {
-        background-image: url('/images/book_drawing_pattern.png');
-        background-repeat: repeat;
-        background-size: 500px;
-        background-attachment: fixed;
-        background-color: #fcfaf7;
         font-family: 'Inter', sans-serif;
     }
 
@@ -16,7 +11,7 @@
         content: "";
         position: fixed;
         top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(252, 250, 247, 0.88);
+        background: rgba(252, 250, 247, 0.45);
         z-index: -1;
     }
 
@@ -24,50 +19,69 @@
         font-weight: 800;
         color: var(--brand-teal);
         position: relative;
-        padding-bottom: 8px;
-        margin-bottom: 1.5rem;
+        padding-bottom: 12px;
+        margin-bottom: 2rem;
+        letter-spacing: -0.5px;
+        text-transform: uppercase;
+        font-size: 2rem;
+    }
+    
+    .section-title::after {
+        content: '';
+        width: 80px;
+        height: 5px;
+        background: var(--brand-gold);
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 10px;
     }
 
     .genre-card {
         border: none;
-        border-radius: 24px;
-        background: rgba(255, 255, 255, 0.8) !important;
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
     .genre-card:hover {
         transform: translateY(-8px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08) !important;
+        box-shadow: 0 15px 35px rgba(30, 64, 175, 0.1) !important;
         background: rgba(255, 255, 255, 0.95) !important;
+        border-color: rgba(30, 64, 175, 0.15);
     }
 
     .icon-box {
-        width: 70px;
-        height: 70px;
+        width: 80px;
+        height: 80px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 20px;
-        background-color: #fcfaf7;
+        border-radius: 50%;
+        background-color: white;
         color: var(--brand-teal);
         margin-bottom: 1.5rem;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.05);
         transition: all 0.3s ease;
+        border: 2px solid rgba(30, 64, 175, 0.05);
     }
 
     .genre-card:hover .icon-box {
         background-color: var(--brand-teal);
         color: #fff;
-        transform: scale(1.1) rotate(5deg);
+        transform: scale(1.1) rotate(10deg);
+        border-color: var(--brand-gold);
+        box-shadow: 0 10px 20px rgba(30, 64, 175, 0.2);
     }
 
     .btn-outline-primary {
         border-color: var(--brand-teal);
         color: var(--brand-teal);
-        border-radius: 14px;
+        border-radius: 12px;
         font-weight: 700;
         padding: 10px;
         transition: all 0.3s ease;
@@ -78,47 +92,46 @@
         border-color: var(--brand-teal);
         color: #fff;
         transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
     }
 </style>
 
 <div class="container py-5">
-    <header class="text-center mb-5">
-        <h1 class="display-4 fw-bold">
+    <header class="text-center mb-5 pb-3">
+        <h1 class="section-title text-center mx-auto" style="width: fit-content;">
             <%= t('genres.title') %>
         </h1>
-        <p class="text-muted">
+        <p class="text-muted mt-3" style="font-size: 1.15rem;">
             <%= t('genres.subtitle') %>
         </p>
-        <hr class="w-25 mx-auto border-primary border-2 opacity-75">
     </header>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         <% genres.forEach(genre=> { %>
             <div class="col">
-                <div class="card h-100 shadow-sm genre-card">
+                <div class="card h-100 shadow-sm genre-card p-2">
                     <div class="card-body d-flex flex-column align-items-center text-center p-4">
                         <div class="icon-box">
-                            <i class="bi bi-book-half fs-4"></i>
+                            <i class="bi bi-bookmarks-fill fs-3"></i>
                         </div>
 
-                        <h5 class="card-title fw-bold mb-3">
+                        <h5 class="card-title fw-bold mb-3 text-dark" style="font-size: 1.25rem;">
                             <%= genre.name %>
                         </h5>
 
-                        <p class="card-text small text-muted mb-4">
-                            <%= t('genres.description', { name: genre.name }) %>
+                        <p class="card-text small text-muted mb-4 opacity-75">
+                            <%= t('genres.description', { name: genre.name }) || 'Explora todos los libros de esta categoría.' %>
                         </p>
 
                         <a href="/genres/<%= genre.name %>"
                             class="btn btn-outline-primary btn-sm mt-auto w-100 rounded-pill">
-                            <%= t('genres.explore') %>
+                            <%= t('genres.explore') %> <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
                 </div>
             </div>
-            <% }) %>
+        <% }) %>
     </div>
 </div>
 
 <%- include('../layout/footer') %>
->

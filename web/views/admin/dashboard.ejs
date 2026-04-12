@@ -17,8 +17,8 @@
         }
 
         .btn-primary {
-            background-color: #6610f2 !important;
-            border-radius: 0px !important;
+            background-color: var(--brand-teal) !important;
+            border-radius: 12px !important;
         }
 
         .admin-card:hover {
@@ -40,15 +40,15 @@
         }
 
         .bg-orange {
-            background-color: #fd7e14 !important;
+            background-color: var(--brand-gold) !important;
         }
 
         .border-orange {
-            border-color: #fd7e14 !important;
+            border-color: var(--brand-gold) !important;
         }
 
         .text-orange {
-            color: #fd7e14 !important;
+            color: var(--brand-gold) !important;
         }
 
         .btn-books {
@@ -65,9 +65,19 @@
     </style>
 </head>
 
-<body class="bg-light">
+<body class="bg-user-vistas">
 
     <%- include("../layout/header") %>
+
+<style>
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(252, 250, 247, 0.45);
+        z-index: -1;
+    }
+</style>
 
         <nav class="navbar navbar-dark bg-dark shadow">
             <div class="container-fluid">
@@ -139,7 +149,7 @@
                 </div>
             </div>
 
-            <h3 class="section-title" style="border-left-color: #6610f2;">
+            <h3 class="section-title">
                 <%= t('adminDashboard.sec_inventory') %>
             </h3>
             <div class="row g-4">
@@ -240,7 +250,7 @@
                 </div>
             </div>
 
-            <h3 class="section-title" style="border-left-color: #fd7e14;">
+            <h3 class="section-title">
                 <%= t('adminDashboard.sec_commercial') %>
             </h3>
             <div class="row g-4">

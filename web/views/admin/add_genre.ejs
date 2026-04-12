@@ -1,55 +1,130 @@
-<!DOCTYPE html>
+<%- include('../layout/header', {
+    title: t('addGenre.page_title') || 'Añadir Género',
+    bodyClass: 'bg-main-vistas'
+}) %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= t('addGenre.page_title') %></title>
-    <link rel="stylesheet" href="/css/add_genre.css">
-</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-<body>
+    body {
+        font-family: 'Inter', sans-serif;
+        color: var(--text-dark);
+    }
 
-    <%- include ("../layout/header") %>
-    <main class="admin-form-page bg-pattern-general">
-        <div class="container py-4">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-lg-5">
-                <div class="card brand-card">
-                    <div class="card-header brand-card-header text-center">
-                        <h2 class="mb-0 h3 fw-bold"><i class="bi bi-tags-fill me-2"></i><%= t('addGenre.title') %></h2>
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(252, 250, 247, 0.45);
+        z-index: -1;
+    }
+
+    .admin-form-container {
+        max-width: 550px;
+        margin: 0 auto;
+    }
+
+    .brand-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .brand-card-header {
+        background: linear-gradient(135deg, var(--brand-teal), #1e3a8a);
+        color: white;
+        padding: 2rem;
+        border-bottom: 6px solid var(--brand-gold);
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 12px;
+        border: 1px solid #cbd5e1;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background-color: #f8fafc;
+    }
+
+    .form-control:focus {
+        border-color: var(--brand-teal);
+        box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+        background-color: white;
+    }
+
+    .btn-brand-teal {
+        background-color: var(--brand-teal);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-brand-teal:hover {
+        background-color: var(--brand-teal-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(30, 64, 175, 0.25);
+        color: white;
+    }
+</style>
+
+<main class="py-5">
+    <div class="container admin-form-container">
+        
+        <div class="mb-4">
+            <a href="/admin/dashboard" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold shadow-sm bg-white">
+                <i class="bi bi-arrow-left me-2"></i> <%= t('admin.btn_return') || 'Volver al Dashboard' %>
+            </a>
+        </div>
+
+        <div class="brand-card">
+            <div class="brand-card-header text-center">
+                <h2 class="mb-0 fw-bold d-flex flex-column align-items-center gap-2">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 80px; height: 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <i class="bi bi-tag-fill text-primary" style="font-size: 2.5rem;"></i>
                     </div>
-                    <div class="card-body p-4">
-                        <% if (locals.error) { %>
-                            <div class="alert alert-danger border-0 shadow-sm">
-                                <i class="bi bi-exclamation-circle me-2"></i><%= error %>
-                            </div>
-                        <% } %>
-
-                        <form action="/genres/create" method="POST">
-                            <div class="mb-4">
-                                <label for="name" class="form-label fw-bold"><%= t('addGenre.label_name') %> *</label>
-                                <input type="text" name="name" id="name" class="form-control" 
-                                       placeholder="<%= t('addGenre.placeholder_name') %>" required>
-                            </div>
-
-                            <div class="d-flex justify-content-center gap-3 mt-4">
-                                <button type="submit" class="btn btn-brand-teal px-5 py-2 fw-bold rounded-pill">
-                                    <i class="bi bi-plus-circle-fill me-2"></i>
-                                    <%= t('addGenre.btn_submit') %>
-                                </button>
-                                <a href="/admin/dashboard" class="btn btn-secondary px-4 rounded-pill">
-                                    <%= t('addAuthor.btn_cancel') %>
-                                </a>
-                            </div>
-                        </form>
+                    <span class="mt-2"><%= t('addGenre.title') || 'Nuevo Género Literario' %></span>
+                </h2>
+                <p class="text-white-50 mt-2 mb-0">Crea una nueva categoría para agrupar libros</p>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                <% if (locals.error) { %>
+                    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                        <div><%= error %></div>
                     </div>
-                </div>
+                <% } %>
+
+                <form action="/genres/create" method="POST">
+                    <div class="mb-4">
+                        <label for="name" class="form-label"><i class="bi bi-fonts me-1"></i> <%= t('addGenre.label_name') || 'Nombre de la Categoría' %> *</label>
+                        <input type="text" name="name" id="name" class="form-control form-control-lg" placeholder="<%= t('addGenre.placeholder_name') || 'Ej: Ciencia Ficción' %>" required>
+                    </div>
+
+                    <div class="d-flex justify-content-center gap-3 mt-5 pt-4 border-top">
+                        <a href="/admin/dashboard" class="btn btn-light px-4 py-2 rounded-pill fw-bold text-secondary border shadow-sm">
+                            <%= t('addAuthor.btn_cancel') || 'Cancelar' %>
+                        </a>
+                        <button type="submit" class="btn btn-brand-teal px-5 py-2 fw-bold rounded-pill text-white shadow-sm d-flex align-items-center gap-2">
+                            <i class="bi bi-plus-circle-fill"></i>
+                            <%= t('addGenre.btn_submit') || 'Añadir Categoría' %>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-            </div>
-        </div>
-    </main>
+    </div>
+</main>
 
-    <%- include ("../layout/footer") %>
-</body>
-</html>
+<%- include("../layout/footer") %>

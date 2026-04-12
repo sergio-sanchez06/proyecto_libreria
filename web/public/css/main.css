@@ -1,14 +1,29 @@
 /* --- 1. CONFIGURACIÓN GENERAL --- */
 :root {
-  --brand-teal: #0d5c63; 
-  --brand-teal-hover: #0a494e; 
-  --brand-gold: #c2973b; 
+  --brand-teal: #1e40af; 
+  --brand-teal-hover: #1e3a8a; 
+  --brand-gold: #d4af37; 
+  --brand-blue: #1d4ed8;
   --bg-cream: #fcfaf7; 
 
   --text-dark: #1a2a2c;
   --text-muted: #718096;
   --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
   --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.1);
+
+  /* Backgrounds */
+  --bg-main: url('/images/backgrounds/waves.png');
+  --bg-user: url('/images/backgrounds/user_waves.png');
+}
+
+.bg-main-vistas {
+  background: var(--bg-main) no-repeat center center fixed !important;
+  background-size: cover !important;
+}
+
+.bg-user-vistas {
+  background: var(--bg-user) no-repeat center center fixed !important;
+  background-size: cover !important;
 }
 
 body {
@@ -78,6 +93,7 @@ body {
   height: 2.6em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-bottom: 10px;
@@ -94,7 +110,7 @@ body {
   margin: 0 auto 15px;
   display: block;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(13, 92, 99, 0.15);
+  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.15);
 }
 
 .author-card:hover img {
@@ -117,34 +133,49 @@ body {
 .btn-primary:hover, .btn-success:hover {
   background-color: var(--brand-teal-hover) !important;
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(13, 92, 99, 0.2);
+  box-shadow: 0 5px 15px rgba(30, 64, 175, 0.2);
 }
 
-.btn-outline-success {
+.btn-outline-success, .btn-outline-primary {
   color: var(--brand-teal) !important;
   border-color: var(--brand-teal) !important;
   border-radius: 12px !important;
+  font-weight: 600 !important;
 }
 
-.btn-outline-success:hover {
+.btn-outline-success:hover, .btn-outline-primary:hover {
   background-color: var(--brand-teal) !important;
   color: white !important;
 }
 
-.text-success {
+
+.text-success, .text-primary {
   color: var(--brand-teal) !important;
 }
+
+.badge-primary, .bg-primary {
+  background-color: var(--brand-teal) !important;
+}
+
+.badge-success, .bg-success {
+  background-color: var(--brand-teal) !important;
+}
+
+.border-primary, .border-success {
+  border-color: var(--brand-teal) !important;
+}
+
 
 .bg-success {
   background-color: var(--brand-teal) !important;
 }
 
 .btn-books {
-  background-color: #1041f2 !important;
+  background-color: var(--brand-blue) !important;
   border: none !important;
   color: white !important;
-  border-radius: none !important; 
-  padding: 5px !important;
+  border-radius: 12px !important; 
+  padding: 8px 16px !important;
   transition: background 0.3s;
 }
 
@@ -157,7 +188,7 @@ body {
 }
 
 .btn-warning:hover {
-  background-color: #a67f2e !important;
+  background-color: #b8860b !important;
 }
 
 .carousel-control-prev-icon,
@@ -182,7 +213,7 @@ body {
 }
 
 .list-group-item-custom:hover {
-  background: rgba(13, 92, 99, 0.02) !important;
+  background: rgba(30, 64, 175, 0.02) !important;
   transform: translateX(8px);
 }
 

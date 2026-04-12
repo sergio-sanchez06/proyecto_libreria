@@ -1,241 +1,314 @@
-<%- include('../layout/header') %>
+<%- include('../layout/header', { 
+    title: t('authors.title'),
+    bodyClass: 'bg-main-vistas'
+}) %>
 
-    <% // Asegurar que las variables necesarias existan para evitar ReferenceError const
-        selectedCountry=locals.selectedCountry || null; const countriesList=locals.countries || []; const
-        searchQuery=locals.query || {}; %>
+<% 
+    const selectedCountry=locals.selectedCountry || null; 
+    const countriesList=locals.countries || []; 
+    const searchQuery=locals.query || {}; 
+%>
 
-        <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-            body {
-                background-image: url('/images/author_drawing_pattern.png');
-                background-repeat: repeat;
-                background-size: 400px;
-                background-attachment: fixed;
-                background-color: #fcfaf7;
-                font-family: 'Inter', sans-serif;
-            }
+    body {
+        font-family: 'Inter', sans-serif;
+    }
 
-            body::before {
-                content: "";
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background: rgba(252, 250, 247, 0.88);
-                z-index: -1;
-            }
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(252, 250, 247, 0.45);
+        z-index: -1;
+    }
 
-            .section-title {
-                font-weight: 800;
-                color: var(--brand-teal);
-                position: relative;
-                padding-bottom: 8px;
-                margin-bottom: 2rem;
-            }
+    .section-title {
+        font-weight: 800;
+        color: var(--brand-teal);
+        position: relative;
+        padding-bottom: 12px;
+        margin-bottom: 2rem;
+        letter-spacing: -0.5px;
+        text-transform: uppercase;
+        font-size: 2rem;
+    }
+    
+    .section-title::after {
+        content: '';
+        width: 80px;
+        height: 5px;
+        background: var(--brand-gold);
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 10px;
+    }
 
-            .filter-sidebar {
-                border-radius: 20px;
-                background: rgba(255, 255, 255, 0.7) !important;
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.5);
-            }
+    .filter-sidebar {
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.85) !important;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
 
-            .card {
-                border: none;
-                border-radius: 20px;
-                background: rgba(255, 255, 255, 0.85);
-                backdrop-filter: blur(8px);
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-                transition: all 0.3s ease;
-                overflow: hidden;
-            }
+    .card {
+        border: none;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border: 1px solid rgba(255,255,255,0.4);
+        overflow: hidden;
+    }
 
-            .card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
-            }
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(30, 64, 175, 0.1);
+        border-color: rgba(30, 64, 175, 0.2);
+    }
 
-            .author-img-container {
-                width: 100px;
-                height: 100px;
-                margin: 0 auto 1.5rem;
-                border-radius: 50%;
-                overflow: hidden;
-                border: 3px solid #fff;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            }
+    .author-img-container {
+        width: 110px;
+        height: 110px;
+        margin: -40px auto 1rem;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid #fff;
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        background: white;
+        transition: transform 0.3s ease;
+    }
 
-            .author-img-container img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-            }
+    .card:hover .author-img-container {
+        transform: scale(1.05);
+        border-color: rgba(30, 64, 175, 0.1);
+    }
 
-            .btn-primary {
-                background: #2c3e50;
-                border: none;
-            }
+    .author-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-            .btn-outline-primary {
-                border-color: #2c3e50;
-                color: #2c3e50;
-                border-radius: 12px;
-                font-weight: 500;
-            }
+    .card-header-bg {
+        height: 80px;
+        background: linear-gradient(135deg, rgba(30, 64, 175, 0.1), rgba(212, 175, 55, 0.1));
+        border-bottom: 1px solid rgba(0,0,0,0.02);
+    }
 
-            .btn-outline-primary:hover {
-                background: #2c3e50;
-                color: #fff;
-            }
+    .btn-primary {
+        background-color: var(--brand-teal);
+        border-color: var(--brand-teal);
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--brand-teal-hover);
+        border-color: var(--brand-teal-hover);
+        box-shadow: 0 6px 15px rgba(30, 64, 175, 0.25);
+        transform: translateY(-2px);
+    }
 
-            .pagination .page-link {
-                border: none;
-                border-radius: 8px;
-                margin: 0 3px;
-                color: #2c3e50;
-            }
+    .btn-outline-primary {
+        border-color: var(--brand-teal);
+        color: var(--brand-teal);
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
 
-            .pagination .page-item.active .page-link {
-                background: #2c3e50;
-            }
+    .btn-outline-primary:hover {
+        background: var(--brand-teal);
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(30, 64, 175, 0.2);
+        transform: translateY(-2px);
+    }
 
-            .scrollable-filter-container {
-                max-height: 200px;
-                overflow-y: auto;
-                padding-right: 5px;
-            }
-        </style>
+    .btn-outline-dark {
+        border-radius: 12px;
+        font-weight: 600;
+    }
 
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <h2 class="section-title text-center">
-                    <%= t('es:authors.title') %>
-                </h2>
-                <p class="text-muted">
-                    <%= t('es:authors.subtitle') %>
-                </p>
-            </div>
+    .pagination .page-link {
+        border: none;
+        border-radius: 10px;
+        margin: 0 4px;
+        color: var(--brand-teal);
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s ease;
+    }
 
-            <div class="row">
-                <!-- Sidebar de Filtros -->
-                <aside class="col-lg-3 mb-4">
-                    <div class="filter-sidebar p-4 shadow-sm bg-light rounded-3">
-                        <h5 class="mb-4 d-flex align-items-center border-bottom pb-2">
-                            <i class="bi bi-sliders me-2"></i> Filtros
-                        </h5>
+    .pagination .page-item.active .page-link {
+        background: var(--brand-teal);
+        color: white;
+        box-shadow: 0 4px 10px rgba(30, 64, 175, 0.2);
+    }
 
-                        <form action="/authors/showAllAuthors" method="GET">
-                            <div class="mb-4">
-                                <label class="form-label small fw-bold text-uppercase text-muted">País de origen</label>
-                                <div class="scrollable-filter-container">
-                                    <div class="form-check small">
-                                        <input class="form-check-input" type="radio" name="country" id="country_all"
-                                            value="" <%=!selectedCountry ? 'checked' : '' %>>
-                                        <label class="form-check-label" for="country_all">
-                                            Todos los países
+    .scrollable-filter-container {
+        max-height: 250px;
+        overflow-y: auto;
+        padding-right: 8px;
+    }
+    
+    .scrollable-filter-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    .scrollable-filter-container::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.05);
+        border-radius: 10px;
+    }
+    .scrollable-filter-container::-webkit-scrollbar-thumb {
+        background: rgba(30, 64, 175, 0.2);
+        border-radius: 10px;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--brand-teal);
+        border-color: var(--brand-teal);
+    }
+</style>
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="section-title text-center">
+            <%= t('authors.title') %>
+        </h2>
+        <p class="text-muted mt-3" style="font-size: 1.1rem;">
+            <%= t('authors.subtitle') %>
+        </p>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar de Filtros -->
+        <aside class="col-lg-3 mb-4">
+            <div class="filter-sidebar p-4">
+                <h5 class="mb-4 d-flex align-items-center border-bottom pb-3 fw-bold" style="color: var(--brand-teal);">
+                    <i class="bi bi-funnel-fill me-2 text-warning"></i> Filtros
+                </h5>
+
+                <form action="/authors/showAllAuthors" method="GET">
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">País de origen</label>
+                        <div class="scrollable-filter-container p-2 bg-white rounded-3 shadow-sm">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input shadow-sm" type="radio" name="country" id="country_all"
+                                    value="" <%=!selectedCountry ? 'checked' : '' %>>
+                                <label class="form-check-label text-dark fw-medium" for="country_all">
+                                    Todos los países
+                                </label>
+                            </div>
+                            <% if (countriesList && countriesList.length> 0) { %>
+                                <% countriesList.forEach(c=> { %>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input shadow-sm" type="radio" name="country"
+                                            id="country_<%= c %>" value="<%= c %>" <%=selectedCountry==c
+                                            ? 'checked' : '' %>>
+                                        <label class="form-check-label text-muted" for="country_<%= c %>">
+                                            <%= c %>
                                         </label>
                                     </div>
-                                    <% if (countriesList && countriesList.length> 0) { %>
-                                        <% countriesList.forEach(c=> { %>
-                                            <div class="form-check small">
-                                                <input class="form-check-input" type="radio" name="country"
-                                                    id="country_<%= c %>" value="<%= c %>" <%=selectedCountry==c
-                                                    ? 'checked' : '' %>>
-                                                <label class="form-check-label" for="country_<%= c %>">
-                                                    <%= c %>
-                                                </label>
-                                            </div>
-                                            <% }) %>
-                                                <% } %>
-                                </div>
-                            </div>
-
-                            <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-sm fw-bold">Aplicar</button>
-                                <a href="/authors/showAllAuthors" class="btn btn-outline-secondary btn-sm">Limpiar</a>
-                            </div>
-                        </form>
+                                <% }) %>
+                            <% } %>
+                        </div>
                     </div>
-                </aside>
 
-                <!-- Lista de Autores -->
-                <main class="col-lg-9">
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
-                        <% if (authors && authors.length> 0) { %>
-                            <% authors.forEach(author=> { %>
-                                <% if (author.deleted_at===null) { %>
-                                    <div class="col">
-                                        <div class="card h-100 shadow-sm border-0 text-center p-4">
-                                            <div class="card-body d-flex flex-column">
-                                                <div
-                                                    class="author-img-container bg-light d-flex align-items-center justify-content-center">
-                                                    <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
-                                                        alt="<%= author.name %>">
-                                                </div>
-                                                <h5 class="card-title fw-bold mb-1">
-                                                    <%= author.name %>
-                                                </h5>
-                                                <p class="text-muted small mb-2">
-                                                    <%= author.country || 'Desconocido' %>
-                                                </p>
-                                                <p class="text-secondary small mb-4 opacity-75">
-                                                    <%= t('es:authors.role') %>
-                                                </p>
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-sm py-2 px-3 shadow-sm rounded-pill"><i class="bi bi-compass me-1"></i> Explorar</button>
+                        <a href="/authors/showAllAuthors" class="btn btn-outline-dark btn-sm py-2 rounded-pill"><i class="bi bi-eraser-fill me-1"></i> Limpiar</a>
+                    </div>
+                </form>
+            </div>
+        </aside>
 
-                                                <div class="mt-auto">
-                                                    <a href="/author/<%= author.id %>"
-                                                        class="btn btn-outline-primary btn-sm w-100">
-                                                        <%= t('es:authors.view_catalog') %>
-                                                    </a>
-                                                </div>
-                                            </div>
+        <!-- Lista de Autores -->
+        <main class="col-lg-9">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+                <% if (authors && authors.length> 0) { %>
+                    <% authors.forEach(author=> { %>
+                        <% if (author.deleted_at===null) { %>
+                            <div class="col">
+                                <div class="card h-100 text-center">
+                                    <div class="card-header-bg"></div>
+                                    <div class="card-body d-flex flex-column pt-0 px-3 pb-4">
+                                        <div class="author-img-container">
+                                            <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
+                                                alt="<%= author.name %>">
+                                        </div>
+                                        <h5 class="fw-bold mb-1 text-dark" style="font-size: 1.15rem;">
+                                            <%= author.name %>
+                                        </h5>
+                                        <p class="text-muted small fw-medium mb-2">
+                                            <i class="bi bi-geo-alt-fill opacity-50 me-1"></i> <%= author.country || 'Desconocido' %>
+                                        </p>
+                                        <span class="badge bg-light text-secondary border rounded-pill mt-1 mx-auto mb-4 px-3 py-1">
+                                            <i class="bi bi-stars text-warning me-1"></i> <%= t('authors.role') %>
+                                        </span>
+
+                                        <div class="mt-auto">
+                                            <a href="/author/<%= author.id %>"
+                                                class="btn btn-outline-primary btn-sm w-100 py-2 rounded-pill shadow-sm">
+                                                <%= t('authors.view_catalog') %> <i class="bi bi-arrow-right ms-1"></i>
+                                            </a>
                                         </div>
                                     </div>
-                                    <% } %>
-                                        <% }) %>
-                                            <% } else { %>
-                                                <div class="col-12 text-center py-5">
-                                                    <i class="bi bi-emoji-frown display-1 text-muted"></i>
-                                                    <p class="mt-3 fs-5 text-muted">No se encontraron autores para este
-                                                        país.</p>
-                                                </div>
-                                                <% } %>
+                                </div>
+                            </div>
+                        <% } %>
+                    <% }) %>
+                <% } else { %>
+                    <div class="col-12 text-center py-5 bg-white rounded-4 shadow-sm border">
+                        <div class="mx-auto bg-light rounded-circle d-flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
+                            <i class="bi bi-people display-4 text-muted opacity-50"></i>
+                        </div>
+                        <h4 class="fw-bold mb-2 text-dark">No hay autores</h4>
+                        <p class="text-muted">No se encontraron autores para este país.</p>
+                        <a href="/authors/showAllAuthors" class="btn btn-primary mt-3 px-4 rounded-pill">Quitar filtros</a>
                     </div>
-                </main>
-
-                <!-- Paginación -->
-                <% if (typeof totalPages !=='undefined' && totalPages> 1) {
-                    const getPageUrl = (p) => {
-                    const params = new URLSearchParams(searchQuery);
-                    params.set('page', p);
-                    return '?' + params.toString();
-                    };
-                    %>
-                    <nav class="mt-5">
-                        <ul class="pagination pagination-sm justify-content-center">
-                            <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                                <a class="page-link" href="<%= getPageUrl(parseInt(currentPage) - 1) %>">&laquo;</a>
-                            </li>
-
-                            <% for(let i=1; i <=totalPages; i++) { %>
-                                <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                                    <a class="page-link" href="<%= getPageUrl(i) %>">
-                                        <%= i %>
-                                    </a>
-                                </li>
-                                <% } %>
-
-                                    <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-                                        <a class="page-link"
-                                            href="<%= getPageUrl(parseInt(currentPage) + 1) %>">&raquo;</a>
-                                    </li>
-                        </ul>
-                    </nav>
-                    <% } %>
-                        </main>
+                <% } %>
             </div>
-        </div>
 
-        <%- include('../layout/footer') %>
+            <!-- Paginación -->
+            <% if (typeof totalPages !=='undefined' && totalPages> 1) {
+                const getPageUrl = (p) => {
+                const params = new URLSearchParams(searchQuery);
+                params.set('page', p);
+                return '?' + params.toString();
+                };
+            %>
+                <nav class="mt-5 pt-3">
+                    <ul class="pagination pagination-sm justify-content-center">
+                        <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="<%= getPageUrl(parseInt(currentPage) - 1) %>">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        <% for(let i=1; i <=totalPages; i++) { %>
+                            <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+                                <a class="page-link" href="<%= getPageUrl(i) %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                        <% } %>
+
+                        <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                            <a class="page-link" href="<%= getPageUrl(parseInt(currentPage) + 1) %>">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            <% } %>
+        </main>
+    </div>
+</div>
+
+<%- include('../layout/footer') %>

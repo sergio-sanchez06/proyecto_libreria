@@ -38,6 +38,7 @@
   margin-bottom: 0.5rem;
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Corta el texto a 2 líneas */
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -48,6 +49,7 @@
   margin-bottom: 1rem;
   display: -webkit-box;
   -webkit-line-clamp: 3; /* Corta la sinopsis a 3 líneas */
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

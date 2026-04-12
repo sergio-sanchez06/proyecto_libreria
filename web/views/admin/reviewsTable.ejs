@@ -1,15 +1,23 @@
-<%- include("../layout/header") %>
+<%- include("../layout/header", { bodyClass: 'bg-user-vistas' }) %>
 
     <style>
         /* Estilos específicos para la gestión de reseñas */
         .admin-main {
             padding: 2.5rem 1rem;
-            background-color: #f8f9fa;
             min-height: 85vh;
         }
 
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(252, 250, 247, 0.45);
+            z-index: -1;
+        }
+
         .table-container {
-            background: white;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
             border-radius: 1rem;
             border: none;
         }

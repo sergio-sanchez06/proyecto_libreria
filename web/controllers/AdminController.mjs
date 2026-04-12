@@ -44,19 +44,17 @@ export const getForm = (req, res) => {
 async function getManageOrders(req, res) {
   try {
     const api = getAuthenticatedClient(req.session.idToken);
-
-    // 1. Pedimos los pedidos
     const response = await api.get("/orders");
     const orders = response.data;
 
-    const batchSize = 5; // Límite de seguridad para el pool
+    const batchSize = 5;
     for (let i = 0; i < orders.length; i += batchSize) {
       const batch = orders.slice(i, i + batchSize);
       await Promise.all(
         batch.map(async (order) => {
           try {
             const resItems = await api.get("/orderItems/" + order.id);
-            order.items = resItems.data; // Aquí se inyectan los OrderItem
+            order.items = resItems.data;
           } catch (err) {
             order.items = [];
           }
@@ -64,24 +62,43 @@ async function getManageOrders(req, res) {
       );
     }
 
-    // 2. En lugar de un FOR con AWAIT, lanzamos todas las peticiones a la vez
-    // Promise.all permite que el pooler de Supabase gestione la cola
-    // await Promise.all(
-    //   orders.map(async (order) => {
-    //     try {
-    //       const resItems = await api.get("/orderItems/" + order.id);
-    //       console.log(resItems.data);
-    //       order.items = resItems.data;
-    //     } catch (err) {
-    //       order.items = []; // Evitamos que un error en un pedido rompa todo
-    //     }
-    //   }),
-    // );
-
     res.render("admin/orders", { orders, lang: req.session.lang });
   } catch (error) {
     console.error("Error al cargar pedidos:", error);
     res.render("errors/500", { error: "No se pudieron cargar los pedidos" });
+  }
+}
+
+async function getPendingOrders(req, res) {
+  try {
+    const api = getAuthenticatedClient(req.session.idToken);
+    const response = await api.get("/orders");
+    const allOrders = response.data;
+
+    // Filtrar solo los pendientes
+    const orders = allOrders.filter((o) => o.status === "PENDIENTE");
+
+    const batchSize = 5;
+    for (let i = 0; i < orders.length; i += batchSize) {
+      const batch = orders.slice(i, i + batchSize);
+      await Promise.all(
+        batch.map(async (order) => {
+          try {
+            const resItems = await api.get("/orderItems/" + order.id);
+            order.items = resItems.data;
+          } catch (err) {
+            order.items = [];
+          }
+        }),
+      );
+    }
+
+    res.render("admin/orders", { orders, lang: req.session.lang });
+  } catch (error) {
+    console.error("Error al cargar pedidos pendientes:", error);
+    res.render("errors/500", {
+      error: "No se pudieron cargar los pedidos pendientes",
+    });
   }
 }
 
@@ -278,6 +295,7 @@ export default {
   updateUser,
   deleteUser,
   getManageOrders,
+  getPendingOrders,
   getDashboard,
   updateOrderStatus,
   deleteOrder,

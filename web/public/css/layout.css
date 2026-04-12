@@ -2,8 +2,9 @@
    VARIABLES Y REGLAS GLOBALES (MODO APP)
    ========================================= */
 :root {
-    --brand-teal: #0d5c63;  /* Teal profundo y moderno */
-    --brand-gold: #c2973b;  /* Dorado premium mate */
+    --brand-teal: #1e40af;  
+    --brand-teal-hover: #1e3a8a;
+    --brand-gold: #d4af37;
     --brand-light: #fcfaf7;
     --dark-bg: #1a1a1a;
     --text-muted: #bbbbbb;
@@ -321,9 +322,9 @@ body {
 }
 
 .btn-brand-teal:hover {
-    background-color: #0b4a50 !important;
+    background-color: var(--brand-teal-hover) !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(13, 92, 99, 0.2);
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
 }
 
 .btn-brand-gold {
@@ -334,7 +335,7 @@ body {
 }
 
 .btn-brand-gold:hover {
-    background-color: #a88232 !important;
+    background-color: #b8860b !important;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(194, 151, 59, 0.2);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
 }

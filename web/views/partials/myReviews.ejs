@@ -1,6 +1,17 @@
-<%- include("../layout/header") %>
+<%- include("../layout/header", { 
+    title: user.name + ' - Mis Reseñas',
+    bodyClass: 'bg-user-vistas' 
+}) %>
 
-    <style>
+<style>
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(252, 250, 247, 0.45);
+        z-index: -1;
+    }
+</style>
         .hover-primary:hover {
             color: var(--bs-primary) !important;
             transition: color 0.2s ease;

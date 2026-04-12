@@ -1,91 +1,156 @@
-<!DOCTYPE html>
+<%- include('../layout/header', {
+    title: t('addAuthor.page_title') || 'Añadir Autor',
+    bodyClass: 'bg-main-vistas'
+}) %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= t('addAuthor.page_title') %>
-    </title>
-    <link rel="stylesheet" href="/css/add_author.css">
-</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-<body>
+    body {
+        font-family: 'Inter', sans-serif;
+        color: var(--text-dark);
+    }
 
-    <%- include("../layout/header") %>
-    <main class="admin-form-page bg-pattern-authors">
-        <div class="container py-4">
-            <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-6">
-                    <div class="card brand-card">
-                        <div class="card-header brand-card-header text-center">
-                            <h2 class="mb-0 h3 fw-bold">
-                                <i class="bi bi-person-plus-fill me-2"></i>
-                                <%= t('addAuthor.title') %>
-                            </h2>
-                        </div>
-                        <div class="card-body p-4">
-                            <% if (locals.error) { %>
-                                <div class="alert alert-danger border-0 shadow-sm">
-                                    <i class="bi bi-exclamation-circle me-2"></i>
-                                    <%= error %>
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(252, 250, 247, 0.45);
+        z-index: -1;
+    }
+
+    .admin-form-container {
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .brand-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .brand-card-header {
+        background: linear-gradient(135deg, var(--brand-teal), #1e3a8a);
+        color: white;
+        padding: 2rem;
+        border-bottom: 6px solid var(--brand-gold);
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        border: 1px solid #cbd5e1;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        background-color: #f8fafc;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--brand-teal);
+        box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+        background-color: white;
+    }
+
+    .btn-brand-teal {
+        background-color: var(--brand-teal);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-brand-teal:hover {
+        background-color: var(--brand-teal-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(30, 64, 175, 0.25);
+        color: white;
+    }
+</style>
+
+<main class="py-5">
+    <div class="container admin-form-container">
+        <div class="brand-card">
+            <div class="brand-card-header text-center">
+                <h2 class="mb-0 fw-bold d-flex flex-column align-items-center gap-2">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 80px; height: 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <i class="bi bi-person-plus-fill text-primary" style="font-size: 2.5rem;"></i>
+                    </div>
+                    <span class="mt-2"><%= t('addAuthor.title') || 'Registrar Nuevo Autor' %></span>
+                </h2>
+                <p class="text-white-50 mt-2 mb-0">Agrega un nuevo escritor u creador al catálogo público</p>
+            </div>
+            
+            <div class="card-body p-4 p-md-5">
+                <% if (locals.error) { %>
+                    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                        <div><%= error %></div>
+                    </div>
+                <% } %>
+
+                <form action="/authors/author/create" method="POST" enctype="multipart/form-data">
+                    <div class="row g-4">
+                        <div class="col-md-7">
+                            <div class="mb-3">
+                                <label for="name" class="form-label"><%= t('addAuthor.label_name') || 'Nombre Completo' %> *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-person text-muted"></i></span>
+                                    <input type="text" name="name" id="name" class="form-control border-start-0 ps-0" placeholder="<%= t('addAuthor.placeholder_name') || 'Ej: Gabriel García Márquez' %>" required>
                                 </div>
-                                <% } %>
+                            </div>
+                        </div>
 
-                                    <form action="/authors/author/create" method="POST" enctype="multipart/form-data">
-                                        <div class="mb-3">
-                                            <label for="name" class="form-label fw-bold">
-                                                <%= t('addAuthor.label_name') %> *
-                                            </label>
-                                            <input type="text" name="name" id="name" class="form-control" required
-                                                placeholder="<%= t('addAuthor.placeholder_name') %>">
-                                        </div>
+                        <div class="col-md-5">
+                            <div class="mb-3">
+                                <label for="country" class="form-label"><%= t('addAuthor.label_country') || 'País de Origen' %></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-globe-americas text-muted"></i></span>
+                                    <input type="text" name="country" id="country" class="form-control border-start-0 ps-0" placeholder="<%= t('addAuthor.placeholder_country') || 'Ej: Colombia' %>">
+                                </div>
+                            </div>
+                        </div>
 
-                                        <div class="mb-3">
-                                            <label for="country" class="form-label fw-bold">
-                                                <%= t('addAuthor.label_country') %>
-                                            </label>
-                                            <input type="text" name="country" id="country" class="form-control"
-                                                placeholder="<%= t('addAuthor.placeholder_country') %>">
-                                        </div>
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="biography" class="form-label"><%= t('addAuthor.label_biography') || 'Biografía / Reseña' %></label>
+                                <textarea name="biography" id="biography" rows="5" class="form-control" placeholder="<%= t('addAuthor.placeholder_biography') || 'Escribe sobre la vida, logros y trayectoria...' %>"></textarea>
+                            </div>
+                        </div>
 
-                                        <div class="mb-3">
-                                            <label for="biography" class="form-label fw-bold">
-                                                <%= t('addAuthor.label_biography') %>
-                                            </label>
-                                            <textarea name="biography" id="biography" rows="5" class="form-control"
-                                                placeholder="<%= t('addAuthor.placeholder_biography') %>"></textarea>
-                                        </div>
-
-                                        <div class="mb-3">
-                                            <label for="photo" class="form-label fw-bold">
-                                                <%= t('addAuthor.label_photo') %>
-                                            </label>
-                                            <input type="file" name="photo" id="photo" class="form-control"
-                                                accept="image/*">
-                                            <small class="form-text text-muted">
-                                                <%= t('addAuthor.photo_help') %>
-                                            </small>
-                                        </div>
-
-                                        <div class="d-flex justify-content-center gap-3 mt-4">
-                                            <button type="submit" class="btn btn-brand-teal px-5 py-2 fw-bold rounded-pill">
-                                                <i class="bi bi-plus-circle-fill me-2"></i>
-                                                <%= t('addAuthor.btn_submit') %>
-                                            </button>
-                                            <a href="/admin/dashboard" class="btn btn-secondary px-4">
-                                                <%= t('addAuthor.btn_cancel') %>
-                                            </a>
-                                        </div>
-                                    </form>
+                        <div class="col-12">
+                            <hr class="my-3 opacity-10">
+                            <div class="mb-4 p-4 rounded-4" style="background-color: #f8fafc; border: 1px dashed #cbd5e1;">
+                                <label for="photo" class="form-label"><i class="bi bi-camera me-1"></i> <%= t('addAuthor.label_photo') || 'Fotografía de Perfil (Opcional)' %></label>
+                                <input type="file" name="photo" id="photo" class="form-control bg-white" accept="image/*">
+                                <small class="text-muted mt-2 d-block fw-medium"><%= t('addAuthor.photo_help') || 'Sube una imagen representativa del autor.' %></small>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
+
+                    <div class="d-flex justify-content-center gap-3 mt-4 pt-4 border-top">
+                        <a href="/admin/dashboard" class="btn btn-light px-4 py-2 rounded-pill fw-bold text-secondary border shadow-sm">
+                            <%= t('addAuthor.btn_cancel') || 'Cancelar' %>
+                        </a>
+                        <button type="submit" class="btn btn-brand-teal px-5 py-2 fw-bold rounded-pill text-white shadow-sm d-flex align-items-center gap-2">
+                            <i class="bi bi-plus-circle"></i>
+                            <%= t('addAuthor.btn_submit') || 'Añadir Autor' %>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
-    </main>
+    </div>
+</main>
 
-        <%- include("../layout/footer") %>
-</body>
-
-</html>
+<%- include("../layout/footer") %>
