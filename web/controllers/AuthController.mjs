@@ -15,6 +15,53 @@ async function showLogin(req, res) {
 }
 
 // Procesa login (recibe idToken del cliente)
+// async function login(req, res) {
+//   const { idToken } = req.body;
+
+//   if (!idToken) {
+//     return res.render("partials/login", {
+//       error: "Token requerido",
+//       user: null,
+//     });
+//   }
+
+//   try {
+//     const response = await apiClient.post("/auth/login", { idToken });
+//     const { user, isNewUser } = response.data;
+
+//     console.log("Nuevo usuario: ", isNewUser);
+
+//     req.session.user = user;
+//     req.session.idToken = idToken;
+
+//     // Usar callback en lugar de await — evita el error no capturado en el primer login
+//     req.session.save((err) => {
+//       if (err) {
+//         console.error("Error al guardar sesión:", err);
+//         return res.render("partials/login", {
+//           error: "Error al guardar la sesión, inténtalo de nuevo.",
+//           user: null,
+//         });
+//       }
+//       // 3. Lógica de redirección inteligente
+//       if (isNewUser) {
+//         // Si es nuevo, lo enviamos al formulario de dirección
+//         // Asegúrate de tener esta ruta creada en tu router web
+//         res.render("partials/edit-profile", {
+//           user: req.session.user,
+//           showWelcomeModal: true, // Esta bandera activa el JS del modal
+//           message: "¡Bienvenido a bordo!",
+//         });
+//       } else {
+//         // Si ya existía, al home como siempre
+//         res.redirect("/");
+//       }
+//     });
+//   } catch (error) {
+//     const message = error.response?.data?.message || "Error al iniciar sesión";
+//     res.render("partials/login", { error: message, user: null });
+//   }
+// }
 async function login(req, res) {
   const { idToken } = req.body;
 
@@ -30,9 +77,8 @@ async function login(req, res) {
     const { user } = response.data;
 
     req.session.user = user;
-    req.session.idToken = idToken;
+    req.session.idToken = idToken; // Evitamos almacenar la sesión de cara a controlar nosotros la duración de las sesiones
 
-    // Usar callback en lugar de await — evita el error no capturado en el primer login
     req.session.save((err) => {
       if (err) {
         console.error("Error al guardar sesión:", err);
@@ -48,34 +94,6 @@ async function login(req, res) {
     res.render("partials/login", { error: message, user: null });
   }
 }
-// async function login(req, res) {
-//   const { idToken } = req.body;
-
-//   console.log(req.body);
-
-//   if (!idToken) {
-//     console.log("Token requerido");
-//     return res.render("partials/login", {
-//       error: "Token requerido",
-//       user: null,
-//     });
-//   }
-
-//   try {
-//     const response = await apiClient.post("/auth/login", { idToken });
-//     const { user } = response.data;
-
-//     // Crea sesión
-//     req.session.user = user;
-//     req.session.idToken = idToken;
-//     await req.session.save();
-
-//     res.redirect("/");
-//   } catch (error) {
-//     const message = error.response?.data?.message || "Error al iniciar sesión";
-//     res.render("partials/login", { error: message });
-//   }
-// }
 
 // Logout
 async function logout(req, res) {
@@ -151,20 +169,34 @@ async function socialLogin(req, res) {
       idToken,
     });
 
-    const { user } = apiResponse.data;
+    // IMPORTANTE: Extraemos también isNewUser de la respuesta de la API
+    const { user, isNewUser } = apiResponse.data;
+
+    console.log("¿Es login social de nuevo usuario?:", isNewUser);
 
     // 2. CREAR SESIÓN: Guardamos al usuario en la sesión de la web
     req.session.user = user;
     req.session.idToken = idToken;
 
-    // 3. Redirigimos al Home o al Perfil
+    console.log(req.session.user);
+
+    // 3. Guardado de sesión y redirección/renderizado
     req.session.save((err) => {
       if (err) {
         console.error("Error al guardar sesión:", err);
         return res.redirect("/login?error=session_error");
       }
 
-      // Solo cuando el store confirma el guardado, se redirecciona al usuario
+      if (isNewUser) {
+        // Si es nuevo, mostramos la vista de completar perfil con el modal activo
+        return res.render("partials/editUserProfile", {
+          user: req.session.user,
+          showWelcomeModal: true,
+          message: "¡Bienvenido! Completa tu perfil para continuar.",
+        });
+      }
+
+      // Si no es nuevo, flujo normal al Home
       return res.redirect("/");
     });
   } catch (error) {
@@ -175,6 +207,40 @@ async function socialLogin(req, res) {
     res.redirect("/login?error=social_auth_failed");
   }
 }
+
+// async function socialLogin(req, res) {
+//   const { idToken } = req.body;
+
+//   try {
+//     // 1. Enviamos el token a la API para validar/crear usuario
+//     const apiResponse = await apiClient.post("/auth/social-login", {
+//       idToken,
+//     });
+
+//     const { user, isNewUser } = apiResponse.data;
+
+//     // 2. CREAR SESIÓN: Guardamos al usuario en la sesión de la web
+//     req.session.user = user;
+//     req.session.idToken = idToken;
+
+//     // 3. Redirigimos al Home o al Perfil
+//     req.session.save((err) => {
+//       if (err) {
+//         console.error("Error al guardar sesión:", err);
+//         return res.redirect("/login?error=session_error");
+//       }
+
+//       // Solo cuando el store confirma el guardado, se redirecciona al usuario
+//       return res.redirect("/");
+//     });
+//   } catch (error) {
+//     console.error(
+//       "Error en puente Web-API:",
+//       error.response?.data || error.message,
+//     );
+//     res.redirect("/login?error=social_auth_failed");
+//   }
+// }
 
 export default {
   showLogin,

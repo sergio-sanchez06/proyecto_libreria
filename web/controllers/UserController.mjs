@@ -93,6 +93,8 @@ async function getEditProfileForm(req, res) {
     // 1. Obtener los datos del usuario
     const response = await api.get("/users/me/" + req.session.user.id);
 
+    console.log(response.data.user);
+
     // 2. Renderizar la plantilla con los datos del usuario
     res.render("partials/editUserProfile", {
       user: response.data.user,
@@ -116,7 +118,7 @@ async function updateProfile(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    console.log(req.body);
+    console.log(req.body, req.session.user.id);
 
     // 1. Obtener los datos del usuario
     const response = await api.put(
@@ -129,15 +131,18 @@ async function updateProfile(req, res) {
 
     console.log(user);
 
-    // 2. Renderizar la plantilla con los datos del usuario
-    res.render("partials/perfil", {
-      user: req.session.user,
+    // IMPORTANTE: Tras un POST exitoso, lo mejor es REDIRECT.
+    // Si haces RENDER, y el usuario refresca la página, el navegador intentará reenviar el formulario.
+    req.session.save(() => {
+      res.redirect("/user/profile"); // O la ruta donde muestres el perfil
     });
   } catch (error) {
     console.error("Error en editProfile:", error.message);
     res.render("partials/editUserProfile", {
-      user: null,
-      error: "Error al cargar los datos del usuario.",
+      user: req.session.user,
+      error:
+        "Error al actualizar los datos: " +
+        (error.response?.data?.message || error.message),
     });
   }
 }

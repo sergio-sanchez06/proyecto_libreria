@@ -23,6 +23,8 @@ api/services/PublisherBookService.mjs
 .env.*
 /node_modules
 
+/temporary_sessions
+
 !es.json
 !ca.json
 !gl.json

@@ -17,6 +17,11 @@ import i18nextHttpMiddleware from "i18next-http-middleware";
 import i18nextFsBackend from "i18next-fs-backend";
 import * as useragent from "express-useragent";
 import cookieParser from "cookie-parser";
+import sessionFileStore from "session-file-store";
+
+const FileStore = sessionFileStore(session);
+
+const SESSION_SECRET = "tu-secret-super-seguro";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,14 +44,29 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(
   session({
-    secret: "tu-secret-super-seguro",
+    store: new FileStore({
+      path: "./temporary_sessions",
+      ttl: 3600 * 2,
+      reapInterval: 3600,
+      retries: 5, // <--- Añade esto: reintenta 5 veces
+      factor: 1, // Factor de espera entre reintentos
+      minTimeout: 50, // Tiempo mínimo de espera (ms)
+      logFn: () => {},
+    }),
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false },
+    rolling: true,
+    cookie: {
+      secure: false,
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60 * 2, // Cookie de 2 horas
+    },
   }),
 );
 
-app.use(cookieParser("tu-secret-super-seguro"));
+app.use(cookieParser(SESSION_SECRET));
 
 // Configuración de i18next para la internacionalización entre los idiomas oficiales de España
 i18next

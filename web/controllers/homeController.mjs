@@ -67,7 +67,7 @@ async function index(req, res) {
   const responseGenres = await apiClient.get("/genres/mostSold");
   const genresMostSold = responseGenres.data;
 
-  console.log(res.locals.books);
+  // console.log(res.locals.books);
 
   res.render("partials/index", {
     books: res.locals.books,

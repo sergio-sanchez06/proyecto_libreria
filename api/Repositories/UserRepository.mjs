@@ -95,12 +95,16 @@ async function upsertFromFirebase({
         optional_address = COALESCE(public.users.optional_address, EXCLUDED.optional_address),
 
         updated_at = NOW()
-      RETURNING *
+      RETURNING *, (xmax = 0) as is_new_user
       `,
       [firebase_uid, email, name, role, default_address, optional_address],
     );
 
-    return new UserModel(result.rows[0]);
+    const userData = result.rows[0];
+    return {
+      user: new UserModel(userData),
+      isNewUser: userData.is_new_user, // Extraemos la bandera para ver si el usuario es nuevo a través de google o X
+    };
   } catch (error) {
     console.error("Error en upsertFromFirebase:", error);
     throw error;

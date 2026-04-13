@@ -197,12 +197,13 @@
     "status_processing": "Processant",
     "status_shipped": "Enviat",
     "status_delivered": "Entregat",
-    "status_cancelled": "Cancel·lat"
+    "status_cancelled": "Cancel·lat",
+    "shipping_address": "Adreça d'enviament"
   },
   "adminOrders": {
     "title": "Gestió de Comandes",
     "total_count": "Total: {{count}} comandes",
-    "table_id": "Comande ID",
+    "table_id": "Comanda ID",
     "table_date": "Data",
     "table_user": "Usuari (Email)",
     "table_total": "Total",
@@ -223,7 +224,8 @@
     "status_processing": "Processant",
     "status_shipped": "Enviat",
     "status_delivered": "Lliurat",
-    "status_cancelled": "Cancel·lat"
+    "status_cancelled": "Cancel·lat",
+    "shipping_address": "Adreça d'enviament"
   },
   "adminDashboard": {
     "nav_title": "Panell Admin",
@@ -396,5 +398,30 @@
     "reviews": "Ressenyes",
     "save": "Desar",
     "user": "Usuari"
+  },
+  "cookies_policy": {
+    "title": "Política de Cookies",
+    "intro": "En compliment amb la normativa vigent, s'informa que aquest projecte educatiu utilitza galetes (cookies) amb fins purament tècnics i de funcionament.",
+    "session_name": "Cookies de Sessió:",
+    "session_desc": "Necessàries per mantenir l'autenticació de l'usuari al panell d'administració o al carret de la compra.",
+    "technical_name": "Cookies Tècniques:",
+    "technical_desc": "Permeten la navegació a través del web i l'ús de les diferents opcions o serveis que hi existeixen.",
+    "disclaimer": "En tractar-se d'un entorn de proves i aprenentatge, no es realitza cap seguiment publicitari ni es comparteixen dades amb tercers (cookies de tercers)."
+  }, "legal_notice": {
+    "title": "Avís Legal",
+    "section1_title": "1. Caràcter Educatiu:",
+    "section1_text": "Aquest lloc web ha estat desenvolupat com a part d'un projecte acadèmic/educatiu sense ànim de lucre. La finalitat és demostrar competències tècniques en desenvolupament web i gestió de bases de dades.",
+    "section2_title": "2. Propietat Intel·lectual i Imatges:",
+    "section2_text": "S'informa l'usuari que el titular d'aquest projecte no disposa de cap propietat ni drets d'autor sobre les imatges de portades de llibres, logotips o recursos gràfics mostrats. Aquests elements pertanyen als seus legítims autors i editorials, i s'utilitzen aquí exclusivament amb fins il·lustratius i didàctics.",
+    "section3_title": "3. Responsabilitat:",
+    "section3_text": "El contingut d'aquest web és simulat. Els preus, l'estoc i les dades de contacte no tenen validesa real. L'autor no es fa responsable de l'ús indegut de la informació aquí presentada."
+  }, "privacy_policy": {
+    "title": "Política de Privacitat",
+    "purpose_title": "Finalitat del tractament:",
+    "purpose_text": "Les dades personals que es puguin recollir (com noms d'usuari en proves) es tracten únicament per validar el funcionament de la lògica del servidor (Node.js/Express) i les transaccions a la base de dades PostgreSQL.",
+    "storage_title": "Emmagatzematge:",
+    "storage_text": "En tractar-se d'un projecte acadèmic, es recomana no introduir dades personals reals. La base de dades és local o de prova i pot ser eliminada en qualsevol moment un cop finalitzat el cicle educatiu.",
+    "rights_title": "Drets:",
+    "rights_text": "L'usuari pot sol·licitar l'eliminació de les seves dades de prova contactant amb l'administrador del projecte a través del repositori corresponent."
   }
 }

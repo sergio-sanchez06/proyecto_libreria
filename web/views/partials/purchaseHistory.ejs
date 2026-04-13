@@ -1,147 +1,176 @@
-<%- include('../layout/header', { 
-    title: t('orders.title'),
-    bodyClass: 'bg-user-vistas' 
-}) %>
+<%- include('../layout/header', { title: t('orders.title'), bodyClass: 'bg-user-vistas' }) %>
 
-<style>
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(252, 250, 247, 0.45);
-        z-index: -1;
-    }
+    <style>
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(252, 250, 247, 0.45);
+            z-index: -1;
+        }
 
-    .order-card {
-        border-left: 5px solid var(--brand-gold);
-        transition: transform 0.2s;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    }
+        .orders-container {
+            padding-bottom: 50px;
+        }
 
-    .order-card:hover {
-        transform: scale(1.005);
-    }
+        .order-card {
+            border-left: 5px solid var(--brand-gold);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 2rem !important;
+            /* Espaciado para que no se peguen al flotar */
+        }
 
-    .status-badge {
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
-    }
-</style>
+        .order-card:hover {
+            transform: translateY(-5px);
+            /* Eleva la tarjeta sin ensancharla */
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+            z-index: 10;
+            /* La mantiene por encima de las demás */
+        }
 
-<div class="container my-5">
-    <h2 class="mb-4 fw-bold" style="color: var(--brand-teal);">
-        <i class="bi bi-bag-check-fill me-2" style="color: var(--brand-gold);"></i>
-        <%= t('orders.title') %>
-    </h2>
+        .status-badge {
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
 
-    <% if (orders && orders.length> 0) { %>
-        <% orders.forEach(order=> { %>
-            <div class="card mb-4 shadow-sm border-0 order-card">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                    <div>
-                        <span class="text-muted small fw-bold text-uppercase">
-                            <%= t('orders.order_no') %> #<%= order.id %>
-                        </span>
-                        <h5 class="mb-0 fw-bold">
-                            <%= t('orders.date_label') %>:
-                                <%= new Date(order.created_at).toLocaleDateString(currentLanguage==='eu'
-                                    ? 'eu-ES' : currentLanguage==='ca' ? 'ca-ES' : currentLanguage==='gl'
-                                    ? 'gl-ES' : 'es-ES' ) %>
-                        </h5>
-                    </div>
-                    <div class="text-end">
-                        <% let statusKey='status_pending' ; let badgeClass='bg-warning text-dark' ;
-                            switch(order.status) { case 'PENDIENTE' : statusKey='status_pending' ;
-                            badgeClass='bg-warning text-dark' ; break; case 'PAGADO' : statusKey='status_paid' ;
-                            badgeClass='bg-info text-white' ; break; case 'PROCESANDO' :
-                            statusKey='status_processing' ; badgeClass='' ; break; case 'ENVIADO' :
-                            statusKey='status_shipped' ; badgeClass='' ; break; case 'ENTREGADO' :
-                            statusKey='status_delivered' ; badgeClass='bg-success' ; break; case 'CANCELADO' :
-                            statusKey='status_cancelled' ; badgeClass='bg-danger' ; break; } %>
-                            <span class="badge rounded-pill status-badge mb-1 px-3 <%= badgeClass %>" 
-                                <% if (order.status === 'PROCESANDO' || order.status === 'ENVIADO') { %> style="background-color: var(--brand-teal); color: white;" <% } %> >
-                                <%= t('orders.' + statusKey) %>
+        .shipping-box {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+    </style>
+
+    <div class="container my-5 orders-container">
+        <h2 class="mb-4 fw-bold" style="color: var(--brand-teal);">
+            <i class="bi bi-bag-check-fill me-2" style="color: var(--brand-gold);"></i>
+            <%= t('orders.title') %>
+        </h2>
+
+        <% if (orders && orders.length> 0) { %>
+            <% orders.forEach(order=> { %>
+                <div class="card shadow-sm border-0 order-card">
+                    <div
+                        class="card-header bg-white d-flex justify-content-between align-items-center py-3 border-bottom-0">
+                        <div>
+                            <span class="text-muted small fw-bold text-uppercase">
+                                <%= t('orders.order_no') %> #<%= order.id %>
                             </span>
-                            <p class="h5 mb-0 fw-bold" style="color: var(--brand-teal);">
-                                <%= order.total %>€
-                            </p>
+                            <h5 class="mb-0 fw-bold">
+                                <%= t('orders.date_label') %>:
+                                    <%= new Date(order.created_at).toLocaleDateString(currentLanguage==='eu' ? 'eu-ES' :
+                                        currentLanguage==='ca' ? 'ca-ES' : currentLanguage==='gl' ? 'gl-ES' : 'es-ES' )
+                                        %>
+                            </h5>
+                        </div>
+                        <div class="text-end">
+                            <% let statusKey='status_pending' ; let badgeClass='bg-warning text-dark' ;
+                                switch(order.status) { case 'PENDIENTE' : statusKey='status_pending' ;
+                                badgeClass='bg-warning text-dark' ; break; case 'PAGADO' : statusKey='status_paid' ;
+                                badgeClass='bg-info text-white' ; break; case 'PROCESANDO' :
+                                statusKey='status_processing' ; badgeClass='text-white' ; break; case 'ENVIADO' :
+                                statusKey='status_shipped' ; badgeClass='text-white' ; break; case 'ENTREGADO' :
+                                statusKey='status_delivered' ; badgeClass='bg-success text-white' ; break;
+                                case 'CANCELADO' : statusKey='status_cancelled' ; badgeClass='bg-danger text-white' ;
+                                break; } %>
+                                <span class="badge rounded-pill status-badge mb-1 px-3 <%= badgeClass %>" <% if
+                                    (order.status==='PROCESANDO' || order.status==='ENVIADO' ) { %>
+                                    style="background-color: var(--brand-teal);"
+                                    <% } %> >
+                                        <%= t('orders.' + statusKey) %>
+                                </span>
+                                <p class="h5 mb-0 fw-bold" style="color: var(--brand-teal);">
+                                    <%= Number(order.total).toFixed(2) %>€
+                                </p>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-4 pt-0">
+                        <div class="shipping-box mb-4 d-flex align-items-start">
+                            <i class="bi bi-geo-alt-fill fs-4 me-3" style="color: var(--brand-teal);"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1 small text-uppercase text-muted">
+                                    <%= t('orders.shipping_details') %>
+                                </h6>
+                                <p class="mb-0 fw-bold">
+                                    <%= order.shipping_address || t('orders.no_address') %>
+                                </p>
+                                <p class="mb-0 small text-muted">
+                                    <%= user.name %> • <%= user.email %>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr class="small text-uppercase">
+                                        <th class="py-2 px-3 border-0" style="border-radius: 8px 0 0 8px;">
+                                            <%= t('orders.table_book') %>
+                                        </th>
+                                        <th class="text-center py-2 border-0">
+                                            <%= t('orders.table_qty') %>
+                                        </th>
+                                        <th class="text-end py-2 border-0">
+                                            <%= t('orders.table_price') %>
+                                        </th>
+                                        <th class="text-end py-2 px-3 border-0" style="border-radius: 0 8px 8px 0;">
+                                            <%= t('orders.table_subtotal') %>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (order.items && order.items.length> 0) { %>
+                                        <% order.items.forEach(item=> { %>
+                                            <tr>
+                                                <td class="py-3 px-3">
+                                                    <span class="fw-semibold text-dark">
+                                                        <%= item.book ? item.book.title : 'No disponible' %>
+                                                    </span>
+                                                </td>
+                                                <td class="text-center text-muted">x<%= item.quantity %>
+                                                </td>
+                                                <td class="text-end">
+                                                    <%= Number(item.price_at_time).toFixed(2) %>€
+                                                </td>
+                                                <td class="text-end fw-bold px-3" style="color: var(--brand-teal);">
+                                                    <%= (item.quantity * Number(item.price_at_time)).toFixed(2) %>€
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                                <% } else { %>
+                                                    <tr>
+                                                        <td colspan="4" class="text-center text-muted fst-italic py-4">
+                                                            <%= t('orders.loading_details') %>
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
+                <% }) %>
+                    <% } else { %>
+                        <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+                            <i class="bi bi-cart-x mb-3 d-block"
+                                style="font-size: 5rem; color: var(--brand-gold); opacity: 0.5;"></i>
+                            <h4 class="fw-bold" style="color: var(--brand-teal);">
+                                <%= t('orders.empty_msg') %>
+                            </h4>
+                            <a href="/books/showAllBooks" class="btn mt-3 rounded-pill px-4 text-white fw-bold"
+                                style="background-color: var(--brand-teal);">
+                                <i class="bi bi-shop me-2"></i>
+                                <%= t('orders.btn_shop') %>
+                            </a>
+                        </div>
+                        <% } %>
+    </div>
 
-                <div class="card-body p-4">
-                    <h6 class="fw-bold">
-                        <%= t('orders.shipping_details') %>:
-                    </h6>
-                    <p class="text-muted mb-3 small">
-                        <%= t('orders.shipped_to') %>: <strong>
-                                <%= user.email %>
-                            </strong>
-                    </p>
-
-                    <div class="table-responsive">
-                        <table class="table table-sm align-middle mb-0">
-                            <thead class="table-light">
-                                <tr class="small text-uppercase">
-                                    <th class="py-2">
-                                        <%= t('orders.table_book') %>
-                                    </th>
-                                    <th class="text-center py-2">
-                                        <%= t('orders.table_qty') %>
-                                    </th>
-                                    <th class="text-end py-2">
-                                        <%= t('orders.table_price') %>
-                                    </th>
-                                    <th class="text-end py-2">
-                                        <%= t('orders.table_subtotal') %>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (order.items && order.items.length> 0) { %>
-                                    <% order.items.forEach(item=> { %>
-                                        <tr>
-                                            <td class="py-2">
-                                                <span class="fw-semibold text-dark">
-                                                    <%= item.book.title %>
-                                                </span>
-                                            </td>
-                                            <td class="text-center">x<%= item.quantity %>
-                                            </td>
-                                            <td class="text-end">
-                                                <%= item.price_at_time %>€
-                                            </td>
-                                            <td class="text-end fw-bold">
-                                                <%= (item.quantity * item.price_at_time).toFixed(2) %>€
-                                            </td>
-                                        </tr>
-                                        <% }) %>
-                                            <% } else { %>
-                                                <tr>
-                                                    <td colspan="4"
-                                                        class="text-center text-muted fst-italic py-3">
-                                                        <%= t('orders.loading_details') %>
-                                                    </td>
-                                                </tr>
-                                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <% }) %>
-                <% } else { %>
-                    <div class="text-center py-5 bg-white rounded-4 shadow-sm">
-                        <i class="bi bi-cart-x mb-3 d-block" style="font-size: 5rem; color: var(--brand-gold); opacity: 0.5;"></i>
-                        <h4 class="fw-bold" style="color: var(--brand-teal);">
-                            <%= t('orders.empty_msg') %>
-                        </h4>
-                        <a href="/books/showAllBooks" class="btn mt-3 rounded-pill px-4 text-white fw-bold" style="background-color: var(--brand-teal);">
-                            <i class="bi bi-shop me-2"></i>
-                            <%= t('orders.btn_shop') %>
-                        </a>
-                    </div>
-                    <% } %>
-</div>
-
-<%- include('../layout/footer') %>
-</html>
+    <%- include('../layout/footer') %>

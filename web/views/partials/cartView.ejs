@@ -1,283 +1,358 @@
 <%- include('../layout/header.ejs', { bodyClass: 'bg-user-vistas' }) %>
 
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-    body {
-        font-family: 'Inter', sans-serif;
-    }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
 
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(252, 250, 247, 0.88);
-        z-index: -1;
-    }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(252, 250, 247, 0.88);
+            z-index: -1;
+        }
 
-    .section-title {
-        font-weight: 800;
-        color: var(--brand-teal);
-        position: relative;
-        padding-bottom: 12px;
-        margin-bottom: 2rem;
-        letter-spacing: -0.5px;
-        text-transform: uppercase;
-        font-size: 2rem;
-    }
-    
-    .section-title::after {
-        content: '';
-        width: 80px;
-        height: 5px;
-        background: var(--brand-gold);
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        border-radius: 10px;
-    }
+        .section-title {
+            font-weight: 800;
+            color: var(--brand-teal);
+            position: relative;
+            padding-bottom: 12px;
+            margin-bottom: 2rem;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+            font-size: 2rem;
+        }
 
-    .card {
-        border: none;
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.85);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.7);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
-        overflow: hidden;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+        .section-title::after {
+            content: '';
+            width: 80px;
+            height: 5px;
+            background: var(--brand-gold);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            border-radius: 10px;
+        }
 
-    .book-card-cart:hover {
-        transform: translateY(-5px);
-        background: rgba(255, 255, 255, 0.95) !important;
-        box-shadow: 0 12px 30px rgba(30, 64, 175, 0.08);
-        border-color: rgba(30, 64, 175, 0.15);
-    }
+        .card {
+            border: none;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
 
-    .qty-controls {
-        border: 1px solid rgba(30, 64, 175, 0.1);
-        background: rgba(255, 255, 255, 0.8) !important;
-        border-radius: 12px;
-        overflow: hidden;
-    }
+        .book-card-cart:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.08);
+            border-color: rgba(30, 64, 175, 0.15);
+        }
 
-    .qty-controls button {
-        background: rgba(245, 247, 250, 0.5);
-        transition: background 0.2s ease;
-    }
+        /* Estilos para las direcciones */
+        .address-select-item .btn-outline-light {
+            border-color: rgba(0, 0, 0, 0.08) !important;
+            background: white;
+            transition: all 0.2s ease;
+        }
 
-    .qty-controls button:hover {
-        background: rgba(30, 64, 175, 0.1);
-    }
+        .address-select-item .btn-check:checked+label {
+            border-color: var(--brand-teal) !important;
+            background: rgba(30, 64, 175, 0.03) !important;
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.1) !important;
+        }
 
-    .summary-card {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border: 2px solid var(--brand-teal);
-        box-shadow: 0 15px 40px rgba(30, 64, 175, 0.15);
-        backdrop-filter: blur(15px);
-        position: relative;
-        overflow: hidden;
-    }
+        .summary-card {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 2px solid var(--brand-teal);
+            box-shadow: 0 15px 40px rgba(30, 64, 175, 0.15);
+            backdrop-filter: blur(15px);
+            position: relative;
+        }
 
-    .summary-card::before {
-        content: "";
-        position: absolute;
-        top: -50px;
-        right: -50px;
-        width: 150px;
-        height: 150px;
-        background: radial-gradient(circle, var(--brand-gold) 0%, transparent 70%);
-        opacity: 0.1;
-        border-radius: 50%;
-    }
+        .btn-success {
+            background-color: var(--brand-gold) !important;
+            color: #1e3a8a !important;
+            border: none !important;
+            padding: 14px 35px;
+            font-weight: 800;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
 
-    .btn-success {
-        background-color: var(--brand-gold) !important;
-        color: #1e3a8a !important;
-        border: none !important;
-        padding: 14px 35px;
-        font-weight: 800;
-        border-radius: 14px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-    }
+        .btn-success:hover:not(:disabled) {
+            background-color: #e5c358 !important;
+            transform: translateY(-3px);
+        }
 
-    .btn-success:hover:not(:disabled) {
-        background-color: #e5c358 !important;
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(212, 175, 55, 0.4);
-    }
+        .btn-primary {
+            background-color: var(--brand-teal) !important;
+            border: none !important;
+            border-radius: 12px;
+        }
 
-    .btn-primary {
-        background-color: var(--brand-teal) !important;
-        border: none !important;
-        border-radius: 12px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
+        .cart-book-img {
+            object-fit: contain;
+            background: rgba(245, 247, 250, 0.5);
+            padding: 10px;
+        }
 
-    .btn-primary:hover {
-        background-color: var(--brand-teal-hover) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(30, 64, 175, 0.25);
-    }
+        .qty-controls {
+            border: 1px solid rgba(30, 64, 175, 0.1);
+            background: rgba(255, 255, 255, 0.8) !important;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+    </style>
 
-    .cart-book-img {
-        object-fit: contain;
-        background: rgba(245, 247, 250, 0.5);
-        padding: 10px;
-    }
-</style>
+    <main class="container py-5">
+        <h1 class="section-title mb-5">
+            <i class="bi bi-cart3 me-2 text-warning"></i>
+            <%= t('cart.title') %>
+        </h1>
 
-<main class="container py-5">
-    <h1 class="section-title mb-5">
-        <i class="bi bi-cart3 me-2 text-warning"></i><%= t('cart.title') %>
-    </h1>
-
-    <% if (error) { %>
-        <div class="alert alert-danger shadow-sm border-0 mb-4 rounded-4" style="background: #fee2e2; color: #991b1b;">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            <%= error %>
-        </div>
-    <% } %>
-
-    <% if (cart.length===0) { %>
-        <div class="text-center py-5 shadow-sm rounded-4 border-0" style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);">
-            <div class="mx-auto bg-light rounded-circle d-flex align-items-center justify-content-center mb-4" style="width: 120px; height: 120px;">
-                <i class="bi bi-cart-x fs-1 text-muted opacity-50"></i>
+        <% if (error) { %>
+            <div class="alert alert-danger shadow-sm border-0 mb-4 rounded-4"
+                style="background: #fee2e2; color: #991b1b;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <%= error %>
             </div>
-            <h3 class="fw-bold mb-3 text-dark">
-                <%= t('cart.empty_msg') || 'Tu carrito está vacío' %>
-            </h3>
-            <p class="text-muted mb-4">¡Aún no has añadido ningún libro a tu carrito!</p>
-            <a href="/books/showAllBooks" class="btn btn-primary px-5 rounded-pill py-3 h5 mb-0">
-                <i class="bi bi-book me-2"></i><%= t('cart.back_to_shop') || 'Explorar el catálogo' %>
-            </a>
-        </div>
-    <% } else { %>
-        <div class="row">
-            <div class="col-lg-8 mb-4">
-                <div class="row row-cols-1 g-4">
-                    <% cart.forEach(item=> { %>
-                        <div class="col">
-                            <div class="card h-100 shadow-sm border-0 book-card-cart">
-                                <div class="row g-0 h-100">
-                                    <div class="col-4 col-sm-3 border-end" style="border-color: rgba(30,64,175,0.05) !important;">
-                                        <img src="<%= item.book.cover_url || '/images/default-cover.jpg' %>"
-                                            class="img-fluid rounded-start h-100 cart-book-img w-100"
-                                            alt="<%= item.book.title %>">
-                                    </div>
-                                    <div class="col-8 col-sm-9">
-                                        <div class="card-body d-flex flex-column h-100 p-4">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <h5 class="card-title fw-bold text-dark pe-3 mb-0">
-                                                    <%= item.book.title %>
-                                                </h5>
-                                                <span class="fs-5 fw-bold" style="color: var(--brand-teal);">
-                                                    <%= item.book.price %>€
-                                                </span>
-                                            </div>
+            <% } %>
 
-                                            <div class="d-flex align-items-center mt-3 mb-3">
-                                                <span class="me-3 small text-muted fw-medium text-uppercase">
-                                                    <%= t('cart.quantity') %>
-                                                </span>
-                                                <div class="qty-controls d-flex align-items-center">
-                                                    <form action="/cart/add" method="POST" class="m-0">
-                                                        <input type="hidden" name="book_id" value="<%= item.book_id %>">
-                                                        <input type="hidden" name="quantity" value="-1">
-                                                        <button type="submit" class="btn btn-sm px-3 fw-bold text-primary border-end-0 border-top-0 border-bottom-0"><i class="bi bi-dash"></i></button>
-                                                    </form>
+                <% if (cart.length===0) { %>
+                    <div class="text-center py-5 shadow-sm rounded-4 border-0"
+                        style="background: rgba(255,255,255,0.8); backdrop-filter: blur(10px);">
+                        <div class="mx-auto bg-light rounded-circle d-flex align-items-center justify-content-center mb-4"
+                            style="width: 120px; height: 120px;">
+                            <i class="bi bi-cart-x fs-1 text-muted opacity-50"></i>
+                        </div>
+                        <h3 class="fw-bold mb-3 text-dark">
+                            <%= t('cart.empty_msg') || 'Tu carrito está vacío' %>
+                        </h3>
+                        <p class="text-muted mb-4">¡Aún no has añadido ningún libro a tu carrito!</p>
+                        <a href="/books/showAllBooks" class="btn btn-primary px-5 rounded-pill py-3 h5 mb-0">
+                            <i class="bi bi-book me-2"></i>
+                            <%= t('cart.back_to_shop') || 'Explorar el catálogo' %>
+                        </a>
+                    </div>
+                    <% } else { %>
+                        <div class="row align-items-start">
+                            <div class="col-lg-8 mb-4">
+                                <div class="row row-cols-1 g-4">
+                                    <% cart.forEach(item=> { %>
+                                        <div class="col">
+                                            <div class="card h-100 shadow-sm border-0 book-card-cart">
+                                                <div class="row g-0 h-100">
+                                                    <div class="col-4 col-sm-3 border-end"
+                                                        style="border-color: rgba(30,64,175,0.05) !important;">
+                                                        <img src="<%= item.book.cover_url || '/images/default-cover.jpg' %>"
+                                                            class="img-fluid rounded-start h-100 cart-book-img w-100"
+                                                            alt="<%= item.book.title %>">
+                                                    </div>
+                                                    <div class="col-8 col-sm-9">
+                                                        <div class="card-body d-flex flex-column h-100 p-4">
+                                                            <div
+                                                                class="d-flex justify-content-between align-items-start mb-2">
+                                                                <h5 class="card-title fw-bold text-dark pe-3 mb-0">
+                                                                    <%= item.book.title %>
+                                                                </h5>
+                                                                <span class="fs-5 fw-bold"
+                                                                    style="color: var(--brand-teal);">
+                                                                    <%= Number(item.book.price).toFixed(2) %>€
+                                                                </span>
+                                                            </div>
 
-                                                    <span class="px-3 fw-bold" style="min-width: 40px; text-align: center;">
-                                                        <%= item.quantity %>
-                                                    </span>
+                                                            <div class="d-flex align-items-center mt-3 mb-3">
+                                                                <span
+                                                                    class="me-3 small text-muted fw-medium text-uppercase">
+                                                                    <%= t('cart.quantity') %>
+                                                                </span>
+                                                                <div class="qty-controls d-flex align-items-center">
+                                                                    <form action="/cart/add" method="POST" class="m-0">
+                                                                        <input type="hidden" name="book_id"
+                                                                            value="<%= item.book_id %>">
+                                                                        <input type="hidden" name="quantity" value="-1">
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm px-3 fw-bold text-primary border-0"><i
+                                                                                class="bi bi-dash"></i></button>
+                                                                    </form>
+                                                                    <span class="px-3 fw-bold"
+                                                                        style="min-width: 40px; text-align: center;">
+                                                                        <%= item.quantity %>
+                                                                    </span>
+                                                                    <form action="/cart/add" method="POST" class="m-0">
+                                                                        <input type="hidden" name="book_id"
+                                                                            value="<%= item.book_id %>">
+                                                                        <input type="hidden" name="quantity" value="1">
+                                                                        <button type="submit"
+                                                                            class="btn btn-sm px-3 fw-bold text-primary border-0"
+                                                                            <%=item.quantity>= item.book.stock ?
+                                                                            'disabled' : '' %>><i
+                                                                                class="bi bi-plus"></i></button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
 
-                                                    <form action="/cart/add" method="POST" class="m-0">
-                                                        <input type="hidden" name="book_id" value="<%= item.book_id %>">
-                                                        <input type="hidden" name="quantity" value="1">
-                                                        <button type="submit" class="btn btn-sm px-3 fw-bold text-primary border-start-0 border-top-0 border-bottom-0"
-                                                            <%=item.quantity>= item.book.stock ? 'disabled' : '' %>>
-                                                            <i class="bi bi-plus"></i>    
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-
-                                            <div class="d-flex justify-content-between align-items-center mt-auto border-top pt-3" style="border-color: rgba(30,64,175,0.05) !important;">
-                                                <form action="/cart/add" method="POST" class="m-0">
-                                                    <input type="hidden" name="book_id" value="<%= item.book_id %>">
-                                                    <input type="hidden" name="quantity" value="-<%= item.quantity %>">
-                                                    <button type="submit" class="btn btn-link btn-sm p-0 text-danger text-decoration-none small fw-medium">
-                                                        <i class="bi bi-trash3 me-1"></i>
-                                                        <%= t('cart.remove') %>
-                                                    </button>
-                                                </form>
-                                                
-                                                <div class="fw-bold fs-6 text-dark bg-light px-3 py-1 rounded-pill border">
-                                                    <span class="text-muted small me-2"><%= t('cart.subtotal') %>:</span>
-                                                    <%= (item.book.price * item.quantity).toFixed(2) %>€
+                                                            <div class="d-flex justify-content-between align-items-center mt-auto border-top pt-3"
+                                                                style="border-color: rgba(30,64,175,0.05) !important;">
+                                                                <form action="/cart/add" method="POST" class="m-0">
+                                                                    <input type="hidden" name="book_id"
+                                                                        value="<%= item.book_id %>">
+                                                                    <input type="hidden" name="quantity"
+                                                                        value="-<%= item.quantity %>">
+                                                                    <button type="submit"
+                                                                        class="btn btn-link btn-sm p-0 text-danger text-decoration-none small fw-medium">
+                                                                        <i class="bi bi-trash3 me-1"></i>
+                                                                        <%= t('cart.remove') %>
+                                                                    </button>
+                                                                </form>
+                                                                <div
+                                                                    class="fw-bold fs-6 text-dark bg-light px-3 py-1 rounded-pill border">
+                                                                    <span class="text-muted small me-2">
+                                                                        <%= t('cart.subtotal') %>:
+                                                                    </span>
+                                                                    <%= (Number(item.book.price) *
+                                                                        item.quantity).toFixed(2) %>€
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <% }) %>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-4 sticky-top" style="top: 100px;">
+                                <div class="summary-card p-4 p-xl-5 rounded-4">
+                                    <h4 class="fw-bold mb-4 d-flex align-items-center pb-3 border-bottom"
+                                        style="color: var(--brand-teal);">
+                                        <i class="bi bi-receipt me-2 text-warning"></i> Resumen
+                                    </h4>
+
+                                    <div class="d-flex justify-content-between mb-3 text-muted">
+                                        <span>Productos (<%= cart.reduce((acc, item)=> acc + item.quantity, 0)
+                                                %>)</span>
+                                        <span>
+                                            <%= total %>€
+                                        </span>
                                     </div>
+
+                                    <div class="d-flex justify-content-between mb-4 text-muted">
+                                        <span>Envío</span>
+                                        <span class="text-success fw-bold">¡Gratis!</span>
+                                    </div>
+
+                                    <div class="mb-4 pt-3 border-top">
+                                        <% if (!user) { %>
+                                            <div class="p-3 rounded-4 border border-info bg-info bg-opacity-10 mb-2">
+                                                <p class="small mb-3 text-dark"><i
+                                                        class="bi bi-info-circle-fill me-1"></i> Identifícate para
+                                                    completar el pedido.</p>
+                                                <a href="/login?returnTo=/cart/view"
+                                                    class="btn btn-primary btn-sm w-100 rounded-pill">Iniciar Sesión</a>
+                                            </div>
+                                            <% } else { %>
+                                                <label
+                                                    class="fw-bold small text-uppercase text-muted mb-3 d-block">Enviar
+                                                    a:</label>
+                                                <% if (addresses && addresses.length> 0) { %>
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <% addresses.forEach((addr, i)=> { %>
+                                                            <div class="address-select-item">
+                                                                <input type="radio" class="btn-check"
+                                                                    name="shipping_address_radio" id="addr<%= i %>"
+                                                                    value="<%= addr.text %>" <%=i===0 ? 'checked' : ''
+                                                                    %>>
+                                                                <label
+                                                                    class="btn btn-outline-light text-dark text-start w-100 p-3 rounded-4 border shadow-sm"
+                                                                    for="addr<%= i %>">
+                                                                    <div
+                                                                        class="d-flex justify-content-between align-items-center">
+                                                                        <span class="fw-bold small">
+                                                                            <%= addr.label %>
+                                                                        </span>
+                                                                        <i
+                                                                            class="bi bi-check-circle-fill text-teal small"></i>
+                                                                    </div>
+                                                                    <div class="small text-muted text-truncate">
+                                                                        <%= addr.text %>
+                                                                    </div>
+                                                                </label>
+                                                            </div>
+                                                            <% }) %>
+                                                    </div>
+                                                    <% } else { %>
+                                                        <div class="alert alert-warning small rounded-4 py-2">
+                                                            <i class="bi bi-geo-alt"></i> Sin dirección. <a
+                                                                href="/user/editUserProfile"
+                                                                class="fw-bold text-dark">Añadir</a>
+                                                        </div>
+                                                        <% } %>
+                                                            <% } %>
+                                    </div>
+
+                                    <div class="border-top pt-4 mb-4">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fs-5 fw-bold text-dark">
+                                                <%= t('cart.total') %>
+                                            </span>
+                                            <span class="fs-3 fw-bold" style="color: var(--brand-teal);">
+                                                <%= total %>€
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <form action="/cart/checkout" method="POST" id="checkout-form">
+                                        <input type="hidden" name="shipping_address" id="final-shipping-address">
+                                        <input type="hidden" name="firebase_token" id="firebase-token">
+
+                                        <button type="submit" id="checkout-btn"
+                                            class="btn btn-success btn-lg w-100 shadow-sm rounded-pill d-flex justify-content-center align-items-center gap-2"
+                                            disabled>
+                                            <div class="spinner-border spinner-border-sm" role="status"
+                                                id="checkout-spinner"></div>
+                                            <span id="checkout-text">
+                                                <%= t('cart.btn_loading') %>
+                                            </span>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
-                    <% }) %>
-                </div>
-            </div>
 
-            <div class="col-lg-4">
-                <div class="summary-card p-4 p-xl-5 rounded-4 sticky-top" style="top: 100px;">
-                    <h4 class="fw-bold mb-4 d-flex align-items-center pb-3 border-bottom" style="color: var(--brand-teal);">
-                        <i class="bi bi-receipt me-2 text-warning"></i> Resumen
-                    </h4>
-                    
-                    <div class="d-flex justify-content-between mb-3 text-muted">
-                        <span>Productos (<%= cart.reduce((acc, item) => acc + item.quantity, 0) %>)</span>
-                        <span><%= total %>€</span>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between mb-4 text-muted">
-                        <span>Envío</span>
-                        <span class="text-success fw-bold">¡Gratis!</span>
-                    </div>
+                        <script type="module">
+                            import { initCheckout } from '/js/auth.mjs';
 
-                    <div class="border-top pt-4 mb-4">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fs-5 fw-bold text-dark"><%= t('cart.total') %></span>
-                            <span class="fs-3 fw-bold" style="color: var(--brand-teal);">
-                                <%= total %>€
-                            </span>
-                        </div>
-                    </div>
+                            document.addEventListener('DOMContentLoaded', () => {
+                                // Inicializar lógica de Firebase y Checkout
+                                initCheckout();
 
-                    <form action="/cart/checkout" method="POST" id="checkout-form" class="d-block mt-4">
-                        <input type="hidden" name="firebase_token" id="firebase-token">
-                        <button type="submit" id="checkout-btn"
-                            class="btn btn-success btn-lg w-100 shadow-sm rounded-pill d-flex justify-content-center align-items-center gap-2" disabled>
-                            <div class="spinner-border spinner-border-sm" role="status" id="checkout-spinner"></div>
-                            <span id="checkout-text"><%= t('cart.btn_loading') %></span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+                                // Lógica para capturar la dirección seleccionada
+                                const hiddenAddressInput = document.getElementById('final-shipping-address');
+                                const radios = document.querySelectorAll('input[name="shipping_address_radio"]');
 
-        <script type="module">
-            import { initCheckout } from '/js/auth.mjs';
+                                const updateHiddenAddress = () => {
+                                    const checked = document.querySelector('input[name="shipping_address_radio"]:checked');
+                                    if (checked) hiddenAddressInput.value = checked.value;
+                                };
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
-                    initCheckout();
-                });
-            } else {
-                initCheckout();
-            }
-        </script>
-    <% } %>
-</main>
+                                radios.forEach(r => r.addEventListener('change', updateHiddenAddress));
+                                updateHiddenAddress(); // Ejecución inicial
+                            });
+                        </script>
+                        <% } %>
+    </main>
 
-<%- include('../layout/footer') %>
+    <%- include('../layout/footer') %>

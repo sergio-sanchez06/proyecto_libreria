@@ -197,7 +197,8 @@
     "status_processing": "Procesando",
     "status_shipped": "Enviado",
     "status_delivered": "Entregado",
-    "status_cancelled": "Cancelado"
+    "status_cancelled": "Cancelado",
+    "shipping_address": "Dirección de envío"
   },
   "adminOrders": {
     "title": "Gestión de Pedidos",
@@ -223,7 +224,8 @@
     "status_processing": "Procesando",
     "status_shipped": "Enviado",
     "status_delivered": "Entregado",
-    "status_cancelled": "Cancelado"
+    "status_cancelled": "Cancelado",
+    "shipping_address": "Dirección de envío"
   },
   "adminDashboard": {
     "nav_title": "Panel Admin",
@@ -396,5 +398,30 @@
     "reviews": "Reseñas",
     "save": "Guardar",
     "user": "Usuario"
+  },
+  "cookies_policy": {
+    "title": "Política de Cookies",
+    "intro": "En cumplimiento con la normativa vigente, se informa que este proyecto educativo utiliza cookies con fines puramente técnicos y de funcionamiento.",
+    "session_name": "Cookies de Sesión:",
+    "session_desc": "Necesarias para mantener la autenticación del usuario en el panel de administración o carrito de compra.",
+    "technical_name": "Cookies Técnicas:",
+    "technical_desc": "Permiten la navegación a través de la web y el uso de las diferentes opciones o servicios que en ella existen.",
+    "disclaimer": "Al ser un entorno de pruebas y aprendizaje, no se realizan seguimientos publicitarios ni se comparten datos con terceros (cookies de terceros)."
+  }, "legal_notice": {
+    "title": "Aviso Legal",
+    "section1_title": "1. Carácter Educativo:",
+    "section1_text": "Este sitio web ha sido desarrollado como parte de un proyecto académico/educativo sin fines de lucro. La finalidad es demostrar competencias técnicas en desarrollo web y gestión de bases de datos.",
+    "section2_title": "2. Propiedad Intelectual e Imágenes:",
+    "section2_text": "Se informa al usuario que el titular de este proyecto no dispone de ninguna propiedad ni derechos de autor sobre las imágenes de portadas de libros, logotipos o recursos gráficos mostrados. Dichos elementos pertenecen a sus legítimos autores y editoriales, y se utilizan aquí exclusivamente con fines ilustrativos y didácticos.",
+    "section3_title": "3. Responsabilidad:",
+    "section3_text": "El contenido de esta web es simulado. Los precios, stock y datos de contacto no tienen validez real. El autor no se hace responsable del uso indebido de la información aquí presentada."
+  }, "privacy_policy": {
+    "title": "Política de Privacidad",
+    "purpose_title": "Finalidad del tratamiento:",
+    "purpose_text": "Los datos personales que se puedan recoger (como nombres de usuario en pruebas) se tratan únicamente para validar el funcionamiento de la lógica del servidor (Node.js/Express) y las transacciones en la base de datos PostgreSQL.",
+    "storage_title": "Almacenamiento:",
+    "storage_text": "Al tratarse de un proyecto académico, se recomienda no introducir datos personales reales. La base de datos es local o de prueba y puede ser eliminada en cualquier momento tras la finalización del ciclo educativo.",
+    "rights_title": "Derechos:",
+    "rights_text": "El usuario puede solicitar la eliminación de sus datos de prueba contactando con el administrador del proyecto a través del repositorio correspondiente."
   }
 }

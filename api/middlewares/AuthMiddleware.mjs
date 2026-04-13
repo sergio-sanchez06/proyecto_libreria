@@ -10,7 +10,7 @@ async function authenticate(req, res, next) {
   const token = authHeader.split("Bearer ")[1];
 
   try {
-    const user = await AuthService.verifyTokenAndGetUser(token);
+    const { user } = await AuthService.verifyTokenAndGetUser(token);
     req.user = user;
     next();
   } catch (error) {

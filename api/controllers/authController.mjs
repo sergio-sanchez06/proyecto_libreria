@@ -16,38 +16,66 @@ export const register = async (req, res) => {
 };
 
 export const socialLogin = async (req, res) => {
-  console.log("Iniciando sesión social");
-  console.log(req.body);
-  const { idToken, default_address, optional_address } = req.body;
+  const { idToken } = req.body;
 
   try {
-    // 1. Validamos el token con el servicio
-    // (firebaseUser contendrá la info que Google/X ya verificaron)
     const firebaseData = await AuthService.verifySocialToken(idToken);
 
-    // 2. Usamos tu Repositorio para "Sincronizar"
-    // Si no existe, lo crea. Si existe, lo recupera.
-    const user = await UserRepository.upsertFromFirebase({
+    // Desestructuramos la respuesta del repositorio
+    const { user, isNewUser } = await UserRepository.upsertFromFirebase({
       firebase_uid: firebaseData.uid,
       email: firebaseData.email,
       name: firebaseData.name,
-      role: "CLIENT", // Rol por defecto
-      default_address: default_address || "Pendiente de completar",
-      optional_address: optional_address || null,
+      role: "CLIENT",
     });
 
+    console.log(isNewUser);
+
     res.status(200).json({
-      message: "Autenticación social exitosa",
+      message: isNewUser ? "Usuario creado" : "Sesión iniciada",
       user: user,
+      isNewUser: isNewUser, // Enviamos esto al frontend
     });
   } catch (error) {
     console.error("Error en login social:", error);
-    res.status(401).json({
-      message: "No se pudo autenticar con el proveedor social",
-      error: error.message,
-    });
+    res
+      .status(401)
+      .json({ message: "Fallo en la autenticación", error: error.message });
   }
 };
+// export const socialLogin = async (req, res) => {
+//   console.log("Iniciando sesión social");
+//   console.log(req.body);
+//   const { idToken, default_address, optional_address } = req.body;
+
+//   try {
+//     // 1. Validamos el token con el servicio
+//     // (firebaseUser contendrá la info que Google/X ya verificaron)
+//     const firebaseData = await AuthService.verifySocialToken(idToken);
+
+//     // 2. Usamos tu Repositorio para "Sincronizar"
+//     // Si no existe, lo crea. Si existe, lo recupera.
+//     const user = await UserRepository.upsertFromFirebase({
+//       firebase_uid: firebaseData.uid,
+//       email: firebaseData.email,
+//       name: firebaseData.name,
+//       role: "CLIENT", // Rol por defecto
+//       default_address: default_address || "Pendiente de completar",
+//       optional_address: optional_address || null,
+//     });
+
+//     res.status(200).json({
+//       message: "Autenticación social exitosa",
+//       user: user,
+//     });
+//   } catch (error) {
+//     console.error("Error en login social:", error);
+//     res.status(401).json({
+//       message: "No se pudo autenticar con el proveedor social",
+//       error: error.message,
+//     });
+//   }
+// };
 
 // export const register = async (req, res) => {
 //   console.log("Registrando usuario");
@@ -78,11 +106,15 @@ export const login = async (req, res) => {
     const { idToken } = req.body;
     if (!idToken) return res.status(400).json({ message: "Token requerido" });
 
-    const user = await AuthService.verifyTokenAndGetUser(idToken);
+    const { user, isNewUser } =
+      await AuthService.verifyTokenAndGetUser(idToken);
+    // Ahora user.email sí existe
     console.log("Inicio de sesion exitoso para:", user.email);
+    console.log("¿Es usuario nuevo?:", isNewUser);
     res.status(200).json({
       message: "Login exitoso",
       user,
+      isNewUser,
     });
   } catch (error) {
     console.error("Error en login:", error);

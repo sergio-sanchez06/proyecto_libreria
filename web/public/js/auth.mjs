@@ -132,25 +132,83 @@ export function getCurrentUser() {
 /**
  * Lógica para la vista de Checkout
  */
+
 export function initCheckout() {
   onAuthStateChanged(auth, async (user) => {
+    const checkoutBtn = document.getElementById("checkout-btn");
+    const checkoutSpinner = document.getElementById("checkout-spinner");
+    const checkoutText = document.getElementById("checkout-text");
+    const checkoutForm = document.getElementById("checkout-form");
+    const tokenInput = document.getElementById("firebase-token");
+
     if (!user) {
-      window.location.href = "/login";
+      window.location.href = "/login?returnTo=/cart/view";
       return;
     }
 
-    try {
-      const token = await user.getIdToken();
-      const tokenInput = document.getElementById("firebase-token");
-      const checkoutBtn = document.getElementById("checkout-btn");
+    // Ya sabemos que hay usuario, habilitamos el botón visualmente
+    if (checkoutBtn) {
+      checkoutBtn.disabled = false;
+      if (checkoutSpinner) checkoutSpinner.classList.add("d-none");
+      if (checkoutText) checkoutText.textContent = "Confirmar y Pagar";
+    }
 
-      if (tokenInput && checkoutBtn) {
-        tokenInput.value = token;
-        checkoutBtn.disabled = false;
-        checkoutBtn.textContent = "Finalizar compra";
-      }
-    } catch (err) {
-      console.error("Error en checkout auth:", err);
+    // ESCUCHAMOS EL CLIC FINAL
+    if (checkoutForm) {
+      checkoutForm.addEventListener("submit", async (e) => {
+        e.preventDefault(); // Detenemos el envío para refrescar el token
+
+        try {
+          // 1. Bloqueamos interfaz
+          checkoutBtn.disabled = true;
+          checkoutText.textContent = "Validando seguridad...";
+          if (checkoutSpinner) checkoutSpinner.classList.remove("d-none");
+
+          // 2. PEDIMOS TOKEN FRESCO (La clave del éxito)
+          const freshToken = await user.getIdToken(true);
+          tokenInput.value = freshToken;
+
+          // 3. Enviamos el formulario manualmente
+          checkoutForm.submit();
+        } catch (err) {
+          console.error("Error al refrescar token antes de pagar:", err);
+          alert("Error de seguridad. Por favor, recarga la página.");
+          checkoutBtn.disabled = false;
+        }
+      });
     }
   });
+}
+
+// export function initCheckout() {
+//   onAuthStateChanged(auth, async (user) => {
+//     if (!user) {
+//       window.location.href = "/login";
+//       return;
+//     }
+
+//     try {
+//       const token = await user.getIdToken();
+//       const tokenInput = document.getElementById("firebase-token");
+//       const checkoutBtn = document.getElementById("checkout-btn");
+
+//       if (tokenInput && checkoutBtn) {
+//         tokenInput.value = token;
+//         checkoutBtn.disabled = false;
+//         checkoutBtn.textContent = "Finalizar compra";
+//       }
+//     } catch (err) {
+//       console.error("Error en checkout auth:", err);
+//     }
+//   });
+// }
+
+export async function getFreshToken() {
+  const user = auth.currentUser;
+
+  if (!user) throw new Error("No hay usuario autenticado");
+
+  // El parámetro 'true' fuerza a Firebase a pedir un token nuevo a Google
+  // en lugar de darte el que tiene guardado en memoria (que podría expirar pronto)
+  return await user.getIdToken(true);
 }

@@ -3,7 +3,7 @@ import pool from "../config/database.mjs";
 import OrderItemsRepository from "./OrderItemsRepository.mjs";
 import BookRepository from "./BookRepository.mjs";
 
-async function createOrder({ user_id, items }) {
+async function createOrder({ user_id, items, shipping_address }) {
   const client = await pool.connect(); // Aquí SÍ usamos client para la transacción
 
   try {
@@ -37,8 +37,8 @@ async function createOrder({ user_id, items }) {
     }
 
     const orderResult = await client.query(
-      "INSERT INTO orders (user_id, total, status) VALUES ($1, $2, 'PENDIENTE') RETURNING *",
-      [user_id, total],
+      "INSERT INTO orders (user_id, total, status, shipping_address) VALUES ($1, $2, 'PENDIENTE', $3) RETURNING *",
+      [user_id, total, shipping_address],
     );
     const order = new Order(orderResult.rows[0]);
 

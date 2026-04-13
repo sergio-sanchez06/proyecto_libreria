@@ -197,7 +197,8 @@
     "status_processing": "Procesando",
     "status_shipped": "Enviado",
     "status_delivered": "Entregado",
-    "status_cancelled": "Cancelado"
+    "status_cancelled": "Cancelado",
+    "shipping_address": "Dirección de envío"
   },
   "adminOrders": {
     "title": "Xestión de Pedidos",
@@ -217,13 +218,14 @@
     "modal_price": "Prezo Unit.",
     "modal_subtotal": "Subtotal",
     "modal_close": "Pechar",
-    "delete_confirm": "Estás seguro de que desexas eliminar este pedido? Esta acción non se pode deshacer.",
+    "delete_confirm": "Estás seguro de que desexas eliminar este pedido? Esta acción non se pode desfacer.",
     "status_pending": "Pendente",
     "status_paid": "Pagado",
     "status_processing": "Procesando",
     "status_shipped": "Enviado",
     "status_delivered": "Entregado",
-    "status_cancelled": "Cancelado"
+    "status_cancelled": "Cancelado",
+    "shipping_address": "Dirección de envío"
   },
   "adminDashboard": {
     "nav_title": "Panel Admin",
@@ -396,5 +398,30 @@
     "reviews": "Recensións",
     "save": "Gardar",
     "user": "Usuario"
+  },
+  "cookies_policy": {
+    "title": "Política de Cookies",
+    "intro": "En cumprimento coa normativa vixente, infórmase de que este proxecto educativo utiliza cookies con fins puramente técnicos e de funcionamento.",
+    "session_name": "Cookies de Sesión:",
+    "session_desc": "Necesarias para manter a autenticación do usuario no panel de administración ou no carriño da compra.",
+    "technical_name": "Cookies Técnicas:",
+    "technical_desc": "Permiten a navegación a través da web e o uso de diferentes opcións ou servizos que nela existen.",
+    "disclaimer": "Ao ser un entorno de probas e aprendizaxe, no se realizan seguimentos publicitarios nin se comparten datos con terceiros (cookies de terceiros)."
+  }, "legal_notice": {
+    "title": "Aviso Legal",
+    "section1_title": "1. Carácter Educativo:",
+    "section1_text": "Este sitio web foi desenvolvido como parte dun proxecto académico/educativo sen fins de lucro. A finalidade é demostrar competencias técnicas en desenvolvemento web e xestión de bases de datos.",
+    "section2_title": "2. Propiedade Intelectual e Imaxes:",
+    "section2_text": "Infórmase ao usuario que o titular deste proxecto non dispón de ningunha propiedade nin dereitos de autor sobre as imaxes de portadas de libros, logotipos ou recursos gráficos mostrados. Ditos elementos pertencen aos seus lexítimos autores e editoriais, e utilízanse aquí exclusivamente con fins ilustrativos e didácticos.",
+    "section3_title": "3. Responsabilidade:",
+    "section3_text": "O contido desta web é simulado. Os prezos, stock e datos de contacto non teñen validez real. O autor non se fai responsable do uso indebido da información aquí presentada."
+  }, "privacy_policy": {
+    "title": "Política de Privacidade",
+    "purpose_title": "Finalidade do tratamento:",
+    "purpose_text": "Os datos persoais que se poidan recoller (como nomes de usuario en probas) trátanse unicamente para validar o funcionamento da lóxica do servidor (Node.js/Express) e as transaccións na base de datos PostgreSQL.",
+    "storage_title": "Almacenamento:",
+    "storage_text": "Ao tratarse dun proxecto académico, recoméndase non introducir datos persoais reais. A base de datos é local ou de proba e pode ser eliminada en calquera momento tras a finalización do ciclo educativo.",
+    "rights_title": "Dereitos:",
+    "rights_text": "O usuario pode solicitar a eliminación dos seus datos de proba contactando co administrador do proxecto a través do repositorio correspondente."
   }
 }

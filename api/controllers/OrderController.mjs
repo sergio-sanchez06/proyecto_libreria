@@ -1,15 +1,21 @@
 import OrderRepository from "../Repositories/OrderRepository.mjs";
 
 async function createOrder(req, res) {
-  const { items } = req.body;
+  const { items, shipping_address } = req.body;
   const user_id = req.user.id;
+
+  const finalAddress = shipping_address || req.user.default_address;
 
   if (!items || items.length === 0) {
     return res.status(400).json({ error: "El carrito está vacío" });
   }
 
   try {
-    const order = await OrderRepository.createOrder({ items, user_id });
+    const order = await OrderRepository.createOrder({
+      items,
+      user_id,
+      shipping_address: finalAddress,
+    });
     res.status(201).json(order);
   } catch (error) {
     console.error(error);

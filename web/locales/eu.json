@@ -197,7 +197,8 @@
     "status_processing": "Prozesatzen",
     "status_shipped": "Bidalia",
     "status_delivered": "Entregatua",
-    "status_cancelled": "Ezeztatua"
+    "status_cancelled": "Ezeztatua",
+    "shipping_address": "Bidalketa helbidea"
   },
   "adminOrders": {
     "title": "Eskaeren Kudeaketa",
@@ -223,7 +224,8 @@
     "status_processing": "Prozesatzen",
     "status_shipped": "Bidalita",
     "status_delivered": "Emanda",
-    "status_cancelled": "Bertan behera utzia"
+    "status_cancelled": "Bertan behera utzia",
+    "shipping_address": "Bidalketa helbidea"
   },
   "adminDashboard": {
     "nav_title": "Admin Panela",
@@ -396,5 +398,32 @@
     "reviews": "Iritziak",
     "save": "Gorde",
     "user": "Erabiltzailea"
+  },
+  "cookies_policy": {
+    "title": "Cookie Politika",
+    "intro": "Indarrean dagoen araudia betez, jakinarazten dizugu hezkuntza-proiektu honek helburu teknikoetarako eta funtzionamendurako soilik erabiltzen dituela cookieak.",
+    "session_name": "Saio-cookieak:",
+    "session_desc": "Beharrezkoak dira erabiltzailearen autentifikazioari administrazio-panelean edo erosketa-saskian eusteko.",
+    "technical_name": "Cookie Teknikoak:",
+    "technical_desc": "Webgunean zehar nabigatzeko eta bertan dauden aukera edo zerbitzuak erabiltzeko aukera ematen dute.",
+    "disclaimer": "Proba- eta ikaskuntza-ingurunea denez, ez da publizitate-jarraipenik egiten eta ez da daturik partekatzen hirugarrenekin (hirugarrenen cookieak)."
+  },
+  "legal_notice": {
+    "title": "Lege Oharra",
+    "section1_title": "1. Hezkuntza Izaera:",
+    "section1_text": "Webgune hau irabazi-asmorik gabeko proiektu akademiko/hezkuntza-proiektu baten barruan garatu da. Helburua web garapenean eta datu-baseen kudeaketan gaitasun teknikoak erakustea da.",
+    "section2_title": "2. Jabetza Intelektuala eta Irudiak:",
+    "section2_text": "Erabiltzaileari jakinarazten zaio proiektu honen titularrak ez duela liburuen azaleko irudien, logotipoen edo erakutsitako baliabide grafikoen jabetzarik edo egile-eskubiderik. Elementu horiek legezko egile eta argitaletxeenak dira, eta helburu ilustratibo eta didaktikoekin soilik erabiltzen dira hemen.",
+    "section3_title": "3. Erantzukizuna:",
+    "section3_text": "Webgune honen edukia simulatua da. Prezioek, stockak eta harremanetarako datuek ez dute benetako baliorik. Egilea ez da hemen aurkeztutako informazioaren erabilera okerraren erantzule egiten."
+  },
+  "privacy_policy": {
+    "title": "Pribatutasun Politika",
+    "purpose_title": "Tratamenduaren helburua:",
+    "purpose_text": "Biltzen diren datu pertsonalak (probetako erabiltzaile-izenak, adibidez) zerbitzariaren logikaren (Node.js/Express) eta PostgreSQL datu-baseko transakzioen funtzionamendua balioztatzeko soilik erabiltzen dira.",
+    "storage_title": "Biltegiratzea:",
+    "storage_text": "Hezkuntza-proiektua denez, benetako datu pertsonalik ez sartzea gomendatzen da. Datu-basea lokala edo probakoa da eta edozein unetan ezaba daiteke hezkuntza-zikloa amaitu ondoren.",
+    "rights_title": "Eskubideak:",
+    "rights_text": "Erabiltzaileak bere proba-datuak ezabatzeko eska dezake, proiektuaren administratzailearekin harremanetan jarriz dagokion biltegiaren (repositorio) bidez."
   }
 }

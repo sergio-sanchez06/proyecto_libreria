@@ -176,7 +176,7 @@ async function verifyTokenAndGetUser(idToken) {
   // Sincronizamos con la DB
   // - Primera vez → INSERT (crea el usuario)
   // - Siguientes  → UPDATE solo email y updated_at
-  return await UserRepository.upsertFromFirebase({
+  const { user, isNewUser } = await UserRepository.upsertFromFirebase({
     firebase_uid: decodedToken.uid,
     email: decodedToken.email,
     name: decodedToken.name || decodedToken.email.split("@")[0],
@@ -184,6 +184,8 @@ async function verifyTokenAndGetUser(idToken) {
     default_address: "Pendiente de completar", // Se establece este valor en caso de que la dirección por defecto no se haya establecido
     optional_address: null,
   });
+
+  return { user, isNewUser };
 }
 
 // async function verifyTokenAndGetUser(idToken) {

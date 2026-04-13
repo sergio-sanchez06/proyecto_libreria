@@ -1,17 +1,17 @@
-<%- include("../layout/header", { 
-    title: user.name + ' - Mis Reseñas',
-    bodyClass: 'bg-user-vistas' 
-}) %>
+<%- include("../layout/header", { title: user.name + ' - Mis Reseñas' , bodyClass: 'bg-user-vistas' }) %>
 
-<style>
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(252, 250, 247, 0.45);
-        z-index: -1;
-    }
-</style>
+    <style>
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(252, 250, 247, 0.45);
+            z-index: -1;
+        }
+
         .hover-primary:hover {
             color: var(--bs-primary) !important;
             transition: color 0.2s ease;
@@ -75,7 +75,7 @@
                                     <div class="row g-0">
                                         <div
                                             class="col-md-2 bg-light d-flex align-items-center justify-content-center p-3">
-                                            <img src="<%= review.book_cover || '/images/default-cover.jpg' %>"
+                                            <img src="<%= review.book_cover || '/covers/cover_default.jpg' %>"
                                                 alt="<%= review.book_title %>" class="img-fluid rounded-2 shadow-sm"
                                                 style="max-height: 120px; object-fit: cover;">
                                         </div>

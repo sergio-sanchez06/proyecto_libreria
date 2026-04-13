@@ -109,6 +109,7 @@ async function getMe(req, res) {
 }
 
 async function updateProfile(req, res) {
+  console.log("Ide usuario", req.user.id);
   try {
     // req.user.id viene del middleware
     const updates = {
