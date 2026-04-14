@@ -2,6 +2,8 @@ import express from "express";
 import authorController from "../controllers/authorController.mjs";
 import upload from "../utils/upload.mjs";
 import protectMiddleware from "../middlewares/protect.mjs";
+import { validateSchema } from "../middlewares/validator.mjs";
+import { authorSchema } from "../schemas/authorSchema.mjs";
 
 const router = express.Router();
 
@@ -24,6 +26,8 @@ router.post(
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("photo"),
+  protectMiddleware.requireFreshToken,
+  validateSchema(authorSchema),
   authorController.createAuthor,
 );
 router.get(
@@ -37,12 +41,15 @@ router.post(
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   upload.single("photo"),
+  protectMiddleware.requireFreshToken,
+  validateSchema(authorSchema),
   authorController.updateAuthor,
 );
 router.post(
   "/author/delete/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
+  protectMiddleware.requireFreshToken,
   authorController.deleteAuthor,
 );
 
@@ -50,6 +57,7 @@ router.post(
   "/author/restore/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
+  protectMiddleware.requireFreshToken,
   authorController.restoreAuthor,
 );
 

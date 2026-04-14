@@ -24,4 +24,24 @@ async function requireAdmin(req, res, next) {
   }
 }
 
-export default { protect, requireAdmin };
+async function requireFreshToken(req, res, next) {
+  const token = req.body?.firebase_token || req.headers["x-firebase-token"];
+
+  if (!token) {
+    // Si es una petición de formulario, redirige con error
+    if (req.accepts("html")) {
+      req.session.flash = {
+        type: "error",
+        message: "Sesión de seguridad requerida. Por favor recarga la página.",
+      };
+      return res.redirect("back");
+    }
+    return res.status(401).json({ message: "Token de seguridad requerido" });
+  }
+
+  // Guardamos el token fresco en la sesión para usarlo en el controlador
+  req.session.idToken = token;
+  next();
+}
+
+export default { protect, requireAdmin, requireFreshToken };

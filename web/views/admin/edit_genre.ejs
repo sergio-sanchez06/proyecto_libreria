@@ -99,7 +99,7 @@
                     </div>
                 <% } %>
 
-                <form action="/genres/update/<%= genre.id %>" method="POST">
+                <form action="/genres/update/<%= genre.id %>" method="POST" data-requires-token>
                     <input type="hidden" name="id" value="<%= genre.id %>">
                     
                     <div class="mb-4">

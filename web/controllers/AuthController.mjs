@@ -79,6 +79,12 @@ async function login(req, res) {
     req.session.user = user;
     req.session.idToken = idToken; // Evitamos almacenar la sesión de cara a controlar nosotros la duración de las sesiones
 
+    // 1. Recuperamos la URL guardada por el middleware (o vamos a / si no hay ninguna)
+    const redirectUrl = req.session.returnTo || "/";
+
+    // 2. Limpiamos la variable para que no afecte a futuros logins
+    delete req.session.returnTo;
+
     req.session.save((err) => {
       if (err) {
         console.error("Error al guardar sesión:", err);
@@ -87,7 +93,9 @@ async function login(req, res) {
           user: null,
         });
       }
-      res.redirect("/");
+      // res.redirect("/");
+
+      res.redirect(redirectUrl);
     });
   } catch (error) {
     const message = error.response?.data?.message || "Error al iniciar sesión";
@@ -208,6 +216,31 @@ async function socialLogin(req, res) {
   }
 }
 
+async function refreshToken(req, res) {
+  const { idToken } = req.body;
+
+  // Validación básica
+  if (!idToken || !req.session.user) {
+    return res.status(401).json({
+      ok: false,
+      message: "No autorizado o token no suministrado",
+    });
+  }
+
+  // Actualizamos el token en la sesión
+  req.session.idToken = idToken;
+
+  // Forzamos el guardado de la sesión para evitar condiciones de carrera
+  req.session.save((err) => {
+    if (err) {
+      console.error("Error al guardar la sesión tras refresh:", err);
+      return res.status(500).json({ ok: false });
+    }
+    console.log(`Token actualizado para el usuario: ${req.session.user.email}`);
+    res.json({ ok: true });
+  });
+}
+
 // async function socialLogin(req, res) {
 //   const { idToken } = req.body;
 
@@ -250,4 +283,5 @@ export default {
   register,
   showRegister,
   socialLogin,
+  refreshToken,
 };

@@ -204,11 +204,20 @@ export function initCheckout() {
 // }
 
 export async function getFreshToken() {
-  const user = auth.currentUser;
-
-  if (!user) throw new Error("No hay usuario autenticado");
-
-  // El parámetro 'true' fuerza a Firebase a pedir un token nuevo a Google
-  // en lugar de darte el que tiene guardado en memoria (que podría expirar pronto)
-  return await user.getIdToken(true);
+  return new Promise((resolve, reject) => {
+    // onAuthStateChanged espera a que Firebase sepa si hay alguien logueado
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      unsubscribe(); // Dejamos de escuchar una vez obtenemos la respuesta
+      if (user) {
+        try {
+          const token = await user.getIdToken(true);
+          resolve(token);
+        } catch (error) {
+          reject(error);
+        }
+      } else {
+        reject(new Error("No hay usuario autenticado en Firebase"));
+      }
+    });
+  });
 }

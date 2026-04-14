@@ -36,7 +36,10 @@ async function createBook(book) {
   }
 }
 
-async function getBookById(id, client = pool) {
+async function getBookById(id, options = {}) {
+  const client = options.client || pool;
+  const withRelations = options.withRelations || false;
+
   console.log("El id es (repo): ", id);
 
   try {

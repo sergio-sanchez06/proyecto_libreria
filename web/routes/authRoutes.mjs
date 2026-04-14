@@ -10,4 +10,6 @@ router.post("/register", AuthController.register);
 router.post("/social-login", AuthController.socialLogin);
 router.get("/logout", AuthController.logout);
 
+router.post("/refresh-token", AuthController.refreshToken);
+
 export default router;

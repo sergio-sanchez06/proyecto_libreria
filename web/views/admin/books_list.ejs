@@ -266,7 +266,7 @@
                                                             </div>
                                                             <% } else { %>
                                                                 <form action="/admin/books/restore/<%= book.id %>"
-                                                                    method="POST">
+                                                                    method="POST" data-requires-token>
                                                                     <button type="submit"
                                                                         class="btn btn-success btn-sm w-100 py-2 fw-bold">
                                                                         <i class="bi bi-arrow-counterclockwise"></i>

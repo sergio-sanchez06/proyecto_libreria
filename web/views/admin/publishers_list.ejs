@@ -165,7 +165,7 @@
                                     </button>
                                 </form>
                                 <% } else { %>
-                                    <form action="/publisher/restore/<%= pub.id %>" method="POST">
+                                    <form action="/publisher/restore/<%= pub.id %>" method="POST" data-requires-token>
                                         <button type="submit" class="btn-admin btn-restore" title="Restaurar">
                                             <i class="fas fa-trash-restore"></i>
                                         </button>

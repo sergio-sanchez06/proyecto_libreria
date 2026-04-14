@@ -1,14 +1,17 @@
 <%- include('../layout/header', { bodyClass: 'bg-user-vistas' }) %>
 
-<style>
-    body::before {
-        content: "";
-        position: fixed;
-        top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(252, 250, 247, 0.45);
-        z-index: -1;
-    }
-</style>
+    <style>
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(252, 250, 247, 0.45);
+            z-index: -1;
+        }
+    </style>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
@@ -177,4 +180,4 @@
         }
     </script>
 
-<%- include('../layout/footer') %>
+    <%- include('../layout/footer') %>

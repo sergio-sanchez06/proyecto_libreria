@@ -246,7 +246,7 @@
                                                                             <% } else { %>
                                                                                 <form
                                                                                     action="/authors/author/restore/<%= author.id %>"
-                                                                                    method="POST">
+                                                                                    method="POST" data-requires-token>
                                                                                     <button type="submit"
                                                                                         class="btn btn-success btn-sm w-100 py-2 fw-bold">
                                                                                         <i
@@ -257,7 +257,7 @@
 
                                                                                 <form
                                                                                     action="/authors/hard-delete/<%= author.id %>"
-                                                                                    method="POST"
+                                                                                    method="POST" data-requires-token
                                                                                     onsubmit="return confirm('ATENCIÓN: Esto eliminará al autor definitivamente. Solo hazlo si no tiene libros asociados.')">
                                                                                     <button type="submit"
                                                                                         class="btn btn-link btn-sm w-100 text-danger text-decoration-none mt-1"

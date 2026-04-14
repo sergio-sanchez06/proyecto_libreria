@@ -1,6 +1,8 @@
 import express from "express";
 import UserController from "../controllers/UserController.mjs";
 import protectMiddleware from "../middlewares/protect.mjs";
+import { validateSchema } from "../middlewares/validator.mjs";
+import { userSchema } from "../schemas/userSchema.mjs";
 
 const router = express.Router();
 
@@ -18,12 +20,15 @@ router.get(
 router.post(
   "/edit/:id",
   protectMiddleware.protect,
+  protectMiddleware.requireFreshToken,
+  validateSchema(userSchema),
   UserController.updateProfile,
 );
 
 router.post(
   "/dismissSelf",
   protectMiddleware.protect,
+  protectMiddleware.requireFreshToken,
   UserController.dismissSelf,
 );
 

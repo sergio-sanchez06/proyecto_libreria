@@ -19,6 +19,8 @@ import * as useragent from "express-useragent";
 import cookieParser from "cookie-parser";
 import sessionFileStore from "session-file-store";
 
+import os from "os";
+
 const FileStore = sessionFileStore(session);
 
 const SESSION_SECRET = "tu-secret-super-seguro";
@@ -45,12 +47,12 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(
   session({
     store: new FileStore({
-      path: "./temporary_sessions",
+      path: path.join(os.tmpdir(), "libreria_sessions"), // ← fuera del proyecto
       ttl: 3600 * 2,
       reapInterval: 3600,
-      retries: 5, // <--- Añade esto: reintenta 5 veces
-      factor: 1, // Factor de espera entre reintentos
-      minTimeout: 50, // Tiempo mínimo de espera (ms)
+      retries: 5,
+      factor: 1,
+      minTimeout: 50,
       logFn: () => {},
     }),
     secret: SESSION_SECRET,
@@ -61,10 +63,34 @@ app.use(
       secure: false,
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 2, // Cookie de 2 horas
+      maxAge: 1000 * 60 * 60 * 2, // 2 horas
     },
   }),
 );
+
+// app.use(
+//   session({
+//     store: new FileStore({
+//       path: "./temporary_sessions",
+//       ttl: 3600 * 2,
+//       reapInterval: 3600,
+//       retries: 5, // <--- Añade esto: reintenta 5 veces
+//       factor: 1, // Factor de espera entre reintentos
+//       minTimeout: 50, // Tiempo mínimo de espera (ms)
+//       logFn: () => {},
+//     }),
+//     secret: SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     rolling: true,
+//     cookie: {
+//       secure: false,
+//       httpOnly: true,
+//       sameSite: "lax",
+//       maxAge: 1000 * 60 * 60 * 2, // Cookie de 2 horas
+//     },
+//   }),
+// );
 
 app.use(cookieParser(SESSION_SECRET));
 
@@ -97,6 +123,15 @@ app.use(controlUserAgent.filterIA);
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null; // disponible en TODAS las vistas
   res.locals.currentLanguage = req.i18n.language; // disponible en TODAS las vistas
+  next();
+});
+
+app.use((req, res, next) => {
+  // Si hay un error en el flash de sesión, lo pasamos a locals.error
+  if (req.session.flash) {
+    res.locals.error = req.session.flash.message;
+    delete req.session.flash; // Limpiamos para que no salga dos veces
+  }
   next();
 });
 
