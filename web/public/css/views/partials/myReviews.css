@@ -1,0 +1,41 @@
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(252, 250, 247, 0.45);
+    z-index: -1;
+}
+
+.hover-primary:hover {
+    color: var(--bs-primary) !important;
+    transition: color 0.2s ease;
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Estilos de Modales (Unificados con Admin) */
+.modal-content {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.modal-header-danger {
+    background: linear-gradient(45deg, #dc3545, #ff4d5a);
+    color: white;
+}
+
+.modal-header-primary {
+    background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    color: white;
+}

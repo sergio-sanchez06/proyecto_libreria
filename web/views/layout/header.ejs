@@ -10,6 +10,10 @@
 
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/layout.css">
+
+    <% if (typeof extraCSS !== 'undefined') { %>
+        <link rel="stylesheet" href="/css/views/<%= extraCSS %>.css">
+    <% } %>
 </head>
 
 <body class="<%= (typeof noScroll !== 'undefined' && noScroll) ? 'no-scroll' : '' %> <%= (typeof bodyClass !== 'undefined') ? bodyClass : '' %>">
@@ -18,13 +22,13 @@
             <div class="header-wrapper">
 
                 <div class="logo-container">
-                    <a href="/" class="brand-container d-flex align-items-center" style="text-decoration: none;">
-                        <div style="width: 52px; height: 52px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid var(--brand-gold); flex-shrink: 0;">
+                    <a href="/" class="brand-container d-flex align-items-center">
+                        <div class="header-logo-outer">
                             <img src="/images/logo.png" 
                                  alt="BOOKLY logo" 
-                                 style="height: 100%; width: 100%; object-fit: contain; transform: scale(1.2);">
+                                 class="header-logo-inner-img">
                         </div>
-                        <span class="brand-text ms-3" style="font-size: 1.5rem;">BOOKLY</span>
+                        <span class="brand-text ms-3">BOOKLY</span>
                     </a>
                 </div>
 
@@ -81,7 +85,7 @@
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li><a class="dropdown-item" href="/user/profile">Mi Perfil</a></li>
                                         <% if(user.role==='ADMIN' ) { %>
-                                            <li><a class="dropdown-item fw-bold" href="/admin/dashboard" style="color: var(--brand-teal);">
+                                            <li><a class="dropdown-item fw-bold admin-dropdown-link" href="/admin/dashboard">
                                                     <%= t('nav.admin') %>
                                                 </a></li>
                                             <% } %>
@@ -95,7 +99,7 @@
                                 </div>
                                 <% } else { %>
                                     <a href="/login" class="btn btn-outline-light btn-sm border-0">Log In</a>
-                                    <a href="/register" class="btn btn-sm fw-bold px-3" style="background-color: var(--brand-gold); color: white; border-radius: 20px;">Registro</a>
+                                    <a href="/register" class="btn btn-sm fw-bold px-3 btn-register-header">Registro</a>
                                     <% } %>
                         </div>
                     </div>

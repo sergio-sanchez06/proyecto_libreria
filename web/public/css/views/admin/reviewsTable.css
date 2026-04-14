@@ -1,0 +1,90 @@
+/* Estilos específicos para la gestión de reseñas */
+.admin-main {
+    padding: 2.5rem 1rem;
+    min-height: 85vh;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(252, 250, 247, 0.45);
+    z-index: -1;
+}
+
+.table-container {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    border: none;
+}
+
+/* Cabecera de tabla elegante */
+.table thead th {
+    background-color: #f1f3f5;
+    color: #495057;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    border: none;
+    padding: 1.25rem 1rem;
+}
+
+.table tbody td {
+    padding: 1.25rem 1rem;
+    color: #343a40;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+/* Efecto hover en filas */
+.table-hover tbody tr:hover {
+    background-color: #f8f9ff;
+    transition: background-color 0.2s ease;
+}
+
+/* Estrellas de puntuación */
+.star-rating {
+    color: #ffc107;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.star-muted {
+    color: #dee2e6 !important;
+}
+
+/* Truncado de comentarios */
+.comment-text {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Botones de acción */
+.action-btn-group .btn {
+    border-radius: 0.5rem;
+    margin: 0 2px;
+    padding: 0.4rem 0.6rem;
+    transition: all 0.2s;
+}
+
+/* Estilo de los Modales */
+.modal-content {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.modal-header-danger {
+    background: linear-gradient(45deg, #dc3545, #ff4d5a);
+    color: white;
+}
+
+.modal-header-primary {
+    background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+    color: white;
+}

@@ -45,11 +45,18 @@ async function getManageOrders(req, res) {
   try {
     const api = getAuthenticatedClient(req.session.idToken);
     const response = await api.get("/orders");
-    const orders = response.data;
+    const allOrders = response.data;
 
+    // ── Paginación ──────────────────────────────────────
+    const PAGE_SIZE = 10;
+    const currentPage = Math.max(1, parseInt(req.query.page) || 1);
+    const totalPages = Math.ceil(allOrders.length / PAGE_SIZE);
+    const pageOrders = allOrders.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    // Solo cargamos los items de la página actual
     const batchSize = 5;
-    for (let i = 0; i < orders.length; i += batchSize) {
-      const batch = orders.slice(i, i + batchSize);
+    for (let i = 0; i < pageOrders.length; i += batchSize) {
+      const batch = pageOrders.slice(i, i + batchSize);
       await Promise.all(
         batch.map(async (order) => {
           try {
@@ -62,7 +69,14 @@ async function getManageOrders(req, res) {
       );
     }
 
-    res.render("admin/orders", { orders, lang: req.session.lang });
+    res.render("admin/orders", {
+      orders: pageOrders,
+      totalOrders: allOrders.length,
+      currentPage,
+      totalPages,
+      lang: req.session.lang,
+      isPending: false,
+    });
   } catch (error) {
     console.error("Error al cargar pedidos:", error);
     res.render("errors/500", { error: "No se pudieron cargar los pedidos" });
@@ -76,11 +90,18 @@ async function getPendingOrders(req, res) {
     const allOrders = response.data;
 
     // Filtrar solo los pendientes
-    const orders = allOrders.filter((o) => o.status === "PENDIENTE");
+    const pendingOrders = allOrders.filter((o) => o.status === "PENDIENTE");
 
+    // ── Paginación ──────────────────────────────────────
+    const PAGE_SIZE = 10;
+    const currentPage = Math.max(1, parseInt(req.query.page) || 1);
+    const totalPages = Math.ceil(pendingOrders.length / PAGE_SIZE);
+    const pageOrders = pendingOrders.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+    // Solo cargamos los items de la página actual
     const batchSize = 5;
-    for (let i = 0; i < orders.length; i += batchSize) {
-      const batch = orders.slice(i, i + batchSize);
+    for (let i = 0; i < pageOrders.length; i += batchSize) {
+      const batch = pageOrders.slice(i, i + batchSize);
       await Promise.all(
         batch.map(async (order) => {
           try {
@@ -93,7 +114,14 @@ async function getPendingOrders(req, res) {
       );
     }
 
-    res.render("admin/orders", { orders, lang: req.session.lang });
+    res.render("admin/orders", {
+      orders: pageOrders,
+      totalOrders: pendingOrders.length,
+      currentPage,
+      totalPages,
+      lang: req.session.lang,
+      isPending: true,
+    });
   } catch (error) {
     console.error("Error al cargar pedidos pendientes:", error);
     res.render("errors/500", {

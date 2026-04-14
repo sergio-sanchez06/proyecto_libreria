@@ -225,6 +225,7 @@
     "status_shipped": "Enviat",
     "status_delivered": "Lliurat",
     "status_cancelled": "Cancel·lat",
+    "title_pending": "Comandes Pendents",
     "shipping_address": "Adreça d'enviament"
   },
   "adminDashboard": {

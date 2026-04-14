@@ -5,7 +5,7 @@
         <div class="row align-items-center mb-4 g-4">
             <div class="col-md-4 text-center text-md-start">
                 <h6 class="mb-1 fw-bold text-uppercase tracking-wider">Librería Online</h6>
-                <p class="text-secondary mb-0" style="font-size: 0.8rem;">
+                <p class="text-secondary mb-0 footer-description">
                     Tu rincón para nuevas historias. <br>
                     <small class="opacity-50 text-white">Proyecto Educativo</small>
                 </p>
@@ -28,7 +28,7 @@
                     <a href="#" class="text-white"><i class="bi bi-instagram fs-5"></i></a>
                     <a href="#" class="text-white"><i class="bi bi-twitter-x fs-5"></i></a>
                 </div>
-                <p class="mb-0 opacity-75" style="font-size: 0.75rem;">&copy; 2026 Todos los derechos reservados</p>
+                <p class="mb-0 opacity-75 footer-copyright">&copy; 2026 Todos los derechos reservados</p>
             </div>
         </div>
 
@@ -37,13 +37,10 @@
                 <div class="col-12">
                     <nav class="d-flex justify-content-center flex-wrap gap-3">
                         <a href="/aviso-legal"
-                            class="legal-link text-secondary text-decoration-none small text-uppercase"
-                            style="font-size: 0.65rem;">Aviso Legal</a>
-                        <a href="/cookies" class="legal-link text-secondary text-decoration-none small text-uppercase"
-                            style="font-size: 0.65rem;">Cookies</a>
+                            class="legal-link text-secondary text-decoration-none small text-uppercase footer-legal-link">Aviso Legal</a>
+                        <a href="/cookies" class="legal-link text-secondary text-decoration-none small text-uppercase footer-legal-link">Cookies</a>
                         <a href="/privacidad"
-                            class="legal-link text-secondary text-decoration-none small text-uppercase"
-                            style="font-size: 0.65rem;">Privacidad</a>
+                            class="legal-link text-secondary text-decoration-none small text-uppercase footer-legal-link">Privacidad</a>
                     </nav>
                 </div>
             </div>
@@ -105,29 +102,14 @@
     </div>
 
     <div id="server-messages" data-error="<%= locals.error ? error : '' %>"
-        data-success="<%= locals.success ? success : '' %>" style="display: none;">
+        data-success="<%= locals.success ? success : '' %>" class="server-messages-container">
     </div>
 
 
 
 </footer>
 
-<style>
-    .footer-link:hover {
-        color: #ffc107 !important;
-        /* Un toque de color (ej. amarillo) al pasar el ratón */
-        transition: 0.3s;
-    }
 
-    .legal-link:hover {
-        color: #fff !important;
-        transition: 0.3s;
-    }
-
-    .main-footer {
-        border-top: 4px solid #343a40;
-    }
-</style>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/modal.js"></script>

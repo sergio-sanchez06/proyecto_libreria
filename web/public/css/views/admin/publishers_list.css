@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(252, 250, 247, 0.45);
+    z-index: -1;
+}
+
+.section-title {
+    font-weight: 800;
+    color: var(--brand-teal);
+    position: relative;
+    padding-bottom: 8px;
+    margin-bottom: 2rem;
+}
+
+.card {
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.card.is-deleted {
+    opacity: 0.7;
+    filter: grayscale(0.7);
+    border: 2px dashed #adb5bd;
+}
+
+.admin-actions {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 10;
+}
+
+.btn-admin {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-edit {
+    color: #0d6efd;
+}
+
+.btn-edit:hover {
+    background: #0d6efd;
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-archive {
+    color: #dc3545;
+}
+
+.btn-archive:hover {
+    background: #dc3545;
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-restore {
+    color: #198754;
+}
+
+.btn-restore:hover {
+    background: #198754;
+    color: white;
+    transform: scale(1.1);
+}
+
+.publisher-logo-container {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.pagination .page-link {
+    border: none;
+    border-radius: 8px;
+    margin: 0 3px;
+    color: #2c3e50;
+    padding: 8px 16px;
+    transition: all 0.2s;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--brand-teal, #2c3e50);
+    color: white;
+}

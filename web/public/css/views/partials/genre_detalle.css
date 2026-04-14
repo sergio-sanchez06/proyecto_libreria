@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(252, 250, 247, 0.45);
+    z-index: -1;
+}
+
+.genre-hero {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.genre-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--brand-teal), var(--brand-gold));
+}
+
+.genre-icon-container {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--brand-teal);
+    box-shadow: 0 8px 20px rgba(30, 64, 175, 0.1);
+    border: 3px solid rgba(30, 64, 175, 0.05);
+}
+
+/* Estilo de los libros */
+.book-card {
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255,255,255,0.4);
+}
+
+.book-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(30, 64, 175, 0.1);
+    border-color: rgba(30, 64, 175, 0.2);
+}
+
+.book-img-container {
+    height: 220px;
+    background: rgba(245, 247, 250, 0.5);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.book-img-container img {
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
+    transition: transform 0.3s ease;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.book-card:hover .book-img-container img {
+    transform: scale(1.05);
+}
+
+.book-synopsis {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.6;
+}

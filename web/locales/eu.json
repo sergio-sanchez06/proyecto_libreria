@@ -225,6 +225,7 @@
     "status_shipped": "Bidalita",
     "status_delivered": "Emanda",
     "status_cancelled": "Bertan behera utzia",
+    "title_pending": "Z zain dauden eskaerak",
     "shipping_address": "Bidalketa helbidea"
   },
   "adminDashboard": {

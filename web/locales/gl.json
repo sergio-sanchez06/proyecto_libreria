@@ -225,6 +225,7 @@
     "status_shipped": "Enviado",
     "status_delivered": "Entregado",
     "status_cancelled": "Cancelado",
+    "title_pending": "Pedidos Pendentes",
     "shipping_address": "Dirección de envío"
   },
   "adminDashboard": {

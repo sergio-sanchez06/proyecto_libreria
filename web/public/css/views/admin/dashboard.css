@@ -1,0 +1,61 @@
+.admin-card {
+    transition: transform 0.2s;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+.btn-primary {
+    background-color: var(--brand-teal) !important;
+    border-radius: 12px !important;
+}
+
+.admin-card:hover {
+    transform: translateY(-5px);
+}
+
+.icon-box {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    border-left: 5px solid var(--brand-teal);
+    padding-left: 15px;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+    color: var(--brand-teal);
+}
+
+.bg-orange {
+    background-color: var(--brand-gold) !important;
+}
+
+.border-orange {
+    border-color: var(--brand-gold) !important;
+}
+
+.text-orange {
+    color: var(--brand-gold) !important;
+}
+
+.btn-books {
+    background-color: var(--brand-teal);
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+.btn-books:hover {
+    background-color: var(--brand-teal-hover);
+    color: white;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(252, 250, 247, 0.45);
+    z-index: -1;
+}

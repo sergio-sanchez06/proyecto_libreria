@@ -1,4 +1,4 @@
-<%- include('../layout/header') %>
+<%- include('../layout/header', { extraCSS: 'errors/404' }) %>
 
     <main class="container my-5 py-5">
         <div class="row justify-content-center">
@@ -47,25 +47,4 @@
     </main>
 
     <%- include('../layout/footer') %>
-
-        <style>
-            /* Opcional: Un toque de animación para el icono */
-            .bi-archive-fill {
-                display: inline-block;
-                animation: float 3s ease-in-out infinite;
-            }
-
-            @keyframes float {
-                0% {
-                    transform: translateY(0px);
-                }
-
-                50% {
-                    transform: translateY(-15px);
-                }
-
-                100% {
-                    transform: translateY(0px);
-                }
-            }
-        </style>
+

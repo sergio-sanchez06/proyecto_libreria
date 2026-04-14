@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(252, 250, 247, 0.45);
+    z-index: -1;
+}
+
+.admin-form-container {
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.brand-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.brand-card-header {
+    background: linear-gradient(135deg, var(--brand-teal), #1e3a8a);
+    color: white;
+    padding: 2rem;
+    border-bottom: 6px solid var(--brand-gold);
+}
+
+.form-label {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+    border-radius: 12px;
+    border: 1px solid #cbd5e1;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+    background-color: #f8fafc;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--brand-teal);
+    box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.1);
+    background-color: white;
+}
+
+.btn-brand-teal {
+    background-color: var(--brand-teal);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-brand-teal:hover {
+    background-color: var(--brand-teal-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(30, 64, 175, 0.25);
+    color: white;
+}

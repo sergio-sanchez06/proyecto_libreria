@@ -223,7 +223,9 @@
     "status_processing": "Liados con ello",
     "status_shipped": "En el camión",
     "status_delivered": "Entregado",
-    "status_cancelled": "Cancelado"
+    "status_cancelled": "Cancelado",
+    "title_pending": "Mandados que faltan",
+    "shipping_address": "A dónde va el paquete"
   },
   "adminDashboard": {
     "nav_title": "Panel del Jefe",

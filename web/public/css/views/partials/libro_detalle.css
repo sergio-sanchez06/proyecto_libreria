@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-dark);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(252, 250, 247, 0.45);
+    z-index: -1;
+}
+
+.book-cover-wrapper {
+    position: sticky;
+    top: 100px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(30, 64, 175, 0.25);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    border: 4px solid white;
+}
+
+.book-cover-wrapper:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px -12px rgba(30, 64, 175, 0.4);
+}
+
+.book-title {
+    font-weight: 800;
+    color: var(--brand-teal);
+    letter-spacing: -1px;
+}
+
+.author-link {
+    color: var(--brand-teal);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.author-link:hover {
+    color: var(--brand-gold);
+}
+
+.badge-genre {
+    background-color: white;
+    color: #1e3a8a;
+    border: 1px solid rgba(30, 64, 175, 0.2);
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+}
+
+.badge-genre:hover {
+    background-color: var(--brand-teal);
+    color: white;
+    border-color: var(--brand-teal);
+    transform: translateY(-2px);
+}
+
+.purchase-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px);
+    border-radius: 24px;
+    border: 2px solid var(--brand-gold);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.purchase-card::after {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, var(--brand-gold) 0%, transparent 70%);
+    opacity: 0.1;
+    border-radius: 50%;
+}
+
+.price-display {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--brand-teal);
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.spec-card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(30, 64, 175, 0.1);
+    border-radius: 16px;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.spec-card:hover {
+    background: white;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(30, 64, 175, 0.08);
+    border-color: rgba(30, 64, 175, 0.2);
+}
+
+.spec-label {
+    color: #64748b;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.spec-value {
+    color: #1e293b;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.btn-purchase {
+    background-color: var(--brand-teal);
+    color: white;
+    font-weight: 800;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-purchase:hover:not(:disabled) {
+    background-color: var(--brand-teal-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(30, 64, 175, 0.3);
+}
+
+.review-card {
+    border-left: 6px solid var(--brand-gold) !important;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateX(5px);
+    background: white;
+}
+
+.synopsis-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #475569;
+}
+
+#toggle-synopsis {
+    background: none;
+    font-size: 16px;
+    border: none;
+    color: var(--brand-teal);
+    cursor: pointer;
+    padding: 0;
+    font-weight: bold;
+    margin-top: 5px;
+    position: relative;
+}
+
+#toggle-synopsis::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--brand-gold);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+}
+
+#toggle-synopsis:hover::after {
+    transform: scaleX(1);
+}

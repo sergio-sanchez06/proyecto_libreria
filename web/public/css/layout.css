@@ -81,10 +81,34 @@ body {
     height: 38px;
 }
 
+/* La regla .main-nav se define más abajo junto al layout colapsable */
+
+/* NEW: Estilos para el contenedor del logo en el header */
+.header-logo-outer {
+    width: 52px;
+    height: 52px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    border: 2px solid var(--brand-gold);
+    flex-shrink: 0;
+}
+
+.header-logo-inner-img {
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    transform: scale(1.2);
+}
+
 .brand-text {
     font-family: 'Inter', sans-serif;
     font-weight: 800;
-    font-size: 1.6rem;
+    font-size: 1.5rem !important; /* Ajustado de 1.6rem para coincidir con el inline anterior */
     letter-spacing: -0.5px;
     color: #ffffff;
     text-shadow: 0 1px 2px rgba(0,0,0,0.1);
@@ -139,6 +163,50 @@ body {
     text-decoration: none;
     line-height: 1.1 !important;
     margin-bottom: 2px;
+}
+
+/* NEW: Styles migrated from footer.ejs */
+.footer-description {
+    font-size: 0.8rem;
+}
+
+.footer-copyright {
+    font-size: 0.75rem;
+}
+
+.footer-legal-link {
+    font-size: 0.65rem !important;
+}
+
+.footer-link {
+    transition: 0.3s;
+}
+
+.footer-link:hover {
+    color: var(--brand-gold) !important;
+}
+
+.legal-link {
+    transition: 0.3s;
+}
+
+.legal-link:hover {
+    color: #fff !important;
+}
+
+.server-messages-container {
+    display: none;
+}
+
+/* Estilos de botones específicos de layout */
+.btn-register-header {
+    background-color: var(--brand-gold);
+    color: white;
+    border-radius: 20px;
+}
+
+.admin-dropdown-link {
+    color: var(--brand-teal) !important;
 }
 
 /* Ocultamos elementos sobrantes para evitar scroll */

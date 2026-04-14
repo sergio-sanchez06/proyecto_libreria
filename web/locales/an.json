@@ -223,7 +223,9 @@
     "status_processing": "Haciéndolo",
     "status_shipped": "Enviado",
     "status_delivered": "Entregado",
-    "status_cancelled": "Cancelado"
+    "status_cancelled": "Cancelado",
+    "title_pending": "Mandados Pendientes",
+    "shipping_address": "Adreza de ninvío"
   },
   "adminDashboard": {
     "nav_title": "Panel del Boss",

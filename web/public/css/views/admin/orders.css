@@ -1,0 +1,287 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+body { font-family: 'Inter', sans-serif; }
+
+body::before {
+    content: "";
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(252, 250, 247, 0.45);
+    z-index: -1;
+}
+
+/* ── Page header ───────────────────────────────── */
+.orders-hero {
+    background: linear-gradient(135deg, var(--brand-teal) 0%, #0a4d4d 100%);
+    border-radius: 20px;
+    padding: 2rem 2.5rem;
+    color: white;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+.orders-hero::after {
+    content: '\F237';
+    font-family: 'Bootstrap-icons';
+    position: absolute;
+    right: -10px; top: -20px;
+    font-size: 9rem;
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+/* ── Stat cards ────────────────────────────────── */
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: transform .2s, box-shadow .2s;
+}
+.stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.10); }
+.stat-icon {
+    width: 50px; height: 50px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem;
+}
+.stat-value { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.stat-label { font-size: 0.78rem; color: #9ca3af; font-weight: 500; text-transform: uppercase; letter-spacing: .05em; margin-top: 2px; }
+
+/* ── Nav tabs ──────────────────────────────────── */
+.orders-tabs {
+    display: flex; gap: 8px; margin-bottom: 1.5rem;
+}
+.tab-btn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 2px solid transparent;
+    transition: all .2s;
+    cursor: pointer;
+    text-decoration: none;
+}
+.tab-btn.active {
+    background: var(--brand-teal);
+    color: white;
+    border-color: var(--brand-teal);
+}
+.tab-btn:not(.active) {
+    background: white;
+    color: var(--brand-teal);
+    border-color: var(--brand-teal);
+}
+.tab-btn:not(.active):hover {
+    background: var(--brand-teal);
+    color: white;
+}
+
+/* ── Data table ────────────────────────────────── */
+.orders-table-wrap {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    overflow: hidden;
+}
+.orders-table {
+    margin-bottom: 0;
+}
+.orders-table thead th {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 14px 16px;
+    white-space: nowrap;
+}
+.orders-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background .15s;
+}
+.orders-table tbody tr:last-child { border-bottom: none; }
+.orders-table tbody tr:hover { background: #f8fbff; }
+.orders-table tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+}
+
+/* ── Order ID chip ─────────────────────────────── */
+.order-id-chip {
+    display: inline-flex; align-items: center;
+    background: #f0fdfa;
+    color: var(--brand-teal);
+    border: 1.5px solid #ccfbf1;
+    border-radius: 8px;
+    padding: 3px 10px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    font-family: monospace;
+}
+
+/* ── Status badges ─────────────────────────────── */
+.status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.status-badge .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.status-PENDIENTE  { background: #fef9c3; color: #854d0e; }
+.status-PENDIENTE  .dot { background: #eab308; }
+.status-PAGADO     { background: #dcfce7; color: #166534; }
+.status-PAGADO     .dot { background: #22c55e; }
+.status-PROCESANDO { background: #dbeafe; color: #1e40af; }
+.status-PROCESANDO .dot { background: #3b82f6; }
+.status-ENVIADO    { background: #e0f2fe; color: #0c4a6e; }
+.status-ENVIADO    .dot { background: #0ea5e9; }
+.status-ENTREGADO  { background: #dcfce7; color: #14532d; }
+.status-ENTREGADO  .dot { background: #16a34a; box-shadow: 0 0 0 2px #bbf7d0; }
+.status-CANCELADO  { background: #fee2e2; color: #991b1b; }
+.status-CANCELADO  .dot { background: #ef4444; }
+
+/* ── Status select styled ──────────────────────── */
+.status-select {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    background: white;
+    cursor: pointer;
+    transition: border-color .2s;
+    min-width: 140px;
+}
+.status-select:focus { outline: none; border-color: var(--brand-teal); }
+
+/* ── Action buttons ────────────────────────────── */
+.btn-view-order {
+    background: #f0fdfa;
+    color: var(--brand-teal);
+    border: 1.5px solid #ccfbf1;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all .2s;
+    white-space: nowrap;
+}
+.btn-view-order:hover {
+    background: var(--brand-teal);
+    color: white;
+    border-color: var(--brand-teal);
+}
+.btn-delete-order {
+    background: #fff5f5;
+    color: #ef4444;
+    border: 1.5px solid #fecaca;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    transition: all .2s;
+}
+.btn-delete-order:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+}
+
+/* ── User email pill ───────────────────────────── */
+.user-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #f8f9fc;
+    border: 1px solid #e2e8f0;
+    border-radius: 50px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    color: #374151;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Empty state ───────────────────────────────── */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #9ca3af;
+}
+.empty-state i { font-size: 3.5rem; opacity: .4; display: block; margin-bottom: 1rem; }
+.empty-state h5 { color: #6b7280; font-weight: 700; margin-bottom: .5rem; }
+
+/* ── Modal redesign ────────────────────────────── */
+.modal-content {
+    border: none !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+}
+.modal-header-custom {
+    background: linear-gradient(135deg, var(--brand-teal) 0%, #0a4d4d 100%);
+    border-bottom: 3px solid var(--brand-gold);
+    padding: 1.25rem 1.5rem;
+    color: white;
+}
+.modal-info-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+}
+.modal-items-table thead th {
+    background: #f1f5f9;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #64748b;
+    font-weight: 700;
+    padding: 10px 12px;
+}
+.modal-items-table tbody td { padding: 10px 12px; vertical-align: middle; }
+.modal-items-table tbody tr:hover { background: #f8fbff; }
+.modal-total-bar {
+    background: linear-gradient(135deg, #f0fdfa, #e0fdf4);
+    border: 1.5px solid #a7f3d0;
+    border-radius: 12px;
+    padding: .875rem 1.25rem;
+}
+
+/* ── Pagination ─────────────────────────────────── */
+.pagination .page-link {
+    border: none;
+    border-radius: 10px;
+    margin: 0 3px;
+    color: var(--brand-teal);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.45rem 0.9rem;
+    transition: all 0.2s ease;
+    background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.pagination .page-link:hover {
+    background: var(--brand-teal);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.2);
+}
+.pagination .page-item.active .page-link {
+    background: var(--brand-teal);
+    color: white;
+    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.25);
+}
+.pagination .page-item.disabled .page-link {
+    color: #cbd5e1;
+    box-shadow: none;
+    cursor: not-allowed;
+}
