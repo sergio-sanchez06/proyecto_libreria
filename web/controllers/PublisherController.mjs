@@ -19,8 +19,20 @@ async function publisher(req, res, next) {
 
 async function getPublishers(req, res, next) {
   try {
-    const response = await apiClient.get("/publishers");
-    res.locals.publishers = response.data;
+
+    var publishers = null
+    const redisClient = redis.returnRedisClient()
+    const redisData = await redisClient.get("AllPublishers")
+
+    if(redisData){
+      publishers = JSON.parse(redisData)
+    }else{
+      const response = await apiClient.get("/publishers");
+      publishers = response.data;
+      await redisClient.set("AllPublishers", JSON.stringify(publishers))
+      
+    }    
+    res.locals.publishers = publishers;
     next();
   } catch (error) {
     console.error("Error cargando editoriales:", error);

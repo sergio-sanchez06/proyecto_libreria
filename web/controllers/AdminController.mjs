@@ -1,5 +1,6 @@
 import apiClient from "../utils/apiClient.mjs";
 import { getAuthenticatedClient } from "../utils/apiClient.mjs";
+import redis from "../controllers/RedisController.mjs";
 
 export const getManageBooks = (req, res) => {
   res.render("admin/libros", {
@@ -17,11 +18,22 @@ export const getForm = (req, res) => {
 
 async function getManageOrders(req, res) {
   try {
+    var orders = null
     const api = getAuthenticatedClient(req.session.idToken);
+    const redisClient = redis.returnRedisClient()
+    const redisData = await redisClient.get("AllOrders")
 
-    // 1. Pedimos los pedidos
-    const response = await api.get("/orders");
-    const orders = response.data;
+    // 1. Pedimos los pedidos comprobando la cache en redis
+    if(!redisData){
+      const response = await api.get("/orders");
+      orders = response.data;
+      await redisClient.set("AllOrders",JSON.stringify(orders))
+    }else{
+      orders = JSON.parse(redisData)
+    }
+
+    
+   
 
     const batchSize = 5; // Límite de seguridad para el pool
     for (let i = 0; i < orders.length; i += batchSize) {
@@ -62,10 +74,20 @@ async function getManageOrders(req, res) {
 async function listUsers(req, res) {
   try {
     const api = getAuthenticatedClient(req.session.idToken);
-    const response = await api.get("/users");
+    var user = null
+    const redisClient = redis.returnRedisClient()
+    const redisData = await redisClient.get("AllUser")
+
+    if(!redisData){
+      const response = await api.get("/users");
+      user = response.data;
+      await redisClient.set("AllUser",JSON.stringify(user))
+    }else{
+      user = JSON.parse(redisData)
+    }
 
     res.render("admin/users_list", {
-      users: response.data,
+      users: user,
       message: req.query.msg || null,
     });
   } catch (error) {
@@ -151,11 +173,34 @@ async function getDashboard(req, res) {
   }
 
   const api = getAuthenticatedClient(req.session.idToken);
-  const response = await api.get("/users");
-  const users = response.data.length;
 
-  const responseOrders = await api.get("/orders");
-  const orders = responseOrders.data.length;
+  var user = null
+  const redisClient = redis.returnRedisClient()
+  const redisData = await redisClient.get("AllUser")
+
+  if(!redisData){
+    const response = await api.get("/users");
+    user = response.data;
+    await redisClient.set("AllUser",JSON.stringify(user))
+  }else{
+    user = JSON.parse(redisData)
+  }
+
+  const users = user.length;
+
+
+  var orders = null
+  const redisDataOrder = await redisClient.get("AllOrders")
+
+  if(!redisDataOrder){
+    const response = await api.get("/orders");
+    orders = response.data;
+    await redisClient.set("AllOrders",JSON.stringify(orders))
+  }else{
+    orders = JSON.parse(redisData)
+  }
+
+  const orders = orders.length;
 
   res.render("admin/dashboard", {
     title: "Consola de Administración",
@@ -192,8 +237,18 @@ async function deleteOrder(req, res) {
 async function getManageReviews(req, res) {
   try {
     const api = getAuthenticatedClient(req.session.idToken);
-    const response = await api.get("/review/all");
-    const reviews = response.data;
+
+    var reviews = null
+    const redisData = await redisClient.get("AllReviews")
+
+    if(!redisData){
+      const response = await api.get("/review/all");
+      reviews = response.data;
+      await redisClient.set("AllReviews",JSON.stringify(reviews))
+    }else{
+      reviews = JSON.parse(redisData)
+    }
+
     console.log(reviews);
     res.render("admin/reviewsTable", {
       reviews: reviews,

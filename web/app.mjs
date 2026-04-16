@@ -17,6 +17,8 @@ import i18nextHttpMiddleware from "i18next-http-middleware";
 import i18nextFsBackend from "i18next-fs-backend";
 import * as useragent from "express-useragent";
 import cookieParser from "cookie-parser";
+import redis from "./controllers/RedisController.mjs";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,6 +76,8 @@ app.use(i18nextHttpMiddleware.handle(i18next));
 app.use(controlUserAgent.filterIA);
 // app.use(controlUserAgent.apiLimiter);
 
+
+
 app.use((req, res, next) => {
   res.locals.user = req.session.user || null; // disponible en TODAS las vistas
   res.locals.currentLanguage = req.i18n.language; // disponible en TODAS las vistas
@@ -90,6 +94,8 @@ app.use("/authors", authorRoutes);
 app.use("/genres", genreRoutes);
 app.use("/cart", cartRoutes);
 app.use("/review", reviewRoutes);
+
+await redis.startRedis();
 
 const port = 3001;
 app.listen(port, () => {

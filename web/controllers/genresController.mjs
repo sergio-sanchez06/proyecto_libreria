@@ -1,14 +1,26 @@
 // web/controllers/genresController.mjs
 import apiClient from "../utils/apiClient.mjs";
 import { getAuthenticatedClient } from "../utils/apiClient.mjs"; // Asegúrate de importar esto
+import redis from "../controllers/RedisController.mjs";
 
 // --- FUNCIONES PÚBLICAS (Lectura) ---
 
 async function getGenres(req, res) {
   try {
-    const response = await apiClient.get("/genres");
+    var genres = "asd"
+    const redisClient = redis.returnRedisClient()
+    const redisData = await redisClient.get("AllGenres")
+    console.log(redisData)
+    if(redisData){
+      genres = JSON.parse(redisData)
+    }else{
+      const response = await apiClient.get("/genres");
+      genres = response.data;
+      await redisClient.set("AllGenres", JSON.stringify(genres))
+      
+    }    
     res.render("partials/genres", {
-      genres: response.data,
+      genres: genres,
       user: req.session.user || null,
     });
   } catch (error) {

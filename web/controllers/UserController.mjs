@@ -52,21 +52,31 @@ async function getPurchaseHistory(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    const response = await api.get("/orders/user/" + req.session.user.id);
-    const orders = response.data;
+    var userOrder = null
+    const redisClient = redis.returnRedisClient()
+    const redisData = await redisClient.get("AllUserOrders")
+    console.log(redisData)
+    if(redisData){
+      userOrder = JSON.parse(redisData)
+    }else{
+      const response = await apiClient.get("/orders/user/" + req.session.user.id);
+      userOrder = response.data;
+      await redisClient.set("AllUserOrders", JSON.stringify(userOrder))
+      
+    }
 
-    for (let order of orders) {
+    for (let order of userOrder) {
       const responseItems = await api.get("/orderItems/" + order.id);
       order.items = responseItems.data;
     }
 
-    console.log("orders", orders);
-    console.log("orders[0].items", orders[0].items);
+    console.log("orders", userOrder);
+    console.log("orders[0].items", userOrder[0].items);
 
     res.render("partials/purchaseHistory", {
       title: "Mis compras",
       user: req.session.user,
-      orders: orders,
+      orders: userOrder,
     });
   } catch (error) {
     console.error("Error en getPurchaseHistory:", error.message);
@@ -183,15 +193,24 @@ async function getMyReviews(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    const response = await api.get("/review/user/" + req.session.user.id);
-    const reviews = response.data;
+    var userReviews = null
+    const redisClient = redis.returnRedisClient()
+    const redisData = await redisClient.get("AllUserReviews" + req.session.user.id)
+    if(redisData){
+      userReviews = JSON.parse(redisData)
+    }else{
+      const response = await api.get("/review/user/" + req.session.user.id);
+      userReviews = response.data;
+      await redisClient.set("AllUserReviews" + req.session.user.id, JSON.stringify(userReviews))
+      
+    }
 
-    console.log("reviews", reviews);
+    console.log("reviews", userReviews);
 
     res.render("partials/myReviews", {
       title: "Mis reseñas",
       user: req.session.user,
-      reviews: reviews,
+      reviews: userReviews,
     });
   } catch (error) {
     console.error("Error en getMyReviews:", error.message);

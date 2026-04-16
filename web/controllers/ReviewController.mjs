@@ -29,9 +29,22 @@ async function getReviewsByBookId(req, res) {
   const client = getAuthenticatedClient(req, res);
 
   try {
-    const response = await client.get(`/review/book/${book_id}`);
+
+    var reviewById = null
+    const redisClient = redis.returnRedisClient()
+    const redisData = await redisClient.get("ReviewById")
+    console.log(redisData)
+    if(redisData){
+      reviewById = JSON.parse(redisData)
+    }else{
+      const response = await apiClient.get(`/review/book/${book_id}`);
+      reviewById = response.data;
+      await redisClient.set("ReviewById", JSON.stringify(reviewById))
+      
+    }
+
     res.render("partials/reviewsTable", {
-      reviews: response.data,
+      reviews: reviewById,
       user: req.session.user || null,
     });
   } catch (error) {
@@ -90,9 +103,21 @@ async function getReviewsByUserId(req, res) {
   const client = getAuthenticatedClient(req, res);
 
   try {
-    const response = await client.get(`/review/user/${user_id}`);
+
+    var userReviews = null
+    const redisClient = redis.returnRedisClient()
+    const redisData = await redisClient.get(`UserReviews${user_id}`)
+    if(redisData){
+      userReviews = JSON.parse(redisData)
+    }else{
+      const response = await api.get(`/review/user/${user_id}`);
+      userReviews = response.data;
+      await redisClient.set(`UserReviews${user_id}`, JSON.stringify(userReviews))
+      
+    }
+
     res.render("partials/reviewsTable", {
-      reviews: response.data,
+      reviews: userReviews,
       user: req.session.user || null,
     });
   } catch (error) {
