@@ -22,9 +22,10 @@ async function createGenre(genre) {
 async function getGenreById(id) {
   const client = await pool.connect();
   try {
-    const result = await client.query("SELECT * FROM genres WHERE id = $1", [
-      id,
-    ]);
+    const result = await client.query(
+      "SELECT * FROM genres WHERE id = $1 AND deleted_at IS NULL",
+      [id],
+    );
     return result.rows[0] ? new GenreModel(result.rows[0]) : null;
   } catch (error) {
     console.log("Error en getGenreById", error);

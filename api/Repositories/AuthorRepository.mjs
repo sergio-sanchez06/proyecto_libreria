@@ -22,9 +22,10 @@ async function createAuthor(author) {
 async function getAuthorById(id) {
   const client = await pool.connect();
   try {
-    const result = await client.query("SELECT * FROM authors WHERE id = $1", [
-      id,
-    ]);
+    const result = await client.query(
+      "SELECT * FROM authors WHERE id = $1 AND deleted_at IS NULL",
+      [id],
+    );
     return result.rows[0] ? new authorModel(result.rows[0]) : null;
   } catch (error) {
     console.error("Error obteniendo autor por ID:", error);

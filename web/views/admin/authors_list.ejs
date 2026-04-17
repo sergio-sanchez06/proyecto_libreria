@@ -1,10 +1,7 @@
-<%- include('../layout/header', { bodyClass: 'bg-main-vistas', extraCSS: 'admin/authors_list' }) %>
+<%- include('../layout/header', { bodyClass: 'bg-main-vistas' , extraCSS: 'admin/authors_list' }) %>
 
-<% 
-    const selectedCountry = locals.selectedCountry || null; 
-    const countriesList = locals.countries || []; 
-    const searchQuery = locals.query || {}; 
-%>
+    <% const selectedCountry=locals.selectedCountry || null; const countriesList=locals.countries || []; const
+        searchQuery=locals.query || {}; %>
 
         <div class="container py-5">
             <div class="text-center mb-5">
@@ -137,6 +134,7 @@
                                                                                     <form
                                                                                         action="/authors/author/delete/<%= author.id %>"
                                                                                         method="POST"
+                                                                                        data-requires-token
                                                                                         onsubmit="return confirm('¿Archivar este autor? Sus libros dejarán de estar visibles.')">
                                                                                         <button type="submit"
                                                                                             class="btn btn-outline-danger btn-sm w-100">
