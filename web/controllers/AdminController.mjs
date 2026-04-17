@@ -189,18 +189,18 @@ async function getDashboard(req, res) {
   const users = user.length;
 
 
-  var orders = null
+  var order = null
   const redisDataOrder = await redisClient.get("AllOrders")
 
   if(!redisDataOrder){
     const response = await api.get("/orders");
-    orders = response.data;
-    await redisClient.set("AllOrders",JSON.stringify(orders))
+    order = response.data;
+    await redisClient.set("AllOrders",JSON.stringify(order))
   }else{
-    orders = JSON.parse(redisData)
+    order = JSON.parse(redisData)
   }
 
-  const orders = orders.length;
+  const orders = order.length;
 
   res.render("admin/dashboard", {
     title: "Consola de Administración",
