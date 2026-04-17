@@ -1,4 +1,5 @@
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
+import redis from "../controllers/RedisController.mjs";
 
 async function createReview(req, res) {
   const origin = req.headers.referer || "/";

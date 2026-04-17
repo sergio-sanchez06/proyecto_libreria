@@ -1,4 +1,5 @@
 import axios from "axios";
+import redis from "../controllers/RedisController.mjs";
 
 const apiClient = axios.create({
   baseURL: "http://localhost:3000",

@@ -1,5 +1,6 @@
 // web/controllers/PublisherController.mjs
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
+import redis from "../controllers/RedisController.mjs";
 
 // --- MIDDLEWARES / HELPERS INTERNOS ---
 

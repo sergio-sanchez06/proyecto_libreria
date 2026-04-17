@@ -1,4 +1,5 @@
 import { getAuthenticatedClient } from "../utils/apiClient.mjs";
+import redis from "../controllers/RedisController.mjs";
 
 async function getProfile(req, res) {
   // 1. Verificación de seguridad en el controlador web
