@@ -1,103 +1,155 @@
-<%- include('../layout/header', { 
-    bodyClass: 'bg-user-vistas',
-    extraCSS: 'partials/register'
-}) %>
+<%- include('../layout/header', { bodyClass: 'bg-user-vistas' , extraCSS: 'partials/register' }) %>
 
-<main class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm border-0">
-                <div class="card-header text-center">
-                    <h2 class="mb-0">
-                        <%= t('register.title') %>
-                    </h2>
-                </div>
-                <div class="card-body p-4">
-                    <% if (error) { %>
-                        <div class="alert alert-danger">
-                            <%= error %>
-                        </div>
-                    <% } %>
-
-                    <form action="/register" method="POST" id="register-form">
-                        <div class="mb-3">
-                            <label for="name" class="form-label fw-bold">
-                                <%= t('register.name') %>
-                                <%= t('register.required_mark') %>
-                            </label>
-                            <input type="text" name="name" id="name" class="form-control"
-                                value="<%= formData ? formData.name : '' %>" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label fw-bold">
-                                <%= t('register.email') %>
-                                <%= t('register.required_mark') %>
-                            </label>
-                            <input type="email" name="email" id="email" class="form-control"
-                                value="<%= formData ? formData.email : '' %>" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="password" class="form-label fw-bold">
-                                <%= t('register.password') %>
-                                <%= t('register.required_mark') %>
-                            </label>
-                            <input type="password" name="password" id="password" class="form-control"
-                                required minlength="6">
-                            <div class="form-text">
-                                <%= t('register.password_hint') %>
+    <main class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header text-center">
+                        <h2 class="mb-0">
+                            <%= t('register.title') %>
+                        </h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <% if (error) { %>
+                            <div class="alert alert-danger">
+                                <%= error %>
                             </div>
-                        </div>
+                            <% } %>
 
-                        <div class="mb-3">
-                            <label for="default_address" class="form-label fw-bold">
-                                <%= t('register.address_main') %>
-                                <%= t('register.required_mark') %>
-                            </label>
-                            <textarea name="default_address" id="default_address" class="form-control"
-                                rows="2"
-                                required><%= formData ? formData.default_address : '' %></textarea>
-                        </div>
+                                <form action="/register" method="POST" id="register-form">
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label fw-bold">
+                                            <%= t('register.name') %>
+                                                <%= t('register.required_mark') %>
+                                        </label>
+                                        <input type="text" name="name" id="name" class="form-control"
+                                            value="<%= formData ? formData.name : '' %>" required>
+                                    </div>
 
-                        <div class="mb-4">
-                            <label for="optional_address" class="form-label fw-bold">
-                                <%= t('register.address_optional') %>
-                            </label>
-                            <textarea name="optional_address" id="optional_address" class="form-control"
-                                rows="2"><%= formData ? formData.optional_address : '' %></textarea>
-                        </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label fw-bold">
+                                            <%= t('register.email') %>
+                                                <%= t('register.required_mark') %>
+                                        </label>
+                                        <input type="email" name="email" id="email" class="form-control"
+                                            value="<%= formData ? formData.email : '' %>" required>
+                                    </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" id="register-btn"
-                                class="btn btn-success btn-lg rounded-pill">
-                                <span id="btn-text">
-                                    <%= t('register.submit') %>
-                                </span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-                <div class="card-footer text-center bg-light py-3">
-                    <p class="mb-0">
-                        <%= t('register.already_account') %>
-                        <a href="/login" class="text-success fw-bold text-decoration-none">
-                            <%= t('register.login_link') %>
-                        </a>
-                    </p>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label fw-bold">
+                                            <%= t('register.password') %>
+                                                <%= t('register.required_mark') %>
+                                        </label>
+                                        <input type="password" name="password" id="password" class="form-control"
+                                            required minlength="6">
+                                        <div class="form-text">
+                                            <%= t('register.password_hint') %>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="default_address" class="form-label fw-bold">
+                                            <%= t('register.address_main') %>
+                                                <%= t('register.required_mark') %>
+                                        </label>
+                                        <textarea name="default_address" id="default_address" class="form-control"
+                                            rows="2" required><%= formData ? formData.default_address : '' %></textarea>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="optional_address" class="form-label fw-bold">
+                                            <%= t('register.address_optional') %>
+                                        </label>
+                                        <textarea name="optional_address" id="optional_address" class="form-control"
+                                            rows="2"><%= formData ? formData.optional_address : '' %></textarea>
+                                    </div>
+
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" id="register-btn"
+                                            class="btn btn-success btn-lg rounded-pill">
+                                            <span id="btn-text">
+                                                <%= t('register.submit') %>
+                                            </span>
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div class="text-center my-4 text-muted position-relative">
+                                    <hr>
+                                    <span class="px-3 bg-white position-absolute top-50 start-50 translate-middle">
+                                        <%= t('login.or_continue') %>
+                                    </span>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    <button type="button" id="btnGoogle" class="btn btn-outline-dark rounded-pill">
+                                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                                            width="18" class="me-2">
+                                        Google
+                                    </button>
+
+                                    <button type="button" id="btnTwitter" class="btn btn-outline-info rounded-pill">
+                                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/twitter.svg"
+                                            width="18" class="me-2">
+                                        X (Twitter)
+                                    </button>
+                                </div>
+
+                                <input type="hidden" name="idToken" id="idTokenInput" form="register-form">
+                    </div>
+                    <div class="card-footer text-center bg-light py-3">
+                        <p class="mb-0">
+                            <%= t('register.already_account') %>
+                                <a href="/login" class="text-success fw-bold text-decoration-none">
+                                    <%= t('register.login_link') %>
+                                </a>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<%- include('../layout/footer') %>
+    <%- include('../layout/footer') %>
 
-<script>
-    document.getElementById('register-form').addEventListener('submit', function () {
-        const btn = document.getElementById('register-btn');
-        const btnText = document.getElementById('btn-text');
-        btn.disabled = true;
-        btnText.textContent = "Procesando registro...";
-    });
-</script>
+        <script type="module">
+            import { getGoogleToken, getTwitterToken } from "/js/auth.mjs";
+
+            const registerForm = document.getElementById('register-form');
+            const idTokenInput = document.getElementById('idTokenInput');
+            const btnGoogle = document.getElementById("btnGoogle");
+            const btnTwitter = document.getElementById("btnTwitter");
+            const registerBtn = document.getElementById('register-btn');
+            const btnText = document.getElementById('btn-text');
+
+            // Estado de carga
+            const setLoading = (isLoading) => {
+                registerBtn.disabled = isLoading;
+                btnGoogle.disabled = isLoading;
+                btnTwitter.disabled = isLoading;
+                if (isLoading) btnText.textContent = "Procesando...";
+            };
+
+            // Registro tradicional
+            registerForm.addEventListener('submit', () => setLoading(true));
+
+            // Lógica para Social Login (mismo flujo que en login.ejs)
+            const handleSocialLogin = async (providerFn) => {
+                setLoading(true);
+                try {
+                    const token = await providerFn();
+                    idTokenInput.value = token;
+
+                    // Cambiamos la acción del formulario para que use la ruta de social-login
+                    registerForm.action = "/login-social";
+                    registerForm.submit();
+                } catch (error) {
+                    console.error(error);
+                    alert("<%= t('login.error_social') %>");
+                    setLoading(false);
+                }
+            };
+
+            btnGoogle.addEventListener("click", () => handleSocialLogin(getGoogleToken));
+            btnTwitter.addEventListener("click", () => handleSocialLogin(getTwitterToken));
+        </script>
