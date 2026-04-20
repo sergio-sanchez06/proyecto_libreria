@@ -56,6 +56,23 @@
                                 </span>
                             </div>
                         </li>
+                        <li class="info-item d-flex align-items-center mb-3">
+                            <div class="info-icon me-3 text-teal"><i class="bi bi-geo-alt-fill fs-4"></i></div>
+                            <div class="info-content">
+                                <strong class="d-block">
+                                    <%= t('profile.address_opt') || 'Dirección Secundaria' %>
+                                </strong>
+                                <span class="text-muted">
+                                    <% if (user.optional_address && user.optional_address.trim() !=='' ) { %>
+                                        <%= user.optional_address %>
+                                            <% } else { %>
+                                                <i class="small text-muted opacity-50">
+                                                    <%= t('profile.not_defined') || 'No definida' %>
+                                                </i>
+                                                <% } %>
+                                </span>
+                            </div>
+                        </li>
                     </ul>
 
                     <div class="row g-3 mb-5">
@@ -119,7 +136,7 @@
                                     <%= t('profile.mode_soft_title') || 'Desactivar cuenta' %>
                                 </strong>
                                 <small class="text-muted">
-                                    <%= t('profile.mode_soft_desc') || 'Podrás recuperarla después.' %>
+                                    <%= t('profile.mode_soft_description') || 'Podrás recuperarla después.' %>
                                 </small>
                             </label>
                         </div>
@@ -132,7 +149,7 @@
                                     <%= t('profile.mode_hard_title') || 'Borrado permanente' %>
                                 </strong>
                                 <small class="text-muted">
-                                    <%= t('profile.mode_hard_desc') || 'Eliminación total de datos (RGPD).' %>
+                                    <%= t('profile.mode_hard_description') || 'Eliminación total de datos (RGPD).' %>
                                 </small>
                             </label>
                         </div>
@@ -141,8 +158,9 @@
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button type="button" class="btn btn-light rounded-pill px-4"
                         data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" form="deleteAccountForm" class="btn btn-danger rounded-pill px-4 fw-bold">
-                        <%= t('profile.confirm_action') || 'Confirmar y Salir' %>
+                    <button type="submit" form="deleteAccountForm" id="confirmDeleteBtn"
+                        class="btn btn-danger rounded-pill px-4 fw-bold">
+                        <%= t('profile.confirm_soft') || 'Confirmar y Desactivar' %>
                     </button>
                 </div>
             </div>
@@ -171,5 +189,34 @@
             color: var(--brand-teal);
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnConfirm = document.getElementById('confirmDeleteBtn');
+            const radioSoft = document.getElementById('modeSoft');
+            const radioHard = document.getElementById('modeHard');
+
+            // Textos traducidos (puedes pasarlos desde EJS)
+            const textSoft = "<%= t('profile.confirm_soft') || 'Confirmar y Desactivar' %>";
+            const textHard = "<%= t('profile.confirm_hard') || 'Confirmar y Borrar Permanentemente' %>";
+
+            function updateButtonText() {
+                if (radioHard.checked) {
+                    btnConfirm.innerText = textHard;
+                    btnConfirm.classList.replace('btn-danger', 'btn-dark'); // Opcional: cambio de color para advertir
+                } else {
+                    btnConfirm.innerText = textSoft;
+                    btnConfirm.classList.replace('btn-dark', 'btn-danger');
+                }
+            }
+
+            // Escuchar cambios
+            radioSoft.addEventListener('change', updateButtonText);
+            radioHard.addEventListener('change', updateButtonText);
+
+            // Ejecutar al cargar por si acaso
+            updateButtonText();
+        });
+    </script>
 
     <%- include('../layout/footer') %>

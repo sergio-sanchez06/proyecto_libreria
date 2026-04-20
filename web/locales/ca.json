@@ -165,7 +165,14 @@
     "delete_account": "Eliminar Compte",
     "delete_confirm": "Estàs segur que vols eliminar el teu compte? Aquesta acció no es pot desfer.",
     "activity_title": "La meva activitat",
-    "view_reviews": "Veure les meves ressenyes"
+    "view_reviews": "Veure les meves ressenyes",
+    "mode_hard_title": "Eliminació permanent del compte",
+    "mode_hard_description": "En eliminar el teu compte permanentment, totes les teves dades personals, historial de comandes i preferències seran eliminades de forma irreversible. Aquesta acció no es pot desfer.",
+    "mode_soft_title": "Deshabilitar el compte d'usuari",
+    "mode_soft_description": "En desactivar el teu compte temporalment, les teves dades personals i preferències seran guardades i podràs sol·licitar la reactivació del teu compte en el futur.",
+    "confirm_soft": "Confirmar i Desactivar",
+    "confirm_hard": "Confirmar i Esborrar Permanentment",
+    "delete_intro": "Quina acció vols realitzar amb el teu compte?"
   },
   "cart": {
     "title": "El teu carret",
@@ -408,7 +415,8 @@
     "technical_name": "Cookies Tècniques:",
     "technical_desc": "Permeten la navegació a través del web i l'ús de les diferents opcions o serveis que hi existeixen.",
     "disclaimer": "En tractar-se d'un entorn de proves i aprenentatge, no es realitza cap seguiment publicitari ni es comparteixen dades amb tercers (cookies de tercers)."
-  }, "legal_notice": {
+  },
+  "legal_notice": {
     "title": "Avís Legal",
     "section1_title": "1. Caràcter Educatiu:",
     "section1_text": "Aquest lloc web ha estat desenvolupat com a part d'un projecte acadèmic/educatiu sense ànim de lucre. La finalitat és demostrar competències tècniques en desenvolupament web i gestió de bases de dades.",
@@ -416,7 +424,8 @@
     "section2_text": "S'informa l'usuari que el titular d'aquest projecte no disposa de cap propietat ni drets d'autor sobre les imatges de portades de llibres, logotips o recursos gràfics mostrats. Aquests elements pertanyen als seus legítims autors i editorials, i s'utilitzen aquí exclusivament amb fins il·lustratius i didàctics.",
     "section3_title": "3. Responsabilitat:",
     "section3_text": "El contingut d'aquest web és simulat. Els preus, l'estoc i les dades de contacte no tenen validesa real. L'autor no es fa responsable de l'ús indegut de la informació aquí presentada."
-  }, "privacy_policy": {
+  },
+  "privacy_policy": {
     "title": "Política de Privacitat",
     "purpose_title": "Finalitat del tractament:",
     "purpose_text": "Les dades personals que es puguin recollir (com noms d'usuari en proves) es tracten únicament per validar el funcionament de la lògica del servidor (Node.js/Express) i les transaccions a la base de dades PostgreSQL.",

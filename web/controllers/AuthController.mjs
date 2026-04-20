@@ -81,10 +81,21 @@ async function login(req, res) {
 
   try {
     const response = await apiClient.post("/auth/login", { idToken });
+
+    console.log("Respuesta del login: ", response.data.user.id);
+
     const { user } = response.data;
+
+    if (!user || !user.id) {
+      throw new Error("La API no encontró el usuario");
+    }
 
     req.session.user = user;
     req.session.idToken = idToken; // Evitamos almacenar la sesión de cara a controlar nosotros la duración de las sesiones
+
+    console.log("Usuario en sesión: ", req.session.user);
+    console.log("Id del usuario en sesión: ", req.session.user.id);
+    console.log("Token en sesión: ", req.session.idToken);
 
     // 1. Recuperamos la URL guardada por el middleware (o vamos a / si no hay ninguna)
     const redirectUrl = req.session.returnTo || "/";

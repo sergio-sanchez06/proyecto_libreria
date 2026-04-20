@@ -2,10 +2,24 @@ import { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 async function getProfile(req, res) {
   // 1. Verificación de seguridad en el controlador web
-  if (!req.session.user || !req.session.idToken) {
+  if (!req.session?.user || !req.session?.idToken) {
     console.log("Sesión no encontrada o token ausente");
     return res.redirect("/login");
   }
+
+  const user = req.session.user;
+  const userId = user.id || user.user?.id; // Intenta leer ambos formatos
+
+  console.log(userId);
+
+  if (!userId) {
+    console.error("Estructura de usuario no reconocida:", user);
+    return res.redirect("/login?error=error_sesion");
+  }
+
+  console.log("Usuario en sesión:", req.session.user);
+  console.log("Id del usuario en sesión:", req.session.user.id);
+  console.log("Token en sesión:", req.session.idToken ? "Presente" : "Ausente");
 
   try {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
@@ -30,7 +44,7 @@ async function getProfile(req, res) {
       return res.redirect("/login");
     }
 
-    res.render("perfil", {
+    res.render("partials/perfil", {
       user: req.session.user,
       profile: null,
       error:
@@ -52,16 +66,20 @@ async function getPurchaseHistory(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
+    console.log("req.session.user.id", req.session.user.id);
+
     const response = await api.get("/orders/user/" + req.session.user.id);
-    const orders = response.data;
+    const orders = response.data || [];
 
-    for (let order of orders) {
-      const responseItems = await api.get("/orderItems/" + order.id);
-      order.items = responseItems.data;
+    if (orders.length > 0) {
+      for (let order of orders) {
+        const responseItems = await api.get("/orderItems/" + order.id);
+        order.items = responseItems.data;
+      }
+
+      console.log("orders", orders);
+      console.log("orders[0].items", orders[0].items);
     }
-
-    console.log("orders", orders);
-    console.log("orders[0].items", orders[0].items);
 
     res.render("partials/purchaseHistory", {
       title: "Mis compras",
@@ -125,16 +143,25 @@ async function updateProfile(req, res) {
       "/users/profile/" + req.session.user.id,
       req.body,
     );
+
+    console.log(response.data);
+
     const user = response.data.user;
+
+    console.log(user.optional_address);
 
     req.session.user = user;
 
-    console.log(user);
+    // Forzamos la persistencia en Redis
+    req.session.save((err) => {
+      if (err) {
+        console.error("Error guardando en Redis:", err);
+        return res.redirect("/user/profile?error=session_sync");
+      }
 
-    // IMPORTANTE: Tras un POST exitoso, lo mejor es REDIRECT.
-    // Si haces RENDER, y el usuario refresca la página, el navegador intentará reenviar el formulario.
-    req.session.save(() => {
-      res.redirect("/user/profile"); // O la ruta donde muestres el perfil
+      // Solo redirigimos cuando Redis ha confirmado que guardó los datos
+      console.log("Sesión sincronizada en Redis. Redirigiendo...");
+      res.redirect("/user/profile");
     });
   } catch (error) {
     console.error("Error en editProfile:", error.message);

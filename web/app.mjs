@@ -18,8 +18,18 @@ import i18nextFsBackend from "i18next-fs-backend";
 import * as useragent from "express-useragent";
 import cookieParser from "cookie-parser";
 import sessionFileStore from "session-file-store";
+import { createClient } from "redis";
+import { RedisStore } from "connect-redis";
 
 import os from "os";
+
+// const redisClient = createClient({
+//   url: "redis://localhost:6379",
+// });
+
+// redisClient.on("error", (err) => console.log("Redis Client Error", err));
+
+// await redisClient.connect(); // <--- CRÍTICO: Sin esto, la app se quedará esperando eternamente
 
 const FileStore = sessionFileStore(session);
 
@@ -43,6 +53,27 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// const redisStore = new RedisStore({
+//   client: redisClient,
+//   prefix: "web_sessions:",
+//   disableTouch: false,
+// });
+
+// app.use(
+//   session({
+//     store: redisStore,
+//     secret: SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: false,
+//     rolling: true,
+//     cookie: {
+//       secure: false,
+//       httpOnly: true,
+//       maxAge: 1000 * 60 * 60 * 2, // 2 horas
+//     },
+//   }),
+// );
 
 app.use(
   session({

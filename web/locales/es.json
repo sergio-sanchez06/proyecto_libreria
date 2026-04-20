@@ -165,7 +165,14 @@
     "delete_account": "Eliminar Cuenta",
     "delete_confirm": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
     "activity_title": "Mi Actividad",
-    "view_reviews": "Ver mis reseñas"
+    "view_reviews": "Ver mis reseñas",
+    "mode_hard_title": "Eliminación permanente de la cuenta",
+    "mode_hard_description": "Al eliminar su cuenta permanentemente, todos sus datos personales, historial de pedidos y preferencias serán eliminados de forma irreversible. Esta acción no se puede deshacer.",
+    "mode_soft_title": "Deshabilitar su cuenta de usuario",
+    "mode_soft_description": "Al deshabilitar su cuenta de usuario temporalmente, sus datos personales y preferencias serán guardados y podrá solicitar la reactivación de su cuenta en el futuro.",
+    "confirm_soft": "Confirmar y Desactivar",
+    "confirm_hard": "Confirmar y Borrar Permanentemente",
+    "delete_intro": "¿Qué acción desea realizar con su cuenta?"
   },
   "cart": {
     "title": "Tu carrito",

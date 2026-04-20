@@ -291,9 +291,9 @@ async function updateProfile(updates) {
       `
       UPDATE public.users
       SET
-        name = COALESCE(NULLIF($1, ''), name),
-        default_address = COALESCE(NULLIF($2, ''), default_address),
-        optional_address = COALESCE(NULLIF($3, ''), optional_address),
+        name = COALESCE(NULLIF($1, ''), name), -- Obligatorio: si viene vacío, no cambia
+        default_address = COALESCE(NULLIF($2, ''), default_address), -- Obligatorio
+        optional_address = $3, -- OPCIONAL: Se guarda exactamente lo que envíe el usuario (vacío o texto)
         role = COALESCE($4, role),
         updated_at = NOW()
       WHERE id = $5

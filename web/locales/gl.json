@@ -165,7 +165,14 @@
     "delete_account": "Eliminar Conta",
     "delete_confirm": "Estás seguro de que queres eliminar a túa conta? Esta acción non se pode deshacer.",
     "activity_title": "A miña actividade",
-    "view_reviews": "Ver as miñas recensións"
+    "view_reviews": "Ver as miñas recensións",
+    "mode_hard_title": "Eliminación permanente da conta",
+    "mode_hard_description": "Ao eliminar a túa conta permanentemente, todos os teus datos persoais, historial de pedidos e preferencias serán eliminados de forma irreversible. Esta acción non se pode deshacer.",
+    "mode_soft_title": "Deshabilitar o conta de usuario",
+    "mode_soft_description": "Ao desactivar a túa conta temporalmente, os teus datos persoais e preferencias serán gardados e poderás solicitar a reactivación da túa conta no futuro.",
+    "confirm_soft": "Confirmar e Desactivar",
+    "confirm_hard": "Confirmar e Borrar Permanentemente",
+    "delete_intro": "Que acción desexa realizar coa súa conta?"
   },
   "cart": {
     "title": "O teu carriño",
@@ -408,7 +415,8 @@
     "technical_name": "Cookies Técnicas:",
     "technical_desc": "Permiten a navegación a través da web e o uso de diferentes opcións ou servizos que nela existen.",
     "disclaimer": "Ao ser un entorno de probas e aprendizaxe, no se realizan seguimentos publicitarios nin se comparten datos con terceiros (cookies de terceiros)."
-  }, "legal_notice": {
+  },
+  "legal_notice": {
     "title": "Aviso Legal",
     "section1_title": "1. Carácter Educativo:",
     "section1_text": "Este sitio web foi desenvolvido como parte dun proxecto académico/educativo sen fins de lucro. A finalidade é demostrar competencias técnicas en desenvolvemento web e xestión de bases de datos.",
@@ -416,7 +424,8 @@
     "section2_text": "Infórmase ao usuario que o titular deste proxecto non dispón de ningunha propiedade nin dereitos de autor sobre as imaxes de portadas de libros, logotipos ou recursos gráficos mostrados. Ditos elementos pertencen aos seus lexítimos autores e editoriais, e utilízanse aquí exclusivamente con fins ilustrativos e didácticos.",
     "section3_title": "3. Responsabilidade:",
     "section3_text": "O contido desta web é simulado. Os prezos, stock e datos de contacto non teñen validez real. O autor non se fai responsable do uso indebido da información aquí presentada."
-  }, "privacy_policy": {
+  },
+  "privacy_policy": {
     "title": "Política de Privacidade",
     "purpose_title": "Finalidade do tratamento:",
     "purpose_text": "Os datos persoais que se poidan recoller (como nomes de usuario en probas) trátanse unicamente para validar o funcionamento da lóxica do servidor (Node.js/Express) e as transaccións na base de datos PostgreSQL.",

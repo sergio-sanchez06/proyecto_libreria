@@ -165,7 +165,14 @@
     "delete_account": "Kontua Ezabatu",
     "delete_confirm": "Ziur zaude zure kontua ezabatu nahi duzula? Ekintza hau ezin da desegin.",
     "activity_title": "Nire Jarduera",
-    "view_reviews": "Nire iritziak ikusi"
+    "view_reviews": "Nire iritziak ikusi",
+    "mode_hard_title": "Zure kontua behin betiko ezabatuko da",
+    "mode_hard_description": "Zure kontua behin betiko ezabatzean, zure datu pertsonal guztiak, eskaeren historia eta lehentasunak ezabatu egingo dira, ezin izango da berreskuratu. Ekintza hau ezin da desegin.",
+    "mode_soft_title": "Zure kontua desaktibatuko da",
+    "mode_soft_description": "Zure kontua desaktibatzean, zure datu pertsonalak eta lehentasunak gordeko dira eta zure kontua etorkizunean berriro aktibatu ahal izango duzu.",
+    "confirm_soft": "Berretsi eta Desaktibatu",
+    "confirm_hard": "Berretsi eta Ezabatu",
+    "delete_intro": "Zer ekintza nahi duzu egin zure kontuarekin?"
   },
   "cart": {
     "title": "Zure saskia",
