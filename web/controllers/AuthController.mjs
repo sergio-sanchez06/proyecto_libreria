@@ -11,7 +11,14 @@ async function showLogin(req, res) {
   if (req.session.user) {
     return res.redirect("/");
   }
-  res.render("partials/login", { error: null, user: null });
+
+  const errorMsg = req.query.error || null;
+
+  res.render("partials/login", {
+    error: errorMsg,
+    user: null,
+    success: req.query.success || null,
+  });
 }
 
 // Procesa login (recibe idToken del cliente)

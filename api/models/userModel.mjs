@@ -9,6 +9,7 @@ export default class User {
     optional_address,
     created_at,
     updated_at,
+    deleted_at,
   } = {}) {
     this.id = id;
     this.name = name;
@@ -19,6 +20,7 @@ export default class User {
     this.optional_address = optional_address;
     this.created_at = created_at;
     this.updated_at = updated_at;
+    this.deleted_at = deleted_at;
   }
   isAdmin() {
     return this.role === "ADMIN";

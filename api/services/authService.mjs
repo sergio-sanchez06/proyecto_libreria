@@ -230,10 +230,20 @@ async function deleteAuthUser(firebase_uid) {
   }
 }
 
+async function updateUserStatus(firebase_uid, status) {
+  try {
+    return await admin.auth().updateUser(firebase_uid, { disabled: !status });
+  } catch (error) {
+    console.error("Error al actualizar estado del usuario:", error);
+    throw error;
+  }
+}
+
 export default {
   //registerWithToken,
   verifyTokenAndGetUser,
   createUser,
   deleteAuthUser,
   verifySocialToken,
+  updateUserStatus,
 };

@@ -1,4 +1,4 @@
-<%- include('../layout/header', { bodyClass: 'bg-user-vistas', extraCSS: 'admin/users_list' }) %>
+<%- include('../layout/header', { bodyClass: 'bg-user-vistas' , extraCSS: 'admin/users_list' }) %>
 
     <main class="container py-5">
         <div class="row mb-5 align-items-center">
@@ -70,10 +70,6 @@
                                             style="font-size: 0.75rem;">
                                             <%= t('adminUsersList.th_role') %>
                                         </th>
-                                        <th class="py-3 text-uppercase fw-semibold text-muted"
-                                            style="font-size: 0.75rem;">
-                                            <%= t('adminUsersList.th_location') %>
-                                        </th>
                                         <th class="py-3 text-uppercase fw-semibold text-muted text-center"
                                             style="font-size: 0.75rem;">
                                             <%= t('adminUsersList.th_actions') %>
@@ -82,7 +78,7 @@
                                 </thead>
                                 <tbody>
                                     <% users.forEach(user=> { %>
-                                        <tr>
+                                        <tr class="<%= user.deleted_at ? 'opacity-50 bg-light' : '' %>">
                                             <td class="ps-4 py-3">
                                                 <div class="d-flex align-items-center">
                                                     <div class="avatar-sm me-3 bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center"
@@ -92,6 +88,10 @@
                                                     <div>
                                                         <div class="fw-bold text-dark">
                                                             <%= user.name %>
+                                                                <% if (user.deleted_at) { %>
+                                                                    <span class="badge bg-secondary ms-1"
+                                                                        style="font-size: 0.6rem;">DESHABILITADO</span>
+                                                                    <% } %>
                                                         </div>
                                                         <small class="text-muted d-block" style="font-size: 0.7rem;">ID:
                                                             #<%= user.id %></small>
@@ -116,13 +116,6 @@
                                                         </span>
                                                         <% } %>
                                             </td>
-                                            <td>
-                                                <div class="text-truncate d-flex align-items-center text-muted"
-                                                    style="max-width: 200px;" title="<%= user.default_address %>">
-                                                    <i class="bi bi-geo-alt me-1 text-primary opacity-75"></i>
-                                                    <%= user.default_address || t('adminUsersList.no_address') %>
-                                                </div>
-                                            </td>
                                             <td class="pe-4 text-center">
                                                 <div class="d-flex justify-content-center gap-2">
                                                     <a href="/admin/users/update/<%= user.id %>"
@@ -130,15 +123,62 @@
                                                         title="<%= t('adminUsersList.btn_edit') %>">
                                                         <i class="bi bi-pencil-square text-primary"></i>
                                                     </a>
-                                                    <form action="/admin/users/delete/<%= user.email %>" method="POST"
-                                                        onsubmit="return confirmDelete(event, '<%= user.name %>')">
-                                                        <input type="hidden" name="id" value="<%= user.id %>">
-                                                        <input type="hidden" name="email" value="<%= user.email %>">
-                                                        <button type="submit"
-                                                            class="btn btn-white btn-sm px-3 border shadow-sm">
-                                                            <i class="bi bi-trash3 text-danger"></i>
-                                                        </button>
-                                                    </form>
+
+                                                    <% if (user.role !=='ADMIN' ) { %>
+                                                        <% if (user.deleted_at) { %>
+                                                            <form action="/admin/users/reactivate/<%= user.email %>"
+                                                                method="POST" data-requires-token
+                                                                onsubmit="return confirmReactivate(event, '<%= user.name %>')"
+                                                                class="d-inline">
+
+                                                                <input type="hidden" name="id" value="<%= user.id %>">
+
+                                                                <button type="submit"
+                                                                    class="btn btn-white btn-sm px-3 border shadow-sm"
+                                                                    title="Restaurar acceso">
+                                                                    <i class="bi bi-person-check-fill text-success"></i>
+                                                                </button>
+                                                            </form>
+
+                                                            <form action="/admin/users/delete/<%= user.email %>"
+                                                                method="POST" data-requires-token
+                                                                onsubmit="return confirmHardDelete(event, '<%= user.name %>')"
+                                                                class="d-inline">
+
+                                                                <input type="hidden" name="id" value="<%= user.id %>">
+                                                                <input type="hidden" name="mode" value="hard">
+
+                                                                <button type="submit"
+                                                                    class="btn btn-danger btn-sm px-3 shadow-sm"
+                                                                    title="Eliminar permanentemente">
+                                                                    <i class="bi bi-x-circle-fill"></i>
+                                                                </button>
+                                                            </form>
+
+                                                            <% } else { %>
+                                                                <form action="/admin/users/delete/<%= user.email %>"
+                                                                    method="POST" data-requires-token
+                                                                    onsubmit="return confirmSoftDelete(event, '<%= user.name %>')"
+                                                                    class="d-inline">
+
+                                                                    <input type="hidden" name="id"
+                                                                        value="<%= user.id %>">
+                                                                    <input type="hidden" name="mode" value="soft">
+                                                                    <button type="submit"
+                                                                        class="btn btn-white btn-sm px-3 border shadow-sm"
+                                                                        title="Deshabilitar usuario">
+                                                                        <i class="bi bi-shield-slash text-warning"></i>
+                                                                    </button>
+                                                                </form>
+                                                                <% } %>
+                                                                    <% } else { %>
+                                                                        <button
+                                                                            class="btn btn-light btn-sm px-3 border-0 disabled"
+                                                                            title="Administrador Protegido">
+                                                                            <i
+                                                                                class="bi bi-shield-lock-fill text-muted"></i>
+                                                                        </button>
+                                                                        <% } %>
                                                 </div>
                                             </td>
                                         </tr>
@@ -151,17 +191,12 @@
     </main>
 
     <script>
-        function confirmDelete(event, userName) {
-            // Obtenemos el mensaje traducido desde el motor de EJS
-            const message = "<%= t('adminUsersList.delete_confirm') %>";
+        function confirmSoftDelete(event, userName) {
+            return confirm(`¿Estás seguro de deshabilitar a ${userName}? El usuario no podrá iniciar sesión pero sus datos se mantendrán.`);
+        }
 
-            // Mostramos el cuadro de confirmación
-            if (confirm(message)) {
-                return true; // Continúa con el envío del formulario
-            } else {
-                event.preventDefault(); // Detiene el envío
-                return false;
-            }
+        function confirmHardDelete(event, userName) {
+            return confirm(`⚠️ ATENCIÓN: Vas a borrar permanentemente a ${userName}. Se anonimizarán sus datos y esta acción NO se puede deshacer. ¿Continuar?`);
         }
     </script>
 

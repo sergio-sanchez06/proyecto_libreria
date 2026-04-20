@@ -152,13 +152,23 @@ async function dismissSelf(req, res) {
     return res.redirect("/login");
   }
 
+  const userId = req.body.id;
+  const deleteMode = req.body.mode || "soft"; // 'soft' (por defecto) o 'hard'
+
+  if (userId !== req.session.user.id.toString()) {
+    console.error("Intento de borrar una cuenta que no pertenece a la sesión");
+    return res.redirect("/user/perfil");
+  }
+
   try {
     console.log("Hemos entrado al controlador de eliminar perfil");
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
     // 1. Obtener los datos del usuario
-    const response = await api.delete("/users/dismissSelf/" + req.body.id);
+    const response = await api.delete("/users/dismissSelf/" + userId, {
+      data: { mode: deleteMode },
+    });
     req.session.destroy((err) => {
       if (err) {
         console.error("Error al destruir la sesión:", err);
@@ -169,10 +179,14 @@ async function dismissSelf(req, res) {
       res.redirect("/");
     });
   } catch (error) {
-    console.error("Error en editProfile:", error.message);
-    res.render("partials/editUserProfile", {
-      user: null,
-      error: "Error al cargar los datos del usuario.",
+    console.error(
+      "Error en dismissSelf:",
+      error.response?.data || error.message,
+    );
+    res.render("partials/perfil", {
+      user: req.session.user || null,
+      error:
+        "No se pudo procesar la solicitud de eliminación. Contacte con soporte.",
     });
   }
 }

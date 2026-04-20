@@ -133,6 +133,14 @@ router.post(
   AdminController.deleteUser,
 );
 
+router.post(
+  "/users/reactivate/:email",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  protectMiddleware.requireFreshToken,
+  AdminController.reactivateUser,
+);
+
 router.get(
   "/orders",
   protectMiddleware.protect,

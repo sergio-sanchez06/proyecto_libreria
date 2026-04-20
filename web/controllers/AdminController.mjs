@@ -51,7 +51,10 @@ async function getManageOrders(req, res) {
     const PAGE_SIZE = 10;
     const currentPage = Math.max(1, parseInt(req.query.page) || 1);
     const totalPages = Math.ceil(allOrders.length / PAGE_SIZE);
-    const pageOrders = allOrders.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+    const pageOrders = allOrders.slice(
+      (currentPage - 1) * PAGE_SIZE,
+      currentPage * PAGE_SIZE,
+    );
 
     // Solo cargamos los items de la página actual
     const batchSize = 5;
@@ -96,7 +99,10 @@ async function getPendingOrders(req, res) {
     const PAGE_SIZE = 10;
     const currentPage = Math.max(1, parseInt(req.query.page) || 1);
     const totalPages = Math.ceil(pendingOrders.length / PAGE_SIZE);
-    const pageOrders = pendingOrders.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+    const pageOrders = pendingOrders.slice(
+      (currentPage - 1) * PAGE_SIZE,
+      currentPage * PAGE_SIZE,
+    );
 
     // Solo cargamos los items de la página actual
     const batchSize = 5;
@@ -204,15 +210,51 @@ async function deleteUser(req, res) {
       );
     }
 
-    const userId = req.body.id;
+    const { id, mode } = req.body;
+
+    console.log("Id del usuario: " + id);
+    console.log("Mode: " + mode);
+
     const api = getAuthenticatedClient(req.session.idToken);
 
-    await api.delete(`/users/${userId}`);
+    await api.put(`/users/delete/${id}`, { mode });
 
     res.redirect("/admin/users");
   } catch (error) {
     console.error("Error al eliminar usuario:", error.message);
     res.redirect("/admin/users?error=No se pudo eliminar");
+  }
+}
+
+async function reactivateUser(req, res) {
+  try {
+    // 1. Obtenemos el ID de los parámetros de la ruta
+    const { id } = req.body;
+
+    console.log("Id para reactivar: " + id);
+
+    // 2. Preparamos el cliente autenticado
+    const api = getAuthenticatedClient(req.session.idToken);
+
+    // 3. Llamamos al API.
+    // Usamos la ruta basada en ID que definimos en el controlador del API:
+    // /users/reactivate/:id (o /users/restore/:id según cómo la hayas nombrado en tus rutas)
+    await api.put(`/users/reactivate/${id}`);
+
+    // 4. Si todo va bien, redirigimos con un mensaje de éxito
+    // Nota: Si usas un sistema de flash messages, podrías usarlo aquí
+    res.redirect("/admin/users");
+  } catch (error) {
+    console.error(
+      "Error al restaurar usuario en el Web Controller:",
+      error.message,
+    );
+
+    // Capturamos el mensaje de error que viene del API si existe
+    const errorMessage =
+      error.response?.data?.message || "No se pudo restaurar el usuario";
+
+    res.redirect(`/admin/users?error=${encodeURIComponent(errorMessage)}`);
   }
 }
 
@@ -322,6 +364,7 @@ export default {
   getUpdateUserForm,
   updateUser,
   deleteUser,
+  reactivateUser,
   getManageOrders,
   getPendingOrders,
   getDashboard,
