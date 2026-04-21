@@ -131,6 +131,10 @@ async function updateProfile(req, res) {
     return res.redirect("/login");
   }
 
+  if (req.session.user.id !== req.body.id) {
+    return res.redirect("/user/profile");
+  }
+
   try {
     console.log("Hemos entrado al controlador de actualizar perfil");
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();

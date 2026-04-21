@@ -1,4 +1,5 @@
 import axios from "axios";
+import redisController from "./RedisController.mjs";
 
 const apiClient = axios.create({
   baseURL: "http://localhost:3000",
@@ -7,6 +8,8 @@ const apiClient = axios.create({
   },
   withCredentials: true,
 });
+
+let redisClient = null;
 
 async function getBooksAndAuthors(req, res, next) {
   try {
@@ -55,30 +58,108 @@ async function getBooksByPublisherId(req, res, next) {
 }
 
 async function index(req, res) {
-  const response = await apiClient.get("/books/mostSold");
-  const booksMostSold = response.data;
+  try {
+    // 1. Inicializar cliente de Redis
+    const redisClient = await redisController.returnRedisClient();
 
-  const responseAuthors = await apiClient.get("/authors/authors/mostSold");
-  const authorsMostSold = responseAuthors.data;
+    // 2. Intentar obtener todas las listas de "Más vendidos" de Redis en paralelo
+    const keys = [
+      "BooksMostSold",
+      "AuthorsMostSold",
+      "PublishersMostSold",
+      "GenresMostSold",
+    ];
+    const cachedData = await Promise.all(
+      keys.map((key) => redisClient.get(key)),
+    );
 
-  const responsePublishers = await apiClient.get("/publishers/mostSold");
-  const publishersMostSold = responsePublishers.data;
+    // Mapeamos los resultados: si existe lo parseamos, si no, queda como null
+    let [booksMostSold, authorsMostSold, publishersMostSold, genresMostSold] =
+      cachedData.map((data) => (data ? JSON.parse(data) : null));
 
-  const responseGenres = await apiClient.get("/genres/mostSold");
-  const genresMostSold = responseGenres.data;
+    // 3. Si falta algún dato en caché, pedimos a la API solo lo necesario
+    if (
+      !booksMostSold ||
+      !authorsMostSold ||
+      !publishersMostSold ||
+      !genresMostSold
+    ) {
+      const apiCalls = [
+        !booksMostSold
+          ? apiClient.get("/books/mostSold")
+          : Promise.resolve(null),
+        !authorsMostSold
+          ? apiClient.get("/authors/authors/mostSold")
+          : Promise.resolve(null),
+        !publishersMostSold
+          ? apiClient.get("/publishers/mostSold")
+          : Promise.resolve(null),
+        !genresMostSold
+          ? apiClient.get("/genres/mostSold")
+          : Promise.resolve(null),
+      ];
 
-  // console.log(res.locals.books);
+      const [resBooks, resAuthors, resPubs, resGenres] =
+        await Promise.all(apiCalls);
 
-  res.render("partials/index", {
-    books: res.locals.books,
-    booksMostSold,
-    authors: res.locals.authors,
-    authorsMostSold,
-    publishersMostSold,
-    genresMostSold,
-    bookAuthors: res.locals.bookAuthors,
-    user: req.session.user || null,
-  });
+      // 4. Guardamos en Redis lo que acabamos de pedir (TTL de 1 hora)
+      if (resBooks) {
+        booksMostSold = resBooks.data;
+        await redisClient.set("BooksMostSold", JSON.stringify(booksMostSold), {
+          EX: 3600,
+        });
+      }
+      if (resAuthors) {
+        authorsMostSold = resAuthors.data;
+        await redisClient.set(
+          "AuthorsMostSold",
+          JSON.stringify(authorsMostSold),
+          { EX: 3600 },
+        );
+      }
+      if (resPubs) {
+        publishersMostSold = resPubs.data;
+        await redisClient.set(
+          "PublishersMostSold",
+          JSON.stringify(publishersMostSold),
+          { EX: 3600 },
+        );
+      }
+      if (resGenres) {
+        genresMostSold = resGenres.data;
+        await redisClient.set(
+          "GenresMostSold",
+          JSON.stringify(genresMostSold),
+          { EX: 3600 },
+        );
+      }
+    }
+
+    // 5. Renderizado final
+    res.render("partials/index", {
+      books: res.locals.books,
+      booksMostSold,
+      authors: res.locals.authors,
+      authorsMostSold,
+      publishers: res.locals.publishers, // Asegúrate que este venga de tu middleware
+      publishersMostSold,
+      genresMostSold,
+      bookAuthors: res.locals.bookAuthors,
+      user: req.session.user || null,
+    });
+  } catch (error) {
+    console.error("Error en el Home Index:", error);
+    // Renderizamos con arrays vacíos si falla todo para que la web no se rompa
+    res.render("partials/index", {
+      books: [],
+      booksMostSold: [],
+      authors: [],
+      authorsMostSold: [],
+      publishersMostSold: [],
+      genresMostSold: [],
+      user: req.session.user || null,
+    });
+  }
 }
 
 async function getBookById(req, res) {

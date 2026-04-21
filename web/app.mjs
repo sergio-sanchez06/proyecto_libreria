@@ -2,6 +2,17 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import session from "express-session";
+import { RedisStore } from "connect-redis";
+import i18next from "i18next";
+import i18nextHttpMiddleware from "i18next-http-middleware";
+import i18nextFsBackend from "i18next-fs-backend";
+import * as useragent from "express-useragent";
+import cookieParser from "cookie-parser";
+
+// Controlador de Redis
+import redisController from "./controllers/RedisController.mjs";
+
+// Rutas
 import webRoutes from "./routes/webRoutes.mjs";
 import publisherRoutes from "./routes/publisherRouter.mjs";
 import userRoutes from "./routes/userRoutes.mjs";
@@ -11,182 +22,127 @@ import bookRoutes from "./routes/bookRoutes.mjs";
 import cartRoutes from "./routes/cartRouter.mjs";
 import adminRoutes from "./routes/adminRoutes.mjs";
 import reviewRoutes from "./routes/reviewRouter.mjs";
+
+// Middlewares
 import controlUserAgent from "./middlewares/controlUserAgent.mjs";
-import i18next from "i18next";
-import i18nextHttpMiddleware from "i18next-http-middleware";
-import i18nextFsBackend from "i18next-fs-backend";
-import * as useragent from "express-useragent";
-import cookieParser from "cookie-parser";
-import sessionFileStore from "session-file-store";
-import { createClient } from "redis";
-import { RedisStore } from "connect-redis";
-
-import os from "os";
-
-// const redisClient = createClient({
-//   url: "redis://localhost:6379",
-// });
-
-// redisClient.on("error", (err) => console.log("Redis Client Error", err));
-
-// await redisClient.connect(); // <--- CRÍTICO: Sin esto, la app se quedará esperando eternamente
-
-const FileStore = sessionFileStore(session);
-
-const SESSION_SECRET = "tu-secret-super-seguro";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const SESSION_SECRET = "tu-secret-super-seguro";
 
-const app = express();
 
-// Middleware de detección de User Agent
-app.use(useragent.express());
+// Refactorización del código para inicializar los servicios web y redis.
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+async function startApp() {
+  try {
+    // 1. Inicialización de Redis a través del controlador
+    const redisClient = await redisController.returnRedisClient();
+    console.log("✅ Redis inicializado y conectado correctamente");
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+    const app = express();
 
-// Servir archivos estáticos de public/
-app.use(express.static(path.join(__dirname, "public")));
+    // 2. Configuración de Middlewares base
+    app.use(useragent.express());
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use(cookieParser(SESSION_SECRET));
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+    // 3. Configuración de Vistas y Estáticos
+    app.set("view engine", "ejs");
+    app.set("views", path.join(__dirname, "views"));
+    app.use(express.static(path.join(__dirname, "public")));
+    app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// const redisStore = new RedisStore({
-//   client: redisClient,
-//   prefix: "web_sessions:",
-//   disableTouch: false,
-// });
+    // 4. Configuración de Sesión con Redis
+    const redisStore = new RedisStore({
+      client: redisClient,
+      prefix: "web_sessions:",
+      disableTouch: false,
+    });
 
-// app.use(
-//   session({
-//     store: redisStore,
-//     secret: SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     rolling: true,
-//     cookie: {
-//       secure: false,
-//       httpOnly: true,
-//       maxAge: 1000 * 60 * 60 * 2, // 2 horas
-//     },
-//   }),
-// );
+    app.use(
+      session({
+        store: redisStore,
+        secret: SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        rolling: true,
+        cookie: {
+          secure: false, // Cambiar a true si al final implementamos certificado HTTPS
+          httpOnly: true,
+          maxAge: 1000 * 60 * 60 * 2, // Sesión de 2 horas
+        },
+      }),
+    );
 
-app.use(
-  session({
-    store: new FileStore({
-      path: path.join(os.tmpdir(), "libreria_sessions"), // ← fuera del proyecto
-      ttl: 3600 * 2,
-      reapInterval: 3600,
-      retries: 5,
-      factor: 1,
-      minTimeout: 50,
-      logFn: () => {},
-    }),
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    rolling: true,
-    cookie: {
-      secure: false,
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 2, // 2 horas
-    },
-  }),
-);
+    // 5. Configuración de i18next
+    await i18next
+      .use(i18nextFsBackend)
+      .use(i18nextHttpMiddleware.LanguageDetector)
+      .init({
+        preload: ["es", "ca", "gl", "eu", "mu", "an"],
+        fallbackLng: "es",
+        ns: ["es", "ca", "gl", "eu", "mu", "an"],
+        defaultNS: "es",
+        backend: {
+          loadPath: path.join(__dirname, "locales/{{lng}}.json"),
+        },
+        detection: {
+          order: ["querystring", "cookie", "header"],
+          lookupCookie: "i18next",
+          caches: ["cookie"],
+        },
+      });
 
-// app.use(
-//   session({
-//     store: new FileStore({
-//       path: "./temporary_sessions",
-//       ttl: 3600 * 2,
-//       reapInterval: 3600,
-//       retries: 5, // <--- Añade esto: reintenta 5 veces
-//       factor: 1, // Factor de espera entre reintentos
-//       minTimeout: 50, // Tiempo mínimo de espera (ms)
-//       logFn: () => {},
-//     }),
-//     secret: SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: false,
-//     rolling: true,
-//     cookie: {
-//       secure: false,
-//       httpOnly: true,
-//       sameSite: "lax",
-//       maxAge: 1000 * 60 * 60 * 2, // Cookie de 2 horas
-//     },
-//   }),
-// );
+    app.use(i18nextHttpMiddleware.handle(i18next));
 
-app.use(cookieParser(SESSION_SECRET));
+    // 6. Middlewares de lógica de negocio y variables locales
+    app.use(controlUserAgent.filterIA);
 
-// Configuración de i18next para la internacionalización entre los idiomas oficiales de España
-i18next
-  .use(i18nextFsBackend)
-  .use(i18nextHttpMiddleware.LanguageDetector)
-  .init({
-    preload: ["es", "ca", "gl", "eu", "mu", "an"],
-    fallbackLng: "es",
-    ns: ["es", "ca", "gl", "eu", "mu", "an"], // <--- Añade los nombres de tus archivos aquí
-    defaultNS: "es", // <--- El archivo por defecto es es.json
-    backend: {
-      loadPath: path.join(__dirname, "locales/{{lng}}.json"),
-    },
-    detection: {
-      order: ["querystring", "cookie", "header"], // Dónde busca el idioma primero
-      lookupCookie: "i18next",
-      caches: ["cookie"], // Guarda la elección en una cookie
-    },
-  });
+    app.use((req, res, next) => {
+      res.locals.user = req.session.user || null;
+      res.locals.currentLanguage = req.i18n.language;
+      next();
+    });
 
-// Middleware para manejar la internacionalización
-app.use(i18nextHttpMiddleware.handle(i18next));
+    app.use((req, res, next) => {
+      if (req.session.flash) {
+        res.locals.error = req.session.flash.message;
+        delete req.session.flash;
+      }
+      next();
+    });
 
-// Middleware para detectar el User Agent y filtrar los accesos de agentes de IA
-app.use(controlUserAgent.filterIA);
-// app.use(controlUserAgent.apiLimiter);
+    // 7. Definición de Rutas
+    app.use("/", webRoutes);
+    app.use("/admin", adminRoutes);
+    app.use("/publisher", publisherRoutes);
+    app.use("/books", bookRoutes);
+    app.use("/user", userRoutes);
+    app.use("/authors", authorRoutes);
+    app.use("/genres", genreRoutes);
+    app.use("/cart", cartRoutes);
+    app.use("/review", reviewRoutes);
 
-app.use((req, res, next) => {
-  res.locals.user = req.session.user || null; // disponible en TODAS las vistas
-  res.locals.currentLanguage = req.i18n.language; // disponible en TODAS las vistas
-  next();
-});
+    // 8. Manejo de errores global del proceso
+    process.on("unhandledRejection", (reason) => {
+      console.error("⚠️ Unhandled Rejection:", reason);
+    });
 
-app.use((req, res, next) => {
-  // Si hay un error en el flash de sesión, lo pasamos a locals.error
-  if (req.session.flash) {
-    res.locals.error = req.session.flash.message;
-    delete req.session.flash; // Limpiamos para que no salga dos veces
+    process.on("uncaughtException", (error) => {
+      console.error("⚠️ Uncaught Exception:", error);
+    });
+
+    // 9. Lanzamiento del servidor
+    const port = 3001;
+    app.listen(port, () => {
+      console.log(`🚀 Web corriendo en http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("💥 Error crítico durante el arranque de la app:", error);
+    process.exit(1);
   }
-  next();
-});
+}
 
-app.use("/", webRoutes);
-app.use("/admin", adminRoutes);
-app.use("/publisher", publisherRoutes);
-// app.use("/auth", authRoutes);
-app.use("/books", bookRoutes);
-app.use("/user", userRoutes);
-app.use("/authors", authorRoutes);
-app.use("/genres", genreRoutes);
-app.use("/cart", cartRoutes);
-app.use("/review", reviewRoutes);
-
-// Captura errores asíncronos no manejados — evita que nodemon reinicie el servidor
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("⚠️ Unhandled Rejection:", reason);
-});
-
-process.on("uncaughtException", (error) => {
-  console.error("⚠️ Uncaught Exception:", error);
-});
-
-const port = 3001;
-app.listen(port, () => {
-  console.log(`Web corriendo en http://localhost:${port}`);
-});
+// Arrancar la aplicación
+startApp();

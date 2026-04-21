@@ -57,7 +57,19 @@ async function createOrder({ user_id, items, shipping_address }) {
     }
 
     await client.query("COMMIT");
-    return order;
+    // return order;
+
+    return {
+      ...order,
+      items: validatedItems.map((item) => {
+        const bookInfo = books.find((b) => b.id == item.book_id);
+        return {
+          title: bookInfo.title, // <--- Esto es lo que necesita el email
+          quantity: item.quantity,
+          price: item.currentPrice,
+        };
+      }),
+    };
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;

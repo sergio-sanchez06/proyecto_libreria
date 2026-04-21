@@ -1,90 +1,102 @@
 // web/middleware/protect.mjs
 
 import { getAuthenticatedClient } from "../utils/apiClient.mjs";
-
-// async function protect(req, res, next) {
-//   // 1. Verificación rápida: ¿Hay sesión?
-//   if (!req.session.user) {
-//     console.log("Acceso denegado: No hay sesión activa.");
-//     req.session.returnTo = req.originalUrl;
-//     return res.redirect("/login");
-//   }
-
-//   try {
-//     // CORRECCIÓN: Buscamos el ID donde sea que esté (por si la sesión está sucia)
-//     const userId = req.session.user.id || req.session.user.user?.id;
-
-//     if (!userId) {
-//       console.error("No se pudo encontrar el ID del usuario en la sesión.");
-//       return res.redirect("/login");
-//     }
-
-//     const api = getAuthenticatedClient(req.session.idToken);
-//     const response = await api.get(`/users/me/${userId}`);
-
-//     // 2. Sincronización inteligente: Extraemos el usuario real del envoltorio de la API
-//     // Tu API devuelve { message: "...", user: {...} }, así que tomamos solo el .user
-//     const freshUser = response.data.user ? response.data.user : response.data;
-
-//     // 3. Validación de cuenta activa
-//     if (freshUser.deleted_at) {
-//       console.log(`Usuario ${freshUser.email} inhabilitado.`);
-//       return req.session.destroy(() => {
-//         res.clearCookie("connect.sid");
-//         res.redirect("/login?error=Su cuenta ha sido desactivada.");
-//       });
-//     }
-
-//     // 4. Actualizamos Redis con el objeto PLANO (sin el "message")
-//     req.session.user = freshUser;
-
-//     // 5. Inyectar en res.locals para EJS
-//     res.locals.user = freshUser;
-//     res.locals.isAdmin = freshUser.role === "ADMIN";
-
-//     console.log(`Usuario ${freshUser.email} autenticado y validado.`);
-//     next();
-//   } catch (error) {
-//     console.error("Error en validación de sesión:", error.message);
-
-//     if (error.response?.status === 401) {
-//       return req.session.destroy(() => {
-//         res.clearCookie("connect.sid");
-//         res.redirect("/login?error=Su sesión ha caducado.");
-//       });
-//     }
-
-//     // FALLBACK: Aseguramos que los datos antiguos también se limpien si estaban anidados
-//     const sessionUser = req.session.user.user
-//       ? req.session.user.user
-//       : req.session.user;
-//     res.locals.user = sessionUser;
-//     res.locals.isAdmin = sessionUser?.role === "ADMIN";
-//     next();
-//   }
-// }
+import redisController from "../controllers/RedisController.mjs";
 
 async function protect(req, res, next) {
-  if (req.session.user) {
-    console.log("Autenticado");
-    console.log(req.session.user);
-    res.locals.user = req.session.user;
-    res.locals.isAdmin = req.session.user.role === "ADMIN";
-    next();
-  } else {
-    console.log("No autenticado");
-    console.log(req.session.user);
+  // 1. Verificación rápida de sesión local
+  if (!req.session.user || !req.session.idToken) {
     req.session.returnTo = req.originalUrl;
-    res.redirect("/login");
+    return res.redirect("/login");
+  }
+
+  try {
+    const userId = req.session.user.id || req.session.user.user?.id;
+    const redisClient = await redisController.returnRedisClient();
+    const cacheKey = `user:validation:${userId}`;
+
+    // 2. INTENTO DE LECTURA DESDE REDIS (Caché de validación)
+    const cachedValidation = await redisClient.get(cacheKey);
+
+    let freshUser;
+
+    if (cachedValidation) {
+      // Si está en Redis, confiamos en esos datos y ahorramos la llamada a la API
+      freshUser = JSON.parse(cachedValidation);
+    } else {
+      // 3. SI NO ESTÁ EN CACHÉ, LLAMADA A LA API
+      const api = getAuthenticatedClient(req.session.idToken);
+      const response = await api.get(`/users/me/${userId}`);
+
+      // Normalizamos el objeto (quitamos el envoltorio {message, user})
+      freshUser = response.data.user || response.data;
+
+      // 4. GUARDAR EN REDIS (ej. 5 o 10 minutos)
+      // Esto evita llamar a la API en cada clic, pero re-valida periódicamente
+      await redisClient.setEx(cacheKey, 600, JSON.stringify(freshUser));
+    }
+
+    // 5. Validación de cuenta activa (Incluso con caché, esto se chequea)
+    if (freshUser.deleted_at) {
+      console.warn(
+        `Intento de acceso de usuario desactivado: ${freshUser.email}`,
+      );
+      return destroySession(req, res, "Su cuenta ha sido desactivada.");
+    }
+
+    // 6. Sincronización de datos para la vista y siguiente middleware
+    req.session.user = freshUser;
+    res.locals.user = freshUser;
+    res.locals.isAdmin = freshUser.role === "ADMIN";
+
+    next();
+  } catch (error) {
+    console.error("Error en protect middleware:", error.message);
+
+    // Si la API dice explícitamente que el token no vale, fuera.
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      return destroySession(req, res, "Sesión inválida o caducada.");
+    }
+
+    // Si la API está caída pero tenemos al usuario en sesión, le dejamos pasar
+    // como medida de "Gracious Degradation", pero limpiando el anidamiento.
+    const fallbackUser = req.session.user.user || req.session.user;
+    res.locals.user = fallbackUser;
+    res.locals.isAdmin = fallbackUser?.role === "ADMIN";
+    next();
   }
 }
 
+// Función auxiliar para limpiar sesión y cookies
+function destroySession(req, res, message) {
+  return req.session.destroy(() => {
+    res.clearCookie("connect.sid");
+    res.redirect(`/login?error=${encodeURIComponent(message)}`);
+  });
+}
+
+// async function protect(req, res, next) {
+//   if (req.session.user) {
+//     console.log("Autenticado");
+//     console.log(req.session.user);
+//     res.locals.user = req.session.user;
+//     res.locals.isAdmin = req.session.user.role === "ADMIN";
+//     next();
+//   } else {
+//     console.log("No autenticado");
+//     console.log(req.session.user);
+//     req.session.returnTo = req.originalUrl;
+//     res.redirect("/login");
+//   }
+// }
+
 async function requireAdmin(req, res, next) {
-  if (req.session.user && req.session.user.role === "ADMIN") {
-    console.log("Admin");
+  // Usamos res.locals que ya fue inyectado y validado por protect()
+  if (res.locals.user && res.locals.isAdmin) {
+    console.log("Acceso concedido: Admin");
     next();
   } else {
-    console.log("No admin");
+    console.log("Acceso denegado: No es administrador");
     res.status(403).render("errors/403");
   }
 }

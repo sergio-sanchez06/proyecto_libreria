@@ -118,21 +118,20 @@
                                             </td>
                                             <td class="pe-4 text-center">
                                                 <div class="d-flex justify-content-center gap-2">
-                                                    <a href="/admin/users/update/<%= user.id %>"
-                                                        class="btn btn-white btn-sm px-3 hover-bg-light border shadow-sm"
-                                                        title="<%= t('adminUsersList.btn_edit') %>">
-                                                        <i class="bi bi-pencil-square text-primary"></i>
-                                                    </a>
+                                                    <% if (user.role !=='ADMIN' && !user.email.includes('deleted')) { %>
 
-                                                    <% if (user.role !=='ADMIN' ) { %>
+                                                        <a href="/admin/users/update/<%= user.id %>"
+                                                            class="btn btn-white btn-sm px-3 hover-bg-light border shadow-sm"
+                                                            title="<%= t('adminUsersList.btn_edit') %>">
+                                                            <i class="bi bi-pencil-square text-primary"></i>
+                                                        </a>
+
                                                         <% if (user.deleted_at) { %>
-                                                            <form action="/admin/users/reactivate/<%= user.email %>"
+                                                            <form action="/admin/users/reactivate/<%= user.id %>"
                                                                 method="POST" data-requires-token
                                                                 onsubmit="return confirmReactivate(event, '<%= user.name %>')"
                                                                 class="d-inline">
-
                                                                 <input type="hidden" name="id" value="<%= user.id %>">
-
                                                                 <button type="submit"
                                                                     class="btn btn-white btn-sm px-3 border shadow-sm"
                                                                     title="Restaurar acceso">
@@ -140,27 +139,23 @@
                                                                 </button>
                                                             </form>
 
-                                                            <form action="/admin/users/delete/<%= user.email %>"
+                                                            <form action="/admin/users/delete/<%= user.id %>"
                                                                 method="POST" data-requires-token
                                                                 onsubmit="return confirmHardDelete(event, '<%= user.name %>')"
                                                                 class="d-inline">
-
                                                                 <input type="hidden" name="id" value="<%= user.id %>">
                                                                 <input type="hidden" name="mode" value="hard">
-
                                                                 <button type="submit"
                                                                     class="btn btn-danger btn-sm px-3 shadow-sm"
                                                                     title="Eliminar permanentemente">
                                                                     <i class="bi bi-x-circle-fill"></i>
                                                                 </button>
                                                             </form>
-
                                                             <% } else { %>
-                                                                <form action="/admin/users/delete/<%= user.email %>"
+                                                                <form action="/admin/users/delete/<%= user.id %>"
                                                                     method="POST" data-requires-token
                                                                     onsubmit="return confirmSoftDelete(event, '<%= user.name %>')"
                                                                     class="d-inline">
-
                                                                     <input type="hidden" name="id"
                                                                         value="<%= user.id %>">
                                                                     <input type="hidden" name="mode" value="soft">
@@ -171,14 +166,18 @@
                                                                     </button>
                                                                 </form>
                                                                 <% } %>
-                                                                    <% } else { %>
+
+                                                                    <% } else if (user.role==='ADMIN' ) { %>
                                                                         <button
                                                                             class="btn btn-light btn-sm px-3 border-0 disabled"
                                                                             title="Administrador Protegido">
                                                                             <i
                                                                                 class="bi bi-shield-lock-fill text-muted"></i>
                                                                         </button>
-                                                                        <% } %>
+                                                                        <% } else { %>
+                                                                            <span class="text-muted small italic">Sin
+                                                                                acciones disponibles</span>
+                                                                            <% } %>
                                                 </div>
                                             </td>
                                         </tr>

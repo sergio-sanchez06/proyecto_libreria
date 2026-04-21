@@ -1,10 +1,17 @@
 import OrderRepository from "../Repositories/OrderRepository.mjs";
+import emailService from "../services/emailService.mjs";
 
 async function createOrder(req, res) {
   const { items, shipping_address } = req.body;
-  const user_id = req.user.id;
+  const { id: user_id, email, name, default_address } = req.user;
 
-  const finalAddress = shipping_address || req.user.default_address;
+  const finalAddress = shipping_address || default_address;
+
+  if (!finalAddress) {
+    return res
+      .status(400)
+      .json({ error: "Se requiere una dirección de envío." });
+  }
 
   if (!items || items.length === 0) {
     return res.status(400).json({ error: "El carrito está vacío" });
@@ -16,6 +23,19 @@ async function createOrder(req, res) {
       user_id,
       shipping_address: finalAddress,
     });
+
+    console.log("Items del pedido: ", order);
+
+    emailService
+      .sendOrderConfirmationEmail(
+        email,
+        name,
+        finalAddress,
+        order.items, // Detalles enriquecidos (con títulos)
+        order.total,
+      )
+      .catch((err) => console.error("Error asíncrono enviando email:", err));
+
     res.status(201).json(order);
   } catch (error) {
     console.error(error);

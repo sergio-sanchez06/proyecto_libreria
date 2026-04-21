@@ -1,388 +1,458 @@
-<%- include('../layout/header', { bodyClass: 'bg-user-vistas', extraCSS: 'admin/orders' }) %>
+<%- include('../layout/header', { bodyClass: 'bg-user-vistas' , extraCSS: 'admin/orders' }) %>
 
-<div class="container-fluid py-4 px-4">
+    <div class="container-fluid py-4 px-4">
 
-    <%
-        const currentLang = (typeof lang !== 'undefined' && lang) ? lang : 'es';
-        const localeMap = { 'eu': 'eu-ES', 'ca': 'ca-ES', 'gl': 'gl-ES', 'es': 'es-ES' };
-        const userLocale = localeMap[currentLang] || 'es-ES';
+        <% const currentLang=(typeof lang !=='undefined' && lang) ? lang : 'es' ; const localeMap={ 'eu' : 'eu-ES'
+            , 'ca' : 'ca-ES' , 'gl' : 'gl-ES' , 'es' : 'es-ES' }; const userLocale=localeMap[currentLang] || 'es-ES' ;
+            /* ── status → i18n key map ── */ const statusKeyMap={ 'PENDIENTE' : 'adminOrders.status_pending' , 'PAGADO'
+            : 'adminOrders.status_paid' , 'PROCESANDO' : 'adminOrders.status_processing' , 'ENVIADO'
+            : 'adminOrders.status_shipped' , 'ENTREGADO' : 'adminOrders.status_delivered' , 'CANCELADO'
+            : 'adminOrders.status_cancelled' }; /* ── quick stats ── */ const total=orders.length; const
+            pending=orders.filter(function(o){ return o.status==='PENDIENTE' ; }).length; const
+            processing=orders.filter(function(o){ return o.status==='PROCESANDO' || o.status==='ENVIADO' ; }).length;
+            const delivered=orders.filter(function(o){ return o.status==='ENTREGADO' ; }).length; const
+            revenue=orders.reduce(function(acc,o){ return acc + parseFloat(o.total||0); }, 0).toFixed(2); %>
 
-        /* ── status → i18n key map ── */
-        const statusKeyMap = {
-            'PENDIENTE':  'adminOrders.status_pending',
-            'PAGADO':     'adminOrders.status_paid',
-            'PROCESANDO': 'adminOrders.status_processing',
-            'ENVIADO':    'adminOrders.status_shipped',
-            'ENTREGADO':  'adminOrders.status_delivered',
-            'CANCELADO':  'adminOrders.status_cancelled'
-        };
-
-        /* ── quick stats ── */
-        const total      = orders.length;
-        const pending    = orders.filter(function(o){ return o.status === 'PENDIENTE'; }).length;
-        const processing = orders.filter(function(o){ return o.status === 'PROCESANDO' || o.status === 'ENVIADO'; }).length;
-        const delivered  = orders.filter(function(o){ return o.status === 'ENTREGADO'; }).length;
-        const revenue    = orders.reduce(function(acc,o){ return acc + parseFloat(o.total||0); }, 0).toFixed(2);
-    %>
-
-    <!-- ── Hero ─────────────────────────────────────── -->
-    <div class="orders-hero mb-4">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <div>
-                <h2 class="fw-800 mb-1" style="font-size:1.6rem; font-weight:800;">
-                    <i class="bi bi-bag-check-fill me-2"></i>
-                    <% if (isPending) { %>
-                        <%= t('adminOrders.title_pending') || 'Pedidos Pendientes' %>
-                    <% } else { %>
-                        <%= t('adminOrders.title') %>
-                    <% } %>
-                </h2>
-        <p class="mb-0 opacity-75" style="font-size:.9rem;">
-                    <%= t('adminOrders.total_count', { count: totalOrders }) %>
-                </p>
-            </div>
-            <a href="/admin/dashboard" class="btn btn-sm btn-light fw-600 rounded-pill px-4">
-                <i class="bi bi-arrow-left me-1"></i> Dashboard
-            </a>
-        </div>
-    </div>
-
-    <!-- ── Stat cards ────────────────────────────────── -->
-    <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="stat-card">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon" style="background:#f0fdfa; color:var(--brand-teal);">
-                        <i class="bi bi-cart-check-fill"></i>
-                    </div>
+            <!-- ── Hero ─────────────────────────────────────── -->
+            <div class="orders-hero mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div>
-                        <div class="stat-value" style="color:var(--brand-teal)"><%= total %></div>
-                        <div class="stat-label">Total</div>
+                        <h2 class="fw-800 mb-1" style="font-size:1.6rem; font-weight:800;">
+                            <i class="bi bi-bag-check-fill me-2"></i>
+                            <% if (isPending) { %>
+                                <%= t('adminOrders.title_pending') || 'Pedidos Pendientes' %>
+                                    <% } else { %>
+                                        <%= t('adminOrders.title') %>
+                                            <% } %>
+                        </h2>
+                        <p class="mb-0 opacity-75" style="font-size:.9rem;">
+                            <%= t('adminOrders.total_count', { count: totalOrders }) %>
+                        </p>
                     </div>
+                    <a href="/admin/dashboard" class="btn btn-sm btn-light fw-600 rounded-pill px-4">
+                        <i class="bi bi-arrow-left me-1"></i> Dashboard
+                    </a>
                 </div>
             </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon" style="background:#fef9c3; color:#854d0e;">
-                        <i class="bi bi-hourglass-split"></i>
-                    </div>
-                    <div>
-                        <div class="stat-value" style="color:#854d0e;"><%= pending %></div>
-                        <div class="stat-label">Pendientes</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon" style="background:#dbeafe; color:#1e40af;">
-                        <i class="bi bi-truck"></i>
-                    </div>
-                    <div>
-                        <div class="stat-value" style="color:#1e40af;"><%= processing %></div>
-                        <div class="stat-label">En camino</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="stat-icon" style="background:#fef3c7; color:#92400e;">
-                        <i class="bi bi-currency-euro"></i>
-                    </div>
-                    <div>
-                        <div class="stat-value" style="color:#92400e; font-size:1.4rem;"><%= revenue %>€</div>
-                        <div class="stat-label">Facturado</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- ── Tab navigation ────────────────────────────── -->
-    <div class="orders-tabs">
-        <a href="/admin/orders" class="tab-btn <%= !isPending ? 'active' : '' %>">
-            <i class="bi bi-list-ul me-1"></i> Todos los pedidos
-        </a>
-        <a href="/admin/orders/pending" class="tab-btn <%= isPending ? 'active' : '' %>">
-            <i class="bi bi-hourglass-split me-1"></i> Pendientes
-            <% if (pending > 0) { %>
-                <span class="ms-1 badge rounded-pill" style="background:#fbbf24; color:#7c2d12; font-size:.65rem;"><%= pending %></span>
-            <% } %>
-        </a>
-    </div>
-
-    <!-- ── Table ──────────────────────────────────────── -->
-    <div class="orders-table-wrap">
-        <% if (orders.length === 0) { %>
-            <div class="empty-state">
-                <i class="bi bi-inbox"></i>
-                <h5><% if (isPending) { %>No hay pedidos pendientes<% } else { %>No hay pedidos<% } %></h5>
-                <p class="small">Aquí aparecerán los pedidos cuando existan.</p>
-            </div>
-        <% } else { %>
-        <div class="table-responsive">
-            <table class="table orders-table align-middle">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Fecha</th>
-                        <th>Cliente</th>
-                        <th>Items</th>
-                        <th class="text-end">Total</th>
-                        <th>Estado</th>
-                        <th class="text-center">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% orders.forEach(function(order) {
-                        const dateStr = order.created_at
-                            ? new Date(order.created_at).toLocaleString(userLocale, { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })
-                            : '---';
-                        const itemCount = (order.items || []).length;
-                    %>
-                    <tr>
-                        <!-- ID -->
-                        <td>
-                            <span class="order-id-chip">#<%= order.id %></span>
-                        </td>
-
-                        <!-- Fecha -->
-                        <td>
-                            <span class="d-block fw-500" style="font-size:.83rem; color:#374151;"><%= dateStr.split(',')[0] %></span>
-                            <span class="d-block text-muted" style="font-size:.75rem;"><% if(dateStr.split(',').length > 1){ %><%= dateStr.split(',').slice(1).join(',').trim() %><% } %></span>
-                        </td>
-
-                        <!-- Cliente -->
-                        <td>
-                            <span class="user-pill">
-                                <i class="bi bi-person-circle" style="color:var(--brand-teal); flex-shrink:0;"></i>
-                                <%= order.user_email %>
-                            </span>
-                        </td>
-
-                        <!-- Items count -->
-                        <td>
-                            <span class="badge rounded-pill" style="background:#f1f5f9; color:#475569; font-size:.78rem; padding:5px 10px;">
-                                <i class="bi bi-book me-1"></i><%= itemCount %> libro<%= itemCount !== 1 ? 's' : '' %>
-                            </span>
-                        </td>
-
-                        <!-- Total -->
-                        <td class="text-end">
-                            <span class="fw-700" style="font-size:1rem; color:#0f172a;"><%= parseFloat(order.total).toFixed(2) %>€</span>
-                        </td>
-
-                        <!-- Estado badge -->
-                        <td>
-                            <span class="status-badge status-<%= order.status %>">
-                                <span class="dot"></span>
-                                <%= t(statusKeyMap[order.status] || 'adminOrders.status_pending') %>
-                            </span>
-                        </td>
-
-                        <!-- Acciones -->
-                        <td>
-                            <div class="d-flex align-items-center justify-content-center gap-2">
-                                <!-- Status change select -->
-                                <form action="/admin/orders/updateStatus" method="POST" data-requires-token class="d-flex">
-                                    <input type="hidden" name="orderId" value="<%= order.id %>">
-                                    <select name="status" class="status-select" onchange="this.form.requestSubmit()" title="Cambiar estado">
-                                        <option value="PENDIENTE"  <%= order.status === 'PENDIENTE'  ? 'selected' : '' %>><%= t('adminOrders.status_pending') %></option>
-                                        <option value="PAGADO"     <%= order.status === 'PAGADO'     ? 'selected' : '' %>><%= t('adminOrders.status_paid') %></option>
-                                        <option value="PROCESANDO" <%= order.status === 'PROCESANDO' ? 'selected' : '' %>><%= t('adminOrders.status_processing') %></option>
-                                        <option value="ENVIADO"    <%= order.status === 'ENVIADO'    ? 'selected' : '' %>><%= t('adminOrders.status_shipped') %></option>
-                                        <option value="ENTREGADO"  <%= order.status === 'ENTREGADO'  ? 'selected' : '' %>><%= t('adminOrders.status_delivered') %></option>
-                                        <option value="CANCELADO"  <%= order.status === 'CANCELADO'  ? 'selected' : '' %>><%= t('adminOrders.status_cancelled') %></option>
-                                    </select>
-                                </form>
-
-                                <!-- Ver detalle -->
-                                <button class="btn-view-order" data-bs-toggle="modal" data-bs-target="#modalOrder<%= order.id %>">
-                                    <i class="bi bi-eye-fill me-1"></i><%= t('adminOrders.btn_view') %>
-                                </button>
-
-                                <!-- Eliminar -->
-                                <form action="/admin/orders/delete" method="POST" data-requires-token
-                                    onsubmit="return confirm('<%= t('adminOrders.delete_confirm') %>');">
-                                    <input type="hidden" name="orderId" value="<%= order.id %>">
-                                    <button type="submit" class="btn-delete-order" title="Eliminar pedido">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </form>
+            <!-- ── Stat cards ────────────────────────────────── -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon" style="background:#f0fdfa; color:var(--brand-teal);">
+                                <i class="bi bi-cart-check-fill"></i>
                             </div>
-                        </td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        </div>
-        <% } %>
-    </div><!-- /orders-table-wrap -->
+                            <div>
+                                <div class="stat-value" style="color:var(--brand-teal)">
+                                    <%= total %>
+                                </div>
+                                <div class="stat-label">Total</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon" style="background:#fef9c3; color:#854d0e;">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value" style="color:#854d0e;">
+                                    <%= pending %>
+                                </div>
+                                <div class="stat-label">Pendientes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon" style="background:#dbeafe; color:#1e40af;">
+                                <i class="bi bi-truck"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value" style="color:#1e40af;">
+                                    <%= processing %>
+                                </div>
+                                <div class="stat-label">En camino</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon" style="background:#fef3c7; color:#92400e;">
+                                <i class="bi bi-currency-euro"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value" style="color:#92400e; font-size:1.4rem;">
+                                    <%= revenue %>€
+                                </div>
+                                <div class="stat-label">Facturado</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- ── Paginación ─────────────────────────────────── -->
-    <% if (totalPages > 1) {
-        const baseUrl = isPending ? '/admin/orders/pending' : '/admin/orders';
-    %>
-    <nav class="mt-4 d-flex align-items-center justify-content-between flex-wrap gap-3" aria-label="Paginación de pedidos">
-        <span class="text-muted" style="font-size:.85rem;">
-            Mostrando página <strong><%= currentPage %></strong> de <strong><%= totalPages %></strong>
-            &nbsp;·&nbsp; <strong><%= totalOrders %></strong> pedidos en total
-        </span>
-        <ul class="pagination pagination-sm mb-0">
-            <!-- Anterior -->
-            <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage - 1 %>">
-                    <i class="bi bi-chevron-left"></i>
+            <!-- ── Tab navigation ────────────────────────────── -->
+            <div class="orders-tabs">
+                <a href="/admin/orders" class="tab-btn <%= !isPending ? 'active' : '' %>">
+                    <i class="bi bi-list-ul me-1"></i> Todos los pedidos
                 </a>
-            </li>
+                <a href="/admin/orders/pending" class="tab-btn <%= isPending ? 'active' : '' %>">
+                    <i class="bi bi-hourglass-split me-1"></i> Pendientes
+                    <% if (pending> 0) { %>
+                        <span class="ms-1 badge rounded-pill"
+                            style="background:#fbbf24; color:#7c2d12; font-size:.65rem;">
+                            <%= pending %>
+                        </span>
+                        <% } %>
+                </a>
+            </div>
 
-            <% for (let p = 1; p <= totalPages; p++) { %>
-                <% if (totalPages <= 7 || p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1) { %>
-                    <li class="page-item <%= currentPage == p ? 'active' : '' %>">
-                        <a class="page-link" href="<%= baseUrl %>?page=<%= p %>"><%= p %></a>
-                    </li>
-                <% } else if (Math.abs(p - currentPage) === 2) { %>
-                    <li class="page-item disabled"><span class="page-link">…</span></li>
+            <!-- ── Table ──────────────────────────────────────── -->
+            <div class="orders-table-wrap">
+                <% if (orders.length===0) { %>
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <h5>
+                            <% if (isPending) { %>No hay pedidos pendientes<% } else { %>No hay pedidos<% } %>
+                        </h5>
+                        <p class="small">Aquí aparecerán los pedidos cuando existan.</p>
+                    </div>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table orders-table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th>Items</th>
+                                        <th class="text-end">Total</th>
+                                        <th>Estado</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% orders.forEach(function(order) { const dateStr=order.created_at ? new
+                                        Date(order.created_at).toLocaleString(userLocale, { day:'2-digit',
+                                        month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '---' ;
+                                        const itemCount=(order.items || []).length; %>
+                                        <tr>
+                                            <!-- ID -->
+                                            <td>
+                                                <span class="order-id-chip">#<%= order.id %></span>
+                                            </td>
+
+                                            <!-- Fecha -->
+                                            <td>
+                                                <span class="d-block fw-500" style="font-size:.83rem; color:#374151;">
+                                                    <%= dateStr.split(',')[0] %>
+                                                </span>
+                                                <span class="d-block text-muted" style="font-size:.75rem;">
+                                                    <% if(dateStr.split(',').length> 1){ %><%=
+                                                            dateStr.split(',').slice(1).join(',').trim() %>
+                                                            <% } %>
+                                                </span>
+                                            </td>
+
+                                            <!-- Cliente -->
+                                            <td>
+                                                <span class="user-pill">
+                                                    <i class="bi bi-person-circle"
+                                                        style="color:var(--brand-teal); flex-shrink:0;"></i>
+                                                    <%= order.user_email %>
+                                                </span>
+                                            </td>
+
+                                            <!-- Items count -->
+                                            <td>
+                                                <span class="badge rounded-pill"
+                                                    style="background:#f1f5f9; color:#475569; font-size:.78rem; padding:5px 10px;">
+                                                    <i class="bi bi-book me-1"></i>
+                                                    <%= itemCount %> libro<%= itemCount !==1 ? 's' : '' %>
+                                                </span>
+                                            </td>
+
+                                            <!-- Total -->
+                                            <td class="text-end">
+                                                <span class="fw-700" style="font-size:1rem; color:#0f172a;">
+                                                    <%= parseFloat(order.total).toFixed(2) %>€
+                                                </span>
+                                            </td>
+
+                                            <!-- Estado badge -->
+                                            <td>
+                                                <span class="status-badge status-<%= order.status %>">
+                                                    <span class="dot"></span>
+                                                    <%= t(statusKeyMap[order.status] || 'adminOrders.status_pending' )
+                                                        %>
+                                                </span>
+                                            </td>
+
+                                            <!-- Acciones -->
+                                            <td>
+                                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                                    <!-- Status change select -->
+                                                    <form action="/admin/orders/updateStatus/<%= order.id %>"
+                                                        method="POST" data-requires-token class="d-flex">
+                                                        <input type="hidden" name="orderId" value="<%= order.id %>">
+                                                        <select name="status" class="status-select"
+                                                            onchange="this.form.requestSubmit()" title="Cambiar estado">
+                                                            <option value="PENDIENTE" <%=order.status==='PENDIENTE'
+                                                                ? 'selected' : '' %>><%= t('adminOrders.status_pending')
+                                                                    %>
+                                                            </option>
+                                                            <option value="PAGADO" <%=order.status==='PAGADO'
+                                                                ? 'selected' : '' %>><%= t('adminOrders.status_paid') %>
+                                                            </option>
+                                                            <option value="PROCESANDO" <%=order.status==='PROCESANDO'
+                                                                ? 'selected' : '' %>><%=
+                                                                    t('adminOrders.status_processing') %>
+                                                            </option>
+                                                            <option value="ENVIADO" <%=order.status==='ENVIADO'
+                                                                ? 'selected' : '' %>><%= t('adminOrders.status_shipped')
+                                                                    %>
+                                                            </option>
+                                                            <option value="ENTREGADO" <%=order.status==='ENTREGADO'
+                                                                ? 'selected' : '' %>><%=
+                                                                    t('adminOrders.status_delivered') %>
+                                                            </option>
+                                                            <option value="CANCELADO" <%=order.status==='CANCELADO'
+                                                                ? 'selected' : '' %>><%=
+                                                                    t('adminOrders.status_cancelled') %>
+                                                            </option>
+                                                        </select>
+                                                    </form>
+
+                                                    <!-- Ver detalle -->
+                                                    <button class="btn-view-order" data-bs-toggle="modal"
+                                                        data-bs-target="#modalOrder<%= order.id %>">
+                                                        <i class="bi bi-eye-fill me-1"></i>
+                                                        <%= t('adminOrders.btn_view') %>
+                                                    </button>
+
+                                                    <!-- Eliminar -->
+                                                    <form action="/admin/orders/delete/<%= order.id %>" method="POST"
+                                                        data-requires-token
+                                                        onsubmit="return confirm('<%= t('adminOrders.delete_confirm') %>');">
+                                                        <input type="hidden" name="orderId" value="<%= order.id %>">
+                                                        <button type="submit" class="btn-delete-order"
+                                                            title="Eliminar pedido">
+                                                            <i class="bi bi-trash-fill"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } %>
+            </div><!-- /orders-table-wrap -->
+
+            <!-- ── Paginación ─────────────────────────────────── -->
+            <% if (totalPages> 1) {
+                const baseUrl = isPending ? '/admin/orders/pending' : '/admin/orders';
+                %>
+                <nav class="mt-4 d-flex align-items-center justify-content-between flex-wrap gap-3"
+                    aria-label="Paginación de pedidos">
+                    <span class="text-muted" style="font-size:.85rem;">
+                        Mostrando página <strong>
+                            <%= currentPage %>
+                        </strong> de <strong>
+                            <%= totalPages %>
+                        </strong>
+                        &nbsp;·&nbsp; <strong>
+                            <%= totalOrders %>
+                        </strong> pedidos en total
+                    </span>
+                    <ul class="pagination pagination-sm mb-0">
+                        <!-- Anterior -->
+                        <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                            <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage - 1 %>">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        <% for (let p=1; p <=totalPages; p++) { %>
+                            <% if (totalPages <=7 || p===1 || p===totalPages || Math.abs(p - currentPage) <=1) { %>
+                                <li class="page-item <%= currentPage == p ? 'active' : '' %>">
+                                    <a class="page-link" href="<%= baseUrl %>?page=<%= p %>">
+                                        <%= p %>
+                                    </a>
+                                </li>
+                                <% } else if (Math.abs(p - currentPage)===2) { %>
+                                    <li class="page-item disabled"><span class="page-link">…</span></li>
+                                    <% } %>
+                                        <% } %>
+
+                                            <!-- Siguiente -->
+                                            <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                                                <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage + 1 %>">
+                                                    <i class="bi bi-chevron-right"></i>
+                                                </a>
+                                            </li>
+                    </ul>
+                </nav>
                 <% } %>
-            <% } %>
 
-            <!-- Siguiente -->
-            <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-                <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage + 1 %>">
-                    <i class="bi bi-chevron-right"></i>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <% } %>
+    </div><!-- /container-fluid -->
 
-</div><!-- /container-fluid -->
-
-<!-- ══════════════════════════════════════════════════
+    <!-- ══════════════════════════════════════════════════
      MODALS (one per order)
 ══════════════════════════════════════════════════ -->
-<% orders.forEach(function(order) {
-    const modalDate = order.created_at
-        ? new Date(order.created_at).toLocaleString(userLocale)
-        : '---';
-    const items = order.items || [];
-    const orderTotal = parseFloat(order.total || 0).toFixed(2);
-%>
-<div class="modal fade" id="modalOrder<%= order.id %>" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
+    <% orders.forEach(function(order) { const modalDate=order.created_at ? new
+        Date(order.created_at).toLocaleString(userLocale) : '---' ; const items=order.items || []; const
+        orderTotal=parseFloat(order.total || 0).toFixed(2); %>
+        <div class="modal fade" id="modalOrder<%= order.id %>" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
 
-            <!-- Header -->
-            <div class="modal-header-custom d-flex justify-content-between align-items-center">
-                <div>
-                    <h5 class="fw-bold mb-0">
-                        <i class="bi bi-receipt me-2"></i>
-                        <%= t('adminOrders.modal_title') %> <span class="opacity-75">#<%= order.id %></span>
-                    </h5>
-                    <small class="opacity-60" style="font-size:.78rem;"><%= modalDate %></small>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span class="status-badge status-<%= order.status %>">
-                        <span class="dot"></span>
-                        <%= t(statusKeyMap[order.status] || 'adminOrders.status_pending') %>
-                    </span>
-                    <button type="button" class="btn-close btn-close-white ms-2" data-bs-dismiss="modal"></button>
-                </div>
-            </div>
-
-            <!-- Body -->
-            <div class="modal-body p-4">
-
-                <!-- Info row: cliente + dirección -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <div class="modal-info-box h-100">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <i class="bi bi-person-circle" style="color:var(--brand-teal); font-size:1.1rem;"></i>
-                                <span class="fw-700 small" style="color:var(--brand-teal);">Cliente</span>
-                            </div>
-                            <p class="mb-0 fw-500" style="font-size:.88rem; word-break:break-all;"><%= order.user_email %></p>
+                    <!-- Header -->
+                    <div class="modal-header-custom d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="fw-bold mb-0">
+                                <i class="bi bi-receipt me-2"></i>
+                                <%= t('adminOrders.modal_title') %> <span class="opacity-75">#<%= order.id %></span>
+                            </h5>
+                            <small class="opacity-60" style="font-size:.78rem;">
+                                <%= modalDate %>
+                            </small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="status-badge status-<%= order.status %>">
+                                <span class="dot"></span>
+                                <%= t(statusKeyMap[order.status] || 'adminOrders.status_pending' ) %>
+                            </span>
+                            <button type="button" class="btn-close btn-close-white ms-2"
+                                data-bs-dismiss="modal"></button>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="modal-info-box h-100">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <i class="bi bi-geo-alt-fill" style="color:var(--brand-teal); font-size:1.1rem;"></i>
-                                <span class="fw-700 small" style="color:var(--brand-teal);"><%= t('adminOrders.shipping_address') %></span>
+
+                    <!-- Body -->
+                    <div class="modal-body p-4">
+
+                        <!-- Info row: cliente + dirección -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="modal-info-box h-100">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <i class="bi bi-person-circle"
+                                            style="color:var(--brand-teal); font-size:1.1rem;"></i>
+                                        <span class="fw-700 small" style="color:var(--brand-teal);">Cliente</span>
+                                    </div>
+                                    <p class="mb-0 fw-500" style="font-size:.88rem; word-break:break-all;">
+                                        <%= order.user_email %>
+                                    </p>
+                                </div>
                             </div>
-                            <p class="mb-0" style="font-size:.88rem; color:#374151;"><%= order.shipping_address || '—' %></p>
+                            <div class="col-md-6">
+                                <div class="modal-info-box h-100">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <i class="bi bi-geo-alt-fill"
+                                            style="color:var(--brand-teal); font-size:1.1rem;"></i>
+                                        <span class="fw-700 small" style="color:var(--brand-teal);">
+                                            <%= t('adminOrders.shipping_address') %>
+                                        </span>
+                                    </div>
+                                    <p class="mb-0" style="font-size:.88rem; color:#374151;">
+                                        <%= order.shipping_address || '—' %>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Items table -->
+                        <h6 class="fw-700 mb-3"
+                            style="color:#0f172a; font-size:.85rem; text-transform:uppercase; letter-spacing:.05em;">
+                            <i class="bi bi-list-ul me-1" style="color:var(--brand-teal);"></i>
+                            <%= t('adminOrders.modal_items') %>
+                        </h6>
+
+                        <% if (items.length===0) { %>
+                            <p class="text-muted small text-center py-3">Sin artículos registrados.</p>
+                            <% } else { %>
+                                <div class="table-responsive rounded-3 border">
+                                    <table class="table modal-items-table mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    <%= t('adminOrders.modal_book_title') %>
+                                                </th>
+                                                <th class="text-center">
+                                                    <%= t('adminOrders.modal_qty') %>
+                                                </th>
+                                                <th class="text-end">
+                                                    <%= t('adminOrders.modal_price') %>
+                                                </th>
+                                                <th class="text-end">
+                                                    <%= t('adminOrders.modal_subtotal') %>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% items.forEach(function(item) { const title=item.book_title || (item.book
+                                                ? item.book.title : '—' ); const subtotal=(item.quantity *
+                                                item.price_at_time).toFixed(2); %>
+                                                <tr>
+                                                    <td>
+                                                        <span class="fw-600" style="font-size:.85rem;">
+                                                            <%= title %>
+                                                        </span>
+                                                        <small class="d-block text-muted" style="font-size:.72rem;">ID:
+                                                            <%= item.book_id %></small>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <span class="badge rounded-pill"
+                                                            style="background:#f1f5f9; color:#475569; font-size:.8rem; padding:5px 10px;">×
+                                                            <%= item.quantity %></span>
+                                                    </td>
+                                                    <td class="text-end" style="font-size:.85rem; color:#374151;">
+                                                        <%= parseFloat(item.price_at_time).toFixed(2) %>€
+                                                    </td>
+                                                    <td class="text-end fw-700" style="color:#0f172a;">
+                                                        <%= subtotal %>€
+                                                    </td>
+                                                </tr>
+                                                <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Total bar -->
+                                <div class="modal-total-bar mt-3 d-flex justify-content-between align-items-center">
+                                    <span class="fw-600" style="color:#065f46; font-size:.9rem;">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Total del pedido
+                                    </span>
+                                    <span class="fw-800" style="font-size:1.25rem; color:#065f46;">
+                                        <%= orderTotal %>€
+                                    </span>
+                                </div>
+                                <% } %>
+
                     </div>
+
+                    <!-- Footer -->
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
+                            <i class="bi bi-x me-1"></i>
+                            <%= t('adminOrders.modal_close') %>
+                        </button>
+                    </div>
+
                 </div>
-
-                <!-- Items table -->
-                <h6 class="fw-700 mb-3" style="color:#0f172a; font-size:.85rem; text-transform:uppercase; letter-spacing:.05em;">
-                    <i class="bi bi-list-ul me-1" style="color:var(--brand-teal);"></i>
-                    <%= t('adminOrders.modal_items') %>
-                </h6>
-
-                <% if (items.length === 0) { %>
-                    <p class="text-muted small text-center py-3">Sin artículos registrados.</p>
-                <% } else { %>
-                <div class="table-responsive rounded-3 border">
-                    <table class="table modal-items-table mb-0">
-                        <thead>
-                            <tr>
-                                <th><%= t('adminOrders.modal_book_title') %></th>
-                                <th class="text-center"><%= t('adminOrders.modal_qty') %></th>
-                                <th class="text-end"><%= t('adminOrders.modal_price') %></th>
-                                <th class="text-end"><%= t('adminOrders.modal_subtotal') %></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% items.forEach(function(item) {
-                                const title    = item.book_title || (item.book ? item.book.title : '—');
-                                const subtotal = (item.quantity * item.price_at_time).toFixed(2);
-                            %>
-                            <tr>
-                                <td>
-                                    <span class="fw-600" style="font-size:.85rem;"><%= title %></span>
-                                    <small class="d-block text-muted" style="font-size:.72rem;">ID: <%= item.book_id %></small>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge rounded-pill" style="background:#f1f5f9; color:#475569; font-size:.8rem; padding:5px 10px;">× <%= item.quantity %></span>
-                                </td>
-                                <td class="text-end" style="font-size:.85rem; color:#374151;"><%= parseFloat(item.price_at_time).toFixed(2) %>€</td>
-                                <td class="text-end fw-700" style="color:#0f172a;"><%= subtotal %>€</td>
-                            </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Total bar -->
-                <div class="modal-total-bar mt-3 d-flex justify-content-between align-items-center">
-                    <span class="fw-600" style="color:#065f46; font-size:.9rem;">
-                        <i class="bi bi-check-circle-fill me-1"></i> Total del pedido
-                    </span>
-                    <span class="fw-800" style="font-size:1.25rem; color:#065f46;"><%= orderTotal %>€</span>
-                </div>
-                <% } %>
-
             </div>
-
-            <!-- Footer -->
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
-                    <i class="bi bi-x me-1"></i><%= t('adminOrders.modal_close') %>
-                </button>
-            </div>
-
         </div>
-    </div>
-</div>
-<% }) %>
+        <% }) %>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<%- include('../layout/footer') %>
+            <%- include('../layout/footer') %>

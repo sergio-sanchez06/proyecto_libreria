@@ -1,6 +1,5 @@
 import express from "express";
 import AdminController from "../controllers/AdminController.mjs";
-import userController from "../controllers/UserController.mjs";
 import protectMiddleware from "../middlewares/protect.mjs";
 import bookController from "../controllers/BookController.mjs";
 import upload from "../utils/upload.mjs";
@@ -126,7 +125,7 @@ router.post(
   AdminController.updateUser,
 );
 router.post(
-  "/users/delete/:email",
+  "/users/delete/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   protectMiddleware.requireFreshToken,
@@ -134,7 +133,7 @@ router.post(
 );
 
 router.post(
-  "/users/reactivate/:email",
+  "/users/reactivate/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   protectMiddleware.requireFreshToken,
@@ -156,14 +155,14 @@ router.get(
 );
 
 router.post(
-  "/orders/updateStatus",
+  "/orders/updateStatus/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   protectMiddleware.requireFreshToken,
   AdminController.updateOrderStatus,
 );
 router.post(
-  "/orders/delete",
+  "/orders/delete/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   protectMiddleware.requireFreshToken,

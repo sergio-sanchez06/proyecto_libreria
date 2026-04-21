@@ -1,6 +1,10 @@
 // web/controllers/authorController.mjs
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
+import redisController from "./RedisController.mjs";
+
+let redisClient = null;
+
 // --- FUNCIONES PÚBLICAS (Lectura) ---
 
 /*async function getAuthors(req, res) {
@@ -18,17 +22,37 @@ import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 async function getAuthors(req, res) {
   try {
+    redisClient = await redisController.returnRedisClient();
+
     const page = req.query.page || 1;
     const country = req.query.country || null;
     const limit = 4;
 
-    // Peticiones paralelas para mayor eficiencia
+    // 1. Obtener países de Redis
+    const cachedCountries = await redisClient.get("AllCountries");
+    let countries = cachedCountries ? JSON.parse(cachedCountries) : null;
+
+    // 2. Preparar las promesas
+    // La petición de paises solo se ejecuta si no está en caché.
+    const authorsPromise = apiClient.get(
+      `/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}`,
+    );
+
+    const countriesPromise = countries
+      ? Promise.resolve({ data: countries })
+      : apiClient.get("/authors/countries");
+
     const [authorsRes, countriesRes] = await Promise.all([
-      apiClient.get(
-        `/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}`,
-      ),
-      apiClient.get("/authors/countries"),
+      authorsPromise,
+      countriesPromise,
     ]);
+
+    if (!countries) {
+      countries = countriesRes.data;
+      await redisClient.set("AllCountries", JSON.stringify(countries), {
+        EX: 3600,
+      });
+    }
 
     res.render("partials/authorsTable", {
       authors: authorsRes.data.data,
@@ -94,6 +118,8 @@ async function getCreateAuthor(req, res) {
 async function createAuthor(req, res) {
   const authorData = req.body;
 
+  redisClient = await redisController.returnRedisClient();
+
   if (req.file) {
     authorData.photo_url = `/uploads/authors/${req.file.filename}`;
   }
@@ -101,8 +127,13 @@ async function createAuthor(req, res) {
   try {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
-
     await api.post("/authors", authorData);
+
+    await Promise.all([
+      redisClient.del("AllAuthors"),
+      redisClient.del("AllCountries"),
+    ]);
+
     res.redirect("/authors/showAllAuthors");
   } catch (error) {
     res.render("admin/add_author", {
@@ -132,6 +163,8 @@ async function updateAuthor(req, res) {
   const { id } = req.params;
   const updateData = req.body;
 
+  redisClient = await redisController.returnRedisClient();
+
   if (req.file) {
     updateData.photo_url = `/uploads/authors/${req.file.filename}`;
   }
@@ -143,6 +176,12 @@ async function updateAuthor(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.put(`/authors/${id}`, updateData);
+
+    await Promise.all([
+      redisClient.del("AllAuthors"),
+      redisClient.del("AllCountries"),
+    ]);
+
     res.redirect(`/author/${id}`);
   } catch (error) {
     res.render("admin/edit_author", {
@@ -159,6 +198,14 @@ async function deleteAuthor(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.delete(`/authors/${req.params.id}`);
+
+    redisClient = await redisController.returnRedisClient();
+
+    await Promise.all([
+      redisClient.del("AllAuthors"),
+      redisClient.del("AllCountries"),
+    ]);
+
     res.redirect("/authors/manage/list");
   } catch (error) {
     console.error("Error al eliminar autor:", error.response?.data);
@@ -172,25 +219,40 @@ async function deleteAuthor(req, res) {
 
 async function getManageAuthors(req, res) {
   try {
+    redisClient = await redisController.returnRedisClient();
+
     const page = req.query.page || 1;
     const country = req.query.country || null;
-    const deleted = req.query.deleted || false;
+    const deleted = req.query.deleted === "true";
     const includeAll = !deleted;
     const limit = 4;
 
-    // Peticiones paralelas para mayor eficiencia
+    // 2. Intentar sacar países de caché
+    const cachedCountries = await redisClient.get("AllCountries");
+    let countries = cachedCountries ? JSON.parse(cachedCountries) : null;
+
+    // 3. Lanzamos TODAS las peticiones en un solo Promise.all
+    // Si countries ya existe, pasamos una promesa que resuelve a null inmediatamente
     const [authorsRes, countriesRes] = await Promise.all([
       apiClient.get(
         `/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}${deleted ? `&deleted=${deleted}` : ""}${includeAll ? `&includeAll=${includeAll}` : ""}`,
       ),
-      apiClient.get("/authors/countries"),
+      countries ? Promise.resolve(null) : apiClient.get("/authors/countries"),
     ]);
+
+    // 4. Si la API de países devolvió datos (porque no había caché), los guardamos
+    if (!countries && countriesRes) {
+      countries = countriesRes.data;
+      await redisClient.set("AllCountries", JSON.stringify(countries), {
+        EX: 3600,
+      });
+    }
 
     res.render("admin/authors_list", {
       authors: authorsRes.data.data,
       currentPage: authorsRes.data.currentPage,
       totalPages: authorsRes.data.totalPages,
-      countries: countriesRes.data,
+      countries: countries,
       selectedCountry: country,
       query: req.query,
       user: req.session.user || null,
@@ -209,6 +271,14 @@ async function restoreAuthor(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.put(`/authors/restore/${req.params.id}`);
+
+    redisClient = await redisController.returnRedisClient();
+
+    await Promise.all([
+      redisClient.del("AllAuthors"),
+      redisClient.del("AllCountries"),
+    ]);
+
     res.redirect("/authors/manage/list");
   } catch (error) {
     console.error("Error al restaurar autor:", error.response?.data);

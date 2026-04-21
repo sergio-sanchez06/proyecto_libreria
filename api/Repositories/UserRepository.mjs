@@ -61,23 +61,19 @@ async function upsertFromFirebase({
 }) {
   const client = await pool.connect();
   try {
-    // 1. VERIFICACIÓN PREVIA: ¿Está el usuario en "Soft Delete"?
+    // 1. VERIFICACIÓN DE CUENTA DESACTIVADA
     const checkRes = await client.query(
       "SELECT deleted_at FROM public.users WHERE firebase_uid = $1",
       [firebase_uid],
     );
 
     if (checkRes.rowCount > 0 && checkRes.rows[0].deleted_at !== null) {
-      // Si el usuario existe pero está borrado, lanzamos error
-      // Esto impedirá que el login continúe
-      const error = new Error(
-        "Cuenta desactivada. Contacte con soporte para reactivarla.",
-      );
-      error.status = 403; // Forbidden
+      const error = new Error("Cuenta desactivada. Contacte con soporte.");
+      error.status = 403;
       throw error;
     }
 
-    // 2. Si no está borrado (o no existe), procedemos con el INSERT/UPDATE normal
+    // 2. UPSERT CON DETECCIÓN DE NUEVO REGISTRO
     const result = await client.query(
       `
       INSERT INTO public.users (
@@ -86,31 +82,36 @@ async function upsertFromFirebase({
       ON CONFLICT (firebase_uid) DO UPDATE SET
         email = EXCLUDED.email,
         updated_at = NOW(),
-        -- Mantenemos el resto de tu lógica de protección de datos...
-        name = CASE
-                 WHEN public.users.name IS NULL OR public.users.name = ''
-                 THEN EXCLUDED.name
-                 ELSE public.users.name
+        name = CASE 
+                 WHEN public.users.name IS NULL OR public.users.name = '' 
+                 THEN EXCLUDED.name ELSE public.users.name 
                END,
-        role = CASE
-                 WHEN public.users.role = 'ADMIN' THEN 'ADMIN'
-                 ELSE public.users.role
-               END,
+        -- LOGICA IMPORTANTE: Si la dirección actual es la de por defecto, 
+        -- intentamos actualizarla con lo que venga de EXCLUDED (por si viene de Google)
         default_address = CASE
-                            WHEN public.users.default_address IS NULL
-                              OR public.users.default_address = 'Pendiente de completar'
+                            WHEN public.users.default_address = 'Pendiente de completar'
                             THEN EXCLUDED.default_address
                             ELSE public.users.default_address
                           END
-      RETURNING *, (xmax = 0) as is_new_user
+      RETURNING *, (xmax = 0) AS is_inserted;
       `,
       [firebase_uid, email, name, role, default_address, optional_address],
     );
 
     const userData = result.rows[0];
+
+    /* LÓGICA DE NEGOCIO PARA isNewUser:
+       Un usuario es "Nuevo" para el sistema si:
+       1. Se acaba de insertar (is_inserted)
+       2. O si su dirección sigue siendo 'Pendiente de completar' (aunque ya existiera el mail)
+    */
+    const isNewUser =
+      userData.is_inserted ||
+      userData.default_address === "Pendiente de completar";
+
     return {
       user: new UserModel(userData),
-      isNewUser: userData.is_new_user,
+      isNewUser: isNewUser,
     };
   } catch (error) {
     console.error("Error en upsertFromFirebase:", error.message);
@@ -119,6 +120,75 @@ async function upsertFromFirebase({
     client.release();
   }
 }
+
+// async function upsertFromFirebase({
+//   firebase_uid,
+//   email,
+//   name,
+//   role = "CLIENT",
+//   default_address = "Pendiente de completar",
+//   optional_address = null,
+// }) {
+//   const client = await pool.connect();
+//   try {
+//     // 1. VERIFICACIÓN PREVIA: ¿Está el usuario en "Soft Delete"?
+//     const checkRes = await client.query(
+//       "SELECT deleted_at FROM public.users WHERE firebase_uid = $1",
+//       [firebase_uid],
+//     );
+
+//     if (checkRes.rowCount > 0 && checkRes.rows[0].deleted_at !== null) {
+//       // Si el usuario existe pero está borrado, lanzamos error
+//       // Esto impedirá que el login continúe
+//       const error = new Error(
+//         "Cuenta desactivada. Contacte con soporte para reactivarla.",
+//       );
+//       error.status = 403; // Forbidden
+//       throw error;
+//     }
+
+//     // 2. Si no está borrado (o no existe), procedemos con el INSERT/UPDATE normal
+//     const result = await client.query(
+//       `
+//       INSERT INTO public.users (
+//         firebase_uid, email, name, role, default_address, optional_address
+//       ) VALUES ($1, $2, $3, $4, $5, $6)
+//       ON CONFLICT (firebase_uid) DO UPDATE SET
+//         email = EXCLUDED.email,
+//         updated_at = NOW(),
+//         -- Mantenemos el resto de tu lógica de protección de datos...
+//         name = CASE
+//                  WHEN public.users.name IS NULL OR public.users.name = ''
+//                  THEN EXCLUDED.name
+//                  ELSE public.users.name
+//                END,
+//         role = CASE
+//                  WHEN public.users.role = 'ADMIN' THEN 'ADMIN'
+//                  ELSE public.users.role
+//                END,
+//         default_address = CASE
+//                             WHEN public.users.default_address IS NULL
+//                               OR public.users.default_address = 'Pendiente de completar'
+//                             THEN EXCLUDED.default_address
+//                             ELSE public.users.default_address
+//                           END
+//       RETURNING *, (xmax = 0) as is_new_user
+//       `,
+//       [firebase_uid, email, name, role, default_address, optional_address],
+//     );
+
+//     const userData = result.rows[0];
+//     return {
+//       user: new UserModel(userData),
+//       isNewUser: userData.is_new_user,
+//     };
+//   } catch (error) {
+//     console.error("Error en upsertFromFirebase:", error.message);
+//     throw error;
+//   } finally {
+//     client.release();
+//   }
+// }
 
 // async function upsertFromFirebase({
 //   firebase_uid,
@@ -344,6 +414,9 @@ async function disableUser(id) {
   const cliente = await pool.connect();
 
   try {
+
+    await cliente.query("BEGIN");
+
     const query = `Update users set deleted_at = NOW(), updated_at = Now() where id = $1 returning firebase_uid;`;
 
     const result = await cliente.query(query, [id]);
@@ -351,8 +424,10 @@ async function disableUser(id) {
     if (result.rowCount === 0) {
       throw new Error("Usuario no encontrado");
     }
+    await cliente.query("COMMIT");
     return result.rows[0].firebase_uid;
   } catch (error) {
+    await cliente.query("ROLLBACK");
     console.error("Error desactivando usuario:", error);
     throw error;
   } finally {

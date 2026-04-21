@@ -1,7 +1,10 @@
 // web/controllers/bookController.mjs
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
+import redisController from "./RedisController.mjs";
 
 import { getBookFormData } from "../utils/bookFormData.mjs";
+
+let redisClient = null;
 
 // --- FUNCIONES PÚBLICAS (Lectura) ---
 
@@ -38,27 +41,47 @@ async function getAllBooks(req, res) {
 
 async function showAllBooks(req, res) {
   try {
+    // Definimos el cliente de redis
+    redisClient = await redisController.returnRedisClient();
+
     const page = req.query.page || 1;
     const q = req.query.q || "";
     const maxPrice = req.query.maxPrice || "";
     const genre = req.query.genre || "";
     const author = req.query.author || "";
 
-    const [booksResponse, genresResponse, authorsResponse] = await Promise.all([
-      apiClient.get(`/books`, {
-        params: { page, q, maxPrice, genre, author },
-      }),
-      apiClient.get("/genres"),
-      apiClient.get("/authors", {
-        params: { onlyWithBooks: true },
-      }),
+    const [cachedGenres, cachedAuthors] = await Promise.all([
+      redisClient.get("AllGenres"),
+      redisClient.get("AllAuthors"),
     ]);
+
+    let genres = cachedGenres ? JSON.parse(cachedGenres) : null;
+    let authors = cachedAuthors ? JSON.parse(cachedAuthors) : null;
+
+    if (!genres || !authors) {
+      const [genresResponse, authorsResponse] = await Promise.all([
+        apiClient.get("/genres"),
+        apiClient.get("/authors", {
+          params: { onlyWithBooks: true },
+        }),
+      ]);
+
+      genres = genresResponse.data.data;
+      authors = authorsResponse.data;
+
+      await redisClient.set("AllGenres", JSON.stringify(genres), { EX: 3600 });
+      await redisClient.set("AllAuthors", JSON.stringify(authors), { EX: 3600 });
+    }
+
+    const booksResponse = await apiClient.get(`/books`, {
+      params: { page, q, maxPrice, genre, author },
+    });
 
     res.render("partials/booksTable", {
       books: booksResponse.data.data,
       // CORRECCIÓN: Igual que arriba, para evitar el error de .forEach
-      genres: genresResponse.data.data,
-      authors: authorsResponse.data,
+      genres: genres,
+      authors: authors,
       currentPage: booksResponse.data.currentPage,
       totalPages: booksResponse.data.totalPages,
       query: req.query,

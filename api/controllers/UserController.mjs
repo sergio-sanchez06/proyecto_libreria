@@ -15,7 +15,7 @@ async function adminCreateUser(req, res) {
     // Llamamos al servicio, que es el que sabe qué hacer
     firebaseUser = await authService.createUser(userData);
 
-    const newUser = await UserRepository.upsertFromFirebase({
+    const { user: newUser } = await UserRepository.upsertFromFirebase({
       firebase_uid: firebaseUser.uid,
       email,
       name,
@@ -23,6 +23,12 @@ async function adminCreateUser(req, res) {
       default_address,
       optional_address,
     });
+
+    try {
+      await emailService.sendWelcomeEmail(newUser.email, newUser.name);
+    } catch (mailError) {
+      console.error("Error enviando email (admin):", mailError.message);
+    }
 
     res.status(201).json({
       message: "Usuario creado con éxito",
@@ -66,7 +72,7 @@ async function registerUser(req, res) {
     // Llamamos al servicio, que es el que sabe qué hacer
     firebaseUser = await authService.createUser(userData);
 
-    const newUser = await UserRepository.upsertFromFirebase({
+    const { user: newUser, isNewUser } = await UserRepository.upsertFromFirebase({
       firebase_uid: firebaseUser.uid,
       email,
       name,
@@ -77,10 +83,7 @@ async function registerUser(req, res) {
 
     // 3. Enviar correo de notificación (Opcional: No crítico)
     try {
-      await emailService.sendWelcomeEmail(
-        newUser.user.email,
-        newUser.user.name,
-      );
+      await emailService.sendWelcomeEmail(newUser.email, newUser.name);
     } catch (mailError) {
       console.error("Error enviando email de bienvenida:", mailError.message);
       // No lanzamos el error para que el cliente reciba el 201 OK de la reactivación
@@ -89,6 +92,7 @@ async function registerUser(req, res) {
     res.status(201).json({
       message: "Usuario creado con éxito",
       user: newUser,
+      isNewUser: isNewUser,
     });
   } catch (error) {
     console.error("Error crítico en el registro:", error.message);
