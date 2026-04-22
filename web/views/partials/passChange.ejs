@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/login.css">
+    <title>Cambiar Contraseña</title>
+</head>
+
+<body>
+
+```
+<%- include('../layout/header') %>
+
+<main class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body p-5">
+                    <h1 class="card-title text-center mb-4">Cambiar Contraseña</h1>
+
+                    <form id="passwordChangerForm" action="/user/changeMyPassReturn" method="POST">
+                        <input type="hidden" name="idToken" id="idToken">
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña Actual</label>
+                            <input type="password" name="password" id="password" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                            <input type="password" name="newPassword" id="newPassword" class="form-control" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Cambiar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../layout/footer') %>
+
+<script type="module">
+    import { changePassword  } from "/js/auth.mjs";
+
+    document.getElementById("passwordChangerForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const newPassword = document.getElementById("newPassword").value;
+        console.log("asd")
+        try {
+            await changePassword(email, password, newPassword);
+            e.target.submit();
+        } catch (error) {
+            alert(error.message || "Error en autenticación");
+        }
+    });
+</script>
+</body>
+</html>

@@ -9,6 +9,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   TwitterAuthProvider,
+  updatePassword,
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
 import axios from "https://cdn.jsdelivr.net/npm/axios@1.6.7/+esm";
@@ -25,6 +26,21 @@ const apiClient = axios.create({
   },
   withCredentials: true, // Crucial para permitir que el servidor gestione cookies de sesión
 });
+
+// Cambio de Contraseña con email y contraseña
+
+export async function changePassword(email, password, newPassword) {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password,
+    );
+  await updatePassword(userCredential.user,newPassword)
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 
 /**
  * Iniciar sesión con Email y Password

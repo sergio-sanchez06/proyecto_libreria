@@ -39,4 +39,16 @@ router.get(
   UserController.getMyReviews,
 );
 
+router.get(
+  "/changePass",
+  protectMiddleware.protect,
+  UserController.changeMyPass,
+);
+
+router.post(
+  "/changePass",
+  protectMiddleware.protect,
+  UserController.changeMyPassReturn,
+);
+
 export default router;

@@ -94,6 +94,17 @@
                                 </span>
                             </a>
                         </div>
+                        <% if (provider == "password") { %>
+                            <div class="col-sm-6">
+                                <a href="/user/changePass"
+                                    class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white">
+                                    <i class="bi bi-star-half fs-1 d-block mb-2 text-warning"></i>
+                                    <span class="fw-bold text-dark">
+                                        <%= 'Cambiar Contraseña' %>
+                                    </span>
+                                </a>
+                            </div>
+                        <% } %>
                     </div>
 
                     <div class="text-center pt-4 border-top">

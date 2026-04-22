@@ -1,4 +1,5 @@
 import { getAuthenticatedClient } from "../utils/apiClient.mjs";
+import jwt from 'jsonwebtoken';
 
 async function getProfile(req, res) {
   // 1. Verificación de seguridad en el controlador web
@@ -26,12 +27,15 @@ async function getProfile(req, res) {
 
     const api = getAuthenticatedClient(cleanToken);
 
+    const provider = jwt.decode(req.session.idToken).firebase.sign_in_provider
+
     const response = await api.get("/users/me/" + req.session.user.id);
 
     res.render("partials/perfil", {
       user: req.session.user,
       profile: response.data,
       error: null,
+      provider: provider,
     });
   } catch (error) {
     console.error(
@@ -254,6 +258,45 @@ async function getMyReviews(req, res) {
   }
 }
 
+async function changeMyPass(req, res) {
+
+  if (!req.session.user || !req.session.idToken) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    res.render("partials/ChangePass", {
+      title: "Cambiar Contraseña",
+      user: req.session.user,
+    });
+  } catch (error) {
+    console.error("Error en changeMyPass:", error.message);
+    res.render("/login", {
+      error: "Error al cargar las reseñas.",
+    });
+  }
+}
+
+async function changeMyPassReturn(req, res) {
+
+  if (!req.session.user || !req.session.idToken) {
+    return res.redirect("/login");
+  }
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+    res.redirect("/user/profile");
+  } catch (error) {
+    console.error("Error en changeMyPass:", error.message);
+    res.render("/login", {
+      error: "Error al cargar las reseñas.",
+    });
+  }
+}
+
 export default {
   getProfile,
   getPurchaseHistory,
@@ -261,4 +304,6 @@ export default {
   updateProfile,
   dismissSelf,
   getMyReviews,
+  changeMyPass,
+  changeMyPassReturn
 };
