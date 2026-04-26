@@ -103,9 +103,17 @@ async function getManageOrders(req, res) {
       );
     }
 
+    const globalStats = {
+      total: allOrders.length,
+      pending: allOrders.filter((o) => o.status === "PENDIENTE").length,
+      processing: allOrders.filter((o) => o.status === "PROCESANDO" || o.status === "ENVIADO").length,
+      revenue: allOrders.reduce((acc, o) => acc + parseFloat(o.total || 0), 0).toFixed(2),
+    };
+
     res.render("admin/orders", {
       orders: pageOrders,
       totalOrders: allOrders.length,
+      globalStats,
       currentPage,
       totalPages,
       lang: req.session.lang,
@@ -151,9 +159,17 @@ async function getPendingOrders(req, res) {
       );
     }
 
+    const globalStats = {
+      total: allOrders.length,
+      pending: allOrders.filter((o) => o.status === "PENDIENTE").length,
+      processing: allOrders.filter((o) => o.status === "PROCESANDO" || o.status === "ENVIADO").length,
+      revenue: allOrders.reduce((acc, o) => acc + parseFloat(o.total || 0), 0).toFixed(2),
+    };
+
     res.render("admin/orders", {
       orders: pageOrders,
       totalOrders: pendingOrders.length,
+      globalStats,
       currentPage,
       totalPages,
       lang: req.session.lang,
