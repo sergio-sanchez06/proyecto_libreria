@@ -15,7 +15,7 @@ import orderItemRouter from "./router/OrderItemRouter.mjs";
 import apiSecurity from "./middlewares/controlUserAgent.mjs";
 import * as userAgent from "express-useragent";
 
-const port = 3000;
+const port = process.env.PORTAPI;
 const app = express();
 
 app.use(userAgent.express());
