@@ -8,6 +8,7 @@ import i18nextHttpMiddleware from "i18next-http-middleware";
 import i18nextFsBackend from "i18next-fs-backend";
 import * as useragent from "express-useragent";
 import cookieParser from "cookie-parser";
+import compression from "compression";
 
 // Controlador de Redis
 import redisController from "./controllers/RedisController.mjs";
@@ -41,6 +42,7 @@ async function startApp() {
     const app = express();
 
     // 2. Configuración de Middlewares base
+    app.use(compression()); // Compresión gzip/brotli de todas las respuestas
     app.use(useragent.express());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
