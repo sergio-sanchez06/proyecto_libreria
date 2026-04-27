@@ -7,7 +7,7 @@
     <div class="book-detail-main py-5">
         <div class="row g-5">
             <!-- Columna Izquierda: Portada -->
-            <div class="col-lg-4 col-xl-3">
+            <div class="col-md-5 col-lg-4 col-xl-3">
                 <div class="book-cover-wrapper bg-white">
                     <img src="<%= book.cover_url || '/images/default-cover.jpg' %>" alt="<%= book.title %>"
                         class="w-100 d-block" style="object-fit: cover;">
@@ -15,7 +15,7 @@
             </div>
 
             <!-- Columna Derecha: Detalles -->
-            <div class="col-lg-8 col-xl-9">
+            <div class="col-md-7 col-lg-8 col-xl-9">
                 <nav aria-label="breadcrumb" class="mb-4">
                     <ol class="breadcrumb" style="font-weight: 500;">
                         <li class="breadcrumb-item"><a href="/books/showAllBooks"
@@ -26,7 +26,7 @@
                     </ol>
                 </nav>
 
-                <h1 class="book-title display-4 mb-3">
+                <h1 class="book-title mb-3">
                     <%= book.title || t('book.no_synopsis') %>
                 </h1>
 
@@ -74,7 +74,8 @@
                             <span class="badge px-4 py-2 rounded-pill fs-6 border"
                                 style="background-color: var(--brand-gold); color: #1e3a8a; border-color: #d4af37 !important;">
                                 <i class="bi bi-box-seam-fill me-1"></i>
-                                <%= book.stock> 0 ? 'En Stock ('+book.stock+')' : 'Agotado temporalmente' %>
+                                <span class="d-none d-sm-inline"><%= book.stock> 0 ? 'En Stock ('+book.stock+')' : 'Agotado' %></span>
+                                <span class="d-inline d-sm-none"><%= book.stock> 0 ? 'Stock: '+book.stock : 'Agotado' %></span>
                             </span>
                         </div>
                     </div>

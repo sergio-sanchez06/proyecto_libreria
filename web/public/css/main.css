@@ -14,6 +14,15 @@
   /* Backgrounds */
   --bg-main: url('/images/backgrounds/waves.png');
   --bg-user: url('/images/backgrounds/user_waves.png');
+
+  /* Re-ligar variables de layout.css si no se cargan en orden */
+  --fs-xs: clamp(0.7rem, 0.6rem + 0.5vw, 0.85rem);
+  --fs-sm: clamp(0.8rem, 0.7rem + 0.5vw, 1rem);
+  --fs-base: clamp(0.9rem, 0.8rem + 0.5vw, 1.1rem);
+  --fs-lg: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  --fs-xl: clamp(1.2rem, 1rem + 1vw, 1.6rem);
+  --fs-2xl: clamp(1.5rem, 1.2rem + 1.5vw, 2.2rem);
+  --fs-3xl: clamp(2rem, 1.5rem + 2vw, 3.5rem);
 }
 
 .bg-main-vistas {
@@ -46,13 +55,13 @@ body {
 
 .section-title {
   font-weight: 800;
-  margin-bottom: 40px;
+  margin-bottom: 2rem;
   color: var(--brand-teal);
   text-transform: uppercase;
   letter-spacing: 1.2px;
   border-left: 6px solid var(--brand-gold); 
   padding-left: 15px;
-  font-size: clamp(1.2rem, 3vw, 1.8rem); 
+  font-size: var(--fs-xl); 
 }
 
 /* --- 3. TARJETAS DE LIBROS  --- */
@@ -88,7 +97,7 @@ body {
 }
 
 .book-card .card-title {
-  font-size: 1.05rem;
+  font-size: var(--fs-sm);
   font-weight: 700;
   height: 2.6em;
   display: -webkit-box;
@@ -250,8 +259,7 @@ a {
 
 @media (max-width: 576px) {
   .section-title {
-    margin-bottom: 20px;
-    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
   }
   
   .book-card img {
@@ -261,11 +269,6 @@ a {
   .btn-primary {
     padding: 8px 15px !important;
     font-size: 0.8rem;
-  }
-
-  .col-md-4, .col-lg-3 {
-    width: 100%;
-    margin-bottom: 20px;
   }
 }
 

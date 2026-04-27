@@ -15,9 +15,17 @@
     </div>
 
     <div class="row">
-        <aside class="col-lg-3 mb-4">
-            <div class="filter-sidebar p-4">
-                <h5 class="mb-4 d-flex align-items-center border-bottom pb-3 fw-bold" style="color: var(--brand-teal);">
+        <!-- Botón para filtros en móvil -->
+        <div class="col-12 d-lg-none mb-3">
+            <button class="btn btn-outline-primary w-100 py-3 rounded-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#filterSidebar">
+                <i class="bi bi-funnel-fill me-2 text-warning"></i>
+                <%= t('catalog.view_filters') || 'Mostrar Filtros' %>
+            </button>
+        </div>
+
+        <aside class="col-lg-3 mb-4 collapse d-lg-block" id="filterSidebar">
+            <div class="filter-sidebar p-4 rounded-4 shadow-sm">
+                <h5 class="mb-4 d-none d-lg-flex align-items-center border-bottom pb-3 fw-bold" style="color: var(--brand-teal);">
                     <i class="bi bi-funnel-fill me-2 text-warning"></i>
                     <%= t('catalog.filters') || 'Filtrar por' %>
                 </h5>
@@ -101,7 +109,7 @@
         </aside>
 
         <main class="col-lg-9">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+            <div class="row row-cols-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3 g-md-4">
                 <% if (books && books.length> 0) { %>
                     <% books.forEach(book=> { %>
                         <% if (book.deleted_at===null) { %>
@@ -138,7 +146,7 @@
                                                         style="width: 60px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">
                                                     <button type="submit"
                                                         class="btn btn-success btn-sm flex-grow-1 shadow-sm px-0">
-                                                        <i class="bi bi-cart-plus-fill me-1"></i> Añadir
+                                                        <i class="bi bi-cart-plus-fill me-1"></i> <span class="d-none d-sm-inline">Añadir</span><span class="d-inline d-sm-none">+</span>
                                                     </button>
                                                 </form>
                                             </div>
