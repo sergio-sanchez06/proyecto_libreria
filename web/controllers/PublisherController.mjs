@@ -130,7 +130,15 @@ async function getPublisherById(req, res, next) {
 async function getPublisherCreateForm(req, res) {
   if (!req.session.user || req.session.user.role !== "ADMIN")
     return res.redirect("/");
-  res.render("admin/add_publisher", { user: req.session.user, error: null });
+
+  const formData = req.session.formData || null;
+  delete req.session.formData;
+
+  res.render("admin/add_publisher", {
+    user: req.session.user,
+    publisherData: formData,
+    error: null,
+  });
 }
 
 async function createPublisher(req, res) {
@@ -149,13 +157,18 @@ async function createPublisher(req, res) {
     redisClient = await redisController.returnRedisClient();
     await redisClient.del("AllPublishers");
 
+    req.session.flash = {
+      type: "success",
+      message: "Editorial creada con éxito.",
+    };
     res.redirect("/publisher/showAllPublishers");
   } catch (error) {
-    res.render("admin/add_publisher", {
-      publisherData,
-      error: error.response?.data?.message || "Error al crear editorial",
-      user: req.session.user,
-    });
+    req.session.formData = req.body;
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "Error al crear la editorial.",
+    };
+    res.redirect("/publisher/create");
   }
 }
 
@@ -163,9 +176,14 @@ async function getPublisherEdit(req, res) {
   if (!req.session.user || req.session.user.role !== "ADMIN")
     return res.redirect("/");
   try {
+    const formData = req.session.formData || null;
+    delete req.session.formData;
+
     const response = await apiClient.get(`/publishers/${req.params.id}`);
     res.render("admin/edit_publisher", {
-      publisher: response.data,
+      publisher: formData
+        ? { ...response.data, ...formData, id: req.params.id }
+        : response.data,
       user: req.session.user,
       error: null,
     });
@@ -192,13 +210,19 @@ async function updatePublisher(req, res) {
     redisClient = await redisController.returnRedisClient();
     await redisClient.del("AllPublishers");
 
+    req.session.flash = {
+      type: "success",
+      message: "Editorial actualizada correctamente.",
+    };
     res.redirect(`/publisher/${publisherId}`);
   } catch (error) {
-    res.render("admin/edit_publisher", {
-      publisher: { ...req.body, id: publisherId },
-      error: error.response?.data?.message || "Error al actualizar editorial",
-      user: req.session.user,
-    });
+    req.session.formData = req.body;
+    req.session.flash = {
+      type: "error",
+      message:
+        error.response?.data?.message || "Error al actualizar la editorial.",
+    };
+    res.redirect(`/publisher/edit/${publisherId}`);
   }
 }
 
@@ -215,21 +239,26 @@ async function deletePublisher(req, res) {
     redisClient = await redisController.returnRedisClient();
     await redisClient.del("AllPublishers");
 
-    res.redirect("/publisher/manage/list?success=true");
+    req.session.flash = {
+      type: "success",
+      message: "Editorial eliminada con éxito.",
+    };
+    res.redirect("/publisher/manage/list");
   } catch (error) {
     console.error("Error eliminando editorial:", error.response?.data);
-    res
-      .status(500)
-      .send(
+    req.session.flash = {
+      type: "error",
+      message:
         "No se pudo eliminar la editorial. Verifique si tiene libros asociados.",
-      );
+    };
+    res.redirect("/publisher/manage/list");
   }
 }
 
 async function getManagePublishers(req, res) {
   try {
     const page = req.query.page || 1;
-    const limit = 4;
+    const limit = 8;
     const deleted = req.query.deleted || false;
 
     const response = await apiClient.get(
@@ -268,10 +297,17 @@ async function restorePublisher(req, res) {
     redisClient = await redisController.returnRedisClient();
     await redisClient.del("AllPublishers");
 
-    res.redirect("/publisher/manage/list?success=true");
+    req.session.flash = {
+      type: "success",
+      message: "Editorial restaurada correctamente.",
+    };
+    res.redirect("/publisher/manage/list");
   } catch (error) {
-    console.error("Error restaurando editorial:", error.response?.data);
-    res.status(500).send("No se pudo restaurar la editorial.");
+    req.session.flash = {
+      type: "error",
+      message: "No se pudo restaurar la editorial.",
+    };
+    res.redirect("/publisher/manage/list");
   }
 }
 // async function restorePublisher(req, res) {

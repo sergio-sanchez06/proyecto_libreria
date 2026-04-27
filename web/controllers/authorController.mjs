@@ -108,10 +108,16 @@ async function getAuthorById(req, res) {
 
 async function getCreateAuthor(req, res) {
   if (!req.session.user || req.session.user.role !== "ADMIN")
-    return res.redirect("/authors");
+    res.status(403).send("No tienes permiso para crear autores");
+
+  // PERSISTENCIA: Recuperamos datos de un intento fallido anterior
+  const formData = req.session.formData || null;
+  delete req.session.formData;
+
   res.render("admin/add_author", {
     user: req.session.user,
     error: null,
+    authorData: formData,
   });
 }
 
@@ -134,12 +140,18 @@ async function createAuthor(req, res) {
       redisClient.del("AllCountries"),
     ]);
 
-    res.redirect("/authors/showAllAuthors");
+    req.session.flash = {
+      type: "success",
+      message: "Autor añadido correctamente al sistema.",
+    };
+    res.redirect("/authors/manage/list");
   } catch (error) {
-    res.render("admin/add_author", {
-      error: error.response?.data?.message || "Error al crear autor",
-      user: req.session.user,
-    });
+    req.session.formData = req.body;
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "No se pudo crear el autor.",
+    };
+    res.redirect("/authors/create"); // Redirigimos al GET para mostrar errores
   }
 }
 
@@ -148,9 +160,20 @@ async function getEditAuthor(req, res) {
     return res.redirect("/authors/showAllAuthors");
   try {
     const { id } = req.params;
+
+    const formData = req.session.formData || null;
+    delete req.session.formData;
+
     const response = await apiClient.get(`/authors/${id}`);
     res.render("admin/edit_author", {
-      author: response.data,
+      author: formData
+        ? {
+            ...response.data,
+            ...formData,
+            id,
+            photo_url: response.data.photo_url,
+          }
+        : response.data,
       user: req.session.user,
       error: null,
     });
@@ -182,13 +205,18 @@ async function updateAuthor(req, res) {
       redisClient.del("AllCountries"),
     ]);
 
+    req.session.flash = {
+      type: "success",
+      message: "Información del autor actualizada.",
+    };
     res.redirect(`/author/${id}`);
   } catch (error) {
-    res.render("admin/edit_author", {
-      author: { ...req.body, id },
-      error: error.response?.data?.message || "Error al actualizar autor",
-      user: req.session.user,
-    });
+    req.session.formData = req.body;
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "Error al actualizar autor",
+    };
+    res.redirect(`/authors/edit/${id}`);
   }
 }
 
@@ -206,14 +234,17 @@ async function deleteAuthor(req, res) {
       redisClient.del("AllCountries"),
     ]);
 
+    req.session.flash = {
+      type: "success",
+      message: "Autor eliminado con éxito.",
+    };
     res.redirect("/authors/manage/list");
   } catch (error) {
-    console.error("Error al eliminar autor:", error.response?.data);
-    res
-      .status(500)
-      .send(
-        "No se pudo eliminar el autor. Verifique si tiene libros vinculados.",
-      );
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "No se pudo eliminar el autor.",
+    };
+    res.redirect("/authors/manage/list");
   }
 }
 
@@ -279,10 +310,18 @@ async function restoreAuthor(req, res) {
       redisClient.del("AllCountries"),
     ]);
 
+    req.session.flash = {
+      type: "success",
+      message: "Autor restaurado correctamente.",
+    };
     res.redirect("/authors/manage/list");
   } catch (error) {
     console.error("Error al restaurar autor:", error.response?.data);
-    res.status(500).render("error", { message: "Error al restaurar autor" });
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "Error al restaurar autor.",
+    };
+    res.redirect("/authors/manage/list");
   }
 }
 
