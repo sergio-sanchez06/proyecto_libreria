@@ -60,7 +60,9 @@ async function getManageBooks(req, res) {
     });
   } catch (error) {
     console.error("Error al obtener libros: ", error);
-    res.status(500).render("error", { message: "Error al cargar el catálogo" });
+    res.status(500).render("error", {
+      message: "Error al cargar el catálogo de administración",
+    });
   }
 }
 
@@ -106,8 +108,12 @@ async function getManageOrders(req, res) {
     const globalStats = {
       total: allOrders.length,
       pending: allOrders.filter((o) => o.status === "PENDIENTE").length,
-      processing: allOrders.filter((o) => o.status === "PROCESANDO" || o.status === "ENVIADO").length,
-      revenue: allOrders.reduce((acc, o) => acc + parseFloat(o.total || 0), 0).toFixed(2),
+      processing: allOrders.filter(
+        (o) => o.status === "PROCESANDO" || o.status === "ENVIADO",
+      ).length,
+      revenue: allOrders
+        .reduce((acc, o) => acc + parseFloat(o.total || 0), 0)
+        .toFixed(2),
     };
 
     res.render("admin/orders", {
@@ -121,7 +127,11 @@ async function getManageOrders(req, res) {
     });
   } catch (error) {
     console.error("Error al cargar pedidos:", error);
-    res.render("errors/500", { error: "No se pudieron cargar los pedidos" });
+    res
+      .status(500)
+      .render("error", {
+        message: "No se pudieron cargar los pedidos",
+      });
   }
 }
 
@@ -162,8 +172,12 @@ async function getPendingOrders(req, res) {
     const globalStats = {
       total: allOrders.length,
       pending: allOrders.filter((o) => o.status === "PENDIENTE").length,
-      processing: allOrders.filter((o) => o.status === "PROCESANDO" || o.status === "ENVIADO").length,
-      revenue: allOrders.reduce((acc, o) => acc + parseFloat(o.total || 0), 0).toFixed(2),
+      processing: allOrders.filter(
+        (o) => o.status === "PROCESANDO" || o.status === "ENVIADO",
+      ).length,
+      revenue: allOrders
+        .reduce((acc, o) => acc + parseFloat(o.total || 0), 0)
+        .toFixed(2),
     };
 
     res.render("admin/orders", {
@@ -209,7 +223,9 @@ async function listUsers(req, res) {
       message: req.query.msg || null,
     });
   } catch (error) {
-    res.render("errors/500", { error: "No se pudieron cargar los usuarios" });
+    res
+      .status(500)
+      .render("error", { message: "No se pudieron cargar los usuarios" });
   }
 }
 
@@ -243,10 +259,18 @@ async function createUser(req, res) {
       );
     }
 
+    req.session.flash = {
+      type: "success",
+      message: "Usuario creado correctamente.",
+    };
     res.redirect("/admin/users");
   } catch (error) {
     console.error("Error al crear usuario:", error);
-    res.status(500).send("Error al crear usuario");
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "Error al crear el usuario.",
+    };
+    res.redirect("/admin/users/create");
   }
 }
 
@@ -289,10 +313,16 @@ async function updateUser(req, res) {
       );
     }
 
+    req.session.flash = { type: "success", message: "Usuario actualizado." };
     res.redirect("/admin/users");
   } catch (error) {
     console.error("Error al actualizar usuario:", error);
-    res.status(500).send("Error al actualizar usuario");
+    req.session.flash = {
+      type: "error",
+      message:
+        error.response?.data?.message || "Error al actualizar el usuario.",
+    };
+    res.redirect(`/admin/users/update/${req.params.id}`);
   }
 }
 
@@ -328,10 +358,19 @@ async function deleteUser(req, res) {
       );
     }
 
+    req.session.flash = {
+      type: "success",
+      message: `Usuario ${mode === "soft" ? "desactivado" : "eliminado"} correctamente.`,
+    };
     res.redirect("/admin/users");
   } catch (error) {
     console.error("Error al eliminar usuario:", error.message);
-    res.redirect("/admin/users?error=No se pudo eliminar");
+    req.session.flash = {
+      type: "error",
+      message:
+        error.response?.data?.message || "No se pudo eliminar el usuario.",
+    };
+    res.redirect("/admin/users");
   }
 }
 
@@ -462,10 +501,18 @@ async function updateOrderStatus(req, res) {
     const api = getAuthenticatedClient(req.session.idToken);
     const response = await api.put(`/orders/${req.body.orderId}`, req.body);
     const order = response.data;
+    req.session.flash = {
+      type: "success",
+      message: "Estado del pedido actualizado.",
+    };
     res.redirect("/admin/orders");
   } catch (error) {
     console.error("Error al actualizar estado del pedido:", error);
-    res.status(500).send("Error al actualizar estado del pedido");
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "Error al cambiar el estado.",
+    };
+    res.redirect("/admin/orders");
   }
 }
 
@@ -483,10 +530,16 @@ async function deleteOrder(req, res) {
     const api = getAuthenticatedClient(req.session.idToken);
     const response = await api.delete(`/orders/${req.body.orderId}`);
     const order = response.data;
+    req.session.flash = { type: "success", message: "Pedido eliminado." };
     res.redirect("/admin/orders");
   } catch (error) {
     console.error("Error al eliminar pedido:", error);
-    res.status(500).send("Error al eliminar pedido");
+    req.session.flash = {
+      type: "error",
+      message:
+        error.response?.data?.message || "No se pudo eliminar el pedido.",
+    };
+    res.redirect("/admin/orders");
   }
 }
 
@@ -502,7 +555,9 @@ async function getManageReviews(req, res) {
     });
   } catch (error) {
     console.error("Error al cargar reseñas:", error);
-    res.render("errors/500", { error: "No se pudieron cargar las reseñas" });
+    res
+      .status(500)
+      .render("error", { message: "No se pudieron cargar las reseñas" });
   }
 }
 
@@ -514,10 +569,18 @@ async function deleteReview(req, res) {
     const api = getAuthenticatedClient(req.session.idToken);
     const response = await api.delete(`/review/admin/delete/${req.params.id}`);
     const review = response.data;
+    req.session.flash = {
+      type: "success",
+      message: "Reseña eliminada por el administrador.",
+    };
     res.redirect("/admin/reviews");
   } catch (error) {
     console.error("Error al eliminar reseña:", error);
-    res.status(500).send("Error al eliminar reseña");
+    req.session.flash = {
+      type: "error",
+      message: "Error al eliminar la reseña.",
+    };
+    res.redirect("/admin/reviews");
   }
 }
 
@@ -536,10 +599,18 @@ async function updateReview(req, res) {
       comment,
     });
     const review = response.data;
+    req.session.flash = {
+      type: "success",
+      message: "Reseña moderada correctamente.",
+    };
     res.redirect("/admin/reviews");
   } catch (error) {
     console.error("Error al actualizar reseña:", error);
-    res.status(500).send("Error al actualizar reseña");
+    req.session.flash = {
+      type: "error",
+      message: "Error al actualizar la reseña.",
+    };
+    res.redirect("/admin/reviews");
   }
 }
 

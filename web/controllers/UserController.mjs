@@ -1,5 +1,5 @@
 import { getAuthenticatedClient } from "../utils/apiClient.mjs";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 async function getProfile(req, res) {
   // 1. Verificación de seguridad en el controlador web
@@ -27,7 +27,7 @@ async function getProfile(req, res) {
 
     const api = getAuthenticatedClient(cleanToken);
 
-    const provider = jwt.decode(req.session.idToken).firebase.sign_in_provider
+    const provider = jwt.decode(req.session.idToken).firebase.sign_in_provider;
 
     const response = await api.get("/users/me/" + req.session.user.id);
 
@@ -58,20 +58,44 @@ async function getProfile(req, res) {
 }
 
 async function getPurchaseHistory(req, res) {
-  console.log(
-    "Hemos entrado al controlador de mis compras - Versión Optimizada",
-  );
+  console.log("Entrando a Mis Compras - Confirmación de Stripe activada");
 
   if (!req.session.user || !req.session.idToken) {
     return res.redirect("/login");
   }
 
+  const { success, session_id } = req.query; // Capturamos los parámetros de Stripe
+  const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+  const api = getAuthenticatedClient(cleanToken);
+
   try {
-    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
-    const api = getAuthenticatedClient(cleanToken);
+    // --- NUEVA LÓGICA: Confirmación de Pago ---
+    if (success === "true" && session_id) {
+      console.log(
+        "Detectado retorno de Stripe, confirmando sesión:",
+        session_id,
+      );
 
-    console.log("req.session.user.id", req.session.user.id);
+      try {
+        // Llamamos a la nueva ruta de la API (que crearemos a continuación)
+        await api.get(
+          `/orders/stripe/confirm-session?session_id=${session_id}`,
+        );
 
+        // Si la confirmación tiene éxito, limpiamos la cookie del carrito
+        res.clearCookie("cart");
+        console.log("✅ Pedido confirmado y carrito limpiado");
+      } catch (confirmError) {
+        console.error(
+          "Error al confirmar pedido en API:",
+          confirmError.response?.data || confirmError.message,
+        );
+        // No bloqueamos la vista, simplemente el pedido podría no aparecer aún
+      }
+    }
+    // --- FIN LÓGICA CONFIRMACIÓN ---
+
+    // Carga normal de pedidos que ya tenías
     const response = await api.get("/orders/user/" + req.session.user.id);
     const orders = response.data || [];
 
@@ -80,15 +104,16 @@ async function getPurchaseHistory(req, res) {
         const responseItems = await api.get("/orderItems/" + order.id);
         order.items = responseItems.data;
       }
-
-      console.log("orders", orders);
-      console.log("orders[0].items", orders[0].items);
     }
 
     res.render("partials/purchaseHistory", {
       title: "Mis compras",
       user: req.session.user,
       orders: orders,
+      successMessage:
+        success === "true"
+          ? "¡Gracias por tu compra! El pago se procesó correctamente."
+          : null,
     });
   } catch (error) {
     console.error("Error en getPurchaseHistory:", error.message);
@@ -100,6 +125,50 @@ async function getPurchaseHistory(req, res) {
     });
   }
 }
+
+// async function getPurchaseHistory(req, res) {
+//   console.log(
+//     "Hemos entrado al controlador de mis compras - Versión Optimizada",
+//   );
+
+//   if (!req.session.user || !req.session.idToken) {
+//     return res.redirect("/login");
+//   }
+
+//   try {
+//     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+//     const api = getAuthenticatedClient(cleanToken);
+
+//     console.log("req.session.user.id", req.session.user.id);
+
+//     const response = await api.get("/orders/user/" + req.session.user.id);
+//     const orders = response.data || [];
+
+//     if (orders.length > 0) {
+//       for (let order of orders) {
+//         const responseItems = await api.get("/orderItems/" + order.id);
+//         order.items = responseItems.data;
+//       }
+
+//       console.log("orders", orders);
+//       console.log("orders[0].items", orders[0].items);
+//     }
+
+//     res.render("partials/purchaseHistory", {
+//       title: "Mis compras",
+//       user: req.session.user,
+//       orders: orders,
+//     });
+//   } catch (error) {
+//     console.error("Error en getPurchaseHistory:", error.message);
+//     res.render("partials/purchaseHistory", {
+//       title: "Mis compras",
+//       user: req.session.user,
+//       orders: [],
+//       error: "Error al cargar el historial de compras.",
+//     });
+//   }
+// }
 
 async function getEditProfileForm(req, res) {
   console.log("Hemos entrado al controlador de editar perfil");
@@ -259,7 +328,6 @@ async function getMyReviews(req, res) {
 }
 
 async function changeMyPass(req, res) {
-
   if (!req.session.user || !req.session.idToken) {
     return res.redirect("/login");
   }
@@ -268,7 +336,7 @@ async function changeMyPass(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    res.render("partials/ChangePass", {
+    res.render("partials/passChange", {
       title: "Cambiar Contraseña",
       user: req.session.user,
     });
@@ -281,7 +349,6 @@ async function changeMyPass(req, res) {
 }
 
 async function changeMyPassReturn(req, res) {
-
   if (!req.session.user || !req.session.idToken) {
     return res.redirect("/login");
   }
@@ -305,5 +372,5 @@ export default {
   dismissSelf,
   getMyReviews,
   changeMyPass,
-  changeMyPassReturn
+  changeMyPassReturn,
 };

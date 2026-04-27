@@ -30,7 +30,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SESSION_SECRET = "tu-secret-super-seguro";
 
-
 // Refactorización del código para inicializar los servicios web y redis.
 
 async function startApp() {
@@ -107,7 +106,9 @@ async function startApp() {
 
     app.use((req, res, next) => {
       if (req.session.flash) {
-        res.locals.error = req.session.flash.message;
+        const { type, message } = req.session.flash;
+        if (type === "success") res.locals.success = message;
+        if (type === "error") res.locals.error = message;
         delete req.session.flash;
       }
       next();

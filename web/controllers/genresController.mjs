@@ -1,6 +1,9 @@
 // web/controllers/genresController.mjs
 import apiClient from "../utils/apiClient.mjs";
 import { getAuthenticatedClient } from "../utils/apiClient.mjs"; // Asegúrate de importar esto
+import redisController from "./RedisController.mjs";
+
+let redisClient = null;
 
 // --- FUNCIONES PÚBLICAS (Lectura) ---
 
@@ -15,7 +18,9 @@ async function getGenres(req, res) {
       user: req.session.user || null,
     });
   } catch (error) {
-    res.status(500).send("Error al obtener los géneros");
+    res
+      .status(500)
+      .render("error", { message: "Error al obtener los géneros" });
   }
   // try {
   //   const response = await apiClient.get("/genres");
@@ -44,7 +49,9 @@ async function getGenreBooksByGenreName(req, res) {
       user: req.session.user || null,
     });
   } catch (error) {
-    res.status(500).send("Error al obtener libros del género");
+    res.status(500).render("error", {
+      message: "Error al obtener libros del género",
+    });
   }
 }
 
@@ -55,8 +62,13 @@ async function getCreateGenre(req, res) {
   if (!req.session.user || req.session.user.role !== "ADMIN") {
     return res.redirect("/genres");
   }
+
+  const formData = req.session.formData || null;
+  delete req.session.formData;
+
   res.render("admin/add_genre", {
     user: req.session.user,
+    genreData: formData,
     error: null,
   });
 }
@@ -69,12 +81,24 @@ async function createGenre(req, res) {
 
     // 2. Llamada a la API
     await api.post("/genres", req.body);
+
+    redisClient = await redisController.returnRedisClient();
+    await redisClient.del("AllGenres");
+
+    req.session.flash = {
+      type: "success",
+      message: "Género creado con éxito.",
+    };
+
     res.redirect("/genres");
+    
   } catch (error) {
-    res.render("admin/add_genre", {
-      error: error.response?.data?.message || "Error al crear género",
-      user: req.session.user,
-    });
+    req.session.formData = req.body;
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "Error al crear el género.",
+    };
+    res.redirect("/admin/genres/create");
   }
 }
 
@@ -87,15 +111,23 @@ async function getEditGenre(req, res) {
 
     const genreId = req.params.genreId; // Usamos ID para ser consistentes con la API
     console.log(`Id del genero a editar: ${genreId}`);
+
+    const formData = req.session.formData || null;
+    delete req.session.formData;
+
     const response = await apiClient.get(`/genres/${genreId}`);
     res.render("admin/edit_genre", {
-      genre: response.data,
+      genre: formData
+        ? { ...response.data, ...formData, id: genreId }
+        : response.data,
       error: null,
       user: req.session.user,
     });
   } catch (error) {
     // console.error(error);
-    res.status(500).send("Error al cargar el formulario de edición");
+    res.status(500).render("error", {
+      message: "Error al cargar el formulario de edición",
+    });
   }
 }
 
@@ -106,13 +138,22 @@ async function updateGenre(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.put(`/genres/${id}`, req.body);
+    redisClient = await redisController.returnRedisClient();
+    await redisClient.del("AllGenres");
+
+    req.session.flash = {
+      type: "success",
+      message: "Género actualizado correctamente.",
+    };
     res.redirect("/genres");
   } catch (error) {
-    res.render("admin/edit_genre", {
-      genre: { ...req.body, id: req.params.id },
-      error: error.response?.data?.message || "Error al actualizar",
-      user: req.session.user,
-    });
+    req.session.formData = req.body;
+    req.session.flash = {
+      type: "error",
+      message:
+        error.response?.data?.message || "Error al actualizar el género.",
+    };
+    res.redirect(`/admin/genres/edit/${id}`);
   }
 }
 
@@ -123,10 +164,23 @@ async function deleteGenre(req, res) {
     const api = getAuthenticatedClient(cleanToken);
 
     await api.delete(`/genres/${id}`);
+
+    redisClient = await redisController.returnRedisClient();
+    await redisClient.del("AllGenres");
+
+    req.session.flash = {
+      type: "success",
+      message: "Género eliminado satisfactoriamente.",
+    };
     res.redirect("/genres");
   } catch (error) {
-    console.error("Error eliminando género:", error.response?.data);
-    res.redirect("/genres?error=no_permitido");
+    req.session.flash = {
+      type: "error",
+      message:
+        error.response?.data?.message ||
+        "No se puede eliminar: el género podría estar en uso.",
+    };
+    res.redirect("/genres");
   }
 }
 

@@ -5,29 +5,32 @@ import AuthMiddleware from "../middlewares/AuthMiddleware.mjs";
 const router = express.Router();
 
 router.post("/", AuthMiddleware.authenticate, OrderController.createOrder);
-router.get("/:id", AuthMiddleware.authenticate, OrderController.getOrderById);
+
 router.get(
   "/user/:id",
   AuthMiddleware.authenticate,
-  OrderController.getOrdersByUser
+  OrderController.getOrdersByUser,
 );
+
+router.get("/:id", AuthMiddleware.authenticate, OrderController.getOrderById);
+
 router.put(
   "/:id",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
-  OrderController.updateOrder
+  OrderController.updateOrder,
 );
 router.delete(
   "/:id",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
-  OrderController.deleteOrder
+  OrderController.deleteOrder,
 );
 router.get(
   "/",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
-  OrderController.getAllOrders
+  OrderController.getAllOrders,
 );
 
 export default router;

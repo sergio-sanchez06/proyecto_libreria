@@ -1,9 +1,4 @@
-import axios from "axios";
-
-const apiClient = axios.create({
-  baseURL: "http://localhost:3000",
-  withCredentials: true,
-});
+import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 // --- AÑADIR AL CARRITO --- (Sin cambios, es correcto)
 async function addToCart(req, res) {
@@ -108,7 +103,7 @@ async function viewCart(req, res) {
         label: "Principal",
       });
     }
-    if (user.optional_address && user.optional_address.trim() !== "") {
+    if (user.optional_address?.trim()) {
       availableAddresses.push({
         id: "optional",
         text: user.optional_address,
@@ -133,7 +128,7 @@ async function viewCart(req, res) {
 // --- CHECKOUT (ADAPTADO) ---
 
 async function checkout(req, res) {
-  const firebaseToken = req.body.firebase_token;
+  const firebaseToken = req.session.idToken;
   const { shipping_address } = req.body;
   const cart = req.signedCookies.cart || [];
 
@@ -169,24 +164,31 @@ async function checkout(req, res) {
 
     // 3. Petición de creación de pedido
     // IMPORTANTE: Enviamos la shipping_address y el total calculado
-    const response = await apiClient.post(
-      "/orders",
-      {
-        items: cart,
-        shipping_address: shipping_address, // <-- Enviamos la dirección seleccionada
-        total: totalCalculado.toFixed(2), // <-- Enviamos el total para validación en el servidor
-      },
-      {
-        headers: { Authorization: `Bearer ${firebaseToken}` },
-      },
-    );
+
+    const cleanToken = firebaseToken.replace("Bearer ", "").trim(); // Limpiamos el token por si acaso
+    const api = getAuthenticatedClient(cleanToken);
+
+    const response = await api.post("/orders", {
+      items: cart,
+      shipping_address: shipping_address, // <-- Enviamos la dirección seleccionada
+      total: totalCalculado.toFixed(2), // <-- Enviamos el total para validación en el servidor
+    });
 
     // 4. Éxito: Solo limpiamos el carrito si la orden se creó correctamente en la DB
     if (response.status === 201 || response.status === 200) {
       res.clearCookie("cart");
       // Opcional: pasar un flag de éxito para mostrar un Toast en la siguiente vista
-      return res.redirect("/user/myOrders?success=true");
+
+      req.session.flash = {
+        type: "success",
+        message: "Pedido creado con éxito.",
+      };
+
+      return res.redirect("/user/myOrders");
     }
+
+    // Redirigimos al usuario al checkout de Stripe
+    // res.redirect(response.data.url);
   } catch (error) {
     console.error(
       "Error detallado en Checkout:",
@@ -195,14 +197,19 @@ async function checkout(req, res) {
 
     // Si el error es falta de stock (asumiendo que tu API devuelve 409 o similar)
     if (error.response?.status === 409) {
-      return res
-        .status(409)
-        .send("Lo sentimos, uno de los productos ya no tiene stock.");
+      req.session.flash = {
+        type: "error",
+        message:
+          "Lo sentimos, uno de los productos en tu carrito ya no tiene stock o se ha modificado.",
+      };
+    } else {
+      req.session.flash = {
+        type: "error",
+        message: "Error procesando la compra. Por favor, inténtalo de nuevo.",
+      };
     }
 
-    res
-      .status(500)
-      .send("Error procesando la compra. Por favor, inténtalo de nuevo.");
+    res.redirect("/cart/view");
   }
 }
 

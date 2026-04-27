@@ -11,7 +11,7 @@ async function createPublisher(publisher) {
         publisher.name,
         publisher.country,
         publisher.website,
-        publisher.description,
+        publisher.descripcion,
         publisher.image_url,
       ],
     );
