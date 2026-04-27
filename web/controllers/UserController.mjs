@@ -336,7 +336,7 @@ async function changeMyPass(req, res) {
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 
-    res.render("partials/ChangePass", {
+    res.render("partials/passChange", {
       title: "Cambiar Contraseña",
       user: req.session.user,
     });
