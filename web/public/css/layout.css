@@ -214,11 +214,24 @@ body {
     display: none;
 }
 
+/* Título de sección del footer (sustituye h6 por semántica de párrafo) */
+.footer-section-title {
+    color: var(--brand-gold);
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+/* Color por defecto de los links legales del footer para contraste suficiente */
+.legal-link {
+    color: #bbb !important;
+}
+
 /* Estilos de botones específicos de layout */
 .btn-register-header {
     background-color: var(--brand-gold);
-    color: white;
+    color: #1a2a2c; /* Oscuro sobre gold: ratio ~6:1, cumple WCAG AA */
     border-radius: 20px;
+    font-weight: 700;
 }
 
 .admin-dropdown-link {

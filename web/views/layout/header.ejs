@@ -18,8 +18,8 @@
 
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/layout.css">
+    <link rel="stylesheet" href="/css/main.min.css">
+    <link rel="stylesheet" href="/css/layout.min.css">
 
     <% if (typeof extraCSS !=='undefined' ) { %>
         <link rel="stylesheet" href="/css/views/<%= extraCSS %>.css">
@@ -71,7 +71,8 @@
                     <div class="header-right-zone">
                         <div class="language-selector">
                             <form action="/language" method="get">
-                                <select name="lng" class="form-select form-select-sm" onchange="this.form.submit()">
+                                <label for="language-select" class="visually-hidden">Idioma</label>
+                                <select id="language-select" name="lng" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="Seleccionar idioma">
                                     <option value="es" <%=i18n.language.startsWith('es') ? 'selected' : '' %>>ES
                                     </option>
                                     <option value="ca" <%=i18n.language.startsWith('ca') ? 'selected' : '' %>>CA
