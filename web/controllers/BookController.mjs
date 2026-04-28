@@ -60,13 +60,13 @@ async function showAllBooks(req, res) {
 
     if (!genres || !authors) {
       const [genresResponse, authorsResponse] = await Promise.all([
-        apiClient.get("/genres"),
+        apiClient.get("/genres/all"),
         apiClient.get("/authors", {
           params: { onlyWithBooks: true },
         }),
       ]);
 
-      genres = genresResponse.data.data;
+      genres = genresResponse.data;
       authors = authorsResponse.data;
 
       await redisClient.set("AllGenres", JSON.stringify(genres), { EX: 3600 });

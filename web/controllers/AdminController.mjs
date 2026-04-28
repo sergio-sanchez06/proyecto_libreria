@@ -26,12 +26,12 @@ async function getManageBooks(req, res) {
 
     if (!genres || !authors) {
       const [genresResponse, authorsResponse] = await Promise.all([
-        !genres ? apiClient.get("/genres") : null,
+        !genres ? apiClient.get("/genres/all") : null,
         !authors ? apiClient.get("/authors") : null,
       ]);
 
       if (genresResponse) {
-        genres = genresResponse.data.data;
+        genres = genresResponse.data;
         await redisClient.set("AllGenres", JSON.stringify(genres), {
           EX: 3600,
         });
