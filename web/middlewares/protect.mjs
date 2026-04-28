@@ -12,6 +12,9 @@ async function protect(req, res, next) {
 
   try {
     const userId = req.session.user.id || req.session.user.user?.id;
+
+    console.log("DEBUG - ID de usuario extraído:", userId); // <-- AÑADE ESTO
+
     const redisClient = await redisController.returnRedisClient();
     const cacheKey = `user:validation:${userId}`;
 
@@ -26,6 +29,12 @@ async function protect(req, res, next) {
     } else {
       // 3. SI NO ESTÁ EN CACHÉ, LLAMADA A LA API
       const api = getAuthenticatedClient(req.session.idToken);
+
+      // LÍNEA TEMPORAL PARA TEST: Descomentar para simular token expirado y comprobar si funciona la sesión de redis para regenerar el token
+      // throw {
+      //   response: { status: 401, data: { code: "auth/id-token-expired" } },
+      // };
+
       const response = await api.get(`/users/me/${userId}`);
 
       // Normalizamos el objeto (quitamos el envoltorio {message, user})
@@ -51,19 +60,37 @@ async function protect(req, res, next) {
 
     next();
   } catch (error) {
-    console.error("Error en protect middleware:", error.message);
+    // Detectamos si el error es porque el token de Firebase caducó
+    const isExpired =
+      error.response?.data?.code === "auth/id-token-expired" ||
+      error.message?.includes("expired") ||
+      error.response?.status === 401;
 
-    // Si la API dice explícitamente que el token no vale, fuera.
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      return destroySession(req, res, "Sesión inválida o caducada.");
+    if (isExpired && req.session.user) {
+      console.warn(
+        "⏰ Token expirado pero sesión Redis activa. Recuperando datos de sesión.",
+      );
+
+      // En lugar de echarlo, recuperamos los datos que ya tenemos en la sesión de Redis
+      const fallbackUser = req.session.user.user || req.session.user;
+      res.locals.user = fallbackUser;
+      res.locals.isAdmin = fallbackUser?.role === "ADMIN";
+
+      // Dejamos que pase. Tu script de frontend renovará el token en segundos.
+      return next();
     }
 
-    // Si la API está caída pero tenemos al usuario en sesión, le dejamos pasar
-    // como medida de "Gracious Degradation", pero limpiando el anidamiento.
-    const fallbackUser = req.session.user.user || req.session.user;
-    res.locals.user = fallbackUser;
-    res.locals.isAdmin = fallbackUser?.role === "ADMIN";
-    next();
+    // Si el error no es por expiración (ej: 500 de la API), intentamos degradación graciosa
+    console.error("Error crítico en protect:", error.message);
+    if (req.session.user) {
+      const fallbackUser = req.session.user.user || req.session.user;
+      res.locals.user = fallbackUser;
+      res.locals.isAdmin = fallbackUser?.role === "ADMIN";
+      return next();
+    }
+
+    // Si todo falla y no hay ni usuario en sesión, al login
+    return destroySession(req, res, "Sesión inválida o caducada.");
   }
 }
 

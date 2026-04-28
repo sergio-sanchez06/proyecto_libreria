@@ -16,7 +16,7 @@ async function assignAuthorToBook(req, res) {
 async function getAuthorsByBook(req, res) {
   try {
     const authors = await BookAuthorRepository.getAuthorsByBook(
-      req.params.bookTitle
+      req.params.bookTitle,
     );
     res.status(200).json(authors);
   } catch (error) {
@@ -28,7 +28,7 @@ async function getAuthorsByBook(req, res) {
 async function getBooksByAuthor(req, res) {
   try {
     const books = await BookAuthorRepository.getBooksByAuthorName(
-      req.params.authorName
+      req.params.authorName,
     );
     console.log(books);
     res.status(200).json(books);
@@ -41,7 +41,7 @@ async function getBooksByAuthor(req, res) {
 async function getAuthorsByBookId(req, res) {
   try {
     const authors = await BookAuthorRepository.getAuthorsByBookId(
-      req.params.bookId
+      req.params.bookId,
     );
     console.log(authors);
     res.status(200).json(authors);
@@ -82,7 +82,7 @@ async function removeAuthorFromBook(req, res) {
     const { bookId, authorId } = req.params;
     const deleted = await BookAuthorRepository.deleteBookAuthor(
       bookId,
-      authorId
+      authorId,
     );
 
     if (!deleted) {
@@ -111,7 +111,7 @@ async function countBooksByAuthors(req, res) {
 async function countBooksByAuthor(req, res) {
   try {
     const count = await BookAuthorRepository.countBooksByAuthor(
-      req.params.authorId
+      req.params.authorId,
     );
     res.status(200).json(count);
   } catch (error) {

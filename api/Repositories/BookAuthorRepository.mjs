@@ -7,7 +7,7 @@ import bookModel from "../models/BookModel.mjs";
 async function createBookAuthor(bookAuthor) {
   const result = await pool.query(
     "INSERT INTO book_authors (book_id, author_id) VALUES ($1, $2) RETURNING *",
-    [bookAuthor.book_id, bookAuthor.author_id]
+    [bookAuthor.book_id, bookAuthor.author_id],
   );
   return result.rows[0] ? new BookAuthorModel(result.rows[0]) : null;
 }
@@ -31,11 +31,11 @@ async function getBooksByAuthorName(authorName) {
       LEFT JOIN public.publishers p ON b.publisher_id = p.id
       LEFT JOIN public.book_genres bg ON b.id = bg.book_id
       LEFT JOIN public.genres g ON bg.genre_id = g.id
-      WHERE a.name ILIKE $1  -- ILIKE para búsqueda insensible a mayúsculas
+      WHERE a.name ILIKE $1  AND b.deleted_at IS NULL -- ILIKE para búsqueda insensible a mayúsculas
       GROUP BY b.id, p.name
       ORDER BY b.releashed_year DESC
       `,
-      [`%${authorName}%`]
+      [`%${authorName}%`],
     );
 
     console.log(result.rows);
@@ -66,7 +66,7 @@ async function getAuthorsByBook(bookTitle) {
       GROUP BY a.id
       ORDER BY a.name ASC
       `,
-      [`%${bookTitle}%`]
+      [`%${bookTitle}%`],
     );
     return result.rows.map((row) => new authorModel(row));
   } catch (err) {
@@ -82,7 +82,7 @@ async function countBooksByAuthors() {
 
   try {
     const result = await client.query(
-      "SELECT author_id,COUNT(*) as count_books FROM book_authors group by author_id"
+      "SELECT author_id,COUNT(*) as count_books FROM book_authors group by author_id",
     );
     return result.rows;
   } catch (err) {
@@ -99,7 +99,7 @@ async function countBooksByAuthor(authorId) {
   try {
     const result = await client.query(
       "SELECT COUNT(*) FROM book_authors WHERE author_id = $1 order by book_id",
-      [authorId]
+      [authorId],
     );
     return result.rows;
   } catch (err) {
@@ -114,7 +114,7 @@ async function countBooksByAuthor(authorId) {
 async function getBookAuthor(bookId, authorId) {
   const result = await pool.query(
     "SELECT * FROM book_author WHERE book_id = $1 AND author_id = $2",
-    [bookId, authorId]
+    [bookId, authorId],
   );
   return result.rows[0] ? new BookAuthorModel(result.rows[0]) : null;
 }
@@ -130,7 +130,7 @@ async function updateBookAuthor(oldIds, newIds) {
        SET book_id = $1, author_id = $2 
        WHERE book_id = $3 AND author_id = $4 
        RETURNING *`,
-      [newIds.book_id, newIds.author_id, oldIds.book_id, oldIds.author_id]
+      [newIds.book_id, newIds.author_id, oldIds.book_id, oldIds.author_id],
     );
     await client.query("COMMIT");
     return result.rows[0] ? new BookAuthorModel(result.rows[0]) : null;
@@ -148,7 +148,7 @@ async function getAuthorsByBookId(bookId) {
   try {
     const result = await client.query(
       "SELECT a.* FROM book_authors ba join authors a on ba.author_id = a.id WHERE ba.book_id = $1",
-      [bookId]
+      [bookId],
     );
     return result.rows.map((row) => new authorModel(row));
   } catch (err) {
@@ -163,7 +163,7 @@ async function getAuthorsByBookId(bookId) {
 async function deleteBookAuthor(bookId, authorId) {
   const result = await pool.query(
     "DELETE FROM book_author WHERE book_id = $1 AND author_id = $2 RETURNING *",
-    [bookId, authorId]
+    [bookId, authorId],
   );
   return result.rowCount > 0;
 }
@@ -218,7 +218,7 @@ async function getBookAuthors() {
             country: row.author_country,
             photo_url: row.author_photo_url,
           }),
-        })
+        }),
     );
   } catch (err) {
     console.error("Error al recuperar book_authors:", err);

@@ -1,93 +1,134 @@
-<%- include('../layout/header', {
-    title: t('editPublisher.page_title') || 'Editar Editorial' + ' - ' + publisher.name,
-    bodyClass: 'bg-main-vistas',
-    extraCSS: 'admin/edit_publisher'
-}) %>
+<%- include('../layout/header', { title: t('editPublisher.page_title') || 'Editar Editorial' + ' - ' + publisher.name,
+    bodyClass: 'bg-main-vistas' , extraCSS: 'admin/edit_publisher' }) %>
 
-<main class="py-5">
-    <div class="container admin-form-container">
-        <div class="brand-card">
-            <div class="brand-card-header text-center">
-                <h2 class="mb-0 fw-bold d-flex flex-column align-items-center gap-2">
-                    <i class="bi bi-building-gear fs-1 opacity-75"></i>
-                    <span><%= t('editPublisher.title') || 'Editar Editorial' %></span>
-                </h2>
-                <p class="text-white-50 mt-2 mb-0">Modifica los detalles de la casa editorial</p>
-            </div>
-            
-            <div class="card-body p-4 p-md-5">
-                <% if (locals.error) { %>
-                    <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center">
-                        <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
-                        <div><%= error %></div>
-                    </div>
-                <% } %>
-
-                <div class="text-center mb-5">
-                    <div class="logo-preview-container mb-3">
-                        <% if (publisher.image_url) { %>
-                            <img src="<%= publisher.image_url %>" alt="Logo <%= publisher.name %>">
-                        <% } else { %>
-                            <i class="bi bi-building text-muted display-4 opacity-25"></i>
-                        <% } %>
-                    </div>
-                    <label class="form-label d-block text-muted">
-                        <%= t('editBook.current_cover') || 'Logo Actual' %>
-                    </label>
+    <main class="py-5">
+        <div class="container admin-form-container">
+            <div class="brand-card">
+                <div class="brand-card-header text-center">
+                    <h2 class="mb-0 fw-bold d-flex flex-column align-items-center gap-2">
+                        <i class="bi bi-building-gear fs-1 opacity-75"></i>
+                        <span>
+                            <%= t('editPublisher.title') || 'Editar Editorial' %>
+                        </span>
+                    </h2>
+                    <p class="text-white-50 mt-2 mb-0">Modifica los detalles de la casa editorial</p>
                 </div>
 
-                <form action="/publisher/update/<%= publisher.id %>" method="POST" enctype="multipart/form-data" data-requires-token>
-                    <div class="row g-4">
-                        <div class="col-md-7">
-                            <div class="mb-3">
-                                <label for="name" class="form-label"><%= t('addPublisher.label_name') || 'Nombre Editorial' %> *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-building-fill text-muted"></i></span>
-                                    <input type="text" name="name" id="name" value="<%= publisher.name %>" class="form-control border-start-0 ps-0" placeholder="Ej: Penguin Random House" required>
+                <div class="card-body p-4 p-md-5">
+                    <% if (locals.error) { %>
+                        <div class="alert alert-danger border-0 shadow-sm rounded-3 mb-4 d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                            <div>
+                                <%= error %>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <div class="text-center mb-5">
+                                <div class="logo-preview-container mb-3">
+                                    <% if (publisher.image_url) { %>
+                                        <img src="<%= publisher.image_url %>" alt="Logo <%= publisher.name %>">
+                                        <% } else { %>
+                                            <i class="bi bi-building text-muted display-4 opacity-25"></i>
+                                            <% } %>
                                 </div>
+                                <label class="form-label d-block text-muted">
+                                    <%= t('editBook.current_cover') || 'Logo Actual' %>
+                                </label>
                             </div>
-                        </div>
 
-                        <div class="col-md-5">
-                            <div class="mb-3">
-                                <label for="country" class="form-label"><%= t('addPublisher.label_country') || 'País Base' %></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-geo-alt-fill text-muted"></i></span>
-                                    <input type="text" name="country" id="country" value="<%= publisher.country || '' %>" class="form-control border-start-0 ps-0" placeholder="Ej: España">
+                            <form action="/publisher/update/<%= publisher.id %>" method="POST"
+                                enctype="multipart/form-data" data-requires-token>
+                                <div class="row g-4">
+                                    <div class="col-md-7">
+                                        <div class="mb-3">
+                                            <label for="name" class="form-label">
+                                                <%= t('addPublisher.label_name') || 'Nombre Editorial' %> *
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-end-0"><i
+                                                        class="bi bi-building-fill text-muted"></i></span>
+                                                <input type="text" name="name" id="name" value="<%= publisher.name %>"
+                                                    class="form-control border-start-0 ps-0"
+                                                    placeholder="Ej: Penguin Random House" required>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-5">
+                                        <div class="mb-3">
+                                            <label for="country" class="form-label">
+                                                <%= t('addPublisher.label_country') || 'País Base' %>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-end-0"><i
+                                                        class="bi bi-geo-alt-fill text-muted"></i></span>
+                                                <input type="text" name="country" id="country"
+                                                    value="<%= publisher.country || '' %>"
+                                                    class="form-control border-start-0 ps-0" placeholder="Ej: España">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label for="website" class="form-label">
+                                                <%= t('addPublisher.label_website') || 'Sitio Web Oficial' %>
+                                            </label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-white border-end-0"><i
+                                                        class="bi bi-globe text-muted"></i></span>
+                                                <input type="url" name="website" id="website"
+                                                    value="<%= publisher.website || '' %>"
+                                                    class="form-control border-start-0 ps-0"
+                                                    placeholder="https://ejemplo.com">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label for="descripcion" class="form-label">
+                                                <%= t('addPublisher.label_description') || 'Descripción' %>
+                                            </label>
+                                            <textarea name="descripcion" id="descripcion" rows="5" class="form-control"
+                                                placeholder="Breve historia o detalles de la editorial..."><%= publisher.descripcion || '' %></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <hr class="my-3 opacity-10">
+                                        <div class="mb-4 p-4 rounded-4"
+                                            style="background-color: #f8fafc; border: 1px dashed #cbd5e1;">
+                                            <label for="publisher_logo" class="form-label"><i
+                                                    class="bi bi-image me-1"></i>
+                                                <%= t('editPublisher.label_new_logo') || 'Actualizar Logo' %>
+                                            </label>
+                                            <input type="file" name="publisher_logo" id="publisher_logo"
+                                                class="form-control bg-white" accept="image/*">
+                                            <small class="text-muted mt-2 d-block fw-medium">
+                                                <%= t('editPublisher.logo_help_edit')
+                                                    || 'Sube una nueva imagen si requieres cambiar el logo actual.' %>
+                                            </small>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <div class="col-12">
-                            <div class="mb-3">
-                                <label for="descripcion" class="form-label"><%= t('addPublisher.label_description') || 'Descripción' %></label>
-                                <textarea name="descripcion" id="descripcion" rows="5" class="form-control" placeholder="Breve historia o detalles de la editorial..."><%= publisher.descripcion || '' %></textarea>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <hr class="my-3 opacity-10">
-                            <div class="mb-4 p-4 rounded-4" style="background-color: #f8fafc; border: 1px dashed #cbd5e1;">
-                                <label for="publisher_logo" class="form-label"><i class="bi bi-image me-1"></i> <%= t('editPublisher.label_new_logo') || 'Actualizar Logo' %></label>
-                                <input type="file" name="publisher_logo" id="publisher_logo" class="form-control bg-white" accept="image/*">
-                                <small class="text-muted mt-2 d-block fw-medium"><%= t('editPublisher.logo_help_edit') || 'Sube una nueva imagen si requieres cambiar el logo actual.' %></small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-center gap-3 mt-4 pt-4 border-top">
-                        <a href="/publisher/<%= publisher.id %>" class="btn btn-light px-4 py-2 rounded-pill fw-bold text-secondary border shadow-sm">
-                            <%= t('addAuthor.btn_cancel') || 'Cancelar' %>
-                        </a>
-                        <button type="submit" class="btn btn-brand-teal px-5 py-2 fw-bold rounded-pill text-white shadow-sm d-flex align-items-center gap-2">
-                            <i class="bi bi-save2"></i>
-                            <%= t('editAuthor.btn_save') || 'Guardar Cambios' %>
-                        </button>
-                    </div>
-                </form>
+                                <div class="d-flex justify-content-center gap-3 mt-4 pt-4 border-top">
+                                    <a href="/publisher/<%= publisher.id %>"
+                                        class="btn btn-light px-4 py-2 rounded-pill fw-bold text-secondary border shadow-sm">
+                                        <%= t('addAuthor.btn_cancel') || 'Cancelar' %>
+                                    </a>
+                                    <button type="submit"
+                                        class="btn btn-brand-teal px-5 py-2 fw-bold rounded-pill text-white shadow-sm d-flex align-items-center gap-2">
+                                        <i class="bi bi-save2"></i>
+                                        <%= t('editAuthor.btn_save') || 'Guardar Cambios' %>
+                                    </button>
+                                </div>
+                            </form>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<%- include('../layout/footer') %>
+    <%- include('../layout/footer') %>

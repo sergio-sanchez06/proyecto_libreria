@@ -34,6 +34,11 @@ router.post(
   protectMiddleware.requireAdmin,
   upload.single("publisher_logo"),
   protectMiddleware.requireFreshToken,
+  (req, res, next) => {
+    req.viewToRender = "admin/add_publisher";
+    req.entityName = "publisherData";
+    next();
+  },
   validateSchema(publisherSchema),
   publisherController.createPublisher,
 );
@@ -43,6 +48,11 @@ router.post(
   protectMiddleware.requireAdmin,
   upload.single("publisher_logo"),
   protectMiddleware.requireFreshToken,
+  (req, res, next) => {
+    req.viewToRender = "admin/add_publisher";
+    req.entityName = "publisherData";
+    next();
+  },
   validateSchema(publisherSchema),
   publisherController.updatePublisher,
 );

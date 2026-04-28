@@ -164,7 +164,7 @@ async function getBooksByPublisherId(publisher_id) {
   const client = await pool.connect();
   try {
     const result = await client.query(
-      "SELECT b.*, p.name as publisher_name FROM books b join publishers p ON b.publisher_id = p.id WHERE b.publisher_id = $1",
+      "SELECT b.*, p.name as publisher_name FROM books b join publishers p ON b.publisher_id = p.id WHERE b.publisher_id = $1 AND b.deleted_at IS NULL",
       [publisher_id],
     );
     return result.rows.map((book) => new Book(book));

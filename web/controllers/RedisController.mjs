@@ -5,11 +5,20 @@ let redisServer = null;
 async function startRedis() {
   if (!redisServer) {
     // 1. Creamos la instancia
+    // redisServer = redis.createClient({
+    //   url: "redis://localhost:6379",
+    // });
     redisServer = redis.createClient({
       url:
-        process.env.REDIS_URL ||
-        "rediss://default:gQAAAAAAAYHAAAIncDI0YTk0MzhjNzhmNWU0MTFjYTM2MDIxZjdmNGVlNWZkMXAyOTg3NTI@known-trout-98752.upstash.io:6379" ||
-        "redis://localhost:6379",
+      process.env.REDIS_URL ||
+        "redis://localhost:6379" ||
+        "rediss://default:gQAAAAAAAYHAAAIncDI0YTk0MzhjNzhmNWU0MTFjYTM2MDIxZjdmNGVlNWZkMXAyOTg3NTI@known-trout-98752.upstash.io:6379",
+      socket: {
+
+        tls: true,
+        rejectUnauthorized: false,
+
+      }
     });
 
     // 2. REGISTRAMOS EL LISTENER PRIMERO (Punto 2 de Claude)

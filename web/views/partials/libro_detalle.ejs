@@ -1,8 +1,5 @@
-<%- include('../layout/header', { 
-    title: book.title + ' - ' + book.format, 
-    bodyClass: 'bg-main-vistas',
-    extraCSS: 'partials/libro_detalle'
-}) %>
+<%- include('../layout/header', { title: book.title + ' - ' + book.format, bodyClass: 'bg-main-vistas' ,
+    extraCSS: 'partials/libro_detalle' }) %>
 
     <div class="book-detail-main py-5">
         <div class="row g-5">
@@ -74,8 +71,12 @@
                             <span class="badge px-4 py-2 rounded-pill fs-6 border"
                                 style="background-color: var(--brand-gold); color: #1e3a8a; border-color: #d4af37 !important;">
                                 <i class="bi bi-box-seam-fill me-1"></i>
-                                <span class="d-none d-sm-inline"><%= book.stock> 0 ? 'En Stock ('+book.stock+')' : 'Agotado' %></span>
-                                <span class="d-inline d-sm-none"><%= book.stock> 0 ? 'Stock: '+book.stock : 'Agotado' %></span>
+                                <span class="d-none d-sm-inline">
+                                    <%= book.stock> 0 ? 'En Stock ('+book.stock+')' : 'Agotado' %>
+                                </span>
+                                <span class="d-inline d-sm-none">
+                                    <%= book.stock> 0 ? 'Stock: '+book.stock : 'Agotado' %>
+                                </span>
                             </span>
                         </div>
                     </div>
@@ -110,20 +111,45 @@
 
                 <div class="mb-5 bg-white p-4 p-md-5 rounded-4 shadow-sm border"
                     style="border-color: rgba(0,0,0,0.05) !important;">
-                    <h4 class="fw-bold mb-4" style="color: var(--brand-teal);"><i
-                            class="bi bi-book-half me-2"></i>Sinopsis</h4>
-                    <div class="synopsis-container synopsis-text">
-                        <p class="mb-0">
-                            <%= book.synopsis.substring(0, 400) %><span id="dots">...</span><span id="extra-text"
-                                    style="display:none;">
+                    <h4 class="fw-bold mb-4" style="color: var(--brand-teal);">
+                        <i class="bi bi-book-half me-2"></i>Sinopsis
+                    </h4>
+
+                    <div class="description-wrapper"
+                        style="max-height: 120px; overflow: hidden; position: relative; transition: max-height 0.6s ease;">
+                        <p id="publisher-desc" class="fs-5 text-secondary description-content"
+                            style="line-height: 1.8; text-align: justify;">
+                            <%= book.synopsis || 'No hay synopsis disponible...' %>
+                        </p>
+                        <div class="read-more-overlay"
+                            style="position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: linear-gradient(transparent, white); pointer-events: none;">
+                        </div>
+                    </div>
+
+                    <button id="btn-read-more" class="btn btn-link p-0 mt-2 text-decoration-none fw-bold"
+                        style="color: var(--brand-teal); display: none;">
+                        <span class="btn-text">Ver más</span> <i class="bi bi-chevron-down ms-1"></i>
+                    </button>
+
+                    <!-- <div class="synopsis-container synopsis-text">
+                        <% if (book.synopsis && book.synopsis.length> 400) { %>
+                            <div class="mb-0 text-secondary" style="white-space: pre-line; line-height: 1.7;">
+                                <span>
+                                    <%= book.synopsis.substring(0, 400) %>
+                                </span><span id="dots">...</span><span id="extra-text" style="display:none;">
                                     <%= book.synopsis.substring(400) %>
                                 </span>
-                        </p>
-                        <% if(book.synopsis.length> 400){ %>
-                            <button id="toggle-synopsis" class="mt-3">Seguir leyendo <i
-                                    class="bi bi-chevron-down ms-1 fs-6"></i></button>
-                            <% } %>
-                    </div>
+                            </div>
+                            <button id="toggle-synopsis" class="btn btn-link p-0 mt-3 text-decoration-none fw-bold"
+                                style="color: var(--brand-teal);">
+                                Seguir leyendo <i class="bi bi-chevron-down ms-1 fs-6"></i>
+                            </button>
+                            <% } else { %>
+                                <p class="mb-0 text-secondary" style="white-space: pre-line; line-height: 1.7;">
+                                    <%= book.synopsis || 'No hay sinopsis disponible.' %>
+                                </p>
+                                <% } %>
+                    </div> -->
                 </div>
 
                 <h4 class="fw-bold mb-4" style="color: var(--brand-teal);"><i
@@ -405,22 +431,8 @@
     <%- include('../layout/footer') %>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
-            $(document).ready(function () {
-                $('#toggle-synopsis').click(function () {
-                    const btn = $(this);
-                    $('#extra-text').slideToggle(400, function () {
-                        if ($(this).is(':visible')) {
-                            btn.html('Leer menos <i class="bi bi-chevron-up ms-1 fs-6"></i>');
-                            $('#dots').hide();
-                        } else {
-                            btn.html('Seguir leyendo <i class="bi bi-chevron-down ms-1 fs-6"></i>');
-                            $('#dots').show();
-                        }
-                    });
-                });
-            });
-
+        <script src="/js/viewsFunctions.mjs"></script>
+        <!-- <script>
             function toggleEditReview(reviewId) {
                 const displayDiv = document.getElementById('review-display-' + reviewId);
                 const formDiv = document.getElementById('review-edit-form-' + reviewId);
@@ -432,4 +444,4 @@
                     displayDiv.style.display = 'block';
                 }
             }
-        </script>
+        </script> -->

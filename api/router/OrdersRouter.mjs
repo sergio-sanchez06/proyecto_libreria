@@ -1,10 +1,30 @@
 import OrderController from "../controllers/OrderController.mjs";
 import express from "express";
 import AuthMiddleware from "../middlewares/AuthMiddleware.mjs";
+import { validateBodyFields } from "../middlewares/validateBody.mjs";
 
 const router = express.Router();
 
-router.post("/", AuthMiddleware.authenticate, OrderController.createOrder);
+router.get(
+  "/",
+  AuthMiddleware.authenticate,
+  AuthMiddleware.requireAdmin,
+  OrderController.getAllOrders,
+);
+
+// router.post(
+//   "/stripe/create-session",
+//   AuthMiddleware.authenticate,
+//   validateBodyFields(["items", "shipping_address"]),
+//   OrderController.createStripeSession,
+// );
+
+router.post(
+  "/",
+  AuthMiddleware.authenticate,
+  validateBodyFields(["items", "shipping_address"]),
+  OrderController.createOrder,
+);
 
 router.get(
   "/user/:id",
@@ -18,19 +38,15 @@ router.put(
   "/:id",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
+  validateBodyFields(["status"]),
   OrderController.updateOrder,
 );
+
 router.delete(
   "/:id",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
   OrderController.deleteOrder,
-);
-router.get(
-  "/",
-  AuthMiddleware.authenticate,
-  AuthMiddleware.requireAdmin,
-  OrderController.getAllOrders,
 );
 
 export default router;

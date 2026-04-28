@@ -27,6 +27,11 @@ router.post(
   protectMiddleware.requireAdmin,
   upload.single("photo"),
   protectMiddleware.requireFreshToken,
+  (req, res, next) => {
+    req.viewToRender = "admin/add_author";
+    req.entityName = "author";
+    next();
+  },
   validateSchema(authorSchema),
   authorController.createAuthor,
 );
@@ -42,6 +47,11 @@ router.post(
   protectMiddleware.requireAdmin,
   upload.single("photo"),
   protectMiddleware.requireFreshToken,
+  (req, res, next) => {
+    req.viewToRender = "admin/edit_author";
+    req.entityName = "author";
+    next();
+  },
   validateSchema(authorSchema),
   authorController.updateAuthor,
 );

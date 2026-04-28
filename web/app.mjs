@@ -3,11 +3,13 @@ import path from "path";
 import { fileURLToPath } from "url";
 import session from "express-session";
 import { RedisStore } from "connect-redis";
-import i18next from "i18next";
+import i18next, { dir } from "i18next";
 import i18nextHttpMiddleware from "i18next-http-middleware";
 import i18nextFsBackend from "i18next-fs-backend";
 import * as useragent from "express-useragent";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import dotenv from "dotenv";
 import compression from "compression";
 
 // Controlador de Redis
@@ -29,7 +31,17 @@ import controlUserAgent from "./middlewares/controlUserAgent.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const SESSION_SECRET = "tu-secret-super-seguro";
+
+// 2. Construir la ruta usando path.resolve (esto arregla el problema de Windows)
+const envPath = path.resolve(__dirname, "../api/config/.env");
+
+dotenv.config({ path: envPath });
+
+const SESSION_SECRET = process.env.SESSION_SECRET;
+if (!SESSION_SECRET) {
+  console.error("💥 SESSION_SECRET no definido en .env");
+  process.exit(1);
+}
 
 // Refactorización del código para inicializar los servicios web y redis.
 
@@ -40,6 +52,70 @@ async function startApp() {
     console.log("✅ Redis inicializado y conectado correctamente");
 
     const app = express();
+
+    app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: [
+              "'self'",
+              "'unsafe-inline'",
+              "'unsafe-eval'",
+              "https://cdn.jsdelivr.net",
+              "https://www.gstatic.com",
+              "https://www.googleapis.com",
+              "https://apis.google.com",
+              "https://js.stripe.com",
+              "https://code.jquery.com",
+              "https://*.firebaseapp.com",
+            ],
+            scriptSrcAttr: ["'unsafe-inline'"],
+            styleSrc: [
+              "'self'",
+              "'unsafe-inline'",
+              "https://cdn.jsdelivr.net",
+              "https://fonts.googleapis.com",
+            ],
+            imgSrc: [
+              "'self'",
+              "data:",
+              "https:",
+              "https://lh3.googleusercontent.com", // Fotos perfil Google
+            ],
+            connectSrc: [
+              "'self'",
+              "https://identitytoolkit.googleapis.com",
+              "https://securetoken.googleapis.com",
+              "https://accounts.google.com",
+              "https://oauth2.googleapis.com",
+              "https://api.stripe.com",
+              "https://cdn.jsdelivr.net",
+              "https://www.gstatic.com",
+              "https://api.twitter.com",
+            ],
+            frameSrc: [
+              "'self'",
+              "https://js.stripe.com",
+              "https://*.firebaseapp.com",
+              "https://accounts.google.com",
+              "https://libreria-ed6c0.firebaseapp.com",
+              "https://twitter.com",
+              "https://api.twitter.com",
+            ],
+            fontSrc: [
+              "'self'",
+              "https://cdn.jsdelivr.net",
+              "https://fonts.gstatic.com",
+            ],
+          },
+        },
+        // CONFIGURACIÓN DE POLÍTICAS DE ORIGEN (Clave para Popups)
+        crossOriginEmbedderPolicy: false,
+        crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }, // Permite comunicación con el popup de Google
+        crossOriginResourcePolicy: { policy: "cross-origin" }, // Permite cargar recursos de otros dominios
+      }),
+    );
 
     // 2. Configuración de Middlewares base
     app.use(compression()); // Compresión gzip/brotli de todas las respuestas
@@ -81,6 +157,7 @@ async function startApp() {
       .use(i18nextFsBackend)
       .use(i18nextHttpMiddleware.LanguageDetector)
       .init({
+        initImmediate: false,
         preload: ["es", "ca", "gl", "eu", "mu", "an"],
         fallbackLng: "es",
         ns: ["es", "ca", "gl", "eu", "mu", "an"],
@@ -89,20 +166,49 @@ async function startApp() {
           loadPath: path.join(__dirname, "locales/{{lng}}.json"),
         },
         detection: {
-          order: ["querystring", "cookie", "header"],
+          // Prioridad: 1. URL (?lng=), 2. Sesión (vía middleware), 3. Cookie
+          order: ["querystring", "session", "cookie", "header"],
+          lookupQuerystring: "lng",
           lookupCookie: "i18next",
-          caches: ["cookie"],
+          caches: ["cookie"], // i18next-http-middleware manejará la cookie automáticamente
         },
       });
 
     app.use(i18nextHttpMiddleware.handle(i18next));
 
+    console.log("Idiomas cargados:", i18next.languages);
+    console.log("Ruta de búsqueda:", path.join(__dirname, "locales/eu.json"));
+
     // 6. Middlewares de lógica de negocio y variables locales
     app.use(controlUserAgent.filterIA);
 
     app.use((req, res, next) => {
-      res.locals.user = req.session.user || null;
+      // Capturar cambio de idioma por URL
+      const queryLng = req.query.lng;
+
+      if (queryLng) {
+        req.session.lang = queryLng;
+        req.i18n.changeLanguage(queryLng);
+      }
+      // Si no hay query, buscar idioma en sesión de redis
+      else if (req.session.lang) {
+        req.i18n.changeLanguage(req.session.lang);
+      }
+
+      // Definimos variables globales para las vistas
+      res.locals.t = req.t;
+      res.locals.i18n = req.i18n;
       res.locals.currentLanguage = req.i18n.language;
+      res.locals.user = req.session.user || null;
+
+      // 4. Lógica para currentUrl (evitando que se guarde la propia ruta de cambio de idioma)
+      if (req.originalUrl.includes("/language")) {
+        res.locals.currentUrl = req.session.lastUrl || "/";
+      } else {
+        res.locals.currentUrl = req.originalUrl;
+        req.session.lastUrl = req.originalUrl; // Guardamos en sesión la última página "real"
+      }
+
       next();
     });
 

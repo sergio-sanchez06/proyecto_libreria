@@ -1,4 +1,4 @@
-<%- include('../layout/header', { bodyClass: 'bg-main-vistas', extraCSS: 'admin/publishers_list' }) %>
+<%- include('../layout/header', { bodyClass: 'bg-main-vistas' , extraCSS: 'admin/publishers_list' }) %>
 
     <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-5">
@@ -28,12 +28,11 @@
                             </a>
 
                             <% if(!pub.deleted_at) { %>
-                                <form action="/publisher/delete/<%= pub.id %>" method="POST"
-                                    onsubmit="return confirm('¿Archivar esta editorial? Sus libros también se ocultarán.')">
-                                    <button type="submit" class="btn-admin btn-archive" title="Archivar">
-                                        <i class="fas fa-archive"></i>
-                                    </button>
-                                </form>
+                                <button type="button" class="btn-admin btn-archive" title="Archivar"
+                                    data-bs-toggle="modal" data-bs-target="#modalDeletePublisher"
+                                    data-action="/publisher/delete/<%= pub.id %>" data-name="<%= pub.name %>">
+                                    <i class="fas fa-archive"></i>
+                                </button>
                                 <% } else { %>
                                     <form action="/publisher/restore/<%= pub.id %>" method="POST" data-requires-token>
                                         <button type="submit" class="btn-admin btn-restore" title="Restaurar">
@@ -102,3 +101,34 @@
     </div>
 
     <%- include('../layout/footer') %>
+
+        <!-- Modal: Archivar editorial -->
+        <div class="modal fade" id="modalDeletePublisher" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg">
+                    <div class="modal-header border-0" style="background-color:#dc3545;">
+                        <h5 class="modal-title fw-bold text-white"><i class="fas fa-archive me-2"></i>Archivar editorial
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <p class="mb-1">¿Archivar <strong id="deletePublisherName"></strong>?</p>
+                        <p class="text-muted small">Sus libros también se ocultarán del catálogo.</p>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form id="deletePublisherForm" method="POST" data-requires-token style="display:inline;">
+                            <button type="submit" class="btn btn-danger ms-2">Archivar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById('modalDeletePublisher').addEventListener('show.bs.modal', function (e) {
+                const btn = e.relatedTarget;
+                document.getElementById('deletePublisherName').textContent = btn.dataset.name;
+                document.getElementById('deletePublisherForm').action = btn.dataset.action;
+            });
+        </script>
