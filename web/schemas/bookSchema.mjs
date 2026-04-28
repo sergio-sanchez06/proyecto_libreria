@@ -11,7 +11,15 @@ export const bookSchema = z
       z.string().optional(),
     ),
 
-    title: z.string().trim().min(1, "El título es obligatorio"),
+    title: z
+      .string()
+      .trim()
+      .min(1, "El título es obligatorio")
+      .max(255, "El título no puede superar 255 caracteres")
+      .refine(
+        (val) => !/<[a-z][\s\S]*>/i.test(val),
+        "El título no puede contener HTML",
+      ),
 
     isbn: z.preprocess(
       (val) => (val === "" ? null : val),
@@ -54,7 +62,16 @@ export const bookSchema = z
       z.number().int({ message: "Debes seleccionar una editorial" }),
     ),
 
-    synopsis: z.string().trim().optional().nullable(),
+    synopsis: z
+      .string()
+      .trim()
+      .max(5000, "La sinopsis no puede superar 5000 caracteres")
+      .refine(
+        (val) => !/<[a-z][\s\S]*>/i.test(val),
+        "La sinopsis no puede contener HTML",
+      )
+      .optional()
+      .nullable(),
 
     // En edición, si no se marcan, llegan como 'undefined' y el controlador NO los enviará a la API
     author_ids: z.preprocess((val) => {

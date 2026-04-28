@@ -14,9 +14,27 @@ import bookGenreRouter from "./router/BookGenreRouter.mjs";
 import orderItemRouter from "./router/OrderItemRouter.mjs";
 import apiSecurity from "./middlewares/controlUserAgent.mjs";
 import * as userAgent from "express-useragent";
+import helmet from "helmet";
 
 const port = 3000;
 const app = express();
+
+// Inclusión de helmet para el uso de cabeceras de seguridad
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://js.stripe.com"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https://api.stripe.com"],
+        frameSrc: ["'self'", "https://js.stripe.com"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  }),
+);
 
 app.use(userAgent.express());
 app.use(apiSecurity.filterIA);
@@ -25,13 +43,12 @@ app.use(apiSecurity.apiLimiter);
 // app.use(cors());
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: process.env.ALLOWED_ORIGIN || "http://localhost:3001",
     credentials: true,
   }),
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use;
+app.use(express.json({ limit: "10kb" })); // ← Fix 9 incluido aquí
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use("/books", bookRouter);
 app.use("/authors", authorRouter);
 app.use("/genres", genreRouter);

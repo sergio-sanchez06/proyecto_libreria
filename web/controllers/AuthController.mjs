@@ -245,6 +245,10 @@ async function refreshToken(req, res) {
     });
   }
 
+  if (req.session.idToken === idToken) {
+    return res.json({ ok: true, message: "Token ya estaba actualizado" });
+  }
+
   // Actualizamos el token en la sesión
   req.session.idToken = idToken;
 

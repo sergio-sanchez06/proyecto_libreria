@@ -13,6 +13,8 @@ const apiLimiter = rateLimit({
   // EXCEPCIÓN PARA TU TFG:
   // Si tu Servidor Web tiene una IP fija, puedes saltar el límite aquí
   skip: (req) => {
+    if (process.env.NODE_ENV === "production") return false;
+
     // return req.ip === '127.0.0.1'; // Ejemplo para desarrollo local
     const trustedIPs = ["::1", "127.0.0.1", "::ffff:127.0.0.1"];
     return trustedIPs.includes(req.ip);
@@ -28,16 +30,18 @@ const apiLimiter = rateLimit({
 /**
  * MIDDLEWARE DE FILTRADO DE IA (API VERSION)
  */
+
+const AI_BOT_PATTERN =
+  /gptbot|chatgpt-user|claudebot|perplexitybot|applebot-extended|ccbot|imagesiftbot|anthropic-ai|cohere-ai|omgili|youbot|diffbot|semrushbot|ahrefsbot/i;
+
 function filterIA(req, res, next) {
   const ua = req.useragent;
 
   if (!ua) return next();
 
   // Lista ampliada para la API (incluimos bots de recolección de datos)
-  const aiKeywords =
-    /gptbot|chatgpt-user|claudebot|perplexitybot|applebot-extended|ccbot|imagesiftbot/i;
 
-  if (ua.isBot || aiKeywords.test(ua.source)) {
+  if (ua.isBot || AI_BOT_PATTERN.test(ua.source)) {
     console.error(
       `[API SECURITY] Bloqueo de scraper/IA: ${ua.source} | IP: ${req.ip}`,
     );

@@ -1,7 +1,7 @@
 /* Contenedor Principal */
 .book-detail-main {
-  width: 100%; 
-  max-width: 1200px; 
+  width: 100%;
+  max-width: 1200px;
   margin: 20px auto;
   padding: 20px;
   background: rgba(255, 255, 255, 0.95);
@@ -41,7 +41,7 @@
 .book-detail-main .book-details-wrapper {
   display: flex;
   gap: 50px;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
 }
 
 .book-detail-main .book-cover-column {
@@ -67,7 +67,7 @@
 }
 
 .book-detail-main .book-cover-column img:hover {
-    transform: scale(1.03);
+  transform: scale(1.03);
 }
 
 /* Estilo de los párrafos y etiquetas */
@@ -105,7 +105,7 @@
 }
 
 .book-detail-main .badge a:hover {
-    background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 /* Formulario de Compra */
@@ -115,11 +115,11 @@
   border-radius: 16px;
   margin: 30px 0;
   border-left: 6px solid var(--brand-gold);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
 .book-detail-main .input-group {
-  width: 100% !important; 
+  width: 100% !important;
 }
 
 /* Botones de Administración */
@@ -128,7 +128,7 @@
   gap: 15px;
   margin-top: 40px;
   padding-top: 25px;
-  border-top: 1px dashed rgba(0,0,0,0.1);
+  border-top: 1px dashed rgba(0, 0, 0, 0.1);
 }
 
 /* Enlaces */
@@ -142,8 +142,56 @@
 }
 
 .book-detail-main .back-link-nav:hover {
-    color: var(--brand-teal-hover);
-    transform: translateX(-5px);
+  color: var(--brand-teal-hover);
+  transform: translateX(-5px);
+}
+
+.description-wrapper {
+  position: relative;
+  max-height: 120px; /* Ajustado para que el corte sea más natural */
+  overflow: hidden;
+  transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Más suave */
+}
+
+.description-wrapper.expanded {
+  max-height: 2000px; /* Suficiente para cualquier descripción */
+}
+
+.read-more-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  /* IMPORTANTE: Si el fondo no es blanco, cambia 'white' por el color de fondo */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 1)
+  );
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.description-wrapper.expanded .read-more-overlay {
+  opacity: 0;
+}
+
+/* Animación del botón y el icono */
+#btn-read-more {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#btn-read-more i {
+  transition: transform 0.4s ease;
+}
+
+/* Esta clase la usaremos para rotar el icono */
+.rotate-icon {
+  transform: rotate(180deg);
 }
 
 /* Responsividad */

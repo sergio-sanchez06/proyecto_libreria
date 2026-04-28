@@ -131,17 +131,15 @@
                                                                                     </a>
                                                                                 </div>
                                                                                 <div class="col-6">
-                                                                                    <form
-                                                                                        action="/authors/author/delete/<%= author.id %>"
-                                                                                        method="POST"
-                                                                                        data-requires-token
-                                                                                        onsubmit="return confirm('¿Archivar este autor? Sus libros dejarán de estar visibles.')">
-                                                                                        <button type="submit"
-                                                                                            class="btn btn-outline-danger btn-sm w-100">
-                                                                                            <i class="bi bi-trash"></i>
-                                                                                            Borrar
-                                                                                        </button>
-                                                                                    </form>
+                                                                                    <button type="button"
+                                                                                        class="btn btn-outline-danger btn-sm w-100"
+                                                                                        data-bs-toggle="modal"
+                                                                                        data-bs-target="#modalDeleteAuthor"
+                                                                                        data-action="/authors/author/delete/<%= author.id %>"
+                                                                                        data-name="<%= author.name %>">
+                                                                                        <i class="bi bi-trash"></i>
+                                                                                        Borrar
+                                                                                    </button>
                                                                                 </div>
                                                                             </div>
                                                                             <% } else { %>
@@ -156,16 +154,15 @@
                                                                                     </button>
                                                                                 </form>
 
-                                                                                <form
-                                                                                    action="/authors/hard-delete/<%= author.id %>"
-                                                                                    method="POST" data-requires-token
-                                                                                    onsubmit="return confirm('ATENCIÓN: Esto eliminará al autor definitivamente. Solo hazlo si no tiene libros asociados.')">
-                                                                                    <button type="submit"
-                                                                                        class="btn btn-link btn-sm w-100 text-danger text-decoration-none mt-1"
-                                                                                        style="font-size: 0.7rem;">
-                                                                                        Eliminar de la base de datos
-                                                                                    </button>
-                                                                                </form>
+                                                                                <button type="button"
+                                                                                    class="btn btn-link btn-sm w-100 text-danger text-decoration-none mt-1"
+                                                                                    style="font-size: 0.7rem;"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#modalHardDeleteAuthor"
+                                                                                    data-action="/authors/hard-delete/<%= author.id %>"
+                                                                                    data-name="<%= author.name %>">
+                                                                                    Eliminar de la base de datos
+                                                                                </button>
                                                                                 <% } %>
                                                                     </div>
                                                                 </div>
@@ -222,5 +219,64 @@
                         </main>
             </div>
         </div>
+
+        <!-- Modal: Archivar autor -->
+        <div class="modal fade" id="modalDeleteAuthor" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg">
+                    <div class="modal-header border-0" style="background-color:#dc3545;">
+                        <h5 class="modal-title fw-bold text-white"><i class="bi bi-archive me-2"></i>Archivar autor</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <p class="mb-1">¿Archivar a <strong id="deleteAuthorName"></strong>?</p>
+                        <p class="text-muted small">Sus libros dejarán de estar visibles en el catálogo.</p>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form id="deleteAuthorForm" method="POST" data-requires-token style="display:inline;">
+                            <button type="submit" class="btn btn-danger ms-2">Archivar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal: Eliminar autor definitivamente -->
+        <div class="modal fade" id="modalHardDeleteAuthor" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg">
+                    <div class="modal-header border-0" style="background-color:#7f1d1d;">
+                        <h5 class="modal-title fw-bold text-white"><i
+                                class="bi bi-exclamation-triangle-fill me-2"></i>Eliminación permanente</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <p class="mb-1">¿Eliminar definitivamente a <strong id="hardDeleteAuthorName"></strong>?</p>
+                        <p class="text-muted small">Esta acción <strong>no se puede deshacer</strong>. Solo procede si
+                            el autor no tiene libros asociados.</p>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form id="hardDeleteAuthorForm" method="POST" data-requires-token style="display:inline;">
+                            <button type="submit" class="btn btn-danger ms-2">Eliminar permanentemente</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById('modalDeleteAuthor').addEventListener('show.bs.modal', function (e) {
+                const btn = e.relatedTarget;
+                document.getElementById('deleteAuthorName').textContent = btn.dataset.name;
+                document.getElementById('deleteAuthorForm').action = btn.dataset.action;
+            });
+            document.getElementById('modalHardDeleteAuthor').addEventListener('show.bs.modal', function (e) {
+                const btn = e.relatedTarget;
+                document.getElementById('hardDeleteAuthorName').textContent = btn.dataset.name;
+                document.getElementById('hardDeleteAuthorForm').action = btn.dataset.action;
+            });
+        </script>
 
         <%- include('../layout/footer') %>

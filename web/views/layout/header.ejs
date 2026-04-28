@@ -65,6 +65,9 @@
                     <div class="header-right-zone">
                         <div class="language-selector">
                             <form action="/language" method="get">
+
+                                <input type="hidden" name="returnTo" value="<%= currentUrl %>">
+
                                 <select name="lng" class="form-select form-select-sm" onchange="this.form.submit()">
                                     <option value="es" <%=i18n.language.startsWith('es') ? 'selected' : '' %>>ES
                                     </option>

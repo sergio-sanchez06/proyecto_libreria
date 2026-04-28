@@ -75,6 +75,8 @@ async function showAllBooks(req, res) {
       });
     }
 
+    console.log("Genres:", genres[0]);
+
     const booksResponse = await apiClient.get(`/books`, {
       params: { page, q, maxPrice, genre, author },
     });

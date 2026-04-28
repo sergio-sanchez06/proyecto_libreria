@@ -1,6 +1,7 @@
 import express from "express";
 import orderItemController from "../controllers/OrderItemController.mjs";
 import AuthMiddleware from "../middlewares/AuthMiddleware.mjs";
+import { validateBodyFields } from "../middlewares/validateBody.mjs";
 
 const router = express.Router();
 
@@ -17,12 +18,14 @@ router.post(
   "/",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
+  validateBodyFields(["order_id", "book_id", "quantity", "price_at_time"]),
   orderItemController.create
 );
 router.put(
   "/:id",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
+  validateBodyFields(["quantity", "price_at_time"]),
   orderItemController.update
 );
 router.delete(

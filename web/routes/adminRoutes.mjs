@@ -189,7 +189,6 @@ router.post(
   "/review/delete/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
-  checkToxicity,
   AdminController.deleteReview,
 );
 
