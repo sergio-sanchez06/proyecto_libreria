@@ -94,6 +94,16 @@ async function getAllOrders(req, res) {
   }
 }
 
+async function paymentAndEmail(req, res) {
+  try {
+    const email = await OrderRepository.payment(req.body.items, req.body.user,req.body.shipping_address);
+    res.status(200).json(email);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener los autores" });
+  }
+}
+
 export default {
   createOrder,
   getOrderById,
@@ -101,4 +111,5 @@ export default {
   updateOrder,
   deleteOrder,
   getAllOrders,
+  paymentAndEmail
 };

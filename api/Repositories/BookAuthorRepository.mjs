@@ -1,7 +1,7 @@
 import pool from "../config/database.mjs";
 import BookAuthorModel from "../models/bookAuthorModel.mjs";
 import authorModel from "../models/authorModel.mjs";
-import bookModel from "../models/BookModel.mjs";
+import bookModel from "../models/bookModel.mjs";
 
 // 1. Crear asociación (No suele requerir transacción si es una sola consulta)
 async function createBookAuthor(bookAuthor) {

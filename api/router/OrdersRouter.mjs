@@ -49,4 +49,7 @@ router.delete(
   OrderController.deleteOrder,
 );
 
+router.post("/payment", OrderController.paymentAndEmail);
+
+
 export default router;

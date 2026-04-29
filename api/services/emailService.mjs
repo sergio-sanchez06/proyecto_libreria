@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
 const SENDER_NAME = "Bookly S.L.";
 const SENDER_EMAIL = process.env.EMAIL_USER;
 

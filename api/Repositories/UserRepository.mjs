@@ -1,5 +1,5 @@
 // repositories/UserRepository.mjs
-import UserModel from "../models/UserModel.mjs";
+import UserModel from "../models/userModel.mjs";
 import pool from "../config/database.mjs";
 
 // async function upsertFromFirebase({

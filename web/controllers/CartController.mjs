@@ -184,7 +184,9 @@ async function checkout(req, res) {
         message: "Pedido creado con éxito.",
       };
 
-      return res.redirect("/user/myOrders");
+      var payment = await apiClient.post("/orders/payment",{items: cart, user: req.session.user, shipping_address:shipping_address})
+      res.clearCookie("cart");
+      return res.redirect(asd.data.url)
     }
 
     // Redirigimos al usuario al checkout de Stripe
