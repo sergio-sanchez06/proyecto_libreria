@@ -175,6 +175,61 @@ async function cancelOrder(id) {
   }
 }
 
+async function payment(items,user,shipping_address){
+  console.log(user)
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+  const bookIds = items.map((item) => item.book_id);
+  const books = await BookRepository.getBooksByIds(bookIds);
+  let total = 0;
+  const validatedItems = [];
+
+    for (const item of items) {
+      const book = books.find((b) => b.id == item.book_id);
+
+      if (!book) throw new Error(`Libro no encontrado: ID ${item.book_id}`);
+      if (book.stock < item.quantity) {
+        throw new Error(
+          `Stock insuficiente para "${book.title}". Disponible: ${book.stock}`
+        );
+      }
+
+      total += book.price * item.quantity;
+      // Guardamos el precio actual para asegurar la consistencia en el detalle
+      validatedItems.push({ ...item, currentPrice: book.price, title: book.title});
+    }
+  const arrayStripeObjects = []
+  validatedItems.forEach(books => {
+    const lineItems = {
+      price_data: {
+        currency: 'eur',
+        product_data: {
+          name: books.title,
+        },
+        unit_amount: (books.currentPrice * 100).toFixed(0),
+      },
+      quantity: books.quantity,
+    }
+    arrayStripeObjects.push(lineItems)
+  });
+  
+  const session = await stripe.checkout.sessions.create({
+    line_items: arrayStripeObjects,
+    mode: 'payment',
+    success_url: `${process.env.FRONTEND_URL}/user/myOrders`,
+  })
+  
+  emailService.sendOrderConfirmationEmail(user.email,user.name,shipping_address,validatedItems,total)
+  const client = await pool.connect();
+  await client.query("BEGIN");
+  const orderResult = await client.query(
+      "UPDATE orders SET status = $1 WHERE user_id = $2 AND created_at >= NOW() - INTERVAL '1 minute';",
+      ["PAGADO", user.id]
+    );
+  await client.query("COMMIT");
+
+  return session
+}
+
 export default {
   createOrder,
   getOrderById,
@@ -183,4 +238,5 @@ export default {
   deleteOrder,
   getAllOrders,
   cancelOrder,
+  payment
 };
