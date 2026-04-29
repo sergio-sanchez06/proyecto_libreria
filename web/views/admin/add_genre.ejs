@@ -32,7 +32,7 @@
                     </div>
                 <% } %>
 
-                <form action="/genres/create" method="POST" data-requires-token>
+                <form action="/admin/genres/create" method="POST" data-requires-token>
                     <div class="mb-4">
                         <label for="name" class="form-label"><i class="bi bi-fonts me-1"></i> <%= t('addGenre.label_name') || 'Nombre de la Categoría' %> *</label>
                         <input type="text" name="name" id="name" class="form-control form-control-lg" placeholder="<%= t('addGenre.placeholder_name') || 'Ej: Ciencia Ficción' %>" required>

@@ -1,5 +1,6 @@
 import express from "express";
 import AdminController from "../controllers/AdminController.mjs";
+import genresController from "../controllers/genresController.mjs";
 import protectMiddleware from "../middlewares/protect.mjs";
 import bookController from "../controllers/BookController.mjs";
 import upload from "../utils/upload.mjs";
@@ -8,6 +9,7 @@ import { validateReview } from "../middlewares/validateReviewContent.mjs";
 import { validateSchema } from "../middlewares/validator.mjs";
 import { bookSchema } from "../schemas/bookSchema.mjs";
 import { userSchema } from "../schemas/userSchema.mjs";
+import { genreSchema } from "../schemas/genreSchema.mjs";
 import { getBookFormData } from "../utils/bookFormData.mjs";
 
 const router = express.Router();
@@ -162,11 +164,11 @@ router.post(
   AdminController.updateOrderStatus,
 );
 router.post(
-  "/orders/delete/:id",
+  "/orders/cancel/:id",
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   protectMiddleware.requireFreshToken,
-  AdminController.deleteOrder,
+  AdminController.cancelOrder,
 );
 
 router.get(
@@ -190,6 +192,50 @@ router.post(
   protectMiddleware.protect,
   protectMiddleware.requireAdmin,
   AdminController.deleteReview,
+);
+
+router.get(
+  "/genres/list",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  AdminController.getManagedGenres,
+);
+
+router.get(
+  "/genres/create",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  genresController.getCreateGenre,
+);
+
+router.post(
+  "/genres/create",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  protectMiddleware.requireFreshToken,
+  (req, res, next) => {
+    req.viewToRender = "admin/add_genre";
+    req.entityName = "genre";
+    next();
+  },
+  validateSchema(genreSchema),
+  AdminController.createGenre,
+);
+
+router.post(
+  "/genres/restore/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  protectMiddleware.requireFreshToken,
+  AdminController.restoreGenre,
+);
+
+router.post(
+  "/genres/delete/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  protectMiddleware.requireFreshToken,
+  AdminController.deleteGenre,
 );
 
 export default router;

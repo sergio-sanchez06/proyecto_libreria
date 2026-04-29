@@ -74,13 +74,20 @@ async function updateOrder(req, res) {
   }
 }
 
-async function deleteOrder(req, res) {
+async function cancelOrder(req, res) {
   try {
-    const order = await OrderRepository.deleteOrder(req.params.id);
-    res.status(200).json(order);
+    const order = await OrderRepository.cancelOrder(req.params.id);
+    res
+      .status(200)
+      .json({ message: "Pedido cancelado correctamente", order: order });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error al eliminar el autor" });
+    const status = error.message.includes("no encontrado")
+      ? 404
+      : error.message.includes("ya fue cancelado")
+        ? 409
+        : 500;
+    res.status(status).json({ error: error.message });
   }
 }
 
@@ -99,6 +106,6 @@ export default {
   getOrderById,
   getOrdersByUser,
   updateOrder,
-  deleteOrder,
+  cancelOrder,
   getAllOrders,
 };

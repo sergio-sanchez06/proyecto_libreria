@@ -127,11 +127,9 @@ async function getManageOrders(req, res) {
     });
   } catch (error) {
     console.error("Error al cargar pedidos:", error);
-    res
-      .status(500)
-      .render("error", {
-        message: "No se pudieron cargar los pedidos",
-      });
+    res.status(500).render("error", {
+      message: "No se pudieron cargar los pedidos",
+    });
   }
 }
 
@@ -493,7 +491,7 @@ async function updateOrderStatus(req, res) {
     const { orderId, status } = req.body;
 
     // 2. Validación de consistencia (Seguridad)
-    if (orderId !== urlId) {
+    if (String(orderId) !== String(urlId)) {
       console.error("Divergencia de IDs detectada en UpdateStatus");
       return res.redirect("/admin/orders?error=invalid_id");
     }
@@ -516,21 +514,24 @@ async function updateOrderStatus(req, res) {
   }
 }
 
-async function deleteOrder(req, res) {
+async function cancelOrder(req, res) {
   try {
     const urlId = req.params.id;
-    const { orderId, status } = req.body;
+    const { orderId } = req.body;
 
     // 2. Validación de consistencia (Seguridad)
-    if (orderId !== urlId) {
+    if (String(orderId) !== String(urlId)) {
       console.error("Divergencia de IDs detectada en UpdateStatus");
       return res.redirect("/admin/orders?error=invalid_id");
     }
 
     const api = getAuthenticatedClient(req.session.idToken);
-    const response = await api.delete(`/orders/${req.body.orderId}`);
+    const response = await api.patch(`/orders/cancel/${orderId}`);
     const order = response.data;
-    req.session.flash = { type: "success", message: "Pedido eliminado." };
+    req.session.flash = {
+      type: "success",
+      message: order.message,
+    };
     res.redirect("/admin/orders");
   } catch (error) {
     console.error("Error al eliminar pedido:", error);
@@ -614,6 +615,120 @@ async function updateReview(req, res) {
   }
 }
 
+async function getManagedGenres(req, res) {
+  if (!req.session.user || req.session.user.role !== "ADMIN") {
+    return res.redirect("/genres");
+  }
+  try {
+    const api = getAuthenticatedClient(req.session.idToken);
+    const response = await api.get("/genres/all?includeDeleted=true");
+    res.render("admin/genres_list", {
+      genres: response.data,
+      user: req.session.user,
+    });
+  } catch (error) {
+    res.status(500).render("error", {
+      message: "Error al obtener los géneros",
+    });
+  }
+}
+
+async function createGenre(req, res) {
+  try {
+    // 1. Limpiamos el token para evitar el "Bearer Bearer"
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    console.log("Nuevo genero: ", req.body);
+
+    // 2. Llamada a la API
+    await api.post("/genres", req.body);
+
+    redisClient = await redisController.returnRedisClient();
+    await redisClient.del("AllGenres");
+
+    req.session.flash = {
+      type: "success",
+      message: "Género creado con éxito.",
+    };
+
+    res.redirect("/admin/genres/list");
+  } catch (error) {
+    req.session.formData = req.body;
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "Error al crear el género.",
+    };
+    res.redirect("/admin/genres/list");
+  }
+}
+
+async function deleteGenre(req, res) {
+  try {
+    const id = req.body.id;
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    await api.delete(`/genres/${id}`);
+
+    redisClient = await redisController.returnRedisClient();
+    await redisClient.del("AllGenres");
+
+    req.session.flash = {
+      type: "success",
+      message: "Género eliminado satisfactoriamente.",
+    };
+    res.redirect("/admin/genres/list");
+  } catch (error) {
+    req.session.flash = {
+      type: "error",
+      message:
+        error.response?.data?.message ||
+        "No se puede eliminar: el género podría estar en uso.",
+    };
+    res.redirect("/admin/genres/list");
+  }
+}
+
+async function restoreGenre(req, res) {
+  console.log("Entramos en restoreGenre");
+
+  try {
+    const id = req.body.id;
+    const urlId = req.params.id;
+
+    if (!id || id != urlId) {
+      req.session.flash = {
+        type: "error",
+        message: "ID de género inválido.",
+      };
+      res.redirect("/admin/genres/list");
+      return;
+    }
+
+    const api = getAuthenticatedClient(req.session.idToken);
+
+    await api.put(`/genres/restore/${id}`);
+    redisClient = await redisController.returnRedisClient();
+    await redisClient.del("AllGenres");
+
+    req.session.flash = {
+      type: "success",
+      message: "Género restaurado correctamente.",
+    };
+    res.redirect("/admin/genres/list");
+  } catch (error) {
+    console.log(error);
+    console.log(error.response.data.message);
+
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "Error al restaurar el género.",
+    };
+    res.redirect("/admin/genres/list");
+  }
+}
+
 export default {
   getManageBooks,
   getForm,
@@ -628,8 +743,12 @@ export default {
   getPendingOrders,
   getDashboard,
   updateOrderStatus,
-  deleteOrder,
+  cancelOrder,
   getManageReviews,
   deleteReview,
   updateReview,
+  getManagedGenres,
+  createGenre,
+  deleteGenre,
+  restoreGenre,
 };

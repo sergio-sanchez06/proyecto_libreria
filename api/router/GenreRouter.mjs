@@ -30,6 +30,13 @@ router.post(
 );
 
 router.put(
+  "/restore/:id",
+  AuthMiddleware.authenticate,
+  AuthMiddleware.requireAdmin,
+  GenreController.restoreGenre,
+);
+
+router.put(
   "/:id",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,

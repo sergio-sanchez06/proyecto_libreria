@@ -13,8 +13,13 @@
     <!-- Preconnect y preload de Google Fonts para romper la cadena de red crítica -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"></noscript>
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    </noscript>
 
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 
@@ -35,7 +40,8 @@
                 <div class="logo-container">
                     <a href="/" class="brand-container d-flex align-items-center">
                         <div class="header-logo-outer">
-                            <img src="/images/logo.png" alt="BOOKLY logo" class="header-logo-inner-img" width="49" height="27" loading="eager">
+                            <img src="/images/logo.png" alt="BOOKLY logo" class="header-logo-inner-img" width="49"
+                                height="27" loading="eager">
                         </div>
                         <span class="brand-text ms-3">BOOKLY</span>
                     </a>
@@ -71,8 +77,12 @@
                     <div class="header-right-zone">
                         <div class="language-selector">
                             <form action="/language" method="get">
+
+                                <input type="hidden" name="returnTo" value="<%= currentUrl %>">
+
                                 <label for="language-select" class="visually-hidden">Idioma</label>
-                                <select id="language-select" name="lng" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="Seleccionar idioma">
+                                <select id="language-select" name="lng" class="form-select form-select-sm"
+                                    onchange="this.form.submit()" aria-label="Seleccionar idioma">
                                     <option value="es" <%=i18n.language.startsWith('es') ? 'selected' : '' %>>ES
                                     </option>
                                     <option value="ca" <%=i18n.language.startsWith('ca') ? 'selected' : '' %>>CA

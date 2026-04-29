@@ -16,10 +16,13 @@ async function create(orderItemData, client) {
   return result.rows[0] ? new OrderItem(result.rows[0]) : null;
 }
 
-async function getItemsByOrderId(orderId) {
+async function getItemsByOrderId(orderId, connection = null) {
   // Al usar pool.query directamente, evitamos fugas de conexiones (memory leaks)
+
+  const client = connection || pool;
+
   try {
-    const result = await pool.query(
+    const result = await client.query(
       `SELECT 
         oi.*, 
         b.id AS book_id,

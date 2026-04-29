@@ -136,6 +136,44 @@ async function getAllOrders() {
   return orders;
 }
 
+async function cancelOrder(id) {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const { rows } = await client.query(
+      "SELECT status FROM orders WHERE id = $1 FOR UPDATE",
+      [id],
+    );
+
+    if (!rows[0]) throw new Error("Pedido no encontrado");
+    if (rows[0].status === "CANCELADO")
+      throw new Error("El pedido ya fue cancelado previamente");
+
+    //Obtenemos los libros de los pedidos, pasando la conexión actual 
+    // para que todo se haga en la misma transacción
+    const items = await OrderItemsRepository.getItemsByOrderId(id, client);
+
+    for (const item of items) {
+      await BookRepository.restoreStock(item.book_id, item.quantity, client);
+    }
+
+    await client.query(
+      "UPDATE orders SET status = 'CANCELADO', updated_at = NOW() WHERE id = $1",
+      [id],
+    );
+
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error(error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createOrder,
   getOrderById,
@@ -143,4 +181,5 @@ export default {
   updateOrder,
   deleteOrder,
   getAllOrders,
+  cancelOrder,
 };

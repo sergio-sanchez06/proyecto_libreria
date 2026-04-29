@@ -39,7 +39,9 @@ async function getAllGenres(req, res) {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
 
-    const genresData = await GenreRepository.getAllGenres(page, limit);
+    const includeDeleted = req.query.includeDeleted === "true";
+
+    const genresData = await GenreRepository.getAllGenres(page, limit, includeDeleted);
     res.status(200).json(genresData);
   } catch (error) {
     console.error(error);
@@ -49,7 +51,9 @@ async function getAllGenres(req, res) {
 
 async function getGenres(req, res) {
   try {
-    const genres = await GenreRepository.getGenres();
+    const includeDeleted = req.query.includeDeleted === "true";
+
+    const genres = await GenreRepository.getGenres(includeDeleted);
     res.status(200).json(genres);
   } catch (error) {
     console.error(error);
@@ -77,6 +81,24 @@ async function deleteGenre(req, res) {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al eliminar el género" });
+  }
+}
+
+async function restoreGenre(req, res) {
+  try {
+    const { id } = req.params;
+    const genre = await GenreRepository.restoreGenre(id);
+
+    if (!genre) {
+      return res
+        .status(404)
+        .json({ error: "Género no encontrado o ya activo" });
+    }
+
+    res.status(200).json(genre);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al restaurar el género" });
   }
 }
 
@@ -108,6 +130,7 @@ export default {
   getGenres,
   updateGenre,
   deleteGenre,
+  restoreGenre,
   getGenreByCountry,
   getGenresMostSold,
 };

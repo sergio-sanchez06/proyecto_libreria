@@ -1,26 +1,18 @@
 <%- include('../layout/header', { bodyClass: 'bg-user-vistas' , extraCSS: 'admin/orders' }) %>
-
     <div class="container-fluid py-4 px-4">
-
-        <% const currentLang=(typeof lang !=='undefined' && lang) ? lang : 'es' ; const localeMap={ 'eu' : 'eu-ES'
-            , 'ca' : 'ca-ES' , 'gl' : 'gl-ES' , 'es' : 'es-ES' }; const userLocale=localeMap[currentLang] || 'es-ES' ;
-            /* ── status → i18n key map ── */ const statusKeyMap={ 'PENDIENTE' : 'adminOrders.status_pending' , 'PAGADO'
-            : 'adminOrders.status_paid' , 'PROCESANDO' : 'adminOrders.status_processing' , 'ENVIADO'
-            : 'adminOrders.status_shipped' , 'ENTREGADO' : 'adminOrders.status_delivered' , 'CANCELADO'
-            : 'adminOrders.status_cancelled' }; 
-
-            /* ── Global Stats from Controller ── */
-            const total = globalStats.total;
-            const pending = globalStats.pending;
-            const processing = globalStats.processing;
-            const revenue = globalStats.revenue;
-         %>
+        <% const currentLang=(typeof lang !=='undefined' && lang) ? lang : 'es' ; const localeMap={ 'eu' :'eu-ES', 'ca'
+            :'ca-ES', 'gl' :'gl-ES', 'es' :'es-ES' }; const userLocale=localeMap[currentLang] || 'es-ES' ; const
+            statusKeyMap={ 'PENDIENTE' : 'adminOrders.status_pending' , 'PAGADO' : 'adminOrders.status_paid'
+            , 'PROCESANDO' : 'adminOrders.status_processing' , 'ENVIADO' : 'adminOrders.status_shipped' , 'ENTREGADO'
+            : 'adminOrders.status_delivered' , 'CANCELADO' : 'adminOrders.status_cancelled' }; const
+            total=globalStats.total; const pending=globalStats.pending; const processing=globalStats.processing; const
+            revenue=globalStats.revenue; %>
 
             <!-- ── Hero ─────────────────────────────────────── -->
             <div class="orders-hero mb-4">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div>
-                        <h2 class="fw-800 mb-1" style="font-size: var(--fs-xl); font-weight:800;">
+                        <h2 class="fw-800 mb-1" style="font-size:var(--fs-xl); font-weight:800;">
                             <i class="bi bi-bag-check-fill me-2"></i>
                             <% if (isPending) { %>
                                 <%= t('adminOrders.title_pending') || 'Pedidos Pendientes' %>
@@ -92,7 +84,7 @@
                                 <i class="bi bi-currency-euro"></i>
                             </div>
                             <div>
-                                <div class="stat-value" style="color:#92400e; font-size: var(--fs-xl);">
+                                <div class="stat-value" style="color:#92400e; font-size:var(--fs-xl);">
                                     <%= revenue %>€
                                 </div>
                                 <div class="stat-label">Facturado</div>
@@ -102,7 +94,7 @@
                 </div>
             </div>
 
-            <!-- ── Tab navigation ────────────────────────────── -->
+            <!-- ── Tabs ──────────────────────────────────────── -->
             <div class="orders-tabs">
                 <a href="/admin/orders" class="tab-btn <%= !isPending ? 'active' : '' %>">
                     <i class="bi bi-list-ul me-1"></i> Todos los pedidos
@@ -146,12 +138,11 @@
                                     <% orders.forEach(function(order) { const dateStr=order.created_at ? new
                                         Date(order.created_at).toLocaleString(userLocale, { day:'2-digit',
                                         month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '---' ;
-                                        const itemCount=(order.items || []).length; %>
+                                        const itemCount=(order.items || []).length; const
+                                        isCancelled=(order.status==='CANCELADO' ); %>
                                         <tr>
                                             <!-- ID -->
-                                            <td>
-                                                <span class="order-id-chip">#<%= order.id %></span>
-                                            </td>
+                                            <td><span class="order-id-chip">#<%= order.id %></span></td>
 
                                             <!-- Fecha -->
                                             <td>
@@ -159,8 +150,8 @@
                                                     <%= dateStr.split(',')[0] %>
                                                 </span>
                                                 <span class="d-block text-muted" style="font-size:.75rem;">
-                                                    <% if(dateStr.split(',').length> 1){ %><%=
-                                                            dateStr.split(',').slice(1).join(',').trim() %>
+                                                    <% if (dateStr.split(',').length> 1) { %>
+                                                        <%= dateStr.split(',').slice(1).join(',').trim() %>
                                                             <% } %>
                                                 </span>
                                             </td>
@@ -174,7 +165,7 @@
                                                 </span>
                                             </td>
 
-                                            <!-- Items count -->
+                                            <!-- Items -->
                                             <td>
                                                 <span class="badge rounded-pill"
                                                     style="background:#f1f5f9; color:#475569; font-size:.78rem; padding:5px 10px;">
@@ -202,55 +193,74 @@
                                             <!-- Acciones -->
                                             <td>
                                                 <div class="d-flex align-items-center justify-content-center gap-2">
-                                                    <!-- Status change select -->
-                                                    <form action="/admin/orders/updateStatus/<%= order.id %>"
-                                                        method="POST" data-requires-token class="d-flex">
-                                                        <input type="hidden" name="orderId" value="<%= order.id %>">
-                                                        <select name="status" class="status-select"
-                                                            onchange="this.form.requestSubmit()" title="Cambiar estado">
-                                                            <option value="PENDIENTE" <%=order.status==='PENDIENTE'
-                                                                ? 'selected' : '' %>><%= t('adminOrders.status_pending')
-                                                                    %>
-                                                            </option>
-                                                            <option value="PAGADO" <%=order.status==='PAGADO'
-                                                                ? 'selected' : '' %>><%= t('adminOrders.status_paid') %>
-                                                            </option>
-                                                            <option value="PROCESANDO" <%=order.status==='PROCESANDO'
-                                                                ? 'selected' : '' %>><%=
-                                                                    t('adminOrders.status_processing') %>
-                                                            </option>
-                                                            <option value="ENVIADO" <%=order.status==='ENVIADO'
-                                                                ? 'selected' : '' %>><%= t('adminOrders.status_shipped')
-                                                                    %>
-                                                            </option>
-                                                            <option value="ENTREGADO" <%=order.status==='ENTREGADO'
-                                                                ? 'selected' : '' %>><%=
-                                                                    t('adminOrders.status_delivered') %>
-                                                            </option>
-                                                            <option value="CANCELADO" <%=order.status==='CANCELADO'
-                                                                ? 'selected' : '' %>><%=
-                                                                    t('adminOrders.status_cancelled') %>
-                                                            </option>
-                                                        </select>
-                                                    </form>
 
-                                                    <!-- Ver detalle -->
-                                                    <button class="btn-view-order" data-bs-toggle="modal"
-                                                        data-bs-target="#modalOrder<%= order.id %>">
-                                                        <i class="bi bi-eye-fill me-1"></i>
-                                                        <%= t('adminOrders.btn_view') %>
-                                                    </button>
+                                                    <!-- ── NUEVO: select deshabilitado si está cancelado ── -->
+                                                    <% if (isCancelled) { %>
+                                                        <span
+                                                            class="status-select d-flex align-items-center gap-1 text-muted"
+                                                            style="font-size:.78rem; padding:5px 10px; background:#f1f5f9;
+                                                   border-radius:8px; cursor:not-allowed;"
+                                                            title="No se puede cambiar el estado de un pedido cancelado">
+                                                            <i class="bi bi-lock-fill" style="font-size:.7rem;"></i>
+                                                            Cancelado
+                                                        </span>
+                                                        <% } else { %>
+                                                            <form action="/admin/orders/updateStatus/<%= order.id %>"
+                                                                method="POST" data-requires-token class="d-flex">
+                                                                <input type="hidden" name="orderId"
+                                                                    value="<%= order.id %>">
+                                                                <select name="status" class="status-select"
+                                                                    onchange="this.form.requestSubmit()"
+                                                                    title="Cambiar estado">
+                                                                    <option value="PENDIENTE"
+                                                                        <%=order.status==='PENDIENTE' ? 'selected' :''
+                                                                        %>><%= t('adminOrders.status_pending') %>
+                                                                    </option>
+                                                                    <option value="PAGADO" <%=order.status==='PAGADO'
+                                                                        ? 'selected' :'' %>><%=
+                                                                            t('adminOrders.status_paid') %>
+                                                                    </option>
+                                                                    <option value="PROCESANDO"
+                                                                        <%=order.status==='PROCESANDO' ? 'selected' :''
+                                                                        %>><%= t('adminOrders.status_processing') %>
+                                                                    </option>
+                                                                    <option value="ENVIADO" <%=order.status==='ENVIADO'
+                                                                        ? 'selected' :'' %>><%=
+                                                                            t('adminOrders.status_shipped') %>
+                                                                    </option>
+                                                                    <option value="ENTREGADO"
+                                                                        <%=order.status==='ENTREGADO' ? 'selected' :''
+                                                                        %>><%= t('adminOrders.status_delivered') %>
+                                                                    </option>
+                                                                </select>
+                                                            </form>
+                                                            <% } %>
 
-                                                    <!-- Eliminar -->
-                                                    <form action="/admin/orders/delete/<%= order.id %>" method="POST"
-                                                        data-requires-token
-                                                        onsubmit="return confirm('<%= t('adminOrders.delete_confirm') %>');">
-                                                        <input type="hidden" name="orderId" value="<%= order.id %>">
-                                                        <button type="submit" class="btn-delete-order"
-                                                            title="Eliminar pedido">
-                                                            <i class="bi bi-trash-fill"></i>
-                                                        </button>
-                                                    </form>
+                                                                <!-- Ver detalle -->
+                                                                <button class="btn-view-order" data-bs-toggle="modal"
+                                                                    data-bs-target="#modalOrder<%= order.id %>">
+                                                                    <i class="bi bi-eye-fill me-1"></i>
+                                                                    <%= t('adminOrders.btn_view') %>
+                                                                </button>
+
+                                                                <!-- ── NUEVO: cancelar → modal de confirmación (solo si no está cancelado) ── -->
+                                                                <% if (isCancelled) { %>
+                                                                    <button class="btn-delete-order" disabled
+                                                                        title="Este pedido ya está cancelado"
+                                                                        style="opacity:.35; cursor:not-allowed;">
+                                                                        <i class="bi bi-x-circle-fill"></i>
+                                                                    </button>
+                                                                    <% } else { %>
+                                                                        <button type="button" class="btn-delete-order"
+                                                                            title="Cancelar pedido"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#modalCancelOrder"
+                                                                            data-order-id="<%= order.id %>"
+                                                                            data-order-email="<%= order.user_email %>">
+                                                                            <i class="bi bi-x-circle-fill"></i>
+                                                                        </button>
+                                                                        <% } %>
+
                                                 </div>
                                             </td>
                                         </tr>
@@ -259,7 +269,7 @@
                             </table>
                         </div>
                         <% } %>
-            </div><!-- /orders-table-wrap -->
+            </div>
 
             <!-- ── Paginación ─────────────────────────────────── -->
             <% if (totalPages> 1) {
@@ -278,13 +288,11 @@
                         </strong> pedidos en total
                     </span>
                     <ul class="pagination pagination-sm mb-0">
-                        <!-- Anterior -->
                         <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
                             <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage - 1 %>">
                                 <i class="bi bi-chevron-left"></i>
                             </a>
                         </li>
-
                         <% for (let p=1; p <=totalPages; p++) { %>
                             <% if (totalPages <=7 || p===1 || p===totalPages || Math.abs(p - currentPage) <=1) { %>
                                 <li class="page-item <%= currentPage == p ? 'active' : '' %>">
@@ -296,8 +304,6 @@
                                     <li class="page-item disabled"><span class="page-link">…</span></li>
                                     <% } %>
                                         <% } %>
-
-                                            <!-- Siguiente -->
                                             <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
                                                 <a class="page-link" href="<%= baseUrl %>?page=<%= currentPage + 1 %>">
                                                     <i class="bi bi-chevron-right"></i>
@@ -309,8 +315,47 @@
 
     </div><!-- /container-fluid -->
 
+
     <!-- ══════════════════════════════════════════════════
-     MODALS (one per order)
+     MODAL DE CONFIRMACIÓN DE CANCELACIÓN (uno global, reutilizable)
+     ── NUEVO ──
+══════════════════════════════════════════════════ -->
+    <div class="modal fade" id="modalCancelOrder" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header border-0" style="background:#dc3545;">
+                    <h5 class="modal-title fw-bold text-white">
+                        <i class="bi bi-x-circle-fill me-2"></i>Cancelar pedido
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <p class="mb-1">
+                        ¿Cancelar el pedido <strong id="cancelOrderId"></strong> de
+                        <strong id="cancelOrderEmail"></strong>?
+                    </p>
+                    <p class="text-muted small mb-0">
+                        El stock de los libros se restituirá automáticamente.
+                        Esta acción no se puede deshacer.
+                    </p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-secondary rounded-pill px-4"
+                        data-bs-dismiss="modal">Volver</button>
+                    <form id="cancelOrderForm" method="POST" data-requires-token style="display:inline;">
+                        <input type="hidden" name="orderId" id="cancelOrderFormId">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 ms-2">
+                            <i class="bi bi-x-circle-fill me-1"></i>Sí, cancelar pedido
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════
+     MODALS DE DETALLE (uno por pedido)
 ══════════════════════════════════════════════════ -->
     <% orders.forEach(function(order) { const modalDate=order.created_at ? new
         Date(order.created_at).toLocaleString(userLocale) : '---' ; const items=order.items || []; const
@@ -318,8 +363,6 @@
         <div class="modal fade" id="modalOrder<%= order.id %>" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
-
-                    <!-- Header -->
                     <div class="modal-header-custom d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="fw-bold mb-0">
@@ -339,11 +382,7 @@
                                 data-bs-dismiss="modal"></button>
                         </div>
                     </div>
-
-                    <!-- Body -->
                     <div class="modal-body p-4">
-
-                        <!-- Info row: cliente + dirección -->
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <div class="modal-info-box h-100">
@@ -372,14 +411,11 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Items table -->
                         <h6 class="fw-700 mb-3"
                             style="color:#0f172a; font-size:.85rem; text-transform:uppercase; letter-spacing:.05em;">
                             <i class="bi bi-list-ul me-1" style="color:var(--brand-teal);"></i>
                             <%= t('adminOrders.modal_items') %>
                         </h6>
-
                         <% if (items.length===0) { %>
                             <p class="text-muted small text-center py-3">Sin artículos registrados.</p>
                             <% } else { %>
@@ -410,13 +446,15 @@
                                                         <span class="fw-600" style="font-size:.85rem;">
                                                             <%= title %>
                                                         </span>
-                                                        <small class="d-block text-muted" style="font-size:.72rem;">ID:
-                                                            <%= item.book_id %></small>
+                                                        <small class="d-block text-muted" style="font-size:.72rem;">
+                                                            ID: <%= item.book_id %>
+                                                        </small>
                                                     </td>
                                                     <td class="text-center">
                                                         <span class="badge rounded-pill"
-                                                            style="background:#f1f5f9; color:#475569; font-size:.8rem; padding:5px 10px;">×
-                                                            <%= item.quantity %></span>
+                                                            style="background:#f1f5f9; color:#475569; font-size:.8rem; padding:5px 10px;">
+                                                            × <%= item.quantity %>
+                                                        </span>
                                                     </td>
                                                     <td class="text-end" style="font-size:.85rem; color:#374151;">
                                                         <%= parseFloat(item.price_at_time).toFixed(2) %>€
@@ -429,8 +467,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-
-                                <!-- Total bar -->
                                 <div class="modal-total-bar mt-3 d-flex justify-content-between align-items-center">
                                     <span class="fw-600" style="color:#065f46; font-size:.9rem;">
                                         <i class="bi bi-check-circle-fill me-1"></i> Total del pedido
@@ -440,22 +476,42 @@
                                     </span>
                                 </div>
                                 <% } %>
-
                     </div>
-
-                    <!-- Footer -->
                     <div class="modal-footer border-0 pt-0">
                         <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">
                             <i class="bi bi-x me-1"></i>
                             <%= t('adminOrders.modal_close') %>
                         </button>
                     </div>
-
                 </div>
             </div>
         </div>
         <% }) %>
 
+            <!-- ── Script del modal de cancelación ── NUEVO ── -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modalCancelOrder = document.getElementById('modalCancelOrder');
+                    if (modalCancelOrder) {
+                        modalCancelOrder.addEventListener('show.bs.modal', function (event) {
+                            // Botón que activó el modal
+                            const button = event.relatedTarget;
 
+                            // Extraer información de los atributos data-
+                            const orderId = button.getAttribute('data-order-id');
+                            const orderEmail = button.getAttribute('data-order-email');
+
+                            // Actualizar el contenido del modal
+                            document.getElementById('cancelOrderId').textContent = '#' + orderId;
+                            document.getElementById('cancelOrderEmail').textContent = orderEmail;
+                            document.getElementById('cancelOrderFormId').value = orderId;
+
+                            // Configurar la URL del formulario dinámicamente
+                            const form = document.getElementById('cancelOrderForm');
+                            form.action = '/admin/orders/cancel/' + orderId;
+                        });
+                    }
+                });
+            </script>
 
             <%- include('../layout/footer') %>

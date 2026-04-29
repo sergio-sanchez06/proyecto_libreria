@@ -132,6 +132,8 @@ async function getBookById(req, res) {
     const publisher = publisherResponse.data;
     const reviews = reviewsResponse.data;
 
+    console.log("Genres: ", genres);
+
     // console.log(authors);
 
     res.render("partials/libro_detalle", {

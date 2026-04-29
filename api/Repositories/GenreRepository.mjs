@@ -39,9 +39,10 @@ async function getGenreByName(name) {
   const client = await pool.connect();
   console.log("Tipo de dato de nombre: " + typeof name);
   try {
-    const result = await client.query("SELECT * FROM genres WHERE name = $1", [
-      name,
-    ]);
+    const result = await client.query(
+      "SELECT * FROM genres WHERE name = $1 AND deleted_at IS NULL",
+      [name],
+    );
     console.log("Buscando nombre", name);
 
     if (result) {
@@ -59,16 +60,25 @@ async function getGenreByName(name) {
   }
 }
 
-async function getAllGenres(page = 1, limit = 10) {
+async function getAllGenres(page = 1, limit = 10, includeDeleted = false) {
   const client = await pool.connect();
   try {
     const offset = (page - 1) * limit;
 
-    const countRes = await client.query("SELECT COUNT(*) FROM genres");
+    const whereClause = includeDeleted ? "1=1" : "deleted_at IS NULL";
+
+    // 2. Obtener el conteo total con la condición dinámica
+    const countRes = await client.query(
+      `SELECT COUNT(*) FROM genres WHERE ${whereClause}`,
+    );
     const totalItems = parseInt(countRes.rows[0].count);
 
+    // 3. Obtener los registros con la condición dinámica
     const result = await client.query(
-      "SELECT * FROM genres ORDER BY name LIMIT $1 OFFSET $2",
+      `SELECT * FROM genres 
+       WHERE ${whereClause} 
+       ORDER BY name 
+       LIMIT $1 OFFSET $2`,
       [limit, offset],
     );
 
@@ -86,12 +96,21 @@ async function getAllGenres(page = 1, limit = 10) {
   }
 }
 
-async function getGenres() {
+async function getGenres(includeDeleted = false) {
   const client = await pool.connect();
+  let result;
   try {
-    const result = await client.query(
-      "SELECT * FROM genres WHERE deleted_at IS NULL ORDER BY name",
-    );
+    if (includeDeleted) {
+      result = await client.query("SELECT * FROM genres ORDER BY name");
+    } else {
+      result = await client.query(
+        `SELECT DISTINCT g.* FROM genres g
+        LEFT JOIN book_genres bg ON g.id = bg.genre_id
+        WHERE g.deleted_at IS NULL 
+           OR bg.book_id IS NOT NULL
+        ORDER BY g.name`,
+      );
+    }
     return result.rows.map((genre) => new GenreModel(genre));
   } catch (error) {
     console.log("Error en getGenres (completo)", error);
@@ -129,20 +148,39 @@ async function deleteGenre(id) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
+    //Borrado lógico (SOFT DELETE)
     const result = await client.query(
-      "DELETE FROM genres WHERE id = $1 RETURNING *",
+      "UPDATE genres SET deleted_at = NOW() WHERE id = $1 RETURNING *",
       [id],
     );
     await client.query("COMMIT");
     return result.rows[0];
   } catch (error) {
+    if (client) await client.query("ROLLBACK");
     console.log("Error en deleteGenre", error);
-    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
   }
 }
+// async function deleteGenre(id) {
+//   const client = await pool.connect();
+//   try {
+//     await client.query("BEGIN");
+//     const result = await client.query(
+//       "DELETE FROM genres WHERE id = $1 RETURNING *",
+//       [id],
+//     );
+//     await client.query("COMMIT");
+//     return result.rows[0];
+//   } catch (error) {
+//     console.log("Error en deleteGenre", error);
+//     await client.query("ROLLBACK");
+//     throw error;
+//   } finally {
+//     client.release();
+//   }
+// }
 
 async function getGenresMostSold() {
   const client = await pool.connect();
@@ -168,6 +206,25 @@ async function getGenresMostSold() {
   }
 }
 
+async function restoreGenre(id) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      "UPDATE genres SET deleted_at = NULL, updated_at = NOW() WHERE id = $1 RETURNING *",
+      [id],
+    );
+    await client.query("COMMIT");
+    return result.rows[0];
+  } catch (error) {
+    if (client) await client.query("ROLLBACK");
+    console.log("Error en restoreGenre", error);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createGenre,
   getGenreById,
@@ -177,4 +234,5 @@ export default {
   updateGenre,
   deleteGenre,
   getGenresMostSold,
+  restoreGenre,
 };
