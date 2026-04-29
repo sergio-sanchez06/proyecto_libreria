@@ -4,7 +4,7 @@
     <div class="container">
         <div class="row align-items-center mb-4 g-4">
             <div class="col-md-4 text-center text-md-start">
-                <h6 class="mb-1 fw-bold text-uppercase tracking-wider">Librería Online</h6>
+                <p class="mb-1 fw-bold text-uppercase tracking-wider footer-section-title">Librería Online</p>
                 <p class="text-secondary mb-0 footer-description">
                     Tu rincón para nuevas historias. <br>
                     <small class="opacity-50 text-white">Proyecto Educativo</small>
@@ -24,9 +24,9 @@
 
             <div class="col-md-4 text-center text-md-end">
                 <div class="d-flex justify-content-center justify-content-md-end gap-3 mb-2">
-                    <a href="#" class="text-white"><i class="bi bi-facebook fs-5"></i></a>
-                    <a href="#" class="text-white"><i class="bi bi-instagram fs-5"></i></a>
-                    <a href="#" class="text-white"><i class="bi bi-twitter-x fs-5"></i></a>
+                    <a href="#" class="text-white" aria-label="Facebook"><i class="bi bi-facebook fs-5"></i></a>
+                    <a href="#" class="text-white" aria-label="Instagram"><i class="bi bi-instagram fs-5"></i></a>
+                    <a href="#" class="text-white" aria-label="Twitter/X"><i class="bi bi-twitter-x fs-5"></i></a>
                 </div>
                 <p class="mb-0 opacity-75 footer-copyright">&copy; 2026 Todos los derechos reservados</p>
             </div>
@@ -35,12 +35,12 @@
         <div class="border-top border-secondary pt-3 mt-2">
             <div class="row">
                 <div class="col-12">
-                    <nav class="d-flex justify-content-center flex-wrap gap-3">
+                    <nav class="d-flex justify-content-center flex-wrap gap-3" aria-label="Legal">
                         <a href="/aviso-legal"
-                            class="legal-link text-secondary text-decoration-none small text-uppercase footer-legal-link">Aviso Legal</a>
-                        <a href="/cookies" class="legal-link text-secondary text-decoration-none small text-uppercase footer-legal-link">Cookies</a>
+                            class="legal-link text-decoration-none small text-uppercase footer-legal-link">Aviso Legal</a>
+                        <a href="/cookies" class="legal-link text-decoration-none small text-uppercase footer-legal-link">Cookies</a>
                         <a href="/privacidad"
-                            class="legal-link text-secondary text-decoration-none small text-uppercase footer-legal-link">Privacidad</a>
+                            class="legal-link text-decoration-none small text-uppercase footer-legal-link">Privacidad</a>
                     </nav>
                 </div>
             </div>
@@ -111,130 +111,11 @@
 
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/modal.js"></script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const messagesDiv = document.getElementById('server-messages');
-        const serverError = messagesDiv ? messagesDiv.getAttribute('data-error') : null;
-        const serverSuccess = messagesDiv ? messagesDiv.getAttribute('data-success') : null;
+<script src="/js/footer-layout.js" defer></script>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const isUrlSuccess = urlParams.get('success') === 'true';
-
-        // Usamos window.showModal explícitamente
-        if (typeof window.showModal === "function") {
-            if (serverError && serverError.trim() !== "") {
-                window.showModal("error", serverError);
-            }
-            else if (serverSuccess && serverSuccess.trim() !== "") {
-                window.showModal("success", serverSuccess);
-            }
-            else if (isUrlSuccess) {
-                window.showModal("success", "¡Los cambios se han guardado correctamente!");
-
-                // Esto limpia el ?success=true de la barra de direcciones sin recargar
-                const newUrl = window.location.pathname;
-                window.history.replaceState({}, document.title, newUrl);
-            }
-        }
-    });
-
-    document.addEventListener("submit", async (e) => {
-        const form = e.target;
-
-        if (form.hasAttribute("data-requires-token")) {
-            e.preventDefault();
-
-            // 1. Intentamos buscar un botón de envío (opcional)
-            const btn = form.querySelector('button[type="submit"]');
-            const originalHTML = btn ? btn.innerHTML : null;
-
-            try {
-                // 2. Feedback visual solo si el botón existe
-                if (btn) {
-                    btn.disabled = true;
-                    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Seguridad...';
-                }
-
-                // 3. Importación y obtención del token
-                const { getFreshToken } = await import("/js/auth.mjs");
-                const token = await getFreshToken();
-
-                // 4. Inserción del token
-                let tokenInput = form.querySelector('input[name="firebase_token"]');
-                if (!tokenInput) {
-                    tokenInput = document.createElement("input");
-                    tokenInput.type = "hidden";
-                    tokenInput.name = "firebase_token";
-                    form.prepend(tokenInput);
-                }
-                tokenInput.value = token;
-
-                // 5. Envío final (usamos submit() del prototipo para evitar recursión)
-                HTMLFormElement.prototype.submit.call(form);
-
-            } catch (err) {
-                console.error("Error obteniendo token:", err);
-
-                // Restaurar botón si falló
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = originalHTML;
-                }
-
-                // Uso seguro de showModal
-                if (typeof window.showModal === "function") {
-                    window.showModal("error", "Error de seguridad. Por favor, reidentifícate.");
-                } else {
-                    alert("Error de seguridad. Por favor, reidentifícate.");
-                }
-                setTimeout(() => window.location.href = "/login", 2000);
-            }
-        }
-    });
-
-    // // Añade esto dentro de tu etiqueta <script> actual en el footer
-    // document.addEventListener("submit", async (e) => {
-    //     const form = e.target;
-
-    //     // Solo actuamos si el formulario tiene el atributo especial
-    //     if (form.hasAttribute("data-requires-token")) {
-    //         e.preventDefault();
-
-    //         try {
-    //             // Importación dinámica para no cargar Firebase si no hace falta
-    //             const { getFreshToken } = await import("/js/auth.mjs");
-
-    //             // Feedback visual en el botón
-    //             const btn = form.querySelector('button[type="submit"]');
-    //             const originalHTML = btn.innerHTML;
-    //             btn.disabled = true;
-    //             btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Seguridad...';
-
-    //             const token = await getFreshToken();
-
-    //             let tokenInput = form.querySelector('input[name="firebase_token"]');
-    //             if (!tokenInput) {
-    //                 tokenInput = document.createElement("input");
-    //                 tokenInput.type = "hidden";
-    //                 tokenInput.name = "firebase_token";
-    //                 form.prepend(tokenInput);
-    //             }
-    //             tokenInput.value = token;
-
-    //             // Enviamos el formulario de verdad
-    //             form.submit();
-    //         } catch (err) {
-    //             console.error("Error obteniendo token:", err);
-    //             window.showModal("error", "Error de seguridad. Por favor, reidentifícate.");
-    //             setTimeout(() => window.location.href = "/login", 2000);
-    //         }
-    //     }
-    // });
-
-</script>
 
 </body>
 

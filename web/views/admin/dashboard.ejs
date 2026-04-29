@@ -1,263 +1,261 @@
-<%- include("../layout/header", { 
-    bodyClass: 'bg-user-vistas', 
-    extraCSS: 'admin/dashboard',
-    title: t('adminDashboard.nav_title') + ' | Librería'
-}) %>
+<%- include("../layout/header", { bodyClass: 'bg-user-vistas' , extraCSS: 'admin/dashboard' , title:
+    t('adminDashboard.nav_title') + ' | Librería' }) %>
 
-        <nav class="navbar navbar-dark bg-dark shadow">
-            <div class="container-fluid">
-                <span class="navbar-brand mb-0 h1">
-                    <i class="bi bi-shield-lock me-2"></i>
-                    <%= t('adminDashboard.nav_title') %> | <%= user.name %>
-                </span>
-                <a href="/logout" class="btn btn-outline-light btn-sm">
-                    <%= t('adminDashboard.logout') %>
-                </a>
-            </div>
-        </nav>
+    <nav class="navbar navbar-dark bg-dark shadow">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">
+                <i class="bi bi-shield-lock me-2"></i>
+                <%= t('adminDashboard.nav_title') %> | <%= user.name %>
+            </span>
+            <a href="/logout" class="btn btn-outline-light btn-sm">
+                <%= t('adminDashboard.logout') %>
+            </a>
+        </div>
+    </nav>
 
-        <div class="container mb-5">
+    <div class="container mb-5">
 
-            <h3 class="section-title">
-                <%= t('adminDashboard.sec_users') %>
-            </h3>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="card h-100 admin-card">
-                        <div class="card-body text-center">
-                            <div class="icon-box text-primary"><i class="bi bi-people-fill"></i></div>
-                            <h5 class="card-title">
-                                <%= t('adminDashboard.card_users_title') %>
-                            </h5>
-                            <p class="card-text text-muted small">
-                                <%= t('adminDashboard.card_users_text') %>
-                            </p>
-                            <a href="/admin/users" class="btn btn-books w-100">
-                                <%= t('adminDashboard.card_users_btn') %>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card h-100 admin-card">
-                        <div class="card-body text-center">
-                            <div class="icon-box text-success"><i class="bi bi-person-plus-fill"></i></div>
-                            <h5 class="card-title">
-                                <%= t('adminDashboard.card_new_user_title') %>
-                            </h5>
-                            <p class="card-text text-muted small">
-                                <%= t('adminDashboard.card_new_user_text') %>
-                            </p>
-                            <a href="/admin/users/create" class="btn btn-outline-success w-100">
-                                <%= t('adminDashboard.card_new_user_btn') %>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card h-100 admin-card border-warning">
-                        <div class="card-body text-center">
-                            <div class="icon-box text-warning"><i class="bi bi-shield-lock-fill"></i></div>
-                            <h5 class="card-title">
-                                <%= t('adminDashboard.card_security_title') %>
-                            </h5>
-                            <p class="card-text text-muted small">
-                                <%= t('adminDashboard.card_security_text') %>
-                            </p>
-                            <button class="btn btn-warning w-100" disabled>
-                                <%= t('adminDashboard.card_security_btn') %>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <h3 class="section-title">
-                <%= t('adminDashboard.sec_inventory') %>
-            </h3>
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 admin-card border-start border-primary border-5">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">
-                                    <%= t('adminDashboard.card_books') %>
-                                </h5>
-                                <i class="bi bi-book text-primary h3"></i>
-                            </div>
-                            <p class="small text-muted">
-                                <%= t('adminDashboard.card_books_text') %>
-                            </p>
-                            <div class="d-grid gap-2">
-                                <a href="/admin/books/list" class="btn btn-sm btn-books">
-                                    <%= t('adminDashboard.btn_manage') %>
-                                </a>
-                                <a href="/admin/books/create" class="btn btn-sm btn-outline-primary">
-                                    <%= t('adminDashboard.btn_add') %>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 admin-card border-start border-info border-5">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">
-                                    <%= t('adminDashboard.card_genres') %>
-                                </h5>
-                                <i class="bi bi-tags text-info h3"></i>
-                            </div>
-                            <p class="small text-muted">
-                                <%= t('adminDashboard.card_genres_text') %>
-                            </p>
-                            <div class="d-grid gap-2">
-                                <a href="/genres" class="btn btn-sm btn-info text-white">
-                                    <%= t('adminDashboard.btn_manage') %>
-                                </a>
-                                <a href="/genres/create" class="btn btn-sm btn-outline-info">
-                                    <%= t('adminDashboard.btn_add') %>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 admin-card border-start border-dark border-5">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">
-                                    <%= t('adminDashboard.card_authors') %>
-                                </h5>
-                                <i class="bi bi-pen text-dark h3"></i>
-                            </div>
-                            <p class="small text-muted">
-                                <%= t('adminDashboard.card_authors_text') %>
-                            </p>
-                            <div class="d-grid gap-2">
-                                <a href="/authors/manage/list" class="btn btn-sm btn-dark">
-                                    <%= t('adminDashboard.btn_manage') %>
-                                </a>
-                                <a href="/authors/author/create" class="btn btn-sm btn-outline-dark">
-                                    <%= t('adminDashboard.btn_add') %>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 col-lg-3">
-                    <div class="card h-100 admin-card border-start border-secondary border-5">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">
-                                    <%= t('adminDashboard.card_publishers') %>
-                                </h5>
-                                <i class="bi bi-building-up text-secondary h3"></i>
-                            </div>
-                            <p class="small text-muted">
-                                <%= t('adminDashboard.card_publishers_text') %>
-                            </p>
-                            <div class="d-grid gap-2">
-                                <a href="/publisher/manage/list" class="btn btn-sm btn-secondary">
-                                    <%= t('adminDashboard.btn_manage') %>
-                                </a>
-                                <a href="/publisher/create" class="btn btn-sm btn-outline-secondary">
-                                    <%= t('adminDashboard.btn_add') %>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <h3 class="section-title">
-                <%= t('adminDashboard.sec_commercial') %> & <%= t('adminDashboard.sec_reviews') %>
-            </h3>
-            <div class="row g-4">
-                <!-- PEDIDOS -->
-                <div class="col-md-6 col-lg-5">
-                    <div class="card h-100 admin-card border-start border-orange border-5">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">
-                                    <%= t('adminDashboard.card_orders_title') %>
-                                </h5>
-                                <i class="bi bi-cart-check text-orange h3"></i>
-                            </div>
-                            <p class="small text-muted">
-                                <%= t('adminDashboard.card_orders_text') %>
-                            </p>
-                            <div class="d-grid gap-2">
-                                <a href="/admin/orders" class="btn btn-sm text-white bg-orange">
-                                    <%= t('adminDashboard.btn_all_orders') %>
-                                </a>
-                                <a href="/admin/orders/pending"
-                                    class="btn btn-sm btn-outline-warning text-orange fw-bold">
-                                    <%= t('adminDashboard.btn_pending_orders') %>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- RESEÑAS -->
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 admin-card border-start border-primary border-5" style="border-left-color: #6610f2 !important;">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="card-title">
-                                    <%= t('adminDashboard.card_reviews') %>
-                                </h5>
-                                <i class="bi bi-chat-left-text text-primary h3" style="color: #6610f2 !important;"></i>
-                            </div>
-                            <p class="small text-muted">
-                                <%= t('adminDashboard.card_reviews_text') %>
-                            </p>
-                            <div class="d-grid gap-2">
-                                <a href="/admin/reviews" class="btn btn-sm btn-books" style="background-color: #6610f2; border-color: #6610f2;">
-                                    <%= t('adminDashboard.btn_manage') %>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-5 p-4 bg-white rounded shadow-sm border">
-                <h4 class="mb-4 fw-bold"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>
-                    <%= t('adminDashboard.stats_title') %>
-                </h4>
-                <div class="row text-center">
-                    <div class="col">
-                        <h3 class="fw-bold">
-                            <%= users %>
-                        </h3>
-                        <p class="text-muted small">
-                            <%= t('adminDashboard.stats_users') %>
+        <h3 class="section-title">
+            <%= t('adminDashboard.sec_users') %>
+        </h3>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 admin-card">
+                    <div class="card-body text-center">
+                        <div class="icon-box text-primary"><i class="bi bi-people-fill"></i></div>
+                        <h5 class="card-title">
+                            <%= t('adminDashboard.card_users_title') %>
+                        </h5>
+                        <p class="card-text text-muted small">
+                            <%= t('adminDashboard.card_users_text') %>
                         </p>
+                        <a href="/admin/users" class="btn btn-books w-100">
+                            <%= t('adminDashboard.card_users_btn') %>
+                        </a>
                     </div>
-                    <div class="col border-start">
-                        <h3 class="fw-bold text-orange">
-                            <%= orders %>
-                        </h3>
-                        <p class="text-muted small">
-                            <%= t('adminDashboard.stats_orders') %>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 admin-card">
+                    <div class="card-body text-center">
+                        <div class="icon-box text-success"><i class="bi bi-person-plus-fill"></i></div>
+                        <h5 class="card-title">
+                            <%= t('adminDashboard.card_new_user_title') %>
+                        </h5>
+                        <p class="card-text text-muted small">
+                            <%= t('adminDashboard.card_new_user_text') %>
                         </p>
+                        <a href="/admin/users/create" class="btn btn-outline-success w-100">
+                            <%= t('adminDashboard.card_new_user_btn') %>
+                        </a>
                     </div>
-                    <div class="col border-start">
-                        <h3 class="fw-bold text-success">Active</h3>
-                        <p class="text-muted small">
-                            <%= t('adminDashboard.stats_status') %>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 admin-card border-warning">
+                    <div class="card-body text-center">
+                        <div class="icon-box text-warning"><i class="bi bi-shield-lock-fill"></i></div>
+                        <h5 class="card-title">
+                            <%= t('adminDashboard.card_security_title') %>
+                        </h5>
+                        <p class="card-text text-muted small">
+                            <%= t('adminDashboard.card_security_text') %>
                         </p>
+                        <button class="btn btn-warning w-100" disabled>
+                            <%= t('adminDashboard.card_security_btn') %>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <h3 class="section-title">
+            <%= t('adminDashboard.sec_inventory') %>
+        </h3>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 admin-card border-start border-primary border-5">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">
+                                <%= t('adminDashboard.card_books') %>
+                            </h5>
+                            <i class="bi bi-book text-primary h3"></i>
+                        </div>
+                        <p class="small text-muted">
+                            <%= t('adminDashboard.card_books_text') %>
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="/admin/books/list" class="btn btn-sm btn-books">
+                                <%= t('adminDashboard.btn_manage') %>
+                            </a>
+                            <a href="/admin/books/create" class="btn btn-sm btn-outline-primary">
+                                <%= t('adminDashboard.btn_add') %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            <%- include("../layout/footer") %>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 admin-card border-start border-info border-5">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">
+                                <%= t('adminDashboard.card_genres') %>
+                            </h5>
+                            <i class="bi bi-tags text-info h3"></i>
+                        </div>
+                        <p class="small text-muted">
+                            <%= t('adminDashboard.card_genres_text') %>
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="/admin/genres/list" class="btn btn-sm btn-info text-white">
+                                <%= t('adminDashboard.btn_manage') %>
+                            </a>
+                            <a href="/admin/genres/create" class="btn btn-sm btn-outline-info">
+                                <%= t('adminDashboard.btn_add') %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 admin-card border-start border-dark border-5">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">
+                                <%= t('adminDashboard.card_authors') %>
+                            </h5>
+                            <i class="bi bi-pen text-dark h3"></i>
+                        </div>
+                        <p class="small text-muted">
+                            <%= t('adminDashboard.card_authors_text') %>
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="/authors/manage/list" class="btn btn-sm btn-dark">
+                                <%= t('adminDashboard.btn_manage') %>
+                            </a>
+                            <a href="/authors/author/create" class="btn btn-sm btn-outline-dark">
+                                <%= t('adminDashboard.btn_add') %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 admin-card border-start border-secondary border-5">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">
+                                <%= t('adminDashboard.card_publishers') %>
+                            </h5>
+                            <i class="bi bi-building-up text-secondary h3"></i>
+                        </div>
+                        <p class="small text-muted">
+                            <%= t('adminDashboard.card_publishers_text') %>
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="/publisher/manage/list" class="btn btn-sm btn-secondary">
+                                <%= t('adminDashboard.btn_manage') %>
+                            </a>
+                            <a href="/publisher/create" class="btn btn-sm btn-outline-secondary">
+                                <%= t('adminDashboard.btn_add') %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="section-title">
+            <%= t('adminDashboard.sec_commercial') %> & <%= t('adminDashboard.sec_reviews') %>
+        </h3>
+        <div class="row g-4">
+            <!-- PEDIDOS -->
+            <div class="col-md-6 col-lg-5">
+                <div class="card h-100 admin-card border-start border-orange border-5">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">
+                                <%= t('adminDashboard.card_orders_title') %>
+                            </h5>
+                            <i class="bi bi-cart-check text-orange h3"></i>
+                        </div>
+                        <p class="small text-muted">
+                            <%= t('adminDashboard.card_orders_text') %>
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="/admin/orders" class="btn btn-sm text-white bg-orange">
+                                <%= t('adminDashboard.btn_all_orders') %>
+                            </a>
+                            <a href="/admin/orders/pending" class="btn btn-sm btn-outline-warning text-orange fw-bold">
+                                <%= t('adminDashboard.btn_pending_orders') %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESEÑAS -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 admin-card border-start border-primary border-5"
+                    style="border-left-color: #6610f2 !important;">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title">
+                                <%= t('adminDashboard.card_reviews') %>
+                            </h5>
+                            <i class="bi bi-chat-left-text text-primary h3" style="color: #6610f2 !important;"></i>
+                        </div>
+                        <p class="small text-muted">
+                            <%= t('adminDashboard.card_reviews_text') %>
+                        </p>
+                        <div class="d-grid gap-2">
+                            <a href="/admin/reviews" class="btn btn-sm btn-books"
+                                style="background-color: #6610f2; border-color: #6610f2;">
+                                <%= t('adminDashboard.btn_manage') %>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5 p-4 bg-white rounded shadow-sm border">
+            <h4 class="mb-4 fw-bold"><i class="bi bi-graph-up-arrow me-2 text-primary"></i>
+                <%= t('adminDashboard.stats_title') %>
+            </h4>
+            <div class="row text-center">
+                <div class="col">
+                    <h3 class="fw-bold">
+                        <%= users %>
+                    </h3>
+                    <p class="text-muted small">
+                        <%= t('adminDashboard.stats_users') %>
+                    </p>
+                </div>
+                <div class="col border-start">
+                    <h3 class="fw-bold text-orange">
+                        <%= orders %>
+                    </h3>
+                    <p class="text-muted small">
+                        <%= t('adminDashboard.stats_orders') %>
+                    </p>
+                </div>
+                <div class="col border-start">
+                    <h3 class="fw-bold text-success">Active</h3>
+                    <p class="text-muted small">
+                        <%= t('adminDashboard.stats_status') %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <%- include("../layout/footer") %>

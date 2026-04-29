@@ -39,19 +39,41 @@ async function getGenres(req, res) {
 async function getGenreBooksByGenreName(req, res) {
   const { genreName } = req.params;
   try {
-    const response = await apiClient.get(`/bookGenre/genre/${genreName}`);
     const genreResponse = await apiClient.get(`/genres/name/${genreName}`);
+
+    const genreData = genreResponse.data;
+
+    // 2. Validar si el género existe y si está activo
+    // Comprobamos !genreData porque si la API no encuentra nada, suele devolver null o vacío
+    if (!genreData || Object.keys(genreData).length === 0) {
+      return res.status(404).render("errors/404", {
+        message: "El género solicitado no existe.",
+      });
+    }
+
+    if (genreData.deleted_at) {
+      return res.status(404).render("errors/404", {
+        message: "Este género ya no está disponible.",
+      });
+    }
+
+    const response = await apiClient.get(`/bookGenre/genre/${genreName}`);
     console.log(response.data);
-    console.log(genreResponse.data);
+    console.log("Datos del género", genreData);
     res.render("partials/genre_detalle", {
       bookGenre: response.data || null,
-      genreData: genreResponse.data || null,
+      genreData: genreData || null,
       user: req.session.user || null,
     });
   } catch (error) {
-    res.status(500).render("error", {
-      message: "Error al obtener libros del género",
-    });
+    console.error("Error en getGenreBooksByGenreName:", error);
+    // Si la API devuelve 404, Axios lo lanza al catch. Manejémoslo:
+    if (error.response && error.response.status === 404) {
+      return res
+        .status(404)
+        .render("errors/404", { message: "Género no encontrado" });
+    }
+    res.status(500).render("errors/500");
   }
 }
 
@@ -91,7 +113,6 @@ async function createGenre(req, res) {
     };
 
     res.redirect("/genres");
-    
   } catch (error) {
     req.session.formData = req.body;
     req.session.flash = {
@@ -172,13 +193,37 @@ async function deleteGenre(req, res) {
       type: "success",
       message: "Género eliminado satisfactoriamente.",
     };
-    res.redirect("/genres");
+    res.redirect("/admin/genres");
   } catch (error) {
     req.session.flash = {
       type: "error",
       message:
         error.response?.data?.message ||
         "No se puede eliminar: el género podría estar en uso.",
+    };
+    res.redirect("/genres");
+  }
+}
+
+async function restoreGenre(req, res) {
+  try {
+    const id = req.body.id;
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+
+    await api.put(`/genres/restore/${id}`);
+    redisClient = await redisController.returnRedisClient();
+    await redisClient.del("AllGenres");
+
+    req.session.flash = {
+      type: "success",
+      message: "Género restaurado correctamente.",
+    };
+    res.redirect("/admin/genres");
+  } catch (error) {
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.message || "Error al restaurar el género.",
     };
     res.redirect("/genres");
   }
@@ -192,4 +237,5 @@ export default {
   getEditGenre,
   updateGenre,
   deleteGenre,
+  restoreGenre,
 };

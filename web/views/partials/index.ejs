@@ -47,15 +47,15 @@
                         <div class="px-3">
                             <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
                                  class="card-img-top rounded shadow-sm mx-auto" style="height: 180px; width: auto; object-fit: cover;"
-                                 alt="<%= book.title %>">
+                                 alt="<%= book.title %>" width="120" height="180" loading="lazy">
                         </div>
                         
                         <div class="card-body d-flex flex-column align-items-center pb-3">
-                            <h6 class="fw-bold mb-2 text-truncate w-100" title="<%= book.title %>">
+                            <p class="fw-bold mb-2 text-truncate w-100 book-card-name" title="<%= book.title %>">
                                 <a href="/books/book/<%= book.id %>" class="text-decoration-none text-dark">
                                     <%= book.title %>
                                 </a>
-                            </h6>
+                            </p>
                             <div class="mt-auto">
                                 <span class="badge bg-light text-muted border text-dark rounded-pill px-3 py-2">
                                     <i class="bi bi-cart-check-fill me-1" style="color: var(--brand-teal);"></i>
@@ -89,13 +89,13 @@
                                         <div class="card h-100 book-card shadow-sm border-0">
                                             <div class="position-relative overflow-hidden">
                                                 <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
-                                                     class="card-img-top p-2 p-md-3 bg-light" style="height: clamp(150px, 20vh, 250px); object-fit: contain;" alt="<%= book.title %>">
+                                                     class="card-img-top p-2 p-md-3 bg-light" style="height: clamp(150px, 20vh, 250px); object-fit: contain;" alt="<%= book.title %>" width="180" height="220" loading="lazy">
                                             </div>
                                             
                                             <div class="card-body d-flex flex-column p-2 p-md-3">
-                                                <h5 class="card-title text-truncate fw-bold text-dark mb-1" style="font-size: var(--fs-sm);">
+                                                <p class="card-title text-truncate fw-bold text-dark mb-1" style="font-size: var(--fs-sm);">
                                                     <%= book.title %>
-                                                </h5>
+                                                </p>
                                                 <p class="text-muted small mb-2 text-truncate">
                                                     <% const relations=bookAuthors.filter(ba=> Number(ba.book_id) === Number(book.id));
                                                        if (relations.length > 0) {
@@ -171,7 +171,7 @@
                             <div class="card text-center h-100 px-3 py-4">
                                 <img src="<%= author.photo_url || '/images/default-author.jpg' %>" class="author-avatar" alt="<%= author.name %>">
                                 
-                                <h5 class="fw-bold mb-1 fs-6"><%= author.name %></h5>
+                                <p class="fw-bold mb-1 fs-6 author-card-name"><%= author.name %></p>
                                 <p class="text-muted small mb-3">
                                     <%= author.country || t('index.unknown_country') %>
                                 </p>

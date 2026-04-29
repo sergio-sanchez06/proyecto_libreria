@@ -492,6 +492,26 @@ async function restoreBooksFromPublisher(publisherId, client) {
   return await client.query(sql, [publisherId]);
 }
 
+async function restoreStock(bookId, quantity, connection = null) {
+  const client = connection || pool;
+
+  try {
+    const result = await client.query(
+      `UPDATE books 
+      SET stock = stock + $1, updated_at = NOW()
+      WHERE id = $2 and deleted_at is null
+      RETURNING *`,
+      [quantity, bookId],
+    );
+    if (result.rowCount === 0) {
+      throw new Error(`El libro ${bookId} no existe o ya no está disponible`);
+    }
+  } catch (error) {
+    console.error("Error en restoreStock (Repository): ", error.message);
+    throw error;
+  }
+}
+
 export default {
   createBook,
   getBookById,
@@ -509,4 +529,5 @@ export default {
   restoreBook,
   deleteBooksFromDeletedPublishers,
   restoreBooksFromPublisher,
+  restoreStock,
 };

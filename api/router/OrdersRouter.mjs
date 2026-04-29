@@ -42,11 +42,18 @@ router.put(
   OrderController.updateOrder,
 );
 
-router.delete(
-  "/:id",
+// router.delete(
+//   "/:id",
+//   AuthMiddleware.authenticate,
+//   AuthMiddleware.requireAdmin,
+//   OrderController.deleteOrder,
+// );
+
+router.patch(
+  "/cancel/:id",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
-  OrderController.deleteOrder,
+  OrderController.cancelOrder,
 );
 
 router.post("/payment", OrderController.paymentAndEmail);

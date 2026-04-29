@@ -10,6 +10,7 @@ import * as useragent from "express-useragent";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import dotenv from "dotenv";
+import compression from "compression";
 
 // Controlador de Redis
 import redisController from "./controllers/RedisController.mjs";
@@ -117,6 +118,7 @@ async function startApp() {
     );
 
     // 2. Configuración de Middlewares base
+    app.use(compression()); // Compresión gzip/brotli de todas las respuestas
     app.use(useragent.express());
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));

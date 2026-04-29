@@ -137,59 +137,42 @@ async function getAllOrders() {
   return orders;
 }
 
-async function payment(items,user,shipping_address){
-  console.log(user)
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-  const bookIds = items.map((item) => item.book_id);
-  const books = await BookRepository.getBooksByIds(bookIds);
-  let total = 0;
-  const validatedItems = [];
+async function cancelOrder(id) {
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const { rows } = await client.query(
+      "SELECT status FROM orders WHERE id = $1 FOR UPDATE",
+      [id],
+    );
+
+    if (!rows[0]) throw new Error("Pedido no encontrado");
+    if (rows[0].status === "CANCELADO")
+      throw new Error("El pedido ya fue cancelado previamente");
+
+    //Obtenemos los libros de los pedidos, pasando la conexión actual 
+    // para que todo se haga en la misma transacción
+    const items = await OrderItemsRepository.getItemsByOrderId(id, client);
 
     for (const item of items) {
-      const book = books.find((b) => b.id == item.book_id);
-
-      if (!book) throw new Error(`Libro no encontrado: ID ${item.book_id}`);
-      if (book.stock < item.quantity) {
-        throw new Error(
-          `Stock insuficiente para "${book.title}". Disponible: ${book.stock}`
-        );
-      }
-
-      total += book.price * item.quantity;
-      // Guardamos el precio actual para asegurar la consistencia en el detalle
-      validatedItems.push({ ...item, currentPrice: book.price, title: book.title});
+      await BookRepository.restoreStock(item.book_id, item.quantity, client);
     }
-  const arrayStripeObjects = []
-  validatedItems.forEach(books => {
-    const lineItems = {
-      price_data: {
-        currency: 'eur',
-        product_data: {
-          name: books.title,
-        },
-        unit_amount: (books.currentPrice * 100).toFixed(0),
-      },
-      quantity: books.quantity,
-    }
-    arrayStripeObjects.push(lineItems)
-  });
-  
-  const session = await stripe.checkout.sessions.create({
-    line_items: arrayStripeObjects,
-    mode: 'payment',
-    success_url: `${process.env.FRONTEND_URL}/user/myOrders`,
-  })
-  
-  emailService.sendOrderConfirmationEmail(user.email,user.name,shipping_address,validatedItems,total)
-  const client = await pool.connect();
-  await client.query("BEGIN");
-  const orderResult = await client.query(
-      "UPDATE orders SET status = $1 WHERE user_id = $2 AND created_at >= NOW() - INTERVAL '1 minute';",
-      ["PAGADO", user.id]
+
+    await client.query(
+      "UPDATE orders SET status = 'CANCELADO', updated_at = NOW() WHERE id = $1",
+      [id],
     );
-  await client.query("COMMIT");
 
-  return session
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    console.error(error);
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export default {
@@ -199,5 +182,5 @@ export default {
   updateOrder,
   deleteOrder,
   getAllOrders,
-  payment
+  cancelOrder,
 };
