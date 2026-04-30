@@ -512,6 +512,41 @@ async function restoreStock(bookId, quantity, connection = null) {
   }
 }
 
+async function getMostSoldBookByGenreForUser(userId){
+  const client = await pool.connect();
+  try {
+    const genre = await client.query(`select genres.name from books
+      join order_items on books.id = order_items.book_id 
+      join orders on order_items.order_id = orders.id 
+      join book_genres on books.id = book_genres.book_id 
+      join genres on book_genres.genre_id = genres.id 
+      where orders.user_id = $1 
+      group by title,genres.name 
+      order by count(genres.name) desc limit 1;`,
+      [userId])
+
+    const result = await client.query(
+      `select b.*, sum(oi.quantity) as total_sold 
+      from books b join order_items oi on b.id = oi.book_id 
+      join book_genres on b.id = book_genres.book_id join genres on book_genres.genre_id = genres.id
+      where genres.name = $1
+      group by b.id 
+      order by total_sold desc
+      LIMIT 5;`,
+      [genre]
+    );
+    return result.rows.map((row) => {
+      const book = new Book(row);
+      book.totalSold = row.total_sold;
+      return book;
+    });
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export default {
   createBook,
   getBookById,
@@ -530,4 +565,5 @@ export default {
   deleteBooksFromDeletedPublishers,
   restoreBooksFromPublisher,
   restoreStock,
+  getMostSoldBookByGenreForUser,
 };

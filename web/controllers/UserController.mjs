@@ -103,6 +103,8 @@ async function getPurchaseHistory(req, res) {
       for (let order of orders) {
         const responseItems = await api.get("/orderItems/" + order.id);
         order.items = responseItems.data;
+
+        const recommendationBasedUponBuy = await api.post("/books/mostSoldRecommendation", {user_id: req.session.user.id,}) //esto es una lista de libros, se devuelve igual que los mas vendidos
       }
     }
 

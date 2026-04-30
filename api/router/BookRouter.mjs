@@ -15,6 +15,7 @@ router.get("/title/:title", bookController.getBookByTitle);
 router.get("/updateCover", bookController.updateAllCovers);
 router.get("/:id", bookController.getBookById);
 router.get("/", bookController.getAllBooks);
+router.post("/mostSoldRecommendation", bookController.getMostSoldBookByGenreForUser);
 
 // Rutas protegidas
 router.post(
