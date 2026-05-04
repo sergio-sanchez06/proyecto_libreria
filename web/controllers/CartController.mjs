@@ -176,7 +176,6 @@ async function checkout(req, res) {
 
     // 4. Éxito: Solo limpiamos el carrito si la orden se creó correctamente en la DB
     if (response.status === 201 || response.status === 200) {
-      res.clearCookie("cart");
       // Opcional: pasar un flag de éxito para mostrar un Toast en la siguiente vista
 
       req.session.flash = {
@@ -184,9 +183,16 @@ async function checkout(req, res) {
         message: "Pedido creado con éxito.",
       };
 
-      var payment = await apiClient.post("/orders/payment",{items: cart, user: req.session.user, shipping_address:shipping_address})
+      var payment = await api.post("/orders/payment",{items: cart, user: req.session.user, shipping_address:shipping_address})
+      
+      if(payment.data && payment.data.url){
+        
+        return res.redirect(payment.data.url)
+      } 
+
       res.clearCookie("cart");
-      return res.redirect(asd.data.url)
+      return res.redirect("/users/myOrders")
+
     }
 
     // Redirigimos al usuario al checkout de Stripe

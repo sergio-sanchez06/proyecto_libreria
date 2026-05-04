@@ -108,6 +108,7 @@ async function startApp() {
               "https://cdn.jsdelivr.net",
               "https://fonts.gstatic.com",
             ],
+            formAction: ["'self'", "https://checkout.stripe.com"],
           },
         },
         // CONFIGURACIÓN DE POLÍTICAS DE ORIGEN (Clave para Popups)

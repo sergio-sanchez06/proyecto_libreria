@@ -1,0 +1,186 @@
+<%- include('../layout/header', { title: user.name + ' - Recomendados para ti' , bodyClass: 'bg-user-vistas' ,
+    extraCSS: 'partials/recommendations' }) %>
+
+    <main class="recommendations-page py-5">
+        <div class="container">
+
+            <!-- ── Cabecera Estilo Dashboard ── -->
+            <div class="row align-items-center mb-5">
+                <div class="col-md-7">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb mb-2">
+                            <li class="breadcrumb-item"><a href="/user/profile" class="text-decoration-none">Mi
+                                    Perfil</a></li>
+                            <li class="breadcrumb-item active">Recomendaciones</li>
+                        </ol>
+                    </nav>
+                    <h2 class="display-6 fw-bold mb-2 section-title">
+                        <i class="bi bi-stars text-warning me-2"></i>Descubrimientos
+                    </h2>
+                    <p class="text-secondary mb-0">
+                        <% if (favoriteGenres.length> 0) { %>
+                            Basado en tu interés por:
+                            <span class="ms-1">
+                                <% favoriteGenres.forEach(function(g, i) { %>
+                                    <span class="badge bg-light text-dark border fw-500 rounded-pill">
+                                        <%= g.genre_name %>
+                                    </span>
+                                    <% }) %>
+                            </span>
+                            <% } else { %>
+                                Personaliza tu experiencia <a href="/user/favorites" class="fw-600 color-teal">eligiendo
+                                    géneros</a>.
+                                <% } %>
+                    </p>
+                </div>
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    <div class="btn-group shadow-sm rounded-pill p-1 bg-white border">
+                        <a href="/user/favorites" class="btn btn-sm btn-action rounded-pill px-3">
+                            <i class="bi bi-heart me-1"></i>Mis Géneros
+                        </a>
+                        <a href="/user/profile" class="btn btn-sm btn-light rounded-pill px-3">
+                            <i class="bi bi-person me-1"></i>Perfil
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <% if (error) { %>
+                <div class="alert alert-custom-danger d-flex align-items-center shadow-sm" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-3 fs-4"></i>
+                    <div>
+                        <%= error %>
+                    </div>
+                </div>
+                <% } %>
+
+                    <!-- ── Estado Vacío (Sin Géneros) ── -->
+                    <% if (favoriteGenres.length===0) { %>
+                        <div class="empty-state-card text-center py-5 shadow-sm border-0 brand-card">
+                            <div class="empty-icon-wrap mb-4">
+                                <i class="bi bi-bookmark-heart text-teal"></i>
+                            </div>
+                            <h4 class="fw-bold">Hagámoslo personal</h4>
+                            <p class="text-muted mx-auto" style="max-width: 450px;">
+                                Dinos qué te gusta leer y nuestro algoritmo buscará los libros perfectos para tu próxima
+                                aventura.
+                            </p>
+                            <a href="/user/favorites"
+                                class="btn btn-teal btn-lg rounded-pill px-5 mt-3 fw-bold shadow-sm">
+                                Configurar Favoritos
+                            </a>
+                        </div>
+
+                        <!-- ── Contenido con Recomendaciones ── -->
+                        <% } else { %>
+                            <div class="rec-tabs-container mb-4">
+                                <ul class="nav rec-tabs" id="recTabs">
+                                    <li class="nav-item">
+                                        <button class="rec-tab-btn active" data-target="combined">
+                                            <i class="bi bi-magic me-2"></i>Selección Especial
+                                            <% if (combined.length> 0) { %> <span class="badge-count">
+                                                    <%= combined.length %>
+                                                </span>
+                                                <% } %>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="rec-tab-btn" data-target="mostSold">
+                                            <i class="bi bi-fire me-2"></i>Tendencias
+                                            <% if (mostSold.length> 0) { %> <span class="badge-count">
+                                                    <%= mostSold.length %>
+                                                </span>
+                                                <% } %>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="rec-tab-btn" data-target="bestRated">
+                                            <i class="bi bi-award me-2"></i>Crítica
+                                            <% if (bestRated.length> 0) { %> <span class="badge-count">
+                                                    <%= bestRated.length %>
+                                                </span>
+                                                <% } %>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Contenedores de Paneles -->
+                            <div class="tab-content mt-2">
+                                <!-- Panel Selección Especial -->
+                                <div class="rec-panel active" id="panel-combined">
+                                    <% if (combined.length===0) { %>
+                                        <%- include('../partials/rec_empty') %>
+                                            <% } else { %>
+                                                <!-- GRID VERTICAL -->
+                                                <div
+                                                    class="books-modern-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                                                    <% combined.forEach(function(book) { %>
+                                                        <div class="col">
+                                                            <%- include('../partials/rec_book_card', { book, showScore:
+                                                                true }) %>
+                                                        </div>
+                                                        <% }) %>
+                                                </div>
+                                                <% } %>
+                                </div>
+
+                                <!-- Panel Tendencias -->
+                                <div class="rec-panel" id="panel-mostSold">
+                                    <% if (mostSold.length===0) { %>
+                                        <%- include('../partials/rec_empty') %>
+                                            <% } else { %>
+                                                <div
+                                                    class="books-modern-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                                                    <% mostSold.forEach(function(book) { %>
+                                                        <div class="col">
+                                                            <%- include('../partials/rec_book_card', { book, showScore:
+                                                                false }) %>
+                                                        </div>
+                                                        <% }) %>
+                                                </div>
+                                                <% } %>
+                                </div>
+
+                                <!-- Panel Crítica -->
+                                <div class="rec-panel" id="panel-bestRated">
+                                    <% if (bestRated.length===0) { %>
+                                        <%- include('../partials/rec_empty') %>
+                                            <% } else { %>
+                                                <div
+                                                    class="books-modern-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                                                    <% bestRated.forEach(function(book) { %>
+                                                        <div class="col">
+                                                            <%- include('../partials/rec_book_card', { book, showScore:
+                                                                false }) %>
+                                                        </div>
+                                                        <% }) %>
+                                                </div>
+                                                <% } %>
+                                </div>
+                            </div>
+                            <% } %>
+        </div>
+    </main>
+
+    <script>
+        document.querySelectorAll('.rec-tab-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const target = this.dataset.target;
+                document.querySelectorAll('.rec-tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.rec-panel').forEach(p => {
+                    p.style.opacity = '0';
+                    setTimeout(() => p.classList.remove('active'), 150);
+                });
+
+                this.classList.add('active');
+                setTimeout(() => {
+                    const panel = document.getElementById('panel-' + target);
+                    panel.classList.add('active');
+                    panel.style.opacity = '1';
+                }, 160);
+            });
+        });
+    </script>
+
+    <%- include('../layout/footer') %>

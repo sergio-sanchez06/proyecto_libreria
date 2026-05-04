@@ -1,7 +1,7 @@
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 async function createReview(req, res) {
-  const origin = req.headers.referer || "/";
+  const origin = "/books/book/" + req.body.book_id;
 
   const { book_id, rating, comment } = req.body;
 
@@ -57,7 +57,7 @@ async function getReviewsByBookId(req, res) {
 }
 
 async function deleteReview(req, res) {
-  const origin = req.headers.referer || "/";
+  const origin = "/books/book/" + req.body.book_id;
   const { book_id } = req.body;
 
   console.log("book_id", book_id);
@@ -92,7 +92,7 @@ async function deleteReview(req, res) {
 }
 
 async function updateReview(req, res) {
-  const origin = req.headers.referer || "/";
+  const origin = "/books/book/" + req.body.book_id;
   const { id } = req.params;
   const { book_id, rating, comment } = req.body;
 

@@ -94,7 +94,21 @@
                                 </span>
                             </a>
                         </div>
-                        <% if (provider == "password") { %>
+                        <div class="col-sm-6">
+                            <a href="/user/favorites"
+                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white">
+                                <i class="bi bi-heart-fill fs-1 d-block mb-2" style="color:#e11d48;"></i>
+                                <span class="fw-bold text-dark">Mis Géneros Favoritos</span>
+                            </a>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="/user/recommendations"
+                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white">
+                                <i class="bi bi-stars fs-1 d-block mb-2" style="color:var(--brand-teal);"></i>
+                                <span class="fw-bold text-dark">Recomendados para mí</span>
+                            </a>
+                        </div>
+                        <% if (provider=="password" ) { %>
                             <div class="col-sm-6">
                                 <a href="/user/changePass"
                                     class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white">
@@ -104,7 +118,7 @@
                                     </span>
                                 </a>
                             </div>
-                        <% } %>
+                            <% } %>
                     </div>
 
                     <div class="text-center pt-4 border-top">

@@ -143,6 +143,31 @@
                     }
                 }
             </script>
+
+            <script type="module">
+                import { getAuth, onIdTokenChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+                const auth = getAuth();
+
+                // Escucha cambios en el token (incluyendo refrescos automáticos cada hora)
+                onIdTokenChanged(auth, async (user) => {
+                    if (user) {
+                        try {
+                            const newToken = await user.getIdToken();
+
+                            // Sincronizamos el nuevo token con la sesión de Redis en el servidor
+                            await fetch("/auth/refresh-token", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ idToken: newToken })
+                            });
+                            console.log("Sincronización de token completada.");
+                        } catch (error) {
+                            console.error("Error al sincronizar el token con el servidor:", error);
+                        }
+                    }
+                });
+            </script>
         </div>
     </header>
 

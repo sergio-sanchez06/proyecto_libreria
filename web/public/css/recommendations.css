@@ -1,0 +1,200 @@
+/* Variables de color consistentes[cite: 1] */
+:root {
+  --brand-teal: #14b8a6;
+  --brand-teal-dark: #0f766e;
+  --brand-teal-light: #f0fdfa;
+  --soft-gray: #f8fafc;
+  --border-color: #e2e8f0;
+}
+
+/* Base de la página[cite: 1] */
+.bg-user-vistas {
+  background-color: #fcfaf7;
+  background-image: radial-gradient(#e5e7eb 0.5px, transparent 0.5px);
+  background-size: 20px 20px;
+}
+
+.section-title {
+  color: #0f172a;
+  letter-spacing: -1px;
+}
+
+.color-teal {
+  color: var(--brand-teal);
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+/* ── Tabs de Navegación[cite: 1] ── */
+.rec-tabs-container {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.rec-tabs {
+  display: flex;
+  gap: 2rem;
+  padding-bottom: 0;
+}
+
+.rec-tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 4px;
+  position: relative;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.rec-tab-btn.active {
+  color: var(--brand-teal);
+}
+
+.rec-tab-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--brand-teal);
+  border-radius: 3px 3px 0 0;
+}
+
+.badge-count {
+  font-size: 0.7rem;
+  background: var(--soft-gray);
+  color: #475569;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 6px;
+  border: 1px solid var(--border-color);
+}
+
+/* ── Grid Adaptado a Estilo Género[cite: 5, 6] ── */
+.books-modern-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(220px, 1fr)
+  ); /* Cuadrícula vertical */
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+/* ── Tarjeta de Libro Vertical (Basada en genre_detail.css)[cite: 6] ── */
+.book-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  height: 100%;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Imagen de la portada[cite: 6] */
+.book-img-container {
+  height: 300px; /* Altura fija para consistencia visual */
+  overflow: hidden;
+  background-color: #f1f1f1;
+  position: relative;
+}
+
+.book-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Badge de Afinidad (Score)[cite: 3] */
+.badge-floating-score {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--brand-teal);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  box-shadow: 0 2px 6px rgba(20, 184, 166, 0.4);
+  z-index: 2;
+}
+
+/* Cuerpo de la tarjeta[cite: 5, 6] */
+.card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.book-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+  min-height: 2.5rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-synopsis {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+  text-align: left;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 3.5rem;
+}
+
+/* Precio y Botón[cite: 3, 5] */
+.price-tag {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--brand-teal-dark);
+  margin-bottom: 0.75rem;
+}
+
+.btn-detail {
+  border-radius: 12px !important;
+  border: 1px solid var(--brand-teal);
+  color: var(--brand-teal);
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+.btn-detail:hover {
+  background-color: var(--brand-teal);
+  color: white;
+}
+
+/* Ajustes Mobile[cite: 1] */
+@media (max-width: 768px) {
+  .books-modern-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
+    gap: 1rem;
+  }
+
+  .book-img-container {
+    height: 220px;
+  }
+}

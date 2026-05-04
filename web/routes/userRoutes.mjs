@@ -51,4 +51,25 @@ router.post(
   UserController.changeMyPassReturn,
 );
 
+router.post(
+  "/favorites/:userId",
+  protectMiddleware.protect,
+  protectMiddleware.requireFreshToken,
+  UserController.saveFavoriteGenres,
+);
+
+// Página de gestión de géneros favoritos
+router.get(
+  "/favorites",
+  protectMiddleware.protect,
+  UserController.getFavoritesPage,
+);
+
+// Página de recomendaciones personalizadas
+router.get(
+  "/recommendations",
+  protectMiddleware.protect,
+  UserController.getRecommendationsPage,
+);
+
 export default router;

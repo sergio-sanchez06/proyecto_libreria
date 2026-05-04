@@ -15,7 +15,23 @@ router.get("/title/:title", bookController.getBookByTitle);
 router.get("/updateCover", bookController.updateAllCovers);
 router.get("/:id", bookController.getBookById);
 router.get("/", bookController.getAllBooks);
-router.post("/mostSoldRecommendation", bookController.getMostSoldBookByGenreForUser);
+router.post(
+  "/mostSoldRecommendation",
+  bookController.getMostSoldBookByGenreForUser,
+);
+
+router.get(
+  "/recommendations/mostSold/:userId",
+  bookController.getMostSoldByFavoriteGenres,
+);
+router.get(
+  "/recommendations/bestRated/:userId",
+  bookController.getBestRatedByFavoriteGenres,
+);
+router.get(
+  "/recommendations/combined/:userId",
+  bookController.getRecommendedByFavoriteGenres,
+);
 
 // Rutas protegidas
 router.post(

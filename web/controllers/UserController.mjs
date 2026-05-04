@@ -104,7 +104,10 @@ async function getPurchaseHistory(req, res) {
         const responseItems = await api.get("/orderItems/" + order.id);
         order.items = responseItems.data;
 
-        const recommendationBasedUponBuy = await api.post("/books/mostSoldRecommendation", {user_id: req.session.user.id,}) //esto es una lista de libros, se devuelve igual que los mas vendidos
+        const recommendationBasedUponBuy = await api.post(
+          "/books/mostSoldRecommendation",
+          { user_id: req.session.user.id },
+        ); //esto es una lista de libros, se devuelve igual que los mas vendidos
       }
     }
 
@@ -366,6 +369,156 @@ async function changeMyPassReturn(req, res) {
   }
 }
 
+async function saveFavoriteGenres(req, res) {
+  if (!req.session.user || !req.session.idToken) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+    const userId = req.session.user.id;
+
+    let genreIds = req.body.genre_ids || [];
+    if (!Array.isArray(genreIds)) genreIds = [genreIds];
+    genreIds = genreIds.map(Number).filter(Boolean);
+
+    await api.post(`/users/favorites/${userId}`, { genre_ids: genreIds });
+
+    req.session.flash = {
+      type: "success",
+      message: "Géneros favoritos actualizados correctamente.",
+    };
+    res.redirect("/user/profile");
+  } catch (error) {
+    console.error("Error en saveFavoriteGenres:", error.message);
+    req.session.flash = {
+      type: "error",
+      message: "No se pudieron guardar los géneros favoritos.",
+    };
+    res.redirect("/user/profile");
+  }
+}
+
+async function getFavoritesPage(req, res) {
+  if (!req.session.user || !req.session.idToken) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+    const userId = req.session.user.id;
+
+    // Cargamos todos los géneros y los favoritos del usuario en paralelo
+    const [allGenresRes, favoritesRes] = await Promise.allSettled([
+      api.get("/genres/all"),
+      api.get(`/users/favorites/${userId}`),
+    ]);
+
+    const allGenres =
+      allGenresRes.status === "fulfilled" ? allGenresRes.value.data : [];
+    const favoriteGenres =
+      favoritesRes.status === "fulfilled" ? favoritesRes.value.data : [];
+
+    const flash = req.session.flash || null;
+    delete req.session.flash;
+
+    res.render("partials/favoriteGenres", {
+      user: req.session.user,
+      allGenres,
+      favoriteGenres,
+      flash,
+      error: null,
+    });
+  } catch (error) {
+    console.error("Error en getFavoritesPage:", error.message);
+    res.render("partials/favoriteGenres", {
+      user: req.session.user,
+      allGenres: [],
+      favoriteGenres: [],
+      flash: null,
+      error: "No se pudieron cargar los géneros.",
+    });
+  }
+}
+
+async function getRecommendationsPage(req, res) {
+  if (!req.session.user || !req.session.idToken) {
+    return res.redirect("/login");
+  }
+
+  try {
+    const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
+    const api = getAuthenticatedClient(cleanToken);
+    const userId = req.session.user.id;
+
+    // Las tres consultas de recomendación en paralelo
+    const [mostSoldRes, bestRatedRes, combinedRes, favoritesRes] =
+      await Promise.allSettled([
+        api.get(`/books/recommendations/mostSold/${userId}`),
+        api.get(`/books/recommendations/bestRated/${userId}`),
+        api.get(`/books/recommendations/combined/${userId}`),
+        api.get(`/users/favorites/${userId}`),
+      ]);
+
+    // Extraer datos o arrays vacíos si fallan
+    let mostSoldRaw =
+      mostSoldRes.status === "fulfilled" ? mostSoldRes.value.data : [];
+    let bestRatedRaw =
+      bestRatedRes.status === "fulfilled" ? bestRatedRes.value.data : [];
+    const combined =
+      combinedRes.status === "fulfilled" ? combinedRes.value.data : [];
+    const favoriteGenres =
+      favoritesRes.status === "fulfilled" ? favoritesRes.value.data : [];
+
+    // ─── LIMPIEZA DE DUPLICADOS ───
+    // Creamos un set con los IDs de los libros en 'combined' para priorizarlos
+    const seenBookIds = new Set(combined.map((book) => book.id));
+
+    // Filtramos 'Tendencias' para quitar los que ya están en 'Selección Especial'
+    const mostSold = mostSoldRaw.filter((book) => {
+      if (seenBookIds.has(book.id)) return false;
+      seenBookIds.add(book.id); // Registramos para que no aparezca tampoco en Crítica
+      return true;
+    });
+
+    // Filtramos 'Crítica' para quitar los que ya están en cualquiera de las anteriores
+    const bestRated = bestRatedRaw.filter((book) => {
+      if (seenBookIds.has(book.id)) return false;
+      return true;
+    });
+    // ──────────────────────────────
+
+    console.log("Lo que le paso a recomendaciones:", {
+      mostSold,
+      bestRated,
+      combined,
+      favoriteGenres,
+      error: null,
+    })
+
+    res.render("partials/recommendations", {
+      user: req.session.user,
+      mostSold,
+      bestRated,
+      combined,
+      favoriteGenres,
+      error: null,
+    });
+  } catch (error) {
+    console.error("Error en getRecommendationsPage:", error.message);
+    res.render("partials/recommendations", {
+      user: req.session.user,
+      mostSold: [],
+      bestRated: [],
+      combined: [],
+      favoriteGenres: [],
+      error: "No se pudieron cargar las recomendaciones.",
+    });
+  }
+}
+
 export default {
   getProfile,
   getPurchaseHistory,
@@ -375,4 +528,7 @@ export default {
   getMyReviews,
   changeMyPass,
   changeMyPassReturn,
+  saveFavoriteGenres,
+  getFavoritesPage,
+  getRecommendationsPage,
 };

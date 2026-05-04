@@ -12,6 +12,7 @@ import userRouter from "./router/UserRouter.mjs";
 import bookAuthorRouter from "./router/BookAuthorRouter.mjs";
 import bookGenreRouter from "./router/BookGenreRouter.mjs";
 import orderItemRouter from "./router/OrderItemRouter.mjs";
+import userFavoriteGenresRouter from "./router/UserFavoriteGenresRouter.mjs";
 import apiSecurity from "./middlewares/controlUserAgent.mjs";
 import * as userAgent from "express-useragent";
 import helmet from "helmet";
@@ -57,6 +58,7 @@ app.use("/orders", orderRouter);
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/orderItems", orderItemRouter);
+app.use("/users/favorites", userFavoriteGenresRouter);
 app.use("/review", reviewRouter);
 
 app.use("/bookAuthor", bookAuthorRouter);

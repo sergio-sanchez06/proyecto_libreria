@@ -1,0 +1,177 @@
+/* ═══════════════════════════════════════════════════
+   favoriteGenres.css - Vista: /user/favorites
+═══════════════════════════════════════════════════ */
+
+/* Contenedor principal */
+.favorites-container {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+/* ── Tarjetas Estilo Brand (Fondo Blanco Forzado) ───────────────── */
+.brand-card {
+  background-color: #ffffff !important; /* Asegura el fondo blanco */
+  border-radius: 20px;
+  border: 1px solid #edf2f7;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+}
+
+.favorites-card-header {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #f8fafc;
+  padding: 1.5rem 1.75rem;
+}
+
+.favorites-card-header h5 {
+  color: var(--brand-blue);
+  font-weight: 800;
+  margin-bottom: 0;
+  letter-spacing: -0.025em;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Tags de favoritos actuales ──────────────────── */
+.favorite-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff; /* Fondo blanco para los tags sobre el fondo blanco de la card */
+  color: #475569;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.favorite-tag:hover {
+  border-color: var(--brand-teal);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(20, 184, 166, 0.1);
+}
+
+.favorite-tag-remove {
+  background: #fff1f2;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #e11d48;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+}
+
+.favorite-tag-remove:hover {
+  background: #e11d48;
+  color: white;
+}
+
+/* ── Grid de selección de géneros (Fondo Blanco) ────────────────── */
+.genres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+  background-color: #ffffff;
+}
+
+.genre-check-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1.5px solid #f1f5f9;
+  border-radius: 16px;
+  background-color: #ffffff !important; /* Fondo blanco */
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #64748b;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.genre-check-label:hover {
+  border-color: var(--brand-teal);
+  background-color: rgba(20, 184, 166, 0.02) !important;
+  color: var(--brand-teal);
+  transform: scale(1.02);
+}
+
+/* Estado Checkbox Marcado */
+.btn-check:checked + .genre-check-label {
+  border-color: var(--brand-teal);
+  background-color: #ffffff !important; /* Mantiene el fondo blanco */
+  color: var(--brand-teal);
+  box-shadow:
+    0 0 0 4px rgba(20, 184, 166, 0.08),
+    0 8px 15px rgba(0, 0, 0, 0.05);
+  font-weight: 700;
+}
+
+.genre-icon {
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  transition: color 0.2s ease;
+}
+
+.btn-check:checked + .genre-check-label .genre-icon {
+  color: var(--brand-teal);
+}
+
+.genre-check-mark {
+  margin-left: auto;
+  font-size: 1.25rem;
+  color: var(--brand-teal);
+  opacity: 0;
+  transform: translateX(10px) scale(0.5);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-check:checked + .genre-check-label .genre-check-mark {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+/* ── Barra de acción inferior ────────────────── */
+.action-bar {
+  background-color: #ffffff !important; /* Fondo blanco */
+  border: 1px solid #edf2f7;
+  padding: 1.5rem 2rem;
+  margin-top: 1rem;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.02);
+}
+
+.btn-brand {
+  background-color: var(--brand-teal) !important;
+  color: white !important;
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 2.5rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-brand:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
+  opacity: 0.95;
+}
+
+/* Helper para texto en la barra */
+.action-bar p {
+  color: #64748b;
+  font-weight: 500;
+}
+
+#selectedCount {
+  color: var(--brand-teal);
+  font-size: 1.1rem;
+}

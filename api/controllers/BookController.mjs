@@ -50,7 +50,7 @@ async function getBookById(req, res) {
 
   const { id } = req.params;
 
-  console.log("El id es: ", id  );
+  console.log("El id es: ", id);
 
   try {
     const book = await RepoBook.getBookById(id);
@@ -267,7 +267,9 @@ async function restoreBook(req, res) {
 
 async function getMostSoldBookByGenreForUser(req, res) {
   try {
-    const books = await RepoBook.getMostSoldBookByGenreForUser(req.body.user_id);
+    const books = await RepoBook.getMostSoldBookByGenreForUser(
+      req.body.user_id,
+    );
     res.status(200).json(books);
   } catch (error) {
     console.error(error);
@@ -275,6 +277,46 @@ async function getMostSoldBookByGenreForUser(req, res) {
   }
 }
 
+async function getMostSoldByFavoriteGenres(req, res) {
+  try {
+    const { userId } = req.params;
+    const books = await RepoBook.getMostSoldByFavoriteGenres(userId);
+    res.status(200).json(books);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener recomendaciones por ventas" });
+  }
+}
+
+// Libros mejor valorados de los géneros favoritos del usuario
+async function getBestRatedByFavoriteGenres(req, res) {
+  try {
+    const { userId } = req.params;
+    const books = await RepoBook.getBestRatedByFavoriteGenres(userId);
+    res.status(200).json(books);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener recomendaciones por valoración" });
+  }
+}
+
+// Recomendaciones combinadas — ventas + valoración ponderadas
+async function getRecommendedByFavoriteGenres(req, res) {
+  try {
+    const { userId } = req.params;
+    const books = await RepoBook.getRecommendedByFavoriteGenres(userId);
+    res.status(200).json(books);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Error al obtener recomendaciones combinadas" });
+  }
+}
 
 export default {
   createBook,
@@ -290,4 +332,7 @@ export default {
   getBooksCarrusel,
   restoreBook,
   getMostSoldBookByGenreForUser,
+  getMostSoldByFavoriteGenres,
+  getBestRatedByFavoriteGenres,
+  getRecommendedByFavoriteGenres,
 };

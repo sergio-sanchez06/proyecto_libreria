@@ -1,6 +1,7 @@
 import OrderRepository from "../Repositories/OrderRepository.mjs";
 import emailService from "../services/emailService.mjs";
 
+
 async function createOrder(req, res) {
   const { items, shipping_address } = req.body;
   const { id: user_id, email, name, default_address } = req.user;

@@ -512,10 +512,11 @@ async function restoreStock(bookId, quantity, connection = null) {
   }
 }
 
-async function getMostSoldBookByGenreForUser(userId){
+async function getMostSoldBookByGenreForUser(userId) {
   const client = await pool.connect();
   try {
-    const genre = await client.query(`select genres.name from books
+    const genre = await client.query(
+      `select genres.name from books
       join order_items on books.id = order_items.book_id 
       join orders on order_items.order_id = orders.id 
       join book_genres on books.id = book_genres.book_id 
@@ -523,7 +524,8 @@ async function getMostSoldBookByGenreForUser(userId){
       where orders.user_id = $1 
       group by title,genres.name 
       order by count(genres.name) desc limit 1;`,
-      [userId])
+      [userId],
+    );
 
     const result = await client.query(
       `select b.*, sum(oi.quantity) as total_sold 
@@ -533,7 +535,7 @@ async function getMostSoldBookByGenreForUser(userId){
       group by b.id 
       order by total_sold desc
       LIMIT 5;`,
-      [genre]
+      [genre],
     );
     return result.rows.map((row) => {
       const book = new Book(row);
@@ -541,6 +543,136 @@ async function getMostSoldBookByGenreForUser(userId){
       return book;
     });
   } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+// Libros más vendidos de los géneros favoritos del usuario
+// Excluye libros que el usuario ya ha comprado
+async function getMostSoldByFavoriteGenres(userId) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `SELECT b.id, b.title, b.cover_url, b.price, 
+              SUM(oi.quantity) AS total_sold,
+              COUNT(DISTINCT ufg.genre_id) AS match_count -- Cuenta coincidencias
+       FROM books b
+       JOIN book_genres bg ON b.id = bg.book_id
+       JOIN user_favorite_genres ufg ON bg.genre_id = ufg.genre_id
+       LEFT JOIN order_items oi ON b.id = oi.book_id
+       WHERE ufg.user_id = $1 
+         AND b.deleted_at IS NULL
+         AND b.id NOT IN (
+           SELECT DISTINCT oi2.book_id FROM order_items oi2
+           JOIN orders o ON oi2.order_id = o.id
+           WHERE o.user_id = $1 AND o.status != 'CANCELADO'
+         )
+       GROUP BY b.id, b.title, b.cover_url, b.price
+       ORDER BY match_count DESC, total_sold DESC -- Prioriza coincidencias
+       LIMIT 6`,
+      [userId],
+    );
+    return result.rows.map((row) => {
+      const book = new Book(row);
+      book.totalSold = parseInt(row.total_sold || 0);
+      book.matchCount = parseInt(row.match_count);
+      return book;
+    });
+  } catch (error) {
+    console.error("Error en getMostSoldByFavoriteGenres:", error.message);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+// Libros mejor valorados de los géneros favoritos del usuario
+// Excluye libros ya comprados y los que no tienen reseñas
+async function getBestRatedByFavoriteGenres(userId) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `SELECT b.id, b.title, b.cover_url, b.price, 
+              ROUND(AVG(r.rating), 2) AS avg_rating, 
+              COUNT(DISTINCT r.id) AS review_count,
+              COUNT(DISTINCT ufg.genre_id) AS match_count
+       FROM books b
+       JOIN book_genres bg ON b.id = bg.book_id
+       JOIN user_favorite_genres ufg ON bg.genre_id = ufg.genre_id
+       JOIN reviews r ON b.id = r.book_id
+       WHERE ufg.user_id = $1 
+         AND b.deleted_at IS NULL
+         AND b.id NOT IN (
+           SELECT DISTINCT oi.book_id FROM order_items oi
+           JOIN orders o ON oi.order_id = o.id
+           WHERE o.user_id = $1 AND o.status != 'CANCELADO'
+         )
+       GROUP BY b.id, b.title, b.cover_url, b.price
+       HAVING COUNT(r.id) >= 1
+       ORDER BY match_count DESC, avg_rating DESC, review_count DESC
+       LIMIT 6`,
+      [userId],
+    );
+    return result.rows.map((row) => {
+      const book = new Book(row);
+      book.avgRating = parseFloat(row.avg_rating);
+      book.matchCount = parseInt(row.match_count);
+      return book;
+    });
+  } catch (error) {
+    console.error("Error en getBestRatedByFavoriteGenres:", error.message);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+// Recomendaciones combinadas — pondera ventas (40%) + valoración (60%)
+// Devuelve un ranking único sin duplicados entre las dos listas anteriores
+async function getRecommendedByFavoriteGenres(userId) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `SELECT
+          b.*,
+          ROUND(AVG(r.rating), 2) AS avg_rating,
+          COUNT(DISTINCT r.id) AS review_count,
+          COALESCE(SUM(oi.quantity), 0) AS total_sold,
+          COUNT(DISTINCT ufg.genre_id) AS match_count,
+          -- Score: (Base ponderada) * (Número de coincidencias de género)
+          ROUND(
+            (
+              ((COALESCE(AVG(r.rating), 0) / 5.0) * 0.6) + 
+              ((COALESCE(SUM(oi.quantity), 0)::numeric / NULLIF(MAX(SUM(oi.quantity)) OVER (), 0)) * 0.4)
+            ) * COUNT(DISTINCT ufg.genre_id) 
+          , 4) AS score
+        FROM books b
+        JOIN book_genres bg ON b.id = bg.book_id
+        JOIN user_favorite_genres ufg ON bg.genre_id = ufg.genre_id
+        LEFT JOIN reviews r ON b.id = r.book_id AND r.deleted_at IS NULL
+        LEFT JOIN order_items oi ON b.id = oi.book_id
+        WHERE ufg.user_id = $1
+          AND b.deleted_at IS NULL
+          AND b.id NOT IN (
+            SELECT DISTINCT oi2.book_id FROM order_items oi2
+            JOIN orders o ON oi2.order_id = o.id
+            WHERE o.user_id = $1 AND o.status != 'CANCELADO'
+          )
+        GROUP BY b.id
+        ORDER BY score DESC, match_count DESC
+        LIMIT 6`,
+      [userId],
+    );
+    return result.rows.map((row) => {
+      const book = new Book(row);
+      book.score = parseFloat(row.score || 0);
+      book.matchCount = parseInt(row.match_count);
+      return book;
+    });
+  } catch (error) {
+    console.error("Error en getRecommendedByFavoriteGenres:", error.message);
     throw error;
   } finally {
     client.release();
@@ -566,4 +698,7 @@ export default {
   restoreBooksFromPublisher,
   restoreStock,
   getMostSoldBookByGenreForUser,
+  getMostSoldByFavoriteGenres,
+  getBestRatedByFavoriteGenres,
+  getRecommendedByFavoriteGenres,
 };

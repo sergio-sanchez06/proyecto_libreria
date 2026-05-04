@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Aseguramos transición del icono
   icon.style.transition = "transform 0.3s ease";
 
-  function toggleEditReview(reviewId) {
+  window.toggleEditReview = function (reviewId) {
     const displayDiv = document.getElementById("review-display-" + reviewId);
     const formDiv = document.getElementById("review-edit-form-" + reviewId);
     if (formDiv.style.display === "none") {
