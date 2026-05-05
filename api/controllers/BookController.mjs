@@ -204,6 +204,20 @@ async function getMostSoldBooks(req, res) {
   }
 }
 
+async function getBestRatedBooks(req, res) {
+  try {
+    const bestRatedBooks = await RepoBook.getBooksBestRated();
+
+    res.status(200).json(bestRatedBooks);
+  } catch (error) {
+    console.error(
+      "Error al obtener los libros (getBooksBestRated | Controlador API): ",
+      error,
+    );
+    res.status(500).json({ error: "Error al obtener los libros" });
+  }
+}
+
 async function restoreBook(req, res) {
   try {
     const { id } = req.params;
@@ -329,6 +343,7 @@ export default {
   getBooksByPublisherId,
   getAllBooks,
   getMostSoldBooks,
+  getBestRatedBooks,
   getBooksCarrusel,
   restoreBook,
   getMostSoldBookByGenreForUser,

@@ -55,6 +55,8 @@ router.post("/register", authController.register);
 
 router.post("/login-social", authController.socialLogin);
 
+router.post("/auth/refresh-token", authController.refreshToken);
+
 router.get("/aviso-legal", homeController.legalNotice);
 router.get("/cookies", homeController.cookiesPolicy);
 router.get("/privacidad", homeController.privacyPolicy);

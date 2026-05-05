@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="/css/main.min.css">
     <link rel="stylesheet" href="/css/layout.min.css">
 
+    <link rel="stylesheet" href="/flags/css/flag-icons.min.css">
+
     <% if (typeof extraCSS !=='undefined' ) { %>
         <link rel="stylesheet" href="/css/views/<%= extraCSS %>.css">
         <% } %>
@@ -75,6 +77,118 @@
                     </nav>
 
                     <div class="header-right-zone">
+                        <div class="language-selector dropdown">
+                            <!-- Botón que muestra el idioma actual con su bandera -->
+                            <!-- <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2"
+                                type="button" data-bs-toggle="dropdown">
+                                <% if(i18n.language.startsWith('es')) { %>
+                                    <img src="https://flagcdn.com/w20/es.png" width="20" alt="ES">
+                                    <% } else if(i18n.language.startsWith('ca')) { %>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Catalonia.svg/20px-Flag_of_Catalonia.svg.png"
+                                            width="20" alt="CA">
+                                        <% } else if(i18n.language.startsWith('gl')) { %>
+                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Flag_of_Galicia.svg/20px-Flag_of_Galicia.svg.png"
+                                                width="20" alt="GL">
+                                            <% } else if(i18n.language.startsWith('eu')) { %>
+                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_the_Basque_Country.svg/20px-Flag_of_the_Basque_Country.svg.png"
+                                                    width="20" alt="EU">
+                                                <% } %>
+                                                    <span class="d-none d-sm-inline">
+                                                        <%= i18n.language.toUpperCase().substring(0,2) %>
+                                                    </span>
+                            </button> -->
+
+                            <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2"
+                                type="button" data-bs-toggle="dropdown">
+                                <% const safeLng=(i18n.language || 'es' ).substring(0, 2); const backupFlags={
+                                    es: "https://flagcdn.com/w20/es.png" ,
+                                    ca: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Catalonia.svg/20px-Flag_of_Catalonia.svg.png"
+                                    ,
+                                    gl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Flag_of_Galicia.svg/20px-Flag_of_Galicia.svg.png"
+                                    ,
+                                    eu: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_the_Basque_Country.svg/20px-Flag_of_the_Basque_Country.svg.png"
+                                    }; const flagMap={ 'es' : 'fi-es' , 'ca' : 'fi-es-ct' , 'gl' : 'fi-es-ga' , 'eu'
+                                    : 'fi-es-pv' }; const currentClass=flagMap[safeLng] || 'fi-es' ; %>
+
+                                    <!-- Usamos una etiqueta IMG directamente para la bandera seleccionada -->
+                                    <!-- Es la forma más fiable de que el failover funcione siempre -->
+                                    <span class="d-flex align-items-center">
+                                        <img src="/flags/flags/4x3/<%= safeLng %>.svg" class="fi <%= currentClass %>"
+                                            style="width: 20px; height: auto; border-radius: 2px;"
+                                            onerror="this.src='<%= backupFlags[safeLng] %>'; this.onerror=null;">
+                                    </span>
+
+                                    <span class="d-none d-sm-inline">
+                                        <%= t('languages.' + safeLng) %>
+                                    </span>
+                            </button>
+
+                            <!-- Opciones del menú: Cada enlace sustituye al envío del formulario -->
+                            <!-- <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 <%= i18n.language.startsWith('es') ? 'active' : '' %>"
+                                        href="/language?lng=es&returnTo=<%= encodeURIComponent(currentUrl) %>">
+                                        <img src="https://flagcdn.com/w20/es.png" width="20" alt="ES">
+                                        <%= t('languages.es') || 'Castellano' %>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 <%= i18n.language.startsWith('ca') ? 'active' : '' %>"
+                                        href="/language?lng=ca&returnTo=<%= encodeURIComponent(currentUrl) %>">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Catalonia.svg/20px-Flag_of_Catalonia.svg.png"
+                                            width="20" alt="CA">
+                                        <%= t('languages.ca') || 'Català' %>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 <%= i18n.language.startsWith('gl') ? 'active' : '' %>"
+                                        href="/language?lng=gl&returnTo=<%= encodeURIComponent(currentUrl) %>">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Flag_of_Galicia.svg/20px-Flag_of_Galicia.svg.png"
+                                            width="20" alt="GL">
+                                        <%= t('languages.gl') || 'Galego' %>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 <%= i18n.language.startsWith('eu') ? 'active' : '' %>"
+                                        href="/language?lng=eu&returnTo=<%= encodeURIComponent(currentUrl) %>">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_the_Basque_Country.svg/20px-Flag_of_the_Basque_Country.svg.png"
+                                            width="20" alt="EU">
+                                        <%= t('languages.eu') || 'Euskara' %>
+                                    </a>
+                                </li>
+                            </ul> -->
+
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                <% const langs=[ { id: 'es' , class: 'fi-es' , img: 'https://flagcdn.com/w20/es.png' },
+                                    { id: 'ca' , class: 'fi-es-ct' ,
+                                    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Catalonia.svg/20px-Flag_of_Catalonia.svg.png'
+                                    }, { id: 'gl' , class: 'fi-es-ga' ,
+                                    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Flag_of_Galicia.svg/20px-Flag_of_Galicia.svg.png'
+                                    }, { id: 'eu' , class: 'fi-es-pv' ,
+                                    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_the_Basque_Country.svg/20px-Flag_of_the_Basque_Country.svg.png'
+                                    } ]; %>
+
+                                    <% langs.forEach(lang=> { %>
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2 <%= i18n.language.startsWith(lang.id) ? 'active' : '' %>"
+                                                href="/language?lng=<%= lang.id %>&returnTo=<%= encodeURIComponent(currentUrl) %>">
+
+                                                <!-- Usamos un span para flag-icons con un fallback de imagen si el CSS no carga -->
+                                                <span class="fi <%= lang.class %> d-flex align-items-center">
+                                                    <img src="/flags/flags/4x3/<%= lang.id %>.svg" width="20"
+                                                        style="display: block;"
+                                                        onerror="this.src='<%= lang.img %>'; this.onerror=null;">
+                                                </span>
+
+                                                <%= t('languages.' + lang.id) %>
+                                            </a>
+                                        </li>
+                                        <% }) %>
+                            </ul>
+
+                        </div>
+
+                        <!-- <div class="header-right-zone">
                         <div class="language-selector">
                             <form action="/language" method="get">
 
@@ -93,17 +207,19 @@
                                     </option>
                                 </select>
                             </form>
-                        </div>
+                        </div> -->
 
                         <div class="auth-group">
                             <% if (user) { %>
                                 <div class="dropdown">
                                     <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button"
                                         data-bs-toggle="dropdown">
-                                        <%= user.name || 'User' %>
+                                        <%= user.name || t('review.user') %>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li><a class="dropdown-item" href="/user/profile">Mi Perfil</a></li>
+                                        <li><a class="dropdown-item" href="/user/profile">
+                                                <%= t('profile.title') %>
+                                            </a></li>
                                         <% if(user.role==='ADMIN' ) { %>
                                             <li><a class="dropdown-item fw-bold admin-dropdown-link"
                                                     href="/admin/dashboard">
@@ -145,9 +261,8 @@
             </script>
 
             <script type="module">
-                import { getAuth, onIdTokenChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-                const auth = getAuth();
+                import { auth } from "/js/firebaseConfig.mjs";
+                import { onIdTokenChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
                 // Escucha cambios en el token (incluyendo refrescos automáticos cada hora)
                 onIdTokenChanged(auth, async (user) => {

@@ -1,200 +1,200 @@
-/* Variables de color consistentes[cite: 1] */
-:root {
-  --brand-teal: #14b8a6;
-  --brand-teal-dark: #0f766e;
-  --brand-teal-light: #f0fdfa;
-  --soft-gray: #f8fafc;
-  --border-color: #e2e8f0;
+/* ═══════════════════════════════════════════════════
+   recommendations.css — inspirado en genre_detalle
+═══════════════════════════════════════════════════ */
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(252, 250, 247, 0.45);
+    z-index: -1;
 }
 
-/* Base de la página[cite: 1] */
-.bg-user-vistas {
-  background-color: #fcfaf7;
-  background-image: radial-gradient(#e5e7eb 0.5px, transparent 0.5px);
-  background-size: 20px 20px;
+/* ── Hero (igual que .genre-hero) ────────────────── */
+.rec-hero {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
 }
 
-.section-title {
-  color: #0f172a;
-  letter-spacing: -1px;
+.rec-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 10px; height: 100%;
+    background: linear-gradient(180deg, var(--brand-teal), var(--brand-gold));
 }
 
-.color-teal {
-  color: var(--brand-teal);
+/* ── Icono hero (igual que .genre-icon-container) ── */
+.rec-icon-container {
+    width: 80px; height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--brand-teal);
+    box-shadow: 0 8px 20px rgba(30, 64, 175, 0.1);
+    border: 3px solid rgba(30, 64, 175, 0.05);
+    flex-shrink: 0;
 }
 
-.fw-600 {
-  font-weight: 600;
+/* ── Pills de géneros en el hero ─────────────────── */
+.genre-pill {
+    display: inline-block;
+    background: rgba(20, 184, 166, 0.1);
+    color: var(--brand-teal);
+    border: 1px solid rgba(20, 184, 166, 0.25);
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: .78rem;
+    font-weight: 500;
+    margin: 0 2px;
 }
 
-/* ── Tabs de Navegación[cite: 1] ── */
+/* ── Tabs (mismo estilo que el proyecto) ─────────── */
 .rec-tabs-container {
-  border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .rec-tabs {
-  display: flex;
-  gap: 2rem;
-  padding-bottom: 0;
+    display: flex;
+    gap: 2rem;
+    padding-bottom: 0;
 }
 
 .rec-tab-btn {
-  background: none;
-  border: none;
-  padding: 12px 4px;
-  position: relative;
-  color: #64748b;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
+    background: none;
+    border: none;
+    padding: 12px 4px;
+    position: relative;
+    color: #64748b;
+    font-weight: 600;
+    font-size: .95rem;
+    cursor: pointer;
+    transition: color .2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
 }
 
-.rec-tab-btn.active {
-  color: var(--brand-teal);
-}
+.rec-tab-btn:hover { color: var(--brand-teal); }
+
+.rec-tab-btn.active { color: var(--brand-teal); }
 
 .rec-tab-btn.active::after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: var(--brand-teal);
-  border-radius: 3px 3px 0 0;
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 100%; height: 2px;
+    background: var(--brand-teal);
+    border-radius: 2px;
 }
 
 .badge-count {
-  font-size: 0.7rem;
-  background: var(--soft-gray);
-  color: #475569;
-  padding: 2px 8px;
-  border-radius: 10px;
-  margin-left: 6px;
-  border: 1px solid var(--border-color);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(20, 184, 166, 0.12);
+    color: var(--brand-teal);
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 700;
+    padding: 1px 7px;
+    min-width: 20px;
 }
 
-/* ── Grid Adaptado a Estilo Género[cite: 5, 6] ── */
-.books-modern-grid {
-  display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(220px, 1fr)
-  ); /* Cuadrícula vertical */
-  gap: 1.5rem;
-  padding: 1rem 0;
-}
+/* ── Paneles con transición ──────────────────────── */
+.rec-panel { display: none; }
+.rec-panel.active { display: block; }
 
-/* ── Tarjeta de Libro Vertical (Basada en genre_detail.css)[cite: 6] ── */
+/* ── Tarjeta de libro (mismo .book-card de genre_detalle) ── */
 .book-card {
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-  height: 100%;
-  border: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
+    border: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .book-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(30, 64, 175, 0.1);
+    border-color: rgba(30, 64, 175, 0.2);
 }
 
-/* Imagen de la portada[cite: 6] */
 .book-img-container {
-  height: 300px; /* Altura fija para consistencia visual */
-  overflow: hidden;
-  background-color: #f1f1f1;
-  position: relative;
+    height: 220px;
+    background: rgba(245, 247, 250, 0.5);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .book-img-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,.15));
+    transition: transform .3s ease;
+    max-height: 100%;
+    object-fit: contain;
 }
 
-/* Badge de Afinidad (Score)[cite: 3] */
-.badge-floating-score {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: var(--brand-teal);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  box-shadow: 0 2px 6px rgba(20, 184, 166, 0.4);
-  z-index: 2;
-}
-
-/* Cuerpo de la tarjeta[cite: 5, 6] */
-.card-body {
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  text-align: center;
-}
-
-.book-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
-  min-height: 2.5rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.book-card:hover .book-img-container img {
+    transform: scale(1.05);
 }
 
 .book-synopsis {
-  font-size: 0.9rem;
-  color: #64748b;
-  margin-bottom: 1rem;
-  text-align: left;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  min-height: 3.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: .9rem;
+    color: #64748b;
+    line-height: 1.6;
 }
 
-/* Precio y Botón[cite: 3, 5] */
-.price-tag {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--brand-teal-dark);
-  margin-bottom: 0.75rem;
+/* ── Estado vacío ────────────────────────────────── */
+.empty-state-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    padding: 3rem 2rem;
 }
 
-.btn-detail {
-  border-radius: 12px !important;
-  border: 1px solid var(--brand-teal);
-  color: var(--brand-teal);
-  font-weight: 700;
-  transition: all 0.2s;
+.empty-icon-wrap {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: rgba(20, 184, 166, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 3rem;
+    color: var(--brand-teal);
 }
 
-.btn-detail:hover {
-  background-color: var(--brand-teal);
-  color: white;
-}
-
-/* Ajustes Mobile[cite: 1] */
-@media (max-width: 768px) {
-  .books-modern-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
-    gap: 1rem;
-  }
-
-  .book-img-container {
-    height: 220px;
-  }
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 576px) {
+    .rec-tabs { gap: 1rem; }
+    .rec-tab-btn { font-size: .82rem; padding: 10px 2px; }
+    .rec-hero { padding: 1.5rem !important; }
+    .rec-icon-container { width: 56px; height: 56px; font-size: 1.5rem; }
 }

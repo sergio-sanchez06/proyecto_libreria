@@ -19,6 +19,12 @@ router.get(
 //   OrderController.createStripeSession,
 // );
 
+router.get(
+  "/stripe/confirm-session",
+  AuthMiddleware.authenticate,
+  OrderController.confirmStripeSession,
+);
+
 router.post(
   "/",
   AuthMiddleware.authenticate,

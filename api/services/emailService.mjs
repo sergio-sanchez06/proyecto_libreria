@@ -13,6 +13,19 @@ const transporter = nodemailer.createTransport({
   tls: { rejectUnauthorized: false },
 });
 
+// Esta configuración de correo no funciona. da error invalid_grant: Bad Request
+
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     type: "OAuth2",
+//     user: SENDER_EMAIL,
+//     clientId: process.env.CLIENT_ID,
+//     clientSecret: process.env.CLIENT_SECRET,
+//     refreshToken: process.env.REFRESH_TOKEN,
+//   },
+// });
+
 const emailService = {
   /**
    * Layout Base para todos los correos

@@ -168,32 +168,44 @@ async function checkout(req, res) {
     const cleanToken = firebaseToken.replace("Bearer ", "").trim(); // Limpiamos el token por si acaso
     const api = getAuthenticatedClient(cleanToken);
 
-    const response = await api.post("/orders", {
+    // const response = await api.post("/orders", {
+    //   items: cart,
+    //   shipping_address: shipping_address, // <-- Enviamos la dirección seleccionada
+    //   total: totalCalculado.toFixed(2), // <-- Enviamos el total para validación en el servidor
+    // });
+
+    var payment = await api.post("/orders/payment", {
       items: cart,
-      shipping_address: shipping_address, // <-- Enviamos la dirección seleccionada
-      total: totalCalculado.toFixed(2), // <-- Enviamos el total para validación en el servidor
+      user: req.session.user,
+      shipping_address: shipping_address,
     });
 
-    // 4. Éxito: Solo limpiamos el carrito si la orden se creó correctamente en la DB
-    if (response.status === 201 || response.status === 200) {
-      // Opcional: pasar un flag de éxito para mostrar un Toast en la siguiente vista
-
-      req.session.flash = {
-        type: "success",
-        message: "Pedido creado con éxito.",
-      };
-
-      var payment = await api.post("/orders/payment",{items: cart, user: req.session.user, shipping_address:shipping_address})
-      
-      if(payment.data && payment.data.url){
-        
-        return res.redirect(payment.data.url)
-      } 
-
-      res.clearCookie("cart");
-      return res.redirect("/users/myOrders")
-
+    if (payment.data && payment.data.url) {
+      return res.redirect(payment.data.url);
     }
+
+    // // 4. Éxito: Solo limpiamos el carrito si la orden se creó correctamente en la DB
+    // if (response.status === 201 || response.status === 200) {
+    //   // Opcional: pasar un flag de éxito para mostrar un Toast en la siguiente vista
+
+    //   req.session.flash = {
+    //     type: "success",
+    //     message: "Pedido creado con éxito.",
+    //   };
+
+    //   var payment = await api.post("/orders/payment", {
+    //     items: cart,
+    //     user: req.session.user,
+    //     shipping_address: shipping_address,
+    //   });
+
+    //   if (payment.data && payment.data.url) {
+    //     return res.redirect(payment.data.url);
+    //   }
+
+    //   // res.clearCookie("cart", { signed: true, path: "/" });
+    //   //   return res.redirect("/users/myOrders")
+    // }
 
     // Redirigimos al usuario al checkout de Stripe
     // res.redirect(response.data.url);

@@ -435,6 +435,34 @@ async function getBooksMostSold() {
   }
 }
 
+async function getBooksBestRated() {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `SELECT b.id, b.title, b.cover_url, b.price,
+            ROUND(AVG(r.rating), 2) AS avg_rating,
+            COUNT(r.id)             AS review_count
+     FROM books b
+     JOIN reviews r ON b.id = r.book_id AND r.deleted_at IS NULL
+     WHERE b.deleted_at IS NULL
+     GROUP BY b.id
+     HAVING COUNT(r.id) >= 1
+     ORDER BY avg_rating DESC, review_count DESC
+     LIMIT 5`,
+    );
+    return result.rows.map((row) => {
+      const book = new Book(row);
+      book.avgRating = parseFloat(row.avg_rating);
+      book.reviewCount = parseInt(row.review_count);
+      return book;
+    });
+  } catch (error) {
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 async function restoreBook(id, client = pool) {
   // Nota: 'client' puede ser el objeto 'pool' o un 'client' de una transacción
   try {
@@ -601,7 +629,7 @@ async function getBestRatedByFavoriteGenres(userId) {
        FROM books b
        JOIN book_genres bg ON b.id = bg.book_id
        JOIN user_favorite_genres ufg ON bg.genre_id = ufg.genre_id
-       JOIN reviews r ON b.id = r.book_id
+       LEFT JOIN reviews r ON b.id = r.book_id
        WHERE ufg.user_id = $1 
          AND b.deleted_at IS NULL
          AND b.id NOT IN (
@@ -692,6 +720,7 @@ export default {
   updateStock,
   getBooksByIds,
   getBooksMostSold,
+  getBooksBestRated,
   getBooksCarrusel,
   restoreBook,
   deleteBooksFromDeletedPublishers,
