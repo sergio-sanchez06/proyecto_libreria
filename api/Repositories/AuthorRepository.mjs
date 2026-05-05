@@ -138,6 +138,11 @@ async function getAllAuthors(
   deleted = false,
   onlyWithBooks = false, // <-- Mostrar autores borrados en el filtro de catalogo
   includeAll = false, // <-- Mostrar autores borrados en la tabla de admin sin usar el filtro de solo borrados
+  mostRated = false,
+  leastRated = false,
+  mostBought = false,
+  leastBought = false,
+   
 ) {
   const client = await pool.connect();
   try {
@@ -152,6 +157,9 @@ async function getAllAuthors(
 
     let whereClauses = [];
     let params = [];
+    let joinClauses = [];
+    let groupBy = [];
+    let OrderClause = [];
 
     // Filtro de país
     if (country) {
@@ -161,23 +169,57 @@ async function getAllAuthors(
 
     // Lógica inteligente de borrado
     if (onlyWithBooks) {
-      whereClauses.push("b.deleted_at IS NULL");
+      whereClauses.push("b.deleted_at IS NULL ");
     } else if (includeAll) {
       // CASO ADMIN TOTAL: No añadimos filtro de deleted_at.
       // Traerá tanto NULL como NOT NULL.
     } else {
       if (deleted) {
-        whereClauses.push("a.deleted_at IS NOT NULL"); // Solo papelera
+        whereClauses.push("a.deleted_at IS NOT NULL "); // Solo papelera
       } else {
-        whereClauses.push("a.deleted_at IS NULL"); // Solo activos (Para formularios)
+        whereClauses.push("a.deleted_at IS NULL "); // Solo activos (Para formularios)
       }
+    }
+
+    if(mostRated === true){
+      joinClauses.push("full outer join reviews on ba.book_id = reviews.book_id")
+      groupBy.push("a.id")
+      OrderClause.push("COALESCE(round(avg(rating), 1),0) desc")
+      
+    }
+    if(leastRated === true){
+      joinClauses.push("full outer join reviews on ba.book_id = reviews.book_id")
+      groupBy.push("a.id")
+      OrderClause.push("COALESCE(round(avg(rating), 1),0) asc")
+      
+    }
+    if(mostBought === true){
+      joinClauses.push("full outer join order_items on ba.book_id = order_items.book_id")
+      groupBy.push("a.id")
+      groupBy.push("order_items.book_id")
+      OrderClause.push("count(order_items.book_id) desc")
+    }
+    if(leastBought === true){
+      joinClauses.push("full outer join order_items on ba.book_id = order_items.book_id")
+      groupBy.push("a.id")
+      groupBy.push("order_items.book_id")
+      OrderClause.push("count(order_items.book_id) asc")
     }
 
     if (whereClauses.length > 0) {
       query += " WHERE " + whereClauses.join(" AND ");
     }
 
-    query += " ORDER BY a.name ASC ";
+    const joinSQL =
+      joinClauses.length > 0 ? joinClauses.join(" ") : "";
+
+    const groupBySQL =
+      groupBy.length > 0 ? groupBy.join(",") : "a.id";
+
+    const orderBySQL =
+      OrderClause.length > 0 ? OrderClause.join(",") : "a.name ASC";
+
+    query +=  joinSQL + " group by " + groupBySQL + " order by " + orderBySQL
 
     // Paginación (Tu lógica original adaptada)
     if (page !== null && limit !== null) {
@@ -200,7 +242,7 @@ async function getAllAuthors(
 
       if (onlyWithBooks) {
         countQuery +=
-          " INNER JOIN book_authors ba ON a.id = ba.author_id INNER JOIN books b ON ba.book_id = b.id WHERE b.deleted_at IS NULL";
+          " INNER JOIN book_authors ba ON a.id = ba.author_id INNER JOIN books b ON ba.book_id = b.id WHERE b.deleted_at IS NULL ";
         if (country) {
           countQuery += " AND a.country = $1";
           countParams.push(country);

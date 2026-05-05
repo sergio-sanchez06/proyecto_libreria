@@ -10,15 +10,26 @@ let redisClient = null;
 
 async function getAllBooks(req, res) {
   try {
+    const sort = req.query.sort
+      ? Array.isArray(req.query.sort)
+        ? req.query.sort
+        : [req.query.sort]
+      : [];
+
     const page = req.query.page || 1;
     const q = req.query.q || "";
     const maxPrice = req.query.maxPrice || "";
     const genre = req.query.genre || "";
     const author = req.query.author || "";
+    const mostRated = sort.includes("mostRated");
+    const leastRated = sort.includes("leastRated");
+    const mostBought = sort.includes("mostBought");
+    const leastBought = sort.includes("leastBought");
+
 
     const [booksResponse, genresResponse, authorsResponse] = await Promise.all([
       apiClient.get(`/books`, {
-        params: { page, q, maxPrice, genre, author },
+        params: { page, q, maxPrice, genre, author, mostRated, leastRated, mostBought, leastBought },
       }),
       apiClient.get("/genres"), //Ruta paginada
       apiClient.get("/authors"),
@@ -41,6 +52,11 @@ async function getAllBooks(req, res) {
 
 async function showAllBooks(req, res) {
   try {
+    const sort = req.query.sort
+      ? Array.isArray(req.query.sort)
+        ? req.query.sort
+        : [req.query.sort]
+      : [];
     // Definimos el cliente de redis
     redisClient = await redisController.returnRedisClient();
 
@@ -49,6 +65,10 @@ async function showAllBooks(req, res) {
     const maxPrice = req.query.maxPrice || "";
     const genre = req.query.genre || "";
     const author = req.query.author || "";
+    const mostRated = sort.includes("mostRated");
+    const leastRated = sort.includes("leastRated");
+    const mostBought = sort.includes("mostBought");
+    const leastBought = sort.includes("leastBought");
 
     const [cachedGenres, cachedAuthors] = await Promise.all([
       redisClient.get("AllGenres"),
@@ -78,7 +98,7 @@ async function showAllBooks(req, res) {
     console.log("Genres:", genres[0]);
 
     const booksResponse = await apiClient.get(`/books`, {
-      params: { page, q, maxPrice, genre, author },
+      params: { page, q, maxPrice, genre, author, mostRated, leastRated, mostBought, leastBought },
     });
 
     res.render("partials/booksTable", {

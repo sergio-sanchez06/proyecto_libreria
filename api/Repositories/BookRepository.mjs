@@ -324,6 +324,9 @@ async function getAllBooks(page = 1, filters = {}) {
     let countBase = "SELECT COUNT(*) FROM books b";
     let whereClauses = [];
     let values = [];
+    let joinClauses = [];
+    let groupBy = [];
+    let OrderClause = [];
 
     if (filters.q) {
       whereClauses.push(`b.title ILIKE $${values.length + 1}`);
@@ -353,11 +356,47 @@ async function getAllBooks(page = 1, filters = {}) {
       whereClauses.push(`b.deleted_at IS NOT NULL`);
     }
 
+    if(filters.mostRated){
+      joinClauses.push("full outer join reviews on b.id = reviews.book_id")
+      groupBy.push("b.id")
+      OrderClause.push("COALESCE(round(avg(rating), 1),0) desc")
+      
+    }
+    if(filters.leastRated){
+      joinClauses.push("full outer join reviews on b.id = reviews.book_id")
+      groupBy.push("b.id")
+      OrderClause.push("COALESCE(round(avg(rating), 1),0) asc")
+      
+    }
+    if(filters.mostBought){
+      joinClauses.push("full outer join order_items on b.id = order_items.book_id")
+      groupBy.push("b.id")
+      groupBy.push("order_items.book_id")
+      OrderClause.push("count(order_items.book_id) desc")
+    }
+    if(filters.leastBought){
+      joinClauses.push("full outer join order_items on b.id = order_items.book_id")
+      groupBy.push("b.id")
+      groupBy.push("order_items.book_id")
+      OrderClause.push("count(order_items.book_id) asc")
+    }
+
     const whereSQL =
       whereClauses.length > 0 ? " WHERE " + whereClauses.join(" AND ") : "";
 
-    const finalQuery = `${queryBase} ${whereSQL} ORDER BY b.created_at DESC LIMIT ${l} OFFSET ${offset}`;
+    const joinSQL =
+      joinClauses.length > 0 ? joinClauses.join(" ") : "";
+
+    const groupBySQL =
+      groupBy.length > 0 ? groupBy.join(",") : "b.id";
+
+    const orderBySQL =
+      OrderClause.length > 0 ? OrderClause.join(",") : "b.created_at DESC";
+
+
+    const finalQuery = `${queryBase} ${joinSQL} ${whereSQL} group by ${groupBySQL} ORDER BY ${orderBySQL} LIMIT ${l} OFFSET ${offset}`
     const finalCount = `${countBase} ${whereSQL}`;
+    
 
     const [result, countRes] = await Promise.all([
       client.query(finalQuery, values),
