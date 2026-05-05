@@ -92,7 +92,7 @@
                                             id="genre_<%= g.id %>" value="<%= g.id %>" <%=query.genre==g.id
                                             ? 'checked' : '' %>>
                                         <label class="form-check-label text-muted" for="genre_<%= g.id %>">
-                                            <%= g.name %>
+                                            <%= g.name || g.genre_name || 'Sin nombre' %>
                                         </label>
                                     </div>
                                     <% }) %>

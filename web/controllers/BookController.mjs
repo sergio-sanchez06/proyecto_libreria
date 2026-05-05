@@ -45,8 +45,11 @@ async function getAllBooks(req, res) {
       user: req.session.user || null,
     });
   } catch (error) {
-    console.error("Error al obtener libros: ", error);
-    res.status(500).render("error", { message: "Error al cargar el catálogo" });
+    console.error("Error al obtener libros: ", error.message, error.stack);
+    if (error.response) {
+      console.error("API Error Response:", error.response.data);
+    }
+    res.status(500).render("errors/500", { message: "Error al cargar el catálogo" });
   }
 }
 
@@ -79,12 +82,15 @@ async function showAllBooks(req, res) {
     let authors = cachedAuthors ? JSON.parse(cachedAuthors) : null;
 
     if (!genres || !authors) {
+      console.log("Fetching genres and authors from API...");
       const [genresResponse, authorsResponse] = await Promise.all([
-        apiClient.get("/genres/all"),
+        apiClient.get("/genres/all").catch(e => { console.error("Genres API Error:", e.message); throw e; }),
         apiClient.get("/authors", {
           params: { onlyWithBooks: true },
-        }),
+        }).catch(e => { console.error("Authors API Error:", e.message); throw e; }),
       ]);
+      console.log("Genres Response Status:", genresResponse.status);
+      console.log("Authors Response Status:", authorsResponse.status);
 
       genres = genresResponse.data;
       authors = authorsResponse.data;
@@ -95,7 +101,11 @@ async function showAllBooks(req, res) {
       });
     }
 
-    console.log("Genres:", genres[0]);
+    if (Array.isArray(genres)) {
+      console.log("Genres:", genres[0]);
+    } else {
+      console.log("Genres is not an array:", genres);
+    }
 
     const booksResponse = await apiClient.get(`/books`, {
       params: { page, q, maxPrice, genre, author, mostRated, leastRated, mostBought, leastBought },
@@ -112,8 +122,11 @@ async function showAllBooks(req, res) {
       user: req.session.user || null,
     });
   } catch (error) {
-    console.error("Error al obtener libros en partial: ", error);
-    res.status(500).render("error", { message: "Error al cargar el catálogo" });
+    console.error("Error al obtener libros en partial: ", error.message, error.stack);
+    if (error.response) {
+      console.error("API Error Response:", error.response.data);
+    }
+    res.status(500).render("errors/500", { message: "Error al cargar el catálogo" });
   }
 }
 

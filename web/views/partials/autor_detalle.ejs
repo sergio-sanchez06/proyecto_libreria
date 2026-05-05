@@ -8,7 +8,9 @@
     <div class="row g-5">
         <div class="col-lg-4 col-xl-3">
             <div class="author-photo-wrapper">
-                <img src="<%= author.photo_url || '/images/default-author.jpg' %>" alt="<%= author.name %>">
+                <img src="<%= author.photo_url || '/images/default-author.jpg' %>" 
+                    alt="<%= author.name %>"
+                    onerror="this.src='/images/default-author.jpg'">
             </div>
         </div>
 

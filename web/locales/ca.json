@@ -91,7 +91,8 @@
     "back": "Tornar",
     "delete": "Eliminar",
     "edit": "Editar",
-    "view": "Veure"
+    "view": "Veure",
+    "meta_description": "BOOKLY - La teva llibreria online de confiança. Troba els millors llibres, autors i editorials en un sol lloc."
   },
   "genres": {
     "title": "Gèneres Literaris",

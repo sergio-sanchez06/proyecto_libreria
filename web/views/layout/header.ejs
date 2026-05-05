@@ -7,6 +7,7 @@
     <title>
         <%= (typeof title !=='undefined' ) ? title : 'Librería Online' %>
     </title>
+    <meta name="description" content="<%= (typeof metaDescription !== 'undefined') ? metaDescription : t('common.meta_description') %>">
     <!-- Bootstrap y Bootstrap Icons servidos localmente para evitar latencia de CDN -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-icons.min.css">
@@ -115,6 +116,7 @@
                                     <span class="d-flex align-items-center">
                                         <img src="/flags/flags/4x3/<%= safeLng %>.svg" class="fi <%= currentClass %>"
                                             style="width: 20px; height: auto; border-radius: 2px;"
+                                            alt="<%= t('languages.' + safeLng) %>"
                                             onerror="this.src='<%= backupFlags[safeLng] %>'; this.onerror=null;">
                                     </span>
 
@@ -177,6 +179,7 @@
                                                 <span class="fi <%= lang.class %> d-flex align-items-center">
                                                     <img src="/flags/flags/4x3/<%= lang.id %>.svg" width="20"
                                                         style="display: block;"
+                                                        alt="<%= t('languages.' + lang.id) %>"
                                                         onerror="this.src='<%= lang.img %>'; this.onerror=null;">
                                                 </span>
 

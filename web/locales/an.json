@@ -91,7 +91,8 @@
     "back": "Volver",
     "delete": "Eliminar",
     "edit": "Editar",
-    "view": "Veyer"
+    "view": "Veyer",
+    "meta_description": "BOOKLY - A tuya librería online de confianza. Troba os millors libros, autors y editorials en un solo puesto."
   },
   "genres": {
     "title": "Palos Literarios",

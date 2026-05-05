@@ -85,13 +85,14 @@
     "books_count": "Liburuak: {{count}}"
   },
   "common": {
-    "search": "Liburuak bilatu...",
+    "search": "Bilatu liburuak...",
     "save": "Gorde",
     "cancel": "Utzi",
     "back": "Bueltatu",
     "delete": "Ezabatu",
-    "edit": "Editatu",
-    "view": "Ikusi"
+    "edit": "Aldatu",
+    "view": "Ikusi",
+    "meta_description": "BOOKLY - Zure konfiantzazko online liburu-denda. Aurkitu liburu, autore eta argitaletxerik onenak leku bakar batean."
   },
   "genres": {
     "title": "Literatura Generoak",

@@ -92,7 +92,8 @@
                                                     <div
                                                         class="author-img-container bg-light d-flex align-items-center justify-content-center">
                                                         <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
-                                                            alt="<%= author.name %>">
+                                                            alt="<%= author.name %>"
+                                                            onerror="this.src='/images/default-author.jpg'">
                                                     </div>
 
                                                     <h5 class="card-title fw-bold mb-1 text-dark">

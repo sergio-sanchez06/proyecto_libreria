@@ -91,7 +91,8 @@
     "back": "Volver",
     "delete": "Eliminar",
     "edit": "Editar",
-    "view": "Ver"
+    "view": "Ver",
+    "meta_description": "BOOKLY - Tu librería online de confianza. Encuentra los mejores libros, autores y editoriales en un solo lugar."
   },
   "genres": {
     "title": "Géneros Literarios",

@@ -212,27 +212,24 @@ async function getAllAuthors(
     if (onlyWithBooks) {
       query += " INNER JOIN book_authors ba ON a.id = ba.author_id ";
       query += " INNER JOIN books b ON ba.book_id = b.id ";
+    } else if (joinClauses.length > 0) {
+      // Necesitamos ba si vamos a unir con reviews u order_items
+      query += " LEFT JOIN book_authors ba ON a.id = ba.author_id ";
     }
 
-    query += " join book_authors ba on a.id = ba.author_id "
-
     const joinSQL = joinClauses.length > 0 ? joinClauses.join(" ") : "";
-
-    query +=  joinSQL +  " "
+    query += joinSQL + " ";
 
     if (whereClauses.length > 0) {
       query += " WHERE " + whereClauses.join(" AND ");
     }
 
     const groupBySQL = groupBy.length > 0 ? groupBy.join(",") : "a.id";
-
     const orderBySQL = OrderClause.length > 0 ? OrderClause.join(",") : "a.name ASC";
 
-    query += " group by " + groupBySQL + " order by " + orderBySQL
+    query += " GROUP BY " + groupBySQL + " ORDER BY " + orderBySQL;
 
-    query.replace("asd", )
-
-    console.log(query)
+    console.log("SQL Query:", query);
 
     // Paginación (Tu lógica original adaptada)
     if (page !== null && limit !== null) {

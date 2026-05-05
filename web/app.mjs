@@ -129,8 +129,8 @@ async function startApp() {
     app.set("view engine", "ejs");
     app.set("views", path.join(__dirname, "views"));
     app.use(express.static(path.join(__dirname, "public")));
-    app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-    app.use('/flags', express.static(path.join(__dirname, 'node_modules/flag-icons')));
+    app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
+    app.use('/flags', express.static(path.join(__dirname, '../node_modules/flag-icons')));
 
     // 4. Configuración de Sesión con Redis
     const redisStore = new RedisStore({
