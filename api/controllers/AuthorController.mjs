@@ -103,6 +103,10 @@ async function getAllAuthors(req, res) {
     const deleted = req.query.deleted === "true";
     const onlyWithBooks = req.query.onlyWithBooks === "true";
     const includeAll = req.query.includeAll === "true";
+    const mostRated = req.query.mostRated === "true";
+    const leastRated = req.query.leastRated === "true";
+    const mostBought = req.query.mostBought === "true";
+    const leastBought = req.query.leastBought === "true";
 
     const authors = await AuthorRepository.getAllAuthors(
       page,
@@ -111,6 +115,10 @@ async function getAllAuthors(req, res) {
       deleted,
       onlyWithBooks,
       includeAll,
+      mostRated,
+      leastRated,
+      mostBought,
+      leastBought,
     );
     res.status(200).json(authors);
   } catch (error) {

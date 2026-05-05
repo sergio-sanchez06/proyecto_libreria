@@ -24,6 +24,17 @@ async function getAuthors(req, res) {
   try {
     redisClient = await redisController.returnRedisClient();
 
+    const sort = req.query.sort
+      ? Array.isArray(req.query.sort)
+        ? req.query.sort
+        : [req.query.sort]
+      : [];
+
+    const mostRated = sort.includes("mostRated");
+    const leastRated = sort.includes("leastRated");
+    const mostBought = sort.includes("mostBought");
+    const leastBought = sort.includes("leastBought");
+
     const page = req.query.page || 1;
     const country = req.query.country || null;
     const limit = 4;
@@ -35,7 +46,7 @@ async function getAuthors(req, res) {
     // 2. Preparar las promesas
     // La petición de paises solo se ejecuta si no está en caché.
     const authorsPromise = apiClient.get(
-      `/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}`,
+      `/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}${mostRated ? `&mostRated=${mostRated}` : ""}${leastRated ? `&leastRated=${leastRated}` : ""}${leastBought ? `&leastBought=${leastBought}` : ""}${mostBought ? `&mostBought=${mostBought}` : ""}`,
     );
 
     const countriesPromise = countries
@@ -256,6 +267,17 @@ async function getManageAuthors(req, res) {
     const country = req.query.country || null;
     const deleted = req.query.deleted === "true";
     const includeAll = !deleted;
+
+    const sort = req.query.sort
+      ? Array.isArray(req.query.sort)
+        ? req.query.sort
+        : [req.query.sort]
+      : [];
+
+    const mostRated = sort.includes("mostRated");
+    const leastRated = sort.includes("leastRated");
+    const mostBought = sort.includes("mostBought");
+    const leastBought = sort.includes("leastBought");
     const limit = 4;
 
     // 2. Intentar sacar países de caché
@@ -266,7 +288,7 @@ async function getManageAuthors(req, res) {
     // Si countries ya existe, pasamos una promesa que resuelve a null inmediatamente
     const [authorsRes, countriesRes] = await Promise.all([
       apiClient.get(
-        `/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}${deleted ? `&deleted=${deleted}` : ""}${includeAll ? `&includeAll=${includeAll}` : ""}`,
+        `/authors?page=${page}&limit=${limit}${country ? `&country=${country}` : ""}${deleted ? `&deleted=${deleted}` : ""}${mostRated ? `&mostRated=${mostRated}` : ""}${leastRated ? `&leastRated=${leastRated}` : ""}${leastBought ? `&leastBought=${leastBought}` : ""}${mostBought ? `&mostBought=${mostBought}` : ""}${includeAll ? `&includeAll=${includeAll}` : ""}`,
       ),
       countries ? Promise.resolve(null) : apiClient.get("/authors/countries"),
     ]);

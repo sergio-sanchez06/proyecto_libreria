@@ -29,6 +29,41 @@
                 </h5>
 
                 <form action="/authors/showAllAuthors" method="GET">
+                    
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-muted">
+                            Ordenar autores
+                        </label>
+
+                        <% const selectedSort = Array.isArray(searchQuery.sort)
+                            ? searchQuery.sort
+                            : searchQuery.sort ? [searchQuery.sort] : []; %>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="sort" value="mostRated"
+                                <%= selectedSort.includes('mostRated') ? 'checked' : '' %>>
+                            <label class="form-check-label">Mejor valorados</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="sort" value="leastRated"
+                                <%= selectedSort.includes('leastRated') ? 'checked' : '' %>>
+                            <label class="form-check-label">Peor valorados</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="sort" value="mostBought"
+                                <%= selectedSort.includes('mostBought') ? 'checked' : '' %>>
+                            <label class="form-check-label">Más vendidos</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="sort" value="leastBought"
+                                <%= selectedSort.includes('leastBought') ? 'checked' : '' %>>
+                            <label class="form-check-label">Menos vendidos</label>
+                        </div>
+                    </div>
+
                     <div class="mb-4">
                         <label class="form-label small fw-bold text-uppercase text-muted">País de origen</label>
                         <div class="scrollable-filter-container p-2 bg-white rounded-3 shadow-sm">
