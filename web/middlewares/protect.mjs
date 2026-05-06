@@ -131,7 +131,12 @@ async function requireAdmin(req, res, next) {
 async function requireFreshToken(req, res, next) {
   const token = req.body?.firebase_token || req.headers["x-firebase-token"];
 
+  console.log("Token en body: ", req.body);
+
   if (!token) {
+
+    console.log("Token requerido en requireFreshToken");
+
     // Si es una petición de formulario, redirige con error
     if (req.accepts("html")) {
       req.session.flash = {

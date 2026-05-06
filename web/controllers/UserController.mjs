@@ -1,4 +1,5 @@
 import { getAuthenticatedClient } from "../utils/apiClient.mjs";
+import redisController from "./RedisController.mjs";
 import jwt from "jsonwebtoken";
 
 async function getProfile(req, res) {
@@ -280,11 +281,18 @@ async function getEditProfileForm(req, res) {
 }
 
 async function updateProfile(req, res) {
+  console.log("WEB UPDATE USER");
+
+  console.log("Params", req.params);
+  console.log("Body", req.body);
+
   if (!req.session.user || !req.session.idToken) {
     return res.redirect("/login");
   }
 
-  if (req.session.user.id !== req.body.id) {
+  if (String(req.session.user.id) !== String(req.body.id)) {
+    console.log("ID distinto");
+
     return res.redirect("/user/profile");
   }
 
@@ -306,6 +314,9 @@ async function updateProfile(req, res) {
     const user = response.data.user;
 
     console.log(user.optional_address);
+
+    const redisClient = await redisController.returnRedisClient();
+    await redisClient.del(`user:validation:${req.session.user.id}`);
 
     req.session.user = user;
 

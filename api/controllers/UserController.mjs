@@ -72,14 +72,15 @@ async function registerUser(req, res) {
     // Llamamos al servicio, que es el que sabe qué hacer
     firebaseUser = await authService.createUser(userData);
 
-    const { user: newUser, isNewUser } = await UserRepository.upsertFromFirebase({
-      firebase_uid: firebaseUser.uid,
-      email,
-      name,
-      role: "CLIENT",
-      default_address,
-      optional_address,
-    });
+    const { user: newUser, isNewUser } =
+      await UserRepository.upsertFromFirebase({
+        firebase_uid: firebaseUser.uid,
+        email,
+        name,
+        role: "CLIENT",
+        default_address,
+        optional_address,
+      });
 
     // 3. Enviar correo de notificación (Opcional: No crítico)
     try {
@@ -209,6 +210,11 @@ async function getUserById(req, res) {
 
 async function updateUser(req, res) {
   try {
+    console.log("API UPDATE USER");
+
+    console.log("Params", req.params);
+    console.log("Body", req.body);
+
     const updateData = { id: req.params.id, ...req.body };
     console.log("Update data:", updateData);
     const user = await UserRepository.updateProfile(updateData);

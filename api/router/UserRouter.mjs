@@ -12,7 +12,7 @@ router.get("/me/:id", AuthMiddleware.authenticate, UserController.getMe); // Ver
 router.put(
   "/profile/:id",
   AuthMiddleware.authenticate,
-  validateBodyFields(["name", "default_address"]),
+  validateBodyFields(["name", "email", "default_address"]),
   UserController.updateProfile,
 ); // Actualizar mi perfil
 

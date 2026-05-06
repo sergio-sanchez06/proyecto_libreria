@@ -7,7 +7,8 @@
     <title>
         <%= (typeof title !=='undefined' ) ? title : 'Librería Online' %>
     </title>
-    <meta name="description" content="<%= (typeof metaDescription !== 'undefined') ? metaDescription : t('common.meta_description') %>">
+    <meta name="description"
+        content="<%= (typeof metaDescription !== 'undefined') ? metaDescription : t('common.meta_description') %>">
     <!-- Bootstrap y Bootstrap Icons servidos localmente para evitar latencia de CDN -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-icons.min.css">
@@ -27,7 +28,7 @@
     <link rel="stylesheet" href="/css/main.min.css">
     <link rel="stylesheet" href="/css/layout.min.css">
 
-    <link rel="stylesheet" href="/flags/css/flag-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css">
 
     <% if (typeof extraCSS !=='undefined' ) { %>
         <link rel="stylesheet" href="/css/views/<%= extraCSS %>.css">
@@ -101,25 +102,11 @@
 
                             <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2"
                                 type="button" data-bs-toggle="dropdown">
-                                <% const safeLng=(i18n.language || 'es' ).substring(0, 2); const backupFlags={
-                                    es: "https://flagcdn.com/w20/es.png" ,
-                                    ca: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Catalonia.svg/20px-Flag_of_Catalonia.svg.png"
-                                    ,
-                                    gl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Flag_of_Galicia.svg/20px-Flag_of_Galicia.svg.png"
-                                    ,
-                                    eu: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_the_Basque_Country.svg/20px-Flag_of_the_Basque_Country.svg.png"
-                                    }; const flagMap={ 'es' : 'fi-es' , 'ca' : 'fi-es-ct' , 'gl' : 'fi-es-ga' , 'eu'
-                                    : 'fi-es-pv' }; const currentClass=flagMap[safeLng] || 'fi-es' ; %>
-
-                                    <!-- Usamos una etiqueta IMG directamente para la bandera seleccionada -->
-                                    <!-- Es la forma más fiable de que el failover funcione siempre -->
-                                    <span class="d-flex align-items-center">
-                                        <img src="/flags/flags/4x3/<%= safeLng %>.svg" class="fi <%= currentClass %>"
-                                            style="width: 20px; height: auto; border-radius: 2px;"
-                                            alt="<%= t('languages.' + safeLng) %>"
-                                            onerror="this.src='<%= backupFlags[safeLng] %>'; this.onerror=null;">
-                                    </span>
-
+                                <% const safeLng=(i18n.language || 'es' ).substring(0, 2); const flagClassMap={
+                                    es: 'fi-es' , ca: 'fi-es-ct' , gl: 'fi-es-ga' , eu: 'fi-es-pv' }; const
+                                    currentFlagClass=flagClassMap[safeLng] || 'fi-es' ; %>
+                                    <span class="fi <%= currentFlagClass %>"
+                                        style="width: 20px; height: 15px; border-radius: 2px;"></span>
                                     <span class="d-none d-sm-inline">
                                         <%= t('languages.' + safeLng) %>
                                     </span>
@@ -161,28 +148,15 @@
                             </ul> -->
 
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                                <% const langs=[ { id: 'es' , class: 'fi-es' , img: 'https://flagcdn.com/w20/es.png' },
-                                    { id: 'ca' , class: 'fi-es-ct' ,
-                                    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/Flag_of_Catalonia.svg/20px-Flag_of_Catalonia.svg.png'
-                                    }, { id: 'gl' , class: 'fi-es-ga' ,
-                                    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Flag_of_Galicia.svg/20px-Flag_of_Galicia.svg.png'
-                                    }, { id: 'eu' , class: 'fi-es-pv' ,
-                                    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Flag_of_the_Basque_Country.svg/20px-Flag_of_the_Basque_Country.svg.png'
-                                    } ]; %>
+                                <% const langs=[ { id: 'es' , class: 'fi-es' }, { id: 'ca' , class: 'fi-es-ct' }, {
+                                    id: 'gl' , class: 'fi-es-ga' }, { id: 'eu' , class: 'fi-es-pv' } ]; %>
 
                                     <% langs.forEach(lang=> { %>
                                         <li>
                                             <a class="dropdown-item d-flex align-items-center gap-2 <%= i18n.language.startsWith(lang.id) ? 'active' : '' %>"
                                                 href="/language?lng=<%= lang.id %>&returnTo=<%= encodeURIComponent(currentUrl) %>">
-
-                                                <!-- Usamos un span para flag-icons con un fallback de imagen si el CSS no carga -->
-                                                <span class="fi <%= lang.class %> d-flex align-items-center">
-                                                    <img src="/flags/flags/4x3/<%= lang.id %>.svg" width="20"
-                                                        style="display: block;"
-                                                        alt="<%= t('languages.' + lang.id) %>"
-                                                        onerror="this.src='<%= lang.img %>'; this.onerror=null;">
-                                                </span>
-
+                                                <span class="fi <%= lang.class %>"
+                                                    style="width: 20px; height: 15px; border-radius: 2px;"></span>
                                                 <%= t('languages.' + lang.id) %>
                                             </a>
                                         </li>
@@ -265,26 +239,50 @@
 
             <script type="module">
                 import { auth } from "/js/firebaseConfig.mjs";
-                import { onIdTokenChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+                import { onIdTokenChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
                 // Escucha cambios en el token (incluyendo refrescos automáticos cada hora)
-                onIdTokenChanged(auth, async (user) => {
-                    if (user) {
+                // Solo actualiza el token en la sesión del servidor, sin recrear la sesión completa
+                onIdTokenChanged(auth, async (firebaseUser) => {
+                    if (firebaseUser) {
                         try {
-                            const newToken = await user.getIdToken();
+                            // getIdToken(false) devuelve el token en caché si aún es válido,
+                            // o uno nuevo si Firebase ya lo ha renovado internamente
+                            const newToken = await firebaseUser.getIdToken(false);
 
-                            // Sincronizamos el nuevo token con la sesión de Redis en el servidor
-                            await fetch("/auth/refresh-token", {
+                            const response = await fetch("/auth/refresh-token", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify({ idToken: newToken })
                             });
-                            console.log("Sincronización de token completada.");
+
+                            if (!response.ok) {
+                                console.warn("El servidor rechazó el refresh de token:", response.status);
+                            } else {
+                                console.log("Token sincronizado correctamente con el servidor.");
+                            }
                         } catch (error) {
                             console.error("Error al sincronizar el token con el servidor:", error);
                         }
                     }
                 });
+
+                // Cierra sesión en Firebase al hacer logout para limpiar el estado del cliente
+                const logoutLink = document.querySelector('a[href="/logout"]');
+                if (logoutLink) {
+                    logoutLink.addEventListener("click", async (e) => {
+                        e.preventDefault();
+                        try {
+                            await signOut(auth);
+                            console.log("Sesión de Firebase cerrada correctamente.");
+                        } catch (err) {
+                            console.warn("Error al cerrar sesión en Firebase (se continúa con el logout del servidor):", err);
+                        } finally {
+                            // Siempre redirigimos al logout del servidor, independientemente de si Firebase falló
+                            window.location.href = "/logout";
+                        }
+                    });
+                }
             </script>
         </div>
     </header>
