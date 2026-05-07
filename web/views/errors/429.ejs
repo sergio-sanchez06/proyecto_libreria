@@ -1,0 +1,42 @@
+<%- include('../layout/header.ejs') %>
+
+    <main class="container my-5 py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6 text-center">
+                <div class="mb-4">
+                    <i class="bi bi-clock-history text-warning" style="font-size: 6rem;"></i>
+                </div>
+
+                <h1 class="display-4 fw-bold mb-3">429</h1>
+                <h2 class="h3 mb-4">
+                    <%= t('error.too_many_requests_title', '¡Un segundo, lector entusiasta!' ) %>
+                </h2>
+
+                <p class="lead text-muted mb-4">
+                    <%= t('error.too_many_requests_msg', 'Parece que estás navegando más rápido de lo que podemos pasar las páginas. Para garantizar la seguridad de nuestra librería, hemos limitado temporalmente tus peticiones.'
+                        ) %>
+                </p>
+
+                <hr class="my-4">
+
+                <div class="alert alert-info border-0 shadow-sm mb-4">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    <%= t('error.too_many_requests_hint', 'Por favor, espera unos minutos (aproximadamente 15) y refresca la página para continuar tu lectura.'
+                        ) %>
+                </div>
+
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="/" class="btn btn-primary btn-lg px-4 gap-3">
+                        <i class="bi bi-house-door-fill me-2"></i>
+                        <%= t('nav.home', 'Volver al Inicio' ) %>
+                    </a>
+                    <button onclick="window.location.reload()" class="btn btn-outline-secondary btn-lg px-4">
+                        <i class="bi bi-arrow-clockwise me-2"></i>
+                        <%= t('common.retry', 'Reintentar' ) %>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <%- include('../layout/footer.ejs') %>

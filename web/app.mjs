@@ -1,4 +1,5 @@
 import express from "express";
+import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import session from "express-session";
@@ -9,11 +10,18 @@ import i18nextFsBackend from "i18next-fs-backend";
 import * as useragent from "express-useragent";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
-import dotenv from "dotenv";
+
 import compression from "compression";
 
 // Controlador de Redis
 import redisController from "./controllers/RedisController.mjs";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// 2. Construir la ruta usando path.resolve (esto arregla el problema de Windows)
+const envPath = path.resolve(__dirname, "../api/config/.env");
+dotenv.config({ path: envPath });
 
 // Rutas
 import webRoutes from "./routes/webRoutes.mjs";
@@ -28,14 +36,6 @@ import reviewRoutes from "./routes/reviewRouter.mjs";
 
 // Middlewares
 import controlUserAgent from "./middlewares/controlUserAgent.mjs";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// 2. Construir la ruta usando path.resolve (esto arregla el problema de Windows)
-const envPath = path.resolve(__dirname, "../api/config/.env");
-
-dotenv.config({ path: envPath });
 
 const SESSION_SECRET = process.env.SESSION_SECRET;
 if (!SESSION_SECRET) {
@@ -52,6 +52,10 @@ async function startApp() {
     console.log("✅ Redis inicializado y conectado correctamente");
 
     const app = express();
+
+    if (process.env.NODE_ENV === "production") {
+      app.set("trust proxy", true); // Railway: múltiples saltos internos de proxy
+    }
 
     app.use(
       helmet({
@@ -130,7 +134,10 @@ async function startApp() {
     app.set("views", path.join(__dirname, "views"));
     app.use(express.static(path.join(__dirname, "public")));
     app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
-    app.use('/flags', express.static(path.join(__dirname, '../node_modules/flag-icons')));
+    app.use(
+      "/flags",
+      express.static(path.join(__dirname, "../node_modules/flag-icons")),
+    );
 
     // 4. Configuración de Sesión con Redis
     const redisStore = new RedisStore({
@@ -183,32 +190,45 @@ async function startApp() {
 
     // 6. Middlewares de lógica de negocio y variables locales
     app.use(controlUserAgent.filterIA);
+    app.use(controlUserAgent.apiLimiter);
 
     app.use((req, res, next) => {
-      // Capturar cambio de idioma por URL
-      const queryLng = req.query.lng;
+      // 1. Detectar si es un archivo estático o recurso multimedia
+      const isAsset =
+        /\.(png|jpg|jpeg|gif|svg|ico|css|js|map|woff|woff2|ttf|otf)$/i.test(
+          req.path,
+        );
 
+      // 2. Si es un asset, pasamos de largo sin tocar la sesión
+      if (isAsset) {
+        return next();
+      }
+
+      // 3. Capturar cambio de idioma
+      const queryLng = req.query.lng;
       if (queryLng) {
         req.session.lang = queryLng;
         req.i18n.changeLanguage(queryLng);
-      }
-      // Si no hay query, buscar idioma en sesión de redis
-      else if (req.session.lang) {
+      } else if (req.session?.lang) {
         req.i18n.changeLanguage(req.session.lang);
       }
 
-      // Definimos variables globales para las vistas
       res.locals.t = req.t;
       res.locals.i18n = req.i18n;
       res.locals.currentLanguage = req.i18n.language;
-      res.locals.user = req.session.user || null;
+      res.locals.user = req.session?.user || null;
 
-      // 4. Lógica para currentUrl (evitando que se guarde la propia ruta de cambio de idioma)
+      // 4. Lógica para currentUrl mejorada
       if (req.originalUrl.includes("/language")) {
-        res.locals.currentUrl = req.session.lastUrl || "/";
+        res.locals.currentUrl = req.session?.lastUrl || "/";
       } else {
         res.locals.currentUrl = req.originalUrl;
-        req.session.lastUrl = req.originalUrl; // Guardamos en sesión la última página "real"
+
+        // CRÍTICO: Solo guardar lastUrl si NO es una petición AJAX/Fetch
+        // y solo si el usuario ya tiene sesión o es una navegación real
+        if (!req.xhr && req.method === "GET") {
+          req.session.lastUrl = req.originalUrl;
+        }
       }
 
       next();

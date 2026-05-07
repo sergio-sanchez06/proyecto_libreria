@@ -1,4 +1,4 @@
-import Book from "./BookModel.mjs";
+import Book from "./bookModel.mjs";
 import Author from "./authorModel.mjs";
 
 export default class BookAuthor {

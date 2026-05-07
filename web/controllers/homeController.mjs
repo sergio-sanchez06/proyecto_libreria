@@ -1,13 +1,14 @@
-import axios from "axios";
+// import axios from "axios";
+import apiClient from "../utils/apiClient.mjs";
 import redisController from "./RedisController.mjs";
 
-const apiClient = axios.create({
-  baseURL: "http://localhost:3000",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-});
+// const apiClient = axios.create({
+//   baseURL: "http://localhost:3000",
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+//   withCredentials: true,
+// });
 
 let redisClient = null;
 
@@ -36,11 +37,18 @@ async function getBooksAndAuthors(req, res, next) {
 
     next();
   } catch (error) {
-    res.locals.bookAuthors = [];
-    res.locals.books = [];
-    res.locals.authors = [];
-    console.error("Error cargando libros destacados:", error);
-    next();
+    console.log(error);
+
+    res.render("errors/500", {
+      message: "Error al cargar la página principal",
+      stack: error.stack,
+    });
+
+    // res.locals.bookAuthors = [];
+    // res.locals.books = [];
+    // res.locals.authors = [];
+    // console.error("Error cargando libros destacados:", error);
+    // next();
   }
 }
 

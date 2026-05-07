@@ -244,26 +244,46 @@
                 // Escucha cambios en el token (incluyendo refrescos automáticos cada hora)
                 // Solo actualiza el token en la sesión del servidor, sin recrear la sesión completa
                 onIdTokenChanged(auth, async (firebaseUser) => {
-                    if (firebaseUser) {
-                        try {
-                            // getIdToken(false) devuelve el token en caché si aún es válido,
-                            // o uno nuevo si Firebase ya lo ha renovado internamente
-                            const newToken = await firebaseUser.getIdToken(false);
+                    if (!firebaseUser) return;
+                    try {
 
-                            const response = await fetch("/auth/refresh-token", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ idToken: newToken })
-                            });
+                        // getIdToken(true): fuerza renovación si el token está próximo a expirar.
+                        // onIdTokenChanged ya se dispara cuando Firebase lo renueva internamente,
+                        // pero true garantiza que siempre enviamos un token válido y fresco.
 
-                            if (!response.ok) {
-                                console.warn("El servidor rechazó el refresh de token:", response.status);
-                            } else {
-                                console.log("Token sincronizado correctamente con el servidor.");
-                            }
-                        } catch (error) {
-                            console.error("Error al sincronizar el token con el servidor:", error);
+                        const newToken = await firebaseUser.getIdToken(false);
+
+                        // Evita reenviar el mismo token en navegaciones dentro de la misma pestaña
+                        // sessionStorage se limpia al cerrar la pestaña — comportamiento correcto
+                        const lastSentToken = sessionStorage.getItem("last_synced_token");
+                        if (newToken === lastSentToken) {
+                            console.log("Token idéntico, saltando sincronización.");
+                            return;
                         }
+
+                        const response = await fetch("/auth/refresh-token", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ idToken: newToken }),
+                        });
+
+                        const data = await response.json().catch(() => ({}));
+
+                        if (response.ok) {
+                            sessionStorage.setItem("last_synced_token", newToken);
+                            console.log("Token sincronizado con éxito.");
+                        }
+
+                        if (data.forceLogout) {
+                            console.warn("[header] Forzando logout por indicación del servidor.");
+                            await signOut(auth).catch(() => { });
+                            window.location.href = "/login?error=" + encodeURIComponent("Tu sesión ha expirado. Por favor inicia sesión de nuevo.");
+                            return;
+                        }
+
+                        console.warn("El servidor rechazó el refresh:", response.status);
+                    } catch (error) {
+                        console.error("Error al sincronizar token:", error);
                     }
                 });
 

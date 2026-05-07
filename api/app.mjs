@@ -27,6 +27,14 @@ import helmet from "helmet";
 const port = 3000;
 const app = express();
 
+// En producción, Express debe confiar en el proxy inverso (nginx, Caddy, etc.)
+// para leer la IP real del cliente desde X-Forwarded-For.
+// Sin esto, req.ip siempre es 127.0.0.1 y el rate limit afecta a todos por igual.
+
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", true); // Railway: múltiples saltos internos de proxy
+}
+
 // Inclusión de helmet para el uso de cabeceras de seguridad
 app.use(
   helmet({

@@ -1,10 +1,11 @@
 // web/controllers/AuthController.mjs
-import axios from "axios";
+// import axios from "axios";
+import apiClient from "../utils/apiClient.mjs";
 
-const apiClient = axios.create({
-  baseURL: "http://localhost:3000",
-  withCredentials: true,
-});
+// const apiClient = axios.create({
+//   baseURL: "http://localhost:3000",
+//   withCredentials: true,
+// });
 
 // Muestra formulario
 async function showLogin(req, res) {
@@ -238,7 +239,15 @@ async function refreshToken(req, res) {
   const { idToken } = req.body;
 
   // Validación básica
-  if (!idToken || !req.session.user) {
+
+  if (!req.session?.user) {
+    console.warn("Refresh fallido: sesión de Express no iniciada");
+    return res.json({ ok: false, message: "Sesión de Express no iniciada" });
+  }
+
+  if (!idToken) {
+    console.warn("Refresh fallido: idToken presente: ", !!idToken);
+
     return res.status(401).json({
       ok: false,
       message: "No autorizado o token no suministrado",
