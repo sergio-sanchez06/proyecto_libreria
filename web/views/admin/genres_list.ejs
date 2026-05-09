@@ -3,12 +3,12 @@
     <div class="container py-5">
         <header class="text-center mb-5 pb-3">
             <h1 class="section-title text-center mx-auto" style="width: fit-content;">
-                <%= t('genres.admin_title') || 'Gestión de Géneros' %>
+                <%= t('genres.admin_title', { defaultValue: 'Gestión de Géneros' }) %>
             </h1>
 
             <div class="mt-4">
-                <a href="/admin/genres/create" class="btn btn-primary rounded-pill px-4 shadow-sm">
-                    <i class="bi bi-plus-circle me-2"></i>Añadir Nuevo Género
+                <a href="/admin/genres/create" class="btn btn-primary rounded-pill px-4 shadow-sm d-flex align-items-center mx-auto" style="width: fit-content; background-color: var(--brand-teal); border: none;">
+                    <i class="bi bi-plus-lg me-2"></i>Añadir Nuevo Género
                 </a>
             </div>
         </header>
@@ -39,22 +39,23 @@
 
                                 <div class="mt-auto w-100">
                                     <% if (isDeleted) { %>
-                                        <button type="button" class="btn btn-success btn-sm w-100 rounded-pill"
+                                        <button type="button" class="btn btn-success btn-sm w-100 rounded-pill py-2 shadow-sm"
                                             data-bs-toggle="modal" data-bs-target="#restoreModal"
                                             data-bs-id="<%= genre.id %>" data-bs-name="<%= genre.name %>">
-                                            <i class="bi bi-arrow-counterclockwise"></i> Restaurar
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i> Restaurar
                                         </button>
                                         <% } else { %>
                                             <a href="/genres/<%= genre.name %>"
-                                                class="btn btn-outline-primary btn-sm w-100 rounded-pill mb-2">
-                                                Explorar <i class="bi bi-arrow-right"></i>
+                                                class="btn btn-primary btn-sm w-100 rounded-pill mb-2 py-2 shadow-sm"
+                                                style="background-color: var(--brand-teal); border: none;">
+                                                <i class="bi bi-compass me-1"></i> Explorar
                                             </a>
 
                                             <button type="button"
-                                                class="btn btn-outline-danger btn-sm w-100 rounded-pill"
+                                                class="btn btn-danger btn-sm w-100 rounded-pill py-2 shadow-sm"
                                                 data-bs-toggle="modal" data-bs-target="#deleteModal"
                                                 data-bs-id="<%= genre.id %>" data-bs-name="<%= genre.name %>">
-                                                <i class="bi bi-trash"></i> Eliminar
+                                                <i class="bi bi-trash me-1"></i> Eliminar
                                             </button>
                                             <% } %>
                                 </div>

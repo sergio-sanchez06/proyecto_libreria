@@ -4,15 +4,15 @@
         <div class="d-flex justify-content-between align-items-center mb-5">
             <div>
                 <h2 class="section-title mb-0" style="font-size: var(--fs-xl);">
-                    <%= t('publishers.title') %>
+                    <%= t('adminDashboard.card_publishers') %>
                 </h2>
                 <p class="text-muted" style="font-size: var(--fs-sm);">
-                    <%= t('publishers.subtitle') %>
+                    Panel de Gestión de Editoriales
                 </p>
             </div>
-            <a href="/publisher/create" class="btn btn-primary rounded-pill px-4 shadow-sm"
+            <a href="/publisher/create" class="btn btn-primary rounded-pill px-4 shadow-sm d-flex align-items-center"
                 style="background-color: var(--brand-teal); border: none;">
-                <i class="fas fa-plus me-2"></i>Nueva Editorial
+                <i class="bi bi-plus-lg me-2"></i>Nueva Editorial
             </a>
         </div>
 
@@ -24,44 +24,54 @@
 
                         <div class="admin-actions">
                             <a href="/publisher/edit/<%= pub.id %>" class="btn-admin btn-edit" title="Editar">
-                                <i class="fas fa-edit"></i>
+                                <i class="bi bi-pencil-square"></i>
                             </a>
 
                             <% if(!pub.deleted_at) { %>
                                 <button type="button" class="btn-admin btn-archive" title="Archivar"
                                     data-bs-toggle="modal" data-bs-target="#modalDeletePublisher"
                                     data-action="/publisher/delete/<%= pub.id %>" data-name="<%= pub.name %>">
-                                    <i class="fas fa-archive"></i>
+                                    <i class="bi bi-archive"></i>
                                 </button>
                                 <% } else { %>
                                     <form action="/publisher/restore/<%= pub.id %>" method="POST" data-requires-token>
                                         <button type="submit" class="btn-admin btn-restore" title="Restaurar">
-                                            <i class="fas fa-trash-restore"></i>
+                                            <i class="bi bi-arrow-counterclockwise"></i>
                                         </button>
                                     </form>
                                     <% } %>
                         </div>
 
-                        <div class="card-body d-flex flex-column text-center">
-                            <div class="publisher-logo-container">
-                                <img src="<%= pub.image_url || '/images/default-publisher.jpg' %>" alt="Logo"
-                                    class="img-fluid" style="max-height: 50px; object-fit: contain;">
+                        <div class="card-body d-flex flex-column text-center pt-2">
+                            <div class="publisher-logo-container mb-4">
+                                <% if (pub.image_url) { %>
+                                    <img src="<%= pub.image_url %>" alt="<%= pub.name %>"
+                                        class="img-fluid publisher-logo" 
+                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <div class="publisher-placeholder" style="display: none;">
+                                        <i class="bi bi-building text-muted"></i>
+                                    </div>
+                                <% } else { %>
+                                    <div class="publisher-placeholder">
+                                        <i class="bi bi-building text-muted"></i>
+                                    </div>
+                                <% } %>
                             </div>
 
-                            <h5 class="card-title fw-bold mb-4">
+                            <h5 class="card-title fw-bold mb-4" style="font-size: 1.1rem; min-height: 2.4em; display: flex; align-items: center; justify-content: center;">
                                 <%= pub.name %>
                             </h5>
 
                             <div class="mt-auto">
                                 <% if(!pub.deleted_at) { %>
                                     <a href="/publisher/<%= pub.id %>"
-                                        class="btn btn-outline-primary btn-sm w-100 rounded-pill">
-                                        <i class="fas fa-list-ul me-1"></i>
+                                        class="btn btn-outline-primary btn-sm w-100 rounded-pill py-2">
+                                        <i class="bi bi-list-ul me-1"></i>
                                         <%= t('publishers.view_catalog') %>
                                     </a>
                                     <% } else { %>
                                         <span class="badge bg-secondary w-100 py-2 rounded-pill">
-                                            <i class="fas fa-eye-slash me-1"></i> Archivada
+                                            <i class="bi bi-eye-slash me-1"></i> Archivada
                                         </span>
                                         <% } %>
                             </div>
@@ -78,7 +88,7 @@
 
                         <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
                             <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) - 1 %>">
-                                <i class="fas fa-chevron-left"></i>
+                                <i class="bi bi-chevron-left"></i>
                             </a>
                         </li>
 
@@ -92,7 +102,7 @@
 
                                 <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
                                     <a class="page-link" href="<%= miRuta %>?page=<%= parseInt(currentPage) + 1 %>">
-                                        <i class="fas fa-chevron-right"></i>
+                                        <i class="bi bi-chevron-right"></i>
                                     </a>
                                 </li>
                 </ul>
@@ -105,20 +115,23 @@
         <!-- Modal: Archivar editorial -->
         <div class="modal fade" id="modalDeletePublisher" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content shadow-lg">
-                    <div class="modal-header border-0" style="background-color:#dc3545;">
-                        <h5 class="modal-title fw-bold text-white"><i class="fas fa-archive me-2"></i>Archivar editorial
+                <div class="modal-content shadow-lg border-0 rounded-4">
+                    <div class="modal-header border-0 text-white p-4" style="background: linear-gradient(135deg, #dc3545, #b02a37); border-radius: 16px 16px 0 0;">
+                        <h5 class="modal-title fw-bold"><i class="bi bi-archive me-2"></i>Archivar editorial
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body p-4 text-center">
-                        <p class="mb-1">¿Archivar <strong id="deletePublisherName"></strong>?</p>
-                        <p class="text-muted small">Sus libros también se ocultarán del catálogo.</p>
+                        <div class="mb-3">
+                            <i class="bi bi-exclamation-circle text-danger" style="font-size: 3rem;"></i>
+                        </div>
+                        <p class="fs-5 mb-1">¿Archivar <strong><span id="deletePublisherName"></span></strong>?</p>
+                        <p class="text-muted">Sus libros también dejarán de ser visibles en la tienda pública.</p>
                     </div>
                     <div class="modal-footer border-0 justify-content-center pb-4">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
                         <form id="deletePublisherForm" method="POST" data-requires-token style="display:inline;">
-                            <button type="submit" class="btn btn-danger ms-2">Archivar</button>
+                            <button type="submit" class="btn btn-danger rounded-pill px-4 shadow-sm">Archivar Ahora</button>
                         </form>
                     </div>
                 </div>
@@ -131,4 +144,4 @@
                 document.getElementById('deletePublisherName').textContent = btn.dataset.name;
                 document.getElementById('deletePublisherForm').action = btn.dataset.action;
             });
-        </script>
+        </script>

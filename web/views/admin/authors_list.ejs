@@ -4,18 +4,18 @@
         searchQuery=locals.query || {}; %>
 
         <div class="container py-5">
-            <div class="text-center mb-5">
-                <h2 class="section-title text-center">
-                    <%= t('es:authors.title') %>
-                </h2>
-                <p class="text-muted">
-                    <%= t('es:authors.subtitle') %>
-                </p>
-            </div>
-
-            <div class="d-flex justify-content-end mb-4">
-                <a href="/authors/author/create" class="btn btn-sm btn-outline-dark">
-                    <%= t('adminDashboard.btn_add') %>
+            <div class="d-flex justify-content-between align-items-center mb-5">
+                <div>
+                    <h2 class="section-title mb-0" style="font-size: var(--fs-xl);">
+                        <%= t('es:authors.title') %>
+                    </h2>
+                    <p class="text-muted" style="font-size: var(--fs-sm);">
+                        <%= t('es:authors.subtitle') %>
+                    </p>
+                </div>
+                <a href="/authors/author/create" class="btn btn-primary rounded-pill px-4 shadow-sm d-flex align-items-center"
+                    style="background-color: var(--brand-teal); border: none;">
+                    <i class="bi bi-plus-lg me-2"></i>Añadir Autor
                 </a>
             </div>
 
@@ -88,28 +88,31 @@
                                             </span>
                                             <% } %>
 
-                                                <div class="card-body d-flex flex-column">
-                                                    <div
-                                                        class="author-img-container bg-light d-flex align-items-center justify-content-center">
+                                                <div class="card-body d-flex flex-column pt-2">
+                                                    <div class="author-img-container mb-4">
                                                         <img src="<%= author.photo_url || '/images/default-author.jpg' %>"
                                                             alt="<%= author.name %>"
-                                                            onerror="this.src='/images/default-author.jpg'">
+                                                            class="author-photo"
+                                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                        <div class="author-placeholder" style="display: none;">
+                                                            <i class="bi bi-person-fill text-muted"></i>
+                                                        </div>
                                                     </div>
 
-                                                    <h5 class="card-title fw-bold mb-1 text-dark">
+                                                    <h5 class="card-title fw-bold mb-1 text-dark" style="font-size: 1.1rem;">
                                                         <%= author.name %>
                                                     </h5>
-                                                    <p class="text-muted small mb-1">
-                                                        <%= author.country || 'País no especificado' %>
+                                                    <p class="text-muted small mb-3">
+                                                        <i class="bi bi-geo-alt me-1"></i><%= author.country || 'País no especificado' %>
                                                     </p>
 
                                                     <% if (author.deleted_at) { %>
-                                                        <p class="text-danger small mb-4" style="font-size: 0.75rem;">
-                                                            <i class="bi bi-calendar-x"></i> Baja: <%= new
+                                                        <p class="text-danger small mb-4" style="font-size: 0.8rem;">
+                                                            <i class="bi bi-calendar-x me-1"></i>Baja: <%= new
                                                                 Date(author.deleted_at).toLocaleDateString() %>
                                                         </p>
                                                         <% } else { %>
-                                                            <p class="text-secondary small mb-4 opacity-75">ID: <%=
+                                                            <p class="text-secondary small mb-4 opacity-50" style="font-size: 0.75rem;">ID: <%=
                                                                     author.id %>
                                                             </p>
                                                             <% } %>
@@ -125,20 +128,20 @@
                                                                             <div class="row g-2">
                                                                                 <div class="col-6">
                                                                                     <a href="/authors/author/edit/<%= author.id %>"
-                                                                                        class="btn btn-primary btn-sm w-100">
+                                                                                        class="btn btn-primary btn-sm w-100 py-2 shadow-sm">
                                                                                         <i
-                                                                                            class="bi bi-pencil-square"></i>
+                                                                                            class="bi bi-pencil-square me-1"></i>
                                                                                         Editar
                                                                                     </a>
                                                                                 </div>
                                                                                 <div class="col-6">
                                                                                     <button type="button"
-                                                                                        class="btn btn-outline-danger btn-sm w-100"
+                                                                                        class="btn btn-danger btn-sm w-100 py-2 shadow-sm"
                                                                                         data-bs-toggle="modal"
                                                                                         data-bs-target="#modalDeleteAuthor"
                                                                                         data-action="/authors/author/delete/<%= author.id %>"
                                                                                         data-name="<%= author.name %>">
-                                                                                        <i class="bi bi-trash"></i>
+                                                                                        <i class="bi bi-trash me-1"></i>
                                                                                         Borrar
                                                                                     </button>
                                                                                 </div>
@@ -180,8 +183,8 @@
                                             <h4 class="text-muted">No se encontraron autores</h4>
                                             <p class="text-muted small">Prueba a cambiar los filtros o añadir un autor
                                                 nuevo.</p>
-                                            <a href="/authors/create" class="btn btn-primary btn-sm">
-                                                <i class="bi bi-plus-circle"></i> Añadir Autor
+                                            <a href="/authors/author/create" class="btn btn-primary btn-sm rounded-pill px-4">
+                                                <i class="bi bi-plus-circle me-1"></i> Añadir Autor
                                             </a>
                                         </div>
                                         <% } %>
@@ -199,7 +202,9 @@
                     <nav class="mt-5">
                         <ul class="pagination pagination-sm justify-content-center">
                             <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                                <a class="page-link" href="<%= getPageUrl(parseInt(currentPage) - 1) %>">&laquo;</a>
+                                <a class="page-link" href="<%= getPageUrl(parseInt(currentPage) - 1) %>">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
                             </li>
 
                             <% for(let i=1; i <=totalPages; i++) { %>
@@ -212,7 +217,9 @@
 
                                     <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
                                         <a class="page-link"
-                                            href="<%= getPageUrl(parseInt(currentPage) + 1) %>">&raquo;</a>
+                                            href="<%= getPageUrl(parseInt(currentPage) + 1) %>">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
                                     </li>
                         </ul>
                     </nav>

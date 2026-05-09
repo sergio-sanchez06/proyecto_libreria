@@ -97,6 +97,7 @@
   "genres": {
     "title": "Xéneros Literarios",
     "subtitle": "Explora a nosa colección clasificada por temáticas",
+    "admin_title": "Xestión de Xéneros",
     "description": "Descubre os mellores títulos de {{name}}",
     "explore": "Explorar catálogo"
   },

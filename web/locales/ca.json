@@ -97,6 +97,7 @@
   "genres": {
     "title": "Gèneres Literaris",
     "subtitle": "Explora la nostra col·lecció classificada per temàtiques",
+    "admin_title": "Gestió de Gèneres",
     "description": "Descobreix els millors títols de {{name}}",
     "explore": "Explorar catàleg"
   },

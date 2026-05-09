@@ -97,6 +97,7 @@
   "genres": {
     "title": "Literatura Generoak",
     "subtitle": "Arakatu gure bilduma tematikaren arabera sailkatuta",
+    "admin_title": "Generoen Kudeaketa",
     "description": "Ezagutu {{name}}(e)ko titulu onenak",
     "explore": "Katalogoa arakatu"
   },

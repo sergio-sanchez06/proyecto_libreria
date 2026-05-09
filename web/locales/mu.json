@@ -97,6 +97,7 @@
   "genres": {
     "title": "Palos Literarios",
     "subtitle": "Todo clasificao por temáticas",
+    "admin_title": "Gestion de Genres",
     "description": "Lo mejor de {{name}}",
     "explore": "Bichear catálogo"
   },

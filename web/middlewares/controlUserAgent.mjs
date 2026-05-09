@@ -26,7 +26,10 @@ const apiLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  validate: { xForwardedForHeader: false },
+  validate: { 
+    xForwardedForHeader: false,
+    keyGeneratorIpFallback: false 
+  },
   // keyGenerator explícito: garantiza que la IP extraída sea la real del cliente
   // cuando hay un proxy inverso (nginx, Caddy, etc.) delante del servidor Express.
   // Sin esto, todos los usuarios comparten el límite de la IP del proxy (127.0.0.1).
