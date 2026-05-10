@@ -13,7 +13,8 @@
 
   /* Backgrounds */
   --bg-main: url('/images/backgrounds/waves.png');
-  --bg-user: url('/images/backgrounds/user_waves.png');
+  --bg-user: url('/images/backgrounds/geometric.png');
+  --bg-admin: url('/images/backgrounds/user_waves.png');
 
   /* Re-ligar variables de layout.css si no se cargan en orden */
   --fs-xs: clamp(0.7rem, 0.6rem + 0.5vw, 0.85rem);
@@ -32,6 +33,11 @@
 
 .bg-user-vistas {
   background: var(--bg-user) no-repeat center center fixed !important;
+  background-size: cover !important;
+}
+
+.bg-admin-vistas {
+  background: var(--bg-admin) no-repeat center center fixed !important;
   background-size: cover !important;
 }
 

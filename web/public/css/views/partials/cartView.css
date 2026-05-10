@@ -11,7 +11,7 @@ body::before {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(252, 250, 247, 0.88);
+    background: rgba(252, 250, 247, 0.5);
     z-index: -1;
 }
 

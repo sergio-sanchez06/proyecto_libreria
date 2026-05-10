@@ -145,6 +145,7 @@ body::before {
     color: white;
 }
 
+.bg-teal { background-color: var(--brand-teal) !important; }
 .text-teal { color: var(--brand-teal); }
 .fw-600 { font-weight: 600; }
 .modal-content {

@@ -114,16 +114,38 @@ async function getPurchaseHistory(req, res) {
         req.query.confirmed === "true" ? "¡Compra realizada con éxito!" : null,
     });
   } catch (error) {
-    // Manejo de errores...
+    console.error("Error en getPurchaseHistory:", error.message);
 
-    req.session.flash = {
-      type: "error",
-      message:
-        error.response?.data?.message ||
-        "No se pudo procesar el pedido, inténtalo de nuevo.",
-    };
+    // Si la API devuelve 404, significa que el usuario no tiene pedidos. Mostramos la vista vacía sin error.
+    if (error.response && error.response.status === 404) {
+      return res.render("partials/purchaseHistory", {
+        title: "Mis compras",
+        user: req.session.user,
+        orders: [],
+        successMessage: null,
+        error: null
+      });
+    }
 
-    res.redirect("/cart/view");
+    // Si el error ocurre durante el callback de Stripe, redirigir al carrito
+    if (success === "true" && session_id) {
+      req.session.flash = {
+        type: "error",
+        message:
+          error.response?.data?.message ||
+          "No se pudo procesar el pedido, inténtalo de nuevo.",
+      };
+      return res.redirect("/cart/view");
+    }
+
+    // Fallo general al cargar la vista
+    res.render("partials/purchaseHistory", {
+      title: "Mis compras",
+      user: req.session.user,
+      orders: [],
+      successMessage: null,
+      error: "Error al cargar el historial de compras.",
+    });
   }
 }
 

@@ -46,7 +46,8 @@
     "confirm": "N'estàs segur?",
     "panel": "Opcions d'administració",
     "actions": "Accions",
-    "date": "Data"
+    "date": "Data",
+    "btn_return": "Volver"
   },
   "author_detail": {
     "biography": "Biografia",
@@ -497,5 +498,5 @@
     "ca": "Català",
     "gl": "Gallec",
     "eu": "Èuscar"
-}
+  }
 }

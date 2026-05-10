@@ -46,7 +46,8 @@
     "confirm": "Ziur zaude?",
     "panel": "Kudeaketa aukerak",
     "actions": "Ekintzak",
-    "date": "Data"
+    "date": "Data",
+    "btn_return": "Volver"
   },
   "author_detail": {
     "biography": "Biografia",

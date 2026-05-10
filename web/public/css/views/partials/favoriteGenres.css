@@ -1,0 +1,241 @@
+/* ═══════════════════════════════════════════════════
+   favoriteGenres.css - Vista: /user/favorites
+   Modern Premium Design (True Blue & Gold)
+═══════════════════════════════════════════════════ */
+
+/* Contenedor principal */
+.favorites-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Tarjetas Estilo Brand (Glassmorphism) ───────────────── */
+.brand-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  margin-bottom: 2.5rem;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.brand-card:hover {
+  box-shadow: 0 20px 50px rgba(30, 64, 175, 0.06); /* True Blue hint */
+}
+
+.favorites-card-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+  padding: 1.75rem 2rem;
+}
+
+.favorites-card-header h5 {
+  color: var(--brand-teal); /* Usa el color principal de la marca (azul) */
+  font-weight: 800;
+  margin-bottom: 0;
+  letter-spacing: -0.025em;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Tags de favoritos actuales ──────────────────── */
+.favorite-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.8));
+  color: #1e293b;
+  border: 1px solid rgba(30, 64, 175, 0.1);
+  border-radius: 999px; /* Pill shape */
+  padding: 8px 18px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+}
+
+.favorite-tag:hover {
+  border-color: var(--brand-gold);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.15);
+}
+
+.favorite-tag i.bi-bookmark-fill {
+  color: var(--brand-gold);
+}
+
+.favorite-tag-remove {
+  background: rgba(239, 68, 68, 0.1);
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+}
+
+.favorite-tag-remove:hover {
+  background: #ef4444;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ── Grid de selección de géneros (Tarjetas Modernas) ────────────────── */
+.genres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 20px;
+}
+
+.genre-check-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 16px;
+  border: 2px solid rgba(0, 0, 0, 0.03);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #475569;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  user-select: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.genre-check-label::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0));
+  z-index: 0;
+  pointer-events: none;
+}
+
+.genre-check-label > * {
+  z-index: 1;
+}
+
+.genre-check-label:hover {
+  border-color: rgba(30, 64, 175, 0.3); /* Teal/Blue hover */
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(30, 64, 175, 0.08);
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Estado Checkbox Marcado */
+.btn-check:checked + .genre-check-label {
+  border-color: var(--brand-teal);
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: var(--brand-teal);
+  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.15);
+  transform: translateY(-3px);
+  font-weight: 800;
+}
+
+.genre-icon {
+  font-size: 2rem;
+  color: #cbd5e1;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-check:checked + .genre-check-label .genre-icon {
+  color: var(--brand-gold);
+  transform: scale(1.1);
+}
+
+.genre-check-mark {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 1.2rem;
+  color: var(--brand-teal);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-check:checked + .genre-check-label .genre-check-mark {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Barra de acción inferior ────────────────── */
+.action-bar {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  padding: 1.5rem 2rem;
+  margin-top: 2rem;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+.btn-brand {
+  background-color: var(--brand-teal) !important;
+  color: white !important;
+  border: none;
+  border-radius: 50px;
+  padding: 0.75rem 2.5rem;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(30, 64, 175, 0.25);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-brand:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(30, 64, 175, 0.35);
+  background-color: var(--brand-teal-hover) !important;
+}
+
+.btn-outline-secondary {
+  border-radius: 50px;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border: 2px solid #e2e8f0;
+  color: #64748b;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-secondary:hover {
+  border-color: #cbd5e1;
+  color: #475569;
+  background: #f8fafc;
+}
+
+/* Helper para texto en la barra */
+.action-bar p {
+  color: #64748b;
+  font-weight: 500;
+}
+
+#selectedCount {
+  color: var(--brand-teal);
+  font-size: 1.2rem;
+  background: rgba(30, 64, 175, 0.1);
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-left: 6px;
+}

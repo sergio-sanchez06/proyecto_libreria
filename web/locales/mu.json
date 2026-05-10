@@ -46,7 +46,8 @@
     "confirm": "¿Tú verás?",
     "panel": "Manejo de la barraca",
     "actions": "Acciones",
-    "date": "Fecha"
+    "date": "Fecha",
+    "btn_return": "Volver"
   },
   "author_detail": {
     "biography": "Su vida",

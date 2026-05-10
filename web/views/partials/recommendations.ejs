@@ -1,229 +1,145 @@
-<%- include('../layout/header', { title: user.name + ' - ' + t('recommendations.page_title') ,
-    bodyClass: 'bg-user-vistas' }) %>
+<%- include('../layout/header', { title: user.name + ' - ' + t('recommendations.page_title'), bodyClass: 'bg-user-vistas', extraCSS: 'partials/recommendations_v2' }) %>
 
-    <link rel="stylesheet" href="/CSS/recommendations.css">
+<div class="container py-5">
 
-    <div class="container py-5">
-
-        <!-- ── Breadcrumb ────────────────────────────── -->
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb" style="font-weight:500;">
-                <li class="breadcrumb-item">
-                    <a href="/user/profile" class="text-decoration-none text-muted">
-                        <%= t('recommendations.breadcrumb_profile') %>
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" style="color:var(--brand-teal);">
-                    <%= t('recommendations.breadcrumb_current') %>
-                </li>
-            </ol>
-        </nav>
-
-        <!-- ── Hero ─── -->
-        <div class="rec-hero p-4 p-md-5 mb-5 d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-4 mb-4 mb-md-0">
-                <div class="rec-icon-container">
-                    <i class="bi bi-stars"></i>
-                </div>
-                <div>
-                    <p class="text-uppercase fw-bold m-0"
-                        style="color:var(--brand-gold); letter-spacing:1px; font-size:.85rem;">
-                        <%= t('recommendations.personalize_hint') %>
-                    </p>
-                    <h1 class="display-5 fw-bold m-0" style="color:var(--brand-teal); letter-spacing:-1px;">
-                        <%= t('recommendations.section_title') %>
-                    </h1>
-                    <p class="text-muted mb-0 mt-1" style="font-size:.9rem;">
-                        <% if (hasFavorites) { %>
-                            <%= t('recommendations.based_on') %>
-                                <% favoriteGenres.forEach(function(g, i) { %>
-                                    <span class="genre-pill">
-                                        <a href="/genres/<%= g.genre_name %>" style="color:var(--brand-teal);">
-                                            <%= g.genre_name %>
-                                        </a>
-                                    </span>
-                                    <% }) %>
-                                        <% } else { %>
-                                            <%= t('recommendations.no_favorites_hint') %>
-                                                <% } %>
-                    </p>
-                </div>
-            </div>
-            <div class="d-flex gap-2 flex-wrap">
-                <a href="/user/favorites"
-                    class="btn btn-outline-dark rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center gap-2">
-                    <i class="bi bi-heart"></i>
-                    <%= t('recommendations.my_genres_btn') %>
+    <!-- ── Breadcrumb ────────────────────────────── -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb" style="font-weight:500;">
+            <li class="breadcrumb-item">
+                <a href="/user/profile" class="text-decoration-none text-muted">
+                    <%= t('recommendations.breadcrumb_profile') %>
                 </a>
-                <a href="/user/profile"
-                    class="btn btn-outline-dark rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center gap-2">
-                    <i class="bi bi-arrow-left"></i>
-                    <%= t('recommendations.profile_btn') %>
+            </li>
+            <li class="breadcrumb-item active" style="color:var(--brand-teal);">
+                <%= t('recommendations.breadcrumb_current') %>
+            </li>
+        </ol>
+    </nav>
+
+    <!-- ── Aviso sin favoritos ────────────────────── -->
+    <% if (!hasFavorites) { %>
+        <div class="alert brand-alert mb-5 d-flex align-items-center gap-3 p-4">
+            <i class="bi bi-lightbulb-fill fs-3 text-warning flex-shrink-0" style="filter: drop-shadow(0 0 10px rgba(255,193,7,0.5));"></i>
+            <div>
+                <strong style="color: var(--brand-teal);">
+                    <%= t('recommendations.no_favorites_title') %>
+                </strong> — <span class="text-muted"><%= t('recommendations.no_favorites_hint') %></span>
+                <a href="/user/favorites" class="fw-bold ms-2 px-3 py-1 rounded-pill" style="background: var(--brand-teal); color: white; text-decoration: none;">
+                    <%= t('recommendations.configure_favorites') %> <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
         </div>
+    <% } %>
 
-        <!-- ── Error ─────────────────────────────────── -->
-        <% if (error) { %>
-            <div class="alert alert-danger rounded-4 border-0 shadow-sm mb-4 d-flex align-items-center gap-3">
-                <i class="bi bi-exclamation-circle-fill fs-4"></i>
-                <div>
-                    <%= t('recommendations.error') %>
-                </div>
-            </div>
-            <% } %>
+    <!-- ── Sin nada que mostrar ───────────────────── -->
+    <% if (favoriteGenres.length === 0 && mostSold.length === 0 && bestRated.length === 0) { %>
+        <div class="brand-alert text-center py-5 shadow-sm border-0">
+            <div class="mb-4"><i class="bi bi-bookmark-heart text-muted fs-1"></i></div>
+            <h4 class="fw-bold text-dark">
+                <%= t('recommendations.empty_title') %>
+            </h4>
+            <p class="text-muted mx-auto mb-4" style="max-width:450px;">
+                <%= t('recommendations.empty_description') %>
+            </p>
+            <a href="/user/favorites" class="btn rounded-pill px-5 fw-bold shadow-sm"
+                style="background:var(--brand-teal); color:white;">
+                <%= t('recommendations.my_genres_btn') %>
+            </a>
+        </div>
+    <% } else { %>
 
-                <!-- ── Aviso sin favoritos ────────────────────── -->
-                <% if (!hasFavorites) { %>
-                    <div class="alert alert-info rounded-4 border-0 shadow-sm mb-5 d-flex align-items-center gap-3">
-                        <i class="bi bi-lightbulb-fill fs-4 text-warning flex-shrink-0"></i>
-                        <div>
-                            <strong>
-                                <%= t('recommendations.no_favorites_title') %>
-                            </strong> — <%= t('recommendations.no_favorites_hint') %>
-                                <a href="/user/favorites" class="fw-bold ms-1" style="color:var(--brand-teal);">
-                                    <%= t('recommendations.configure_favorites') %>
-                                </a>
+        <!-- ── Spotlight Hero ────────────────────────── -->
+        <% 
+            let topBook = null;
+            let topBadge = "";
+            let topScore = 0;
+            if (hasFavorites && combined.length > 0) {
+                topBook = combined[0];
+                topBadge = t('recommendations.tab_special') || "Selección Especial";
+                topScore = parseFloat(topBook.score || 0);
+            } else if (mostSold.length > 0) {
+                topBook = mostSold[0];
+                topBadge = t('recommendations.tab_trending') || "Tendencias";
+            } else if (bestRated.length > 0) {
+                topBook = bestRated[0];
+                topBadge = t('recommendations.tab_best_rated') || "Aclamado";
+            }
+        %>
+
+        <% if (topBook) { %>
+            <div class="spotlight-hero">
+                <img src="<%= topBook.cover_url %>" class="spotlight-backdrop" alt="backdrop">
+                <div class="spotlight-overlay"></div>
+                
+                <div class="spotlight-content p-4 p-md-5 d-flex flex-column flex-md-row align-items-center gap-4 gap-md-5">
+                    <div class="flex-shrink-0">
+                        <img src="<%= topBook.cover_url %>" class="spotlight-cover" alt="<%= topBook.title %>">
+                    </div>
+                    <div>
+                        <div class="mb-2 d-flex align-items-center gap-2">
+                            <span class="badge" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); font-size: 0.85rem;"><i class="bi bi-star-fill text-warning me-1"></i> <%= topBadge %></span>
+                            <% if (topScore > 0) { %>
+                                <span class="fw-bold" style="color: var(--brand-gold);"><%= (topScore * 100).toFixed(0) %>% Match</span>
+                            <% } %>
+                        </div>
+                        <h2 class="spotlight-title"><%= topBook.title %></h2>
+                        <p class="spotlight-desc">
+                            <%= topBook.description || topBook.synopsis || "Explora esta recomendación destacada basada en lo que más te gusta. Una lectura imprescindible." %>
+                        </p>
+                        <div class="d-flex gap-3 align-items-center">
+                            <a href="/books/book/<%= topBook.id %>" class="btn btn-spotlight">
+                                <i class="bi bi-play-fill me-1"></i> Ver detalles
+                            </a>
+                            <span class="text-white fs-4 fw-bold ms-3"><%= parseFloat(topBook.price || 0).toFixed(2) %>€</span>
                         </div>
                     </div>
-                    <% } %>
+                </div>
+            </div>
+        <% } %>
 
-                        <!-- ── Sin nada que mostrar ───────────────────── -->
-                        <% if (favoriteGenres.length===0 && mostSold.length===0 && bestRated.length===0) { %>
-                            <div class="empty-state-card text-center py-5 shadow-sm border-0">
-                                <div class="empty-icon-wrap mb-4"><i class="bi bi-bookmark-heart"></i></div>
-                                <h4 class="fw-bold">
-                                    <%= t('recommendations.empty_title') %>
-                                </h4>
-                                <p class="text-muted mx-auto" style="max-width:450px;">
-                                    <%= t('recommendations.empty_description') %>
-                                </p>
-                                <a href="/user/favorites" class="btn btn-lg rounded-pill px-5 mt-3 fw-bold shadow-sm"
-                                    style="background:var(--brand-teal); color:white;">
-                                    <%= t('recommendations.my_genres_btn') %>
-                                </a>
-                            </div>
+        <!-- ── Estanterías (Carruseles) ───────────────── -->
 
-                            <% } else { %>
+        <% if (hasFavorites && combined.length > 0) { %>
+            <div class="mb-5">
+                <h3 class="shelf-title">
+                    <%= t('recommendations.tab_special') %> <span class="text-muted fs-6 ms-2 fw-normal"><%= combined.length %> títulos</span>
+                </h3>
+                <div class="shelf-container">
+                    <% combined.forEach(function(book) { %>
+                        <%- include('../partials/rec_book_card', { book, showScore: true, badgeText: null }) %>
+                    <% }) %>
+                </div>
+            </div>
+        <% } %>
 
-                                <!-- ── Header de sección con pestañas ── -->
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <div class="rec-tabs-container">
-                                        <ul class="nav rec-tabs" id="recTabs">
-                                            <% if (hasFavorites) { %>
-                                                <li class="nav-item">
-                                                    <button class="rec-tab-btn active" data-target="combined">
-                                                        <i class="bi bi-magic me-2"></i>
-                                                        <%= t('recommendations.tab_special') %>
-                                                            <% if (combined.length> 0) { %>
-                                                                <span class="badge-count">
-                                                                    <%= combined.length %>
-                                                                </span>
-                                                                <% } %>
-                                                    </button>
-                                                </li>
-                                                <% } %>
-                                                    <li class="nav-item">
-                                                        <button class="rec-tab-btn <%= !hasFavorites ? 'active' : '' %>"
-                                                            data-target="mostSold">
-                                                            <i class="bi bi-fire me-2"></i>
-                                                            <%= t('recommendations.tab_trending') %>
-                                                                <% if (mostSold.length> 0) { %>
-                                                                    <span class="badge-count">
-                                                                        <%= mostSold.length %>
-                                                                    </span>
-                                                                    <% } %>
-                                                        </button>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <button class="rec-tab-btn" data-target="bestRated">
-                                                            <i class="bi bi-award me-2"></i>
-                                                            <%= t('recommendations.tab_best_rated') %>
-                                                                <% if (bestRated.length> 0) { %>
-                                                                    <span class="badge-count">
-                                                                        <%= bestRated.length %>
-                                                                    </span>
-                                                                    <% } %>
-                                                        </button>
-                                                    </li>
-                                        </ul>
-                                    </div>
-                                    <span class="badge rounded-pill px-3 py-2 fs-6"
-                                        style="background:var(--brand-gold); color:#1e3a8a;">
-                                        <%= (combined.length || 0) + (mostSold.length || 0) + (bestRated.length || 0) %>
-                                            <%= t('recommendations.titles_count_label') || 'Títulos' %>
-                                    </span>
-                                </div>
+        <% if (mostSold.length > 0) { %>
+            <div class="mb-5">
+                <h3 class="shelf-title">
+                    <%= t('recommendations.tab_trending') %> <span class="text-muted fs-6 ms-2 fw-normal"><%= mostSold.length %> títulos</span>
+                </h3>
+                <div class="shelf-container">
+                    <% mostSold.forEach(function(book) { %>
+                        <%- include('../partials/rec_book_card', { book, showScore: false, badgeText: null }) %>
+                    <% }) %>
+                </div>
+            </div>
+        <% } %>
 
-                                <!-- ── Paneles ─────────────────────────────── -->
-                                <div class="tab-content">
-                                    <% if (hasFavorites) { %>
-                                        <div class="rec-panel active" id="panel-combined">
-                                            <% if (combined.length===0) { %>
-                                                <%- include('../partials/rec_empty') %>
-                                                    <% } else { %>
-                                                        <div
-                                                            class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                                                            <% combined.forEach(function(book) { %>
-                                                                <div class="col">
-                                                                    <%- include('../partials/rec_book_card', { book,
-                                                                        showScore: true, badgeText:
-                                                                        t('recommendations.badge_recommended') }) %>
-                                                                </div>
-                                                                <% }) %>
-                                                        </div>
-                                                        <% } %>
-                                        </div>
-                                        <% } %>
+        <% if (bestRated.length > 0) { %>
+            <div class="mb-5">
+                <h3 class="shelf-title">
+                    <%= t('recommendations.tab_best_rated') %> <span class="text-muted fs-6 ms-2 fw-normal"><%= bestRated.length %> títulos</span>
+                </h3>
+                <div class="shelf-container">
+                    <% bestRated.forEach(function(book) { %>
+                        <%- include('../partials/rec_book_card', { book, showScore: false, badgeText: null }) %>
+                    <% }) %>
+                </div>
+            </div>
+        <% } %>
 
-                                            <div class="rec-panel <%= !hasFavorites ? 'active' : '' %>"
-                                                id="panel-mostSold">
-                                                <% if (mostSold.length===0) { %>
-                                                    <%- include('../partials/rec_empty') %>
-                                                        <% } else { %>
-                                                            <div
-                                                                class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                                                                <% mostSold.forEach(function(book) { %>
-                                                                    <div class="col">
-                                                                        <%- include('../partials/rec_book_card', { book,
-                                                                            showScore: false, badgeText:
-                                                                            t('recommendations.badge_trending') }) %>
-                                                                    </div>
-                                                                    <% }) %>
-                                                            </div>
-                                                            <% } %>
-                                            </div>
+    <% } %>
 
-                                            <div class="rec-panel" id="panel-bestRated">
-                                                <% if (bestRated.length===0) { %>
-                                                    <%- include('../partials/rec_empty') %>
-                                                        <% } else { %>
-                                                            <div
-                                                                class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                                                                <% bestRated.forEach(function(book) { %>
-                                                                    <div class="col">
-                                                                        <%- include('../partials/rec_book_card', { book,
-                                                                            showScore: false, badgeText:
-                                                                            t('recommendations.badge_top_rated') }) %>
-                                                                    </div>
-                                                                    <% }) %>
-                                                            </div>
-                                                            <% } %>
-                                            </div>
-                                </div>
-                                <% } %>
-    </div>
+</div>
 
-    <script>
-        document.querySelectorAll('.rec-tab-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const target = this.dataset.target;
-                document.querySelectorAll('.rec-tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.rec-panel').forEach(p => p.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById('panel-' + target).classList.add('active');
-            });
-        });
-    </script>
-
-    <%- include('../layout/footer') %>
+<%- include('../layout/footer') %>

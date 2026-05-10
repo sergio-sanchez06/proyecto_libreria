@@ -46,7 +46,8 @@
     "confirm": "¿Seguro, hermano?",
     "panel": "Panel del Jefe",
     "actions": "Accions",
-    "date": "Calendata"
+    "date": "Calendata",
+    "btn_return": "Volver"
   },
   "author_detail": {
     "biography": "Su vida",

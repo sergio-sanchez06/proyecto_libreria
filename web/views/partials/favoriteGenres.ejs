@@ -1,10 +1,8 @@
-<%- include('../layout/header', { title: user.name + ' - ' + t('favorites.page_title'), bodyClass: 'bg-user-vistas' })
+<%- include('../layout/header', { title: user.name + ' - ' + t('favorites.page_title'), bodyClass: 'bg-user-vistas', extraCSS: 'partials/favoriteGenres' })
     %>
 
     <!-- Cargamos el CSS de recomendaciones para heredar el diseño del Hero e Iconos -->
     <link rel="stylesheet" href="/CSS/recommendations.css">
-    <!-- Mantenemos el CSS específico para el grid de selección -->
-    <link rel="stylesheet" href="/CSS/partials/favoriteGenres.css">
 
     <div class="container py-5">
 
@@ -152,11 +150,11 @@
                                                     <input type="checkbox" class="btn-check" name="genre_ids"
                                                         value="<%= genre.id %>" id="genre_<%= genre.id %>" <%=isFav
                                                         ? 'checked' : '' %>>
-                                                    <label class="genre-check-label bg-white"
+                                                    <label class="genre-check-label"
                                                         for="genre_<%= genre.id %>">
                                                         <i
                                                             class="bi bi-bookmark<%= isFav ? '-fill' : '' %> genre-icon"></i>
-                                                        <span class="genre-name">
+                                                        <span class="genre-name mt-2">
                                                             <%= genre.name %>
                                                         </span>
                                                         <i class="bi bi-check-circle-fill genre-check-mark"></i>
@@ -184,7 +182,7 @@
                                                     <i class="bi bi-trash3 me-1"></i>
                                                     <%= t('favorites.clear_btn') %>
                                                 </button>
-                                                <button type="submit" class="btn rounded-pill px-5 fw-bold shadow-sm"
+                                                <button type="submit" class="btn btn-brand"
                                                     style="background:var(--brand-teal); color:white;">
                                                     <i class="bi bi-cloud-check me-1"></i>
                                                     <%= t('favorites.save_changes_btn') %>

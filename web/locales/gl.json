@@ -46,7 +46,8 @@
     "confirm": "Estás seguro?",
     "panel": "Opciones de administración",
     "actions": "Accións",
-    "date": "Data"
+    "date": "Data",
+    "btn_return": "Volver"
   },
   "author_detail": {
     "biography": "Biografía",
