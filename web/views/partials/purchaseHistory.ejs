@@ -5,10 +5,66 @@
 }) %>
 
     <div class="container my-5 orders-container">
-        <h2 class="mb-4 fw-bold" style="color: var(--brand-teal);">
-            <i class="bi bi-bag-check-fill me-2" style="color: var(--brand-gold);"></i>
-            <%= t('orders.title') %>
-        </h2>
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb" style="font-weight:500;">
+                <li class="breadcrumb-item">
+                    <a href="/user/profile" class="text-decoration-none text-muted">
+                        Perfil
+                    </a>
+                </li>
+                <li class="breadcrumb-item active" style="color:var(--brand-teal);">
+                    <%= t('orders.title') %>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- ── New Integrated Orders Hero ── -->
+        <div class="orders-hero p-4 p-lg-5 mb-5 rounded-5 shadow-lg border-0 position-relative overflow-hidden text-white">
+            <div class="hero-overlay"></div>
+            <div class="row align-items-center position-relative z-1">
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="hero-icon-box bg-white text-teal rounded-4 shadow-sm d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 2.2rem; flex-shrink: 0;">
+                            <i class="bi bi-box-seam-fill"></i>
+                        </div>
+                        <div>
+                            <h1 class="display-5 fw-bold mb-0">Mis Pedidos</h1>
+                            <p class="opacity-75 mb-0">Gestiona tus compras y envíos</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-pills d-flex gap-3 mt-4">
+                        <div class="stat-pill px-4 py-2 rounded-pill bg-glass-white text-dark shadow-sm text-center">
+                            <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">Pedidos Totales</span>
+                            <span class="fw-bold fs-4 d-block" style="line-height: 1;"><%= orders.length %></span>
+                        </div>
+                        <% 
+                            let totalSpent = orders.reduce((acc, o) => acc + Number(o.total), 0).toFixed(2);
+                        %>
+                        <div class="stat-pill px-4 py-2 rounded-pill bg-glass-white text-dark shadow-sm text-center">
+                            <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">Inversión en Lectura</span>
+                            <span class="fw-bold fs-4 d-block" style="line-height: 1;"><%= totalSpent %>€</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-5">
+                    <div class="d-flex flex-column gap-3">
+                        <div class="p-3 rounded-4 bg-glass-white text-dark border shadow-sm">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-teal-soft p-2 rounded-circle">
+                                    <i class="bi bi-shield-check text-teal"></i>
+                                </div>
+                                <div class="small fw-600">Todas tus compras están protegidas por nuestro sistema de garantía.</div>
+                            </div>
+                        </div>
+                        <a href="/user/profile" class="btn btn-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-arrow-left"></i> Volver al Perfil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <% if (orders && orders.length> 0) { %>
             <% orders.forEach(order=> { %>
@@ -46,70 +102,50 @@
                                     <%= Number(order.total).toFixed(2) %>€
                                 </p>
                         </div>
-                    </div>
-
-                    <div class="card-body p-4 pt-0">
-                        <div class="shipping-box mb-4 d-flex align-items-start">
-                            <i class="bi bi-geo-alt-fill fs-4 me-3" style="color: var(--brand-teal);"></i>
-                            <div>
-                                <h6 class="fw-bold mb-1 small text-uppercase text-muted">
-                                    <%= t('orders.shipping_details') %>
-                                </h6>
-                                <p class="mb-0 fw-bold">
-                                    <%= order.shipping_address || t('orders.no_address') %>
-                                </p>
-                                <p class="mb-0 small text-muted">
-                                    <%= user.name %> • <%= user.email %>
-                                </p>
+                    <div class="card-body p-0">
+                        <div class="row g-0">
+                            <!-- Left Side: Order Meta & Shipping -->
+                            <div class="col-lg-4 border-end bg-light-soft p-4">
+                                <div class="mb-4">
+                                    <h6 class="fw-bold mb-2 text-uppercase small text-muted" style="letter-spacing: 1px;">Envío a:</h6>
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-geo-alt text-teal"></i>
+                                        <p class="mb-0 small fw-bold text-dark"><%= order.shipping_address || 'Dirección no especificada' %></p>
+                                    </div>
+                                </div>
+                                <div class="mb-0">
+                                    <h6 class="fw-bold mb-2 text-uppercase small text-muted" style="letter-spacing: 1px;">Estado del Pago:</h6>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-check-circle-fill text-success small"></i>
+                                        <span class="small fw-bold text-dark">Confirmado</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-sm align-middle mb-0">
-                                <thead class="table-light">
-                                    <tr class="small text-uppercase">
-                                        <th class="py-2 px-3 border-0" style="border-radius: 8px 0 0 8px;">
-                                            <%= t('orders.table_book') %>
-                                        </th>
-                                        <th class="text-center py-2 border-0">
-                                            <%= t('orders.table_qty') %>
-                                        </th>
-                                        <th class="text-end py-2 border-0">
-                                            <%= t('orders.table_price') %>
-                                        </th>
-                                        <th class="text-end py-2 px-3 border-0" style="border-radius: 0 8px 8px 0;">
-                                            <%= t('orders.table_subtotal') %>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% if (order.items && order.items.length> 0) { %>
-                                        <% order.items.forEach(item=> { %>
-                                            <tr>
-                                                <td class="py-3 px-3">
-                                                    <span class="fw-semibold text-dark">
-                                                        <%= item.book ? item.book.title : 'No disponible' %>
-                                                    </span>
-                                                </td>
-                                                <td class="text-center text-muted">x<%= item.quantity %>
-                                                </td>
-                                                <td class="text-end">
-                                                    <%= Number(item.price_at_time).toFixed(2) %>€
-                                                </td>
-                                                <td class="text-end fw-bold px-3" style="color: var(--brand-teal);">
-                                                    <%= (item.quantity * Number(item.price_at_time)).toFixed(2) %>€
-                                                </td>
-                                            </tr>
-                                            <% }) %>
-                                                <% } else { %>
-                                                    <tr>
-                                                        <td colspan="4" class="text-center text-muted fst-italic py-4">
-                                                            <%= t('orders.loading_details') %>
-                                                        </td>
-                                                    </tr>
-                                                    <% } %>
-                                </tbody>
-                            </table>
+                            <!-- Right Side: Items List -->
+                            <div class="col-lg-8 p-4">
+                                <h6 class="fw-bold mb-3 text-uppercase small text-muted" style="letter-spacing: 1px;">Libros en este pedido</h6>
+                                <% if (order.items && order.items.length > 0) { %>
+                                    <div class="order-items-compact">
+                                        <% order.items.forEach(item => { %>
+                                            <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-light last-child-no-border">
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <div class="item-thumbnail rounded shadow-sm overflow-hidden" style="width: 45px; height: 65px; flex-shrink: 0; background: #eee;">
+                                                        <img src="<%= item.book_cover || '/covers/cover_default.jpg' %>" alt="" class="w-100 h-100 object-fit-cover">
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-bold text-dark small mb-0"><%= item.book_title %></div>
+                                                        <div class="text-muted" style="font-size: 0.75rem;">Cantidad: <%= item.quantity %> • <span class="fw-bold text-teal"><%= Number(item.price_at_time || item.price).toFixed(2) %>€</span></div>
+                                                    </div>
+                                                </div>
+                                                <div class="fw-bold text-dark small text-end">
+                                                    <%= (Number(item.price_at_time || item.price) * item.quantity).toFixed(2) %>€
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                <% } %>
+                            </div>
                         </div>
                     </div>
                 </div>

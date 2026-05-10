@@ -4,87 +4,183 @@
     extraCSS: 'partials/myReviews'
 }) %>
 
-    <main>
-        <div class="container mt-5 mb-5">
-            <div class="row mb-4">
-                <div class="col-12 text-center">
-                    <div class="display-6 fw-bold text-primary mb-2">
-                        <i class="bi bi-person-circle"></i>
-                        <%= user.name %>
+    <main class="py-5">
+        <div class="container profile-reviews-container">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb" style="font-weight:500;">
+                    <li class="breadcrumb-item">
+                        <a href="/user/profile" class="text-decoration-none text-muted">
+                            Perfil
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" style="color:var(--brand-teal);">
+                        <%= t('profile.activity_title') || 'Mis Reseñas' %>
+                    </li>
+                </ol>
+            </nav>
+
+            <div class="reviews-hero p-4 p-lg-5 mb-5 rounded-5 shadow-lg border-0 position-relative overflow-hidden text-white">
+                <div class="hero-overlay"></div>
+                <div class="row align-items-center position-relative z-1">
+                    <div class="col-lg-7 mb-4 mb-lg-0">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="hero-icon-box bg-white text-teal rounded-4 shadow-sm d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 2rem;">
+                                <i class="bi bi-journal-check"></i>
+                            </div>
+                            <div>
+                                <h1 class="display-5 fw-bold mb-0">Mi Diario Literario</h1>
+                                <p class="opacity-75 mb-0"><%= user.name %> • <%= user.email %></p>
+                            </div>
+                        </div>
+                        
+                        <div class="reviewer-rank-container mt-4 p-3 rounded-4 bg-glass-white text-dark">
+                            <% 
+                                let rank = "Principiante";
+                                let nextRank = "Lector Activo";
+                                let progress = (reviews.length / 5) * 100;
+                                let needed = 5 - reviews.length;
+
+                                if (reviews.length >= 5 && reviews.length < 10) {
+                                    rank = "Lector Activo";
+                                    nextRank = "Crítico Experto";
+                                    progress = ((reviews.length - 5) / 5) * 100;
+                                    needed = 10 - reviews.length;
+                                } else if (reviews.length >= 10) {
+                                    rank = "Crítico Experto";
+                                    nextRank = "Maestro Bibliófilo";
+                                    progress = 100;
+                                    needed = 0;
+                                }
+                            %>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge rounded-pill bg-teal text-white px-3 fw-bold"><%= rank %></span>
+                                <span class="small fw-bold text-muted">
+                                    <% if (needed > 0) { %> 
+                                        ¡Solo <%= needed %> reseñas para <%= nextRank %>! 
+                                    <% } else { %>
+                                        ¡Eres un <%= rank %>!
+                                    <% } %>
+                                </span>
+                            </div>
+                            <div class="progress rounded-pill" style="height: 12px; background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.05);">
+                                <div class="progress-bar bg-teal progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" style="width: <%= progress %>%"></div>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-muted">
-                        <%= user.email %>
-                    </p>
-                    <hr class="w-25 mx-auto opacity-25">
+                    
+                    <div class="col-lg-5">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="hero-stat-card p-3 rounded-4 bg-glass-white text-dark text-center h-100 border shadow-sm">
+                                    <div class="fs-1 fw-bold text-teal"><%= reviews.length %></div>
+                                    <div class="small text-muted fw-bold text-uppercase" style="letter-spacing: 1px;">Reseñas</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <% 
+                                    let avgRating = 0;
+                                    if (reviews.length > 0) {
+                                        const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+                                        avgRating = (sum / reviews.length).toFixed(1);
+                                    }
+                                %>
+                                <div class="hero-stat-card p-3 rounded-4 bg-glass-white text-dark text-center h-100 border shadow-sm">
+                                    <div class="fs-1 fw-bold text-gold"><%= avgRating %></div>
+                                    <div class="small text-muted fw-bold text-uppercase" style="letter-spacing: 1px;">Nota Media</div>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <a href="/user/profile" class="btn btn-white rounded-pill px-4 py-2 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2">
+                                    <i class="bi bi-arrow-left"></i> Volver al Perfil
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    <h3 class="fw-bold mb-4">
-                        <%= t('profile.activity_title') || 'Tu Actividad de Reseñas' %>
-                            <span class="badge bg-success rounded-pill ms-2 fs-6">
-                                <%= reviews.length %>
-                            </span>
-                    </h3>
+                <div class="col-lg-12">
+                    <div class="d-flex justify-content-between align-items-end mb-4">
+                        <h3 class="fw-bold mb-0">
+                            Tu Historial Literario
+                        </h3>
+                        <div class="text-muted small">
+                            Ordenado por fecha más reciente
+                        </div>
+                    </div>
 
                     <% if (reviews && reviews.length> 0) { %>
-                        <div class="reviews-grid">
+                        <div class="reviews-timeline">
                             <% reviews.forEach(review=> { %>
-                                <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden">
+                                <div class="card border-0 shadow-sm mb-5 rounded-4 overflow-hidden review-modern-card">
                                     <div class="row g-0">
-                                        <div
-                                            class="col-md-2 bg-light d-flex align-items-center justify-content-center p-3">
-                                            <img src="<%= review.book_cover || '/covers/cover_default.jpg' %>"
-                                                alt="<%= review.book_title %>" class="img-fluid rounded-2 shadow-sm"
-                                                style="max-height: 120px; object-fit: cover;">
+                                        <div class="col-md-3 col-lg-2 bg-light-soft d-flex align-items-center justify-content-center p-4">
+                                            <div class="book-cover-wrapper">
+                                                <img src="<%= review.book_cover || '/covers/cover_default.jpg' %>"
+                                                    alt="<%= review.book_title %>" class="img-fluid rounded-3 shadow"
+                                                    style="max-height: 180px; object-fit: cover;">
+                                                <% if (review.rating >= 5) { %>
+                                                    <span class="top-pick-badge">
+                                                        <i class="bi bi-heart-fill"></i>
+                                                    </span>
+                                                <% } %>
+                                            </div>
                                         </div>
 
-                                        <div class="col-md-10">
-                                            <div class="card-body p-4">
-                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="col-md-9 col-lg-10">
+                                            <div class="card-body p-4 p-lg-5">
+                                                <div class="d-flex justify-content-between align-items-start mb-3">
                                                     <div>
-                                                        <h5 class="fw-bold mb-0">
+                                                        <h4 class="fw-bold mb-1">
                                                             <a href="/books/book/<%= review.book_id %>"
-                                                                class="text-decoration-none text-dark hover-primary">
+                                                                class="text-decoration-none text-dark hover-teal">
                                                                 <%= review.book_title %>
                                                             </a>
-                                                        </h5>
-                                                        <div class="text-warning mt-1">
+                                                        </h4>
+                                                        <div class="review-stars-display mb-2">
                                                             <% for(let i=0; i<5; i++) { %>
-                                                                <i
-                                                                    class="bi bi-star-fill <%= i < review.rating ? '' : 'text-muted opacity-25' %>"></i>
-                                                                <% } %>
+                                                                <i class="bi bi-star-fill <%= i < review.rating ? 'text-gold' : 'text-muted-light' %>"></i>
+                                                            <% } %>
+                                                            <span class="ms-2 fw-bold text-muted small"><%= review.rating %>/5</span>
                                                         </div>
                                                     </div>
-                                                    <small class="text-muted">
-                                                        <%= new Date(review.created_at).toLocaleDateString() %>
-                                                    </small>
+                                                    <div class="text-end">
+                                                        <div class="badge rounded-pill bg-light text-dark border mb-1">
+                                                            <%= new Date(review.created_at).toLocaleDateString() %>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
-                                                <p class="card-text text-secondary fst-italic">"<%= review.comment %>"
-                                                </p>
+                                                <div class="review-comment-box p-3 rounded-4 mb-4">
+                                                    <i class="bi bi-quote fs-2 text-teal opacity-25 d-block mb-n3"></i>
+                                                    <p class="card-text text-secondary mb-0 ps-4">
+                                                        <%= review.comment %>
+                                                    </p>
+                                                </div>
 
-                                                <div class="d-flex gap-2 mt-3">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="d-flex gap-2">
+                                                        <button type="button"
+                                                            class="btn btn-teal-soft btn-sm rounded-pill px-3 edit-btn fw-600"
+                                                            data-id="<%= review.id %>" data-bookid="<%= review.book_id %>"
+                                                            data-rating="<%= review.rating %>"
+                                                            data-comment="<%= review.comment %>">
+                                                            <i class="bi bi-pencil-square me-1"></i>
+                                                            Editar
+                                                        </button>
+                                                        <button type="button"
+                                                            class="btn btn-danger-soft btn-sm rounded-pill px-3 fw-600"
+                                                            onclick="openDeleteModal('<%= review.id %>', '<%= review.book_id %>')">
+                                                            <i class="bi bi-trash3 me-1"></i>
+                                                            Eliminar
+                                                        </button>
+                                                    </div>
                                                     <a href="/books/book/<%= review.book_id %>"
-                                                        class="btn btn-outline-primary btn-sm rounded-pill px-3">
-                                                        <i class="bi bi-eye"></i>
-                                                        <%= t('common.view') || 'Ver' %>
+                                                        class="btn btn-link text-teal text-decoration-none fw-bold p-0">
+                                                        Ver libro <i class="bi bi-arrow-right small"></i>
                                                     </a>
-                                                    <button type="button"
-                                                        class="btn btn-outline-info btn-sm rounded-pill px-3 edit-btn"
-                                                        data-id="<%= review.id %>" data-bookid="<%= review.book_id %>"
-                                                        data-rating="<%= review.rating %>"
-                                                        data-comment="<%= review.comment %>">
-                                                        <i class="bi bi-pencil"></i>
-                                                        <%= t('common.edit') || 'Editar' %>
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-outline-danger btn-sm rounded-pill px-3"
-                                                        onclick="openDeleteModal('<%= review.id %>', '<%= review.book_id %>')">
-                                                        <i class="bi bi-trash"></i>
-                                                        <%= t('common.delete') || 'Borrar' %>
-                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -93,11 +189,17 @@
                                 <% }) %>
                         </div>
                         <% } else { %>
-                            <div class="text-center py-5 bg-white rounded-4 shadow-sm border border-dashed">
-                                <i class="bi bi-chat-square-dots text-muted display-1"></i>
-                                <p class="fs-5 text-muted mt-3">Parece que aún no has compartido tu opinión sobre ningún
-                                    libro.</p>
-                                <a href="/books" class="btn btn-primary rounded-pill px-4 mt-2">Explorar Libros</a>
+                            <div class="text-center py-5 bg-white rounded-5 shadow-sm border border-dashed my-5 p-5">
+                                <div class="empty-reviews-icon mb-4">
+                                    <i class="bi bi-journal-richtext text-muted opacity-25" style="font-size: 5rem;"></i>
+                                </div>
+                                <h4 class="fw-bold text-dark">Tu diario literario está vacío</h4>
+                                <p class="text-muted mx-auto mb-4" style="max-width: 400px;">
+                                    ¡Comparte tus impresiones sobre los libros que has leído y ayuda a otros lectores a encontrar su próxima aventura!
+                                </p>
+                                <a href="/books" class="btn btn-teal rounded-pill px-5 py-3 fw-bold shadow-sm">
+                                    Explorar Libros para Reseñar
+                                </a>
                             </div>
                             <% } %>
                 </div>

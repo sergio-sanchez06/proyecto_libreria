@@ -199,7 +199,7 @@
                                                         <span
                                                             class="status-select d-flex align-items-center gap-1 text-muted"
                                                             style="font-size:.78rem; padding:5px 10px; background:#f1f5f9;
-                                                   border-radius:8px; cursor:not-allowed;"
+                                                            border-radius:8px; cursor:not-allowed;"
                                                             title="No se puede cambiar el estado de un pedido cancelado">
                                                             <i class="bi bi-lock-fill" style="font-size:.7rem;"></i>
                                                             Cancelado
@@ -355,7 +355,7 @@
 
 
     <!-- ══════════════════════════════════════════════════
-     MODALS DE DETALLE (uno por pedido)
+    MODALS DE DETALLE (uno por pedido)
 ══════════════════════════════════════════════════ -->
     <% orders.forEach(function(order) { const modalDate=order.created_at ? new
         Date(order.created_at).toLocaleString(userLocale) : '---' ; const items=order.items || []; const

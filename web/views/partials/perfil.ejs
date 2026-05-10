@@ -78,7 +78,7 @@
                     <div class="row g-3 mb-5">
                         <div class="col-sm-6">
                             <a href="/user/myOrders"
-                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white">
+                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white h-100">
                                 <i class="bi bi-bag-check fs-1 d-block mb-2" style="color: var(--brand-teal);"></i>
                                 <span class="fw-bold text-dark">
                                     <%= t('profile.view_orders') || 'Mis Pedidos' %>
@@ -87,7 +87,7 @@
                         </div>
                         <div class="col-sm-6">
                             <a href="/user/myReviews"
-                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white">
+                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white h-100">
                                 <i class="bi bi-star-half fs-1 d-block mb-2 text-warning"></i>
                                 <span class="fw-bold text-dark">
                                     <%= t('profile.view_reviews') || 'Mis Reseñas' %>
@@ -96,14 +96,14 @@
                         </div>
                         <div class="col-sm-6">
                             <a href="/user/favorites"
-                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white">
+                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white h-100">
                                 <i class="bi bi-heart-fill fs-1 d-block mb-2" style="color:#e11d48;"></i>
                                 <span class="fw-bold text-dark">Mis Géneros Favoritos</span>
                             </a>
                         </div>
                         <div class="col-sm-6">
                             <a href="/user/recommendations"
-                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white">
+                                class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white h-100">
                                 <i class="bi bi-stars fs-1 d-block mb-2" style="color:var(--brand-teal);"></i>
                                 <span class="fw-bold text-dark">Recomendados para mí</span>
                             </a>
@@ -111,8 +111,8 @@
                         <% if (provider=="password" ) { %>
                             <div class="col-sm-6">
                                 <a href="/user/changePass"
-                                    class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white">
-                                    <i class="bi bi-star-half fs-1 d-block mb-2 text-warning"></i>
+                                    class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white h-100">
+                                    <i class="bi bi-shield-lock fs-1 d-block mb-2 text-primary"></i>
                                     <span class="fw-bold text-dark">
                                         <%= 'Cambiar Contraseña' %>
                                     </span>

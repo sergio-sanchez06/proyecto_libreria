@@ -32,6 +32,7 @@ body::before {
     color: white;
     padding: 3rem 2rem 5rem 2rem;
     position: relative;
+    border-bottom: 4px solid var(--brand-gold);
 }
 
 .profile-avatar-wrapper {
@@ -99,11 +100,45 @@ body::before {
 }
 
 .action-button {
-    transition: all 0.3s ease;
-    border-radius: 16px;
-    font-weight: 600;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: 20px;
+    font-weight: 700;
+    border: 1px solid rgba(0,0,0,0.05) !important;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.action-button::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+    z-index: -1;
+    transition: opacity 0.3s;
 }
 
 .action-button:hover {
-    transform: translateY(-2px);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08) !important;
+    border-color: var(--brand-teal) !important;
+}
+
+.action-button i {
+    transition: transform 0.4s ease;
+}
+
+.action-button:hover i {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.btn-outline-danger.rounded-pill {
+    border-width: 2px;
+    transition: all 0.3s;
+}
+
+.btn-outline-danger.rounded-pill:hover {
+    background-color: #dc3545;
+    color: white;
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
 }

@@ -1,0 +1,43 @@
+.profile-pass-container {
+    max-width: 500px;
+}
+
+.brand-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.brand-card-header {
+    background: linear-gradient(135deg, var(--brand-teal), #1e3a8a);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+    border-bottom: 4px solid var(--brand-gold);
+}
+
+.form-control {
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 4px rgba(44, 62, 80, 0.1);
+    border-color: var(--brand-teal);
+}
+
+.btn-brand-teal {
+    background-color: var(--brand-teal);
+    transition: all 0.3s;
+}
+
+.btn-brand-teal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(44, 62, 80, 0.25);
+    filter: brightness(1.1);
+}

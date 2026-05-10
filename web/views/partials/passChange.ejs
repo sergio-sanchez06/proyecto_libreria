@@ -1,71 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
+<%- include('../layout/header', { 
+    title: t('profile.change_pass') || 'Cambiar Contraseña', 
+    bodyClass: 'bg-user-vistas',
+    extraCSS: 'partials/passChange'
+}) %>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/login.css">
-    <title>Cambiar Contraseña</title>
-</head>
+    <main class="py-5">
+        <div class="container profile-pass-container">
 
-<body>
+            <!-- ── Breadcrumb ────────────────── -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb" style="font-weight:500;">
+                    <li class="breadcrumb-item">
+                        <a href="/user/profile" class="text-decoration-none text-muted">
+                            Perfil
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" style="color:var(--brand-teal);">
+                        Cambiar Contraseña
+                    </li>
+                </ol>
+            </nav>
 
-    <%- include('../layout/header') %>
-
-        <main class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-md-6 col-lg-4">
-                    <div class="card shadow-sm">
-                        <div class="card-body p-5">
-                            <h1 class="card-title text-center mb-4">Cambiar Contraseña</h1>
-
-                            <form id="passwordChangerForm" action="/user/changePass" method="POST">
-                                <input type="hidden" name="idToken" id="idToken">
-
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" name="email" id="email" class="form-control" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Contraseña Actual</label>
-                                    <input type="password" name="password" id="password" class="form-control" required>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="newPassword" class="form-label">Nueva Contraseña</label>
-                                    <input type="password" name="newPassword" id="newPassword" class="form-control"
-                                        required>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary w-100">Cambiar</button>
-                            </form>
-                        </div>
+            <div class="brand-card shadow-sm border-0">
+                <div class="brand-card-header">
+                    <div class="bg-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3"
+                        style="width: 80px; height: 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <i class="bi bi-shield-lock-fill text-primary" style="font-size: 2.5rem;"></i>
                     </div>
+                    <h2 class="mb-0 fw-bold">Cambiar Contraseña</h2>
+                    <p class="text-white-50 mt-2 mb-0">Protege tu cuenta con una contraseña segura</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form id="passwordChangerForm" action="/user/changePass" method="POST">
+                        <input type="hidden" name="idToken" id="idToken">
+
+                        <div class="mb-4">
+                            <label for="email" class="form-label fw-bold">
+                                <i class="bi bi-envelope me-1"></i> Email
+                            </label>
+                            <input type="email" name="email" id="email" class="form-control" 
+                                value="<%= user.email %>" readonly 
+                                style="background-color: #f1f5f9; cursor: not-allowed;">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-bold">
+                                <i class="bi bi-key me-1"></i> Contraseña Actual
+                            </label>
+                            <input type="password" name="password" id="password" class="form-control" 
+                                placeholder="Tu contraseña actual" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="newPassword" class="form-label fw-bold">
+                                <i class="bi bi-shield-plus me-1"></i> Nueva Contraseña
+                            </label>
+                            <input type="password" name="newPassword" id="newPassword" class="form-control" 
+                                placeholder="Mínimo 6 caracteres" required>
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-3 mt-5 pt-4 border-top">
+                            <a href="/user/profile"
+                                class="btn btn-light px-4 py-2 rounded-pill fw-bold text-secondary border shadow-sm">
+                                Cancelar
+                            </a>
+                            <button type="submit"
+                                class="btn btn-brand-teal px-5 py-2 fw-bold rounded-pill text-white shadow-sm d-flex align-items-center gap-2">
+                                <i class="bi bi-check2-circle"></i>
+                                Cambiar
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </main>
+        </div>
+    </main>
 
-        <%- include('../layout/footer') %>
+    <%- include('../layout/footer') %>
 
-            <script type="module">
-                import { changePassword } from "/js/auth.mjs";
+    <script type="module">
+        import { changePassword } from "/js/auth.mjs";
 
-                document.getElementById("passwordChangerForm").addEventListener("submit", async (e) => {
-                    e.preventDefault();
+        document.getElementById("passwordChangerForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
 
-                    const email = document.getElementById("email").value;
-                    const password = document.getElementById("password").value;
-                    const newPassword = document.getElementById("newPassword").value;
-                    console.log("asd")
-                    try {
-                        await changePassword(email, password, newPassword);
-                        e.target.submit();
-                    } catch (error) {
-                        alert(error.message || "Error en autenticación");
-                    }
-                });
-            </script>
-</body>
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const newPassword = document.getElementById("newPassword").value;
+            
+            try {
+                const btn = e.target.querySelector('button[type="submit"]');
+                const originalContent = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
 
-</html>
+                await changePassword(email, password, newPassword);
+                e.target.submit();
+            } catch (error) {
+                alert(error.message || "Error al cambiar la contraseña");
+                const btn = e.target.querySelector('button[type="submit"]');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-check2-circle"></i> Cambiar';
+            }
+        });
+    </script>
