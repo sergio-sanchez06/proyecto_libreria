@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.post("/add", CartController.addToCart);
 router.get("/view", CartController.viewCart);
-router.post("/checkout", protectMiddleware.protect, CartController.checkout);
+router.post("/checkout", protectMiddleware.protect, protectMiddleware.requireFreshToken, CartController.checkout);
 
 export default router;

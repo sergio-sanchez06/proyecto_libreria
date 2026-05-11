@@ -57,6 +57,28 @@ router.post("/login-social", authController.socialLogin);
 
 router.post("/auth/refresh-token", authController.refreshToken);
 
+// Página de renovación de token — se muestra cuando protect detecta token expirado.
+// El cliente renueva el token via Firebase, lo sincroniza con el servidor,
+// y redirige automáticamente a la URL original (returnTo).
+router.get("/refreshing", (req, res) => {
+  // Si no hay sesión activa, no tiene sentido renovar — al login
+  if (!req.session.user) {
+    return res.redirect("/login");
+  }
+
+  const returnTo = req.query.returnTo || "/";
+
+  // Validación básica de returnTo para evitar open redirects
+  // Solo permitimos rutas relativas (que empiecen por /)
+  const safeReturnTo = returnTo.startsWith("/") ? returnTo : "/";
+
+  res.render("errors/refreshing", {
+    title: "Actualizando sesión | Librería",
+    returnTo: safeReturnTo,
+    user: req.session.user || null,
+  });
+});
+
 router.get("/aviso-legal", homeController.legalNotice);
 router.get("/cookies", homeController.cookiesPolicy);
 router.get("/privacidad", homeController.privacyPolicy);

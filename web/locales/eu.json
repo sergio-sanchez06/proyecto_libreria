@@ -5,7 +5,8 @@
     "authors": "Idazleak",
     "publishers": "Argitaletxeak",
     "genres": "Generoak",
-    "admin": "Administrazioa"
+    "admin": "Administrazioa",
+    "cart": "Zure saskia"
   },
   "auth": {
     "login": "Saioa hasi",
@@ -69,7 +70,8 @@
     "no_stock": "Stockik gabe",
     "filters": "Iragazi honen arabera",
     "all_genres": "Genero guztiak",
-    "search_placeholder": "Liburuaren izena"
+    "search_placeholder": "Liburuaren izena",
+    "view_filters": "Iragazkiak Erakutsi"
   },
   "index": {
     "welcome_msg": "Ezagutu momentuko liburu eta idazle onenak",
@@ -175,7 +177,9 @@
     "mode_soft_description": "Zure kontua desaktibatzean, zure datu pertsonalak eta lehentasunak gordeko dira eta zure kontua etorkizunean berriro aktibatu ahal izango duzu.",
     "confirm_soft": "Berretsi eta Desaktibatu",
     "confirm_hard": "Berretsi eta Ezabatu",
-    "delete_intro": "Zer ekintza nahi duzu egin zure kontuarekin?"
+    "delete_intro": "Zer ekintza nahi duzu egin zure kontuarekin?",
+    "change_pass": "Aldatu pasahitza",
+    "delete_title": "Zer egin nahi duzu zure kontuarekin?"
   },
   "cart": {
     "title": "Zure saskia",

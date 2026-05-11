@@ -5,7 +5,8 @@
     "authors": "Autores",
     "publishers": "Editoriais",
     "genres": "Xéneros",
-    "admin": "Administración"
+    "admin": "Administración",
+    "cart": "O teu carriño"
   },
   "auth": {
     "login": "Iniciar Sesión",
@@ -69,7 +70,9 @@
     "no_stock": "Sen stock",
     "filters": "Filtrar por",
     "all_genres": "Todos os xéneros",
-    "search_placeholder": "Nome do libro"
+    "search_placeholder": "Nome do libro",
+    "view_filters": "Mostrar Filtros",
+    "hide_filters": "Agochar Filtros"
   },
   "index": {
     "welcome_msg": "Descobre os mellores libros e autores do momento",
@@ -175,7 +178,9 @@
     "mode_soft_description": "Ao desactivar a túa conta temporalmente, os teus datos persoais e preferencias serán gardados e poderás solicitar a reactivación da túa conta no futuro.",
     "confirm_soft": "Confirmar e Desactivar",
     "confirm_hard": "Confirmar e Borrar Permanentemente",
-    "delete_intro": "Que acción desexa realizar coa súa conta?"
+    "delete_intro": "Que acción desexa realizar coa súa conta?",
+    "change_pass": "Cambia o teu contrasinal",
+    "delete_title": "Que queres facer co teu compte?"
   },
   "cart": {
     "title": "O teu carriño",

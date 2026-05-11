@@ -118,8 +118,9 @@ async function getAuthorById(req, res) {
 // --- FUNCIONES DE ADMINISTRADOR (Escritura) ---
 
 async function getCreateAuthor(req, res) {
-  if (!req.session.user || req.session.user.role !== "ADMIN")
-    res.status(403).send("No tienes permiso para crear autores");
+  if (!req.session.user || req.session.user.role !== "ADMIN") {
+    return res.status(403).send("No tienes permiso para crear autores");
+  }
 
   // PERSISTENCIA: Recuperamos datos de un intento fallido anterior
   const formData = req.session.formData || null;

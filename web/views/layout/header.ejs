@@ -251,7 +251,7 @@
                         // onIdTokenChanged ya se dispara cuando Firebase lo renueva internamente,
                         // pero true garantiza que siempre enviamos un token válido y fresco.
 
-                        const newToken = await firebaseUser.getIdToken(false);
+                        const newToken = await firebaseUser.getIdToken(true);
 
                         // Evita reenviar el mismo token en navegaciones dentro de la misma pestaña
                         // sessionStorage se limpia al cerrar la pestaña — comportamiento correcto
@@ -272,6 +272,7 @@
                         if (response.ok) {
                             sessionStorage.setItem("last_synced_token", newToken);
                             console.log("Token sincronizado con éxito.");
+                            return;
                         }
 
                         if (data.forceLogout) {
@@ -288,9 +289,8 @@
                 });
 
                 // Cierra sesión en Firebase al hacer logout para limpiar el estado del cliente
-                const logoutLink = document.querySelector('a[href="/logout"]');
-                if (logoutLink) {
-                    logoutLink.addEventListener("click", async (e) => {
+                document.querySelectorAll('a[href="/logout"]').forEach(link => {
+                    link.addEventListener("click", async (e) => {
                         e.preventDefault();
                         try {
                             await signOut(auth);
@@ -302,7 +302,7 @@
                             window.location.href = "/logout";
                         }
                     });
-                }
+                })
             </script>
         </div>
     </header>

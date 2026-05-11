@@ -17,18 +17,18 @@ const apiLimiter = rateLimit({
     sendCommand: (...args) => redisClient.sendCommand(args.flat()),
     prefix: "rl:",
   }),
-
-  windowMs: 1 * 60 * 1000,
+  skipFailedRequests: false, // Contar también las peticiones fallidas en el límite
+  windowMs: 15 * 60 * 1000,
   max: (req) => {
     if (req.session?.user?.role === "ADMIN") return 1000;
     if (req.session?.user) return 500; // Usuario logueado (Cliente)
-    return 200; // Usuario anónimo (Navegando por la tienda)
+    return 100; // Usuario anónimo (Navegando por la tienda)
   },
   standardHeaders: true,
   legacyHeaders: false,
-  validate: { 
+  validate: {
     xForwardedForHeader: false,
-    keyGeneratorIpFallback: false 
+    keyGeneratorIpFallback: false,
   },
   // keyGenerator explícito: garantiza que la IP extraída sea la real del cliente
   // cuando hay un proxy inverso (nginx, Caddy, etc.) delante del servidor Express.
@@ -52,7 +52,12 @@ const apiLimiter = rateLimit({
 
     // 2. Rutas de sistema que NO deben contar para el límite
     // Incluimos /auth/refresh-token para que Firebase no de error 401/429
-    const systemRoutes = ["/auth/refresh-token", "/language", "/favicon.ico"];
+    const systemRoutes = [
+      "/auth/refresh-token",
+      "/language",
+      "/favicon.ico",
+      "/logout",
+    ];
     if (systemRoutes.includes(req.path)) return true;
 
     // En desarrollo, las IPs de loopback no se limitan
@@ -143,7 +148,9 @@ const apiLimiter = rateLimit({
  */
 
 const AI_BOT_PATTERN =
-  /gptbot|chatgpt-user|claudebot|perplexitybot|applebot-extended|ccbot|imagesiftbot|anthropic-ai|cohere-ai|omgili|diffbot|semrushbot|ahrefsbot|bytespider|baiduspider|oai-searchbot|meta-externalagent|amazonbot|petalbot|duckassistbot|ia_archiver|python-requests|python-httpx|go-http-client|wget|libwww-perl/i;
+  /gptbot|chatgpt-user|claudebot|perplexitybot|applebot-extended|ccbot|imagesiftbot|anthropic-ai|cohere-ai|omgili|diffbot|bytespider|baiduspider|oai-searchbot|meta-externalagent|amazonbot|petalbot|duckassistbot|ia_archiver|python-requests|python-httpx|go-http-client|wget|libwww-perl/i;
+
+const SEARCH_ENGINE_BOTS = /googlebot|bingbot|duckduckbot|slurp/i;
 
 function filterIA(req, res, next) {
   // Dejar pasar robots.txt siempre: los bots que respetan Disallow no deben ser bloqueados
@@ -151,7 +158,21 @@ function filterIA(req, res, next) {
   if (req.path === "/robots.txt") return next();
 
   const ua = req.useragent;
-  if (!ua) return next();
+
+  if (!ua || !ua.source) {
+    console.warn(
+      `[SECURITY ALERT] Petición sin User-Agent bloqueada | IP: ${req.ip}`,
+    );
+    return res.status(403).render("errors/403", {
+      title: "403 - Prohibido",
+      currentURL: req.originalUrl,
+      user: req.session?.user || null,
+      message: "El acceso automatizado a la librería está restringido.",
+    });
+  }
+
+  //Dejamos pasar los bots de búsqueda legítimos, para evitar problemas con el SEO.
+  if (SEARCH_ENGINE_BOTS.test(ua.source)) return next();
 
   if (ua.isBot || AI_BOT_PATTERN.test(ua.source)) {
     console.warn(`[SECURITY ALERT] IA Bloqueada: ${ua.source} | IP: ${req.ip}`);

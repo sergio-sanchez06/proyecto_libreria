@@ -1,5 +1,5 @@
 import { auth } from "./firebaseConfig.mjs";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {

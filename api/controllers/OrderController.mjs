@@ -126,6 +126,19 @@ async function confirmStripeSession(req, res) {
 
     if (order) {
       // Respondemos JSON de éxito para que la WEB borre la cookie
+
+      emailService
+        .sendOrderConfirmationEmail(
+          order.user_email,
+          order.user_name,
+          order.shipping_address,
+          order.items,
+          order.total,
+        )
+        .catch((err) =>
+          console.error("Error enviando email de pedido:", err.message),
+        );
+
       return res.status(200).json({ status: "success", order });
     }
     res.status(400).json({ error: "El pago no ha sido verificado" });

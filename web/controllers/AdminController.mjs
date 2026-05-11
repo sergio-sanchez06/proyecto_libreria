@@ -228,10 +228,17 @@ async function listUsers(req, res) {
 }
 
 async function getCreateUserForm(req, res) {
+  const formData = req.session.formData || null;
+  const error = req.session.error || null;
+
+  delete req.session.formData;
+  delete req.session.error;
+
   res.render("admin/add_user", {
     title: "Agregar Usuario",
     user: req.session.user,
-    error: req.query.error,
+    error: error,
+    formData: formData,
   });
 }
 
@@ -264,6 +271,7 @@ async function createUser(req, res) {
     res.redirect("/admin/users");
   } catch (error) {
     console.error("Error al crear usuario:", error);
+    req.session.formData = req.body;
     req.session.flash = {
       type: "error",
       message: error.response?.data?.message || "Error al crear el usuario.",

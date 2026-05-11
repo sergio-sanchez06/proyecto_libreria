@@ -5,7 +5,8 @@
     "authors": "Autores",
     "publishers": "Editoriales",
     "genres": "Géneros",
-    "admin": "Administración"
+    "admin": "Administración",
+    "cart": "Tu Carrito"
   },
   "auth": {
     "login": "Iniciar Sesión",
@@ -69,7 +70,9 @@
     "no_stock": "Sin stock",
     "filters": "Filtrar por",
     "all_genres": "Todos los géneros",
-    "search_placeholder": "Nombre del libro"
+    "search_placeholder": "Nombre del libro",
+    "view_filters": "Mostrar Filtros",
+    "hide_filters": "Ocultar Filtros"
   },
   "index": {
     "welcome_msg": "Descubre los mejores libros y autores del momento",
@@ -175,7 +178,9 @@
     "mode_soft_description": "Al deshabilitar su cuenta de usuario temporalmente, sus datos personales y preferencias serán guardados y podrá solicitar la reactivación de su cuenta en el futuro.",
     "confirm_soft": "Confirmar y Desactivar",
     "confirm_hard": "Confirmar y Borrar Permanentemente",
-    "delete_intro": "¿Qué acción desea realizar con su cuenta?"
+    "delete_intro": "¿Qué acción desea realizar con su cuenta?",
+    "change_pass": "Cambiar su Contraseña",
+    "delete_title": "¿Qué desea hacer con su cuenta?"
   },
   "cart": {
     "title": "Tu carrito",
@@ -498,5 +503,41 @@
     "ca": "Catalán",
     "gl": "Gallego",
     "eu": "Euskera"
+  },
+  "add_user": {
+    "page_title": "Crear Usuario - Admin",
+    "title": "Crear Nuevo Usuario",
+    "name_label": "Nombre",
+    "email_label": "Correo electrónico",
+    "email_placeholder": "[EMAIL_ADDRESS]",
+    "password_label": "Contraseña",
+    "password_placeholder": "Mínimo 6 caracteres",
+    "confirm_password_label": "Confirmar Contraseña",
+    "btn_create": "Crear Usuario",
+    "btn_cancel": "Cancelar"
+  },
+  "edit_user": {
+    "page_title": "Editar Usuario - Admin",
+    "title": "Editar Perfil",
+    "name_label": "Nombre",
+    "email_label": "Correo electrónico",
+    "email_placeholder": "[EMAIL_ADDRESS]",
+    "password_label": "Contraseña",
+    "password_placeholder": "Mínimo 6 caracteres",
+    "confirm_password_label": "Confirmar Contraseña",
+    "btn_save": "Guardar Cambios",
+    "btn_cancel": "Cancelar"
+  },
+  "edit_profile": {
+    "page_title": "Editar Perfil",
+    "title": "Editar Perfil",
+    "name_label": "Nombre",
+    "email_label": "Correo electrónico",
+    "email_placeholder": "[EMAIL_ADDRESS]",
+    "password_label": "Contraseña",
+    "password_placeholder": "Mínimo 6 caracteres",
+    "confirm_password_label": "Confirmar Contraseña",
+    "btn_save": "Guardar Cambios",
+    "btn_cancel": "Cancelar"
   }
 }

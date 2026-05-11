@@ -7,7 +7,7 @@
             <div class="col-md-5 col-lg-4 col-xl-3">
                 <div class="book-cover-wrapper bg-white">
                     <img src="<%= book.cover_url || '/images/default-cover.jpg' %>" alt="<%= book.title %>"
-                        class="w-100 d-block" style="object-fit: cover;" width="300" height="420" loading="eager">
+                        class="w-100 d-block" style="object-fit: cover;" width="300" height="auto" loading="eager">
                 </div>
             </div>
 
@@ -57,22 +57,22 @@
 
                                 <% console.log("El genero es: ", genreData.name) %>
 
-                                <% console.log("El genero esta eliminado?: ", genreData.deleted_at) %>
+                                <% console.log(" El genero esta eliminado?: ", genreData.deleted_at) %>
 
                                     <% if (isDeleted) { %>
-                                        <span class="badge rounded-pill bg-light text-secondary border px-4 py-2 opacity-75"
-                                        style="border-style: dashed !important;" title="Género no disponible">
-                                        <i class="bi bi-lock-fill me-1 opacity-50"></i>
-                                        <%= genreData.name %>
-                                    </span>
-                                    <% } else { %>
-                                        <a href="/genres/<%= encodeURIComponent(genreData.name) %>"
-                                            class="badge badge-genre text-decoration-none px-4 py-2 rounded-pill">
-                                            <i class="bi bi-tag-fill me-1 opacity-50"></i>
-                                            <%= genreData.name %>
-                                        </a>
-                                        <% } %>
-                                            <% }) %>
+                                        <span class=" badge rounded-pill bg-light text-secondary border px-4 py-2
+                                    opacity-75" style="border-style: dashed !important;" title="Género no disponible">
+                                    <i class="bi bi-lock-fill me-1 opacity-50"></i>
+                                    <%= genreData.name %>
+                                        </span>
+                                        <% } else { %>
+                                            <a href="/genres/<%= encodeURIComponent(genreData.name) %>"
+                                                class="badge badge-genre text-decoration-none px-4 py-2 rounded-pill">
+                                                <i class="bi bi-tag-fill me-1 opacity-50"></i>
+                                                <%= genreData.name %>
+                                            </a>
+                                            <% } %>
+                                                <% }) %>
                 </div>
 
                 <!-- Ficha de Compra -->

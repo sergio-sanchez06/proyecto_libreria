@@ -12,7 +12,7 @@ const apiLimiter = (req, res, next) => {
 
   console.log("Token recibido en API:", tokenIdentidad);
 
-  if (tokenIdentidad === process.env.SESSION_SECRET) {
+  if (tokenIdentidad === process.env.INTERNAL_API_TOKEN) {
     return next(); // Es tu web, adelante.
   }
 

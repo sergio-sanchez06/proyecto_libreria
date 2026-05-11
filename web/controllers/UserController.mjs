@@ -315,6 +315,11 @@ async function updateProfile(req, res) {
   if (String(req.session.user.id) !== String(req.body.id)) {
     console.log("ID distinto");
 
+    req.session.flash = {
+      type: "error",
+      message: "No se pudo actualizar el perfil.",
+    };
+
     return res.redirect("/user/profile");
   }
 
@@ -346,7 +351,13 @@ async function updateProfile(req, res) {
     req.session.save((err) => {
       if (err) {
         console.error("Error guardando en Redis:", err);
-        return res.redirect("/user/profile?error=session_sync");
+
+        req.session.flash = {
+          type: "error",
+          message: "Error guardando en Redis.",
+        };
+
+        return res.redirect("/user/profile");
       }
 
       // Solo redirigimos cuando Redis ha confirmado que guardó los datos
@@ -355,12 +366,20 @@ async function updateProfile(req, res) {
     });
   } catch (error) {
     console.error("Error en editProfile:", error.message);
-    res.render("partials/editUserProfile", {
-      user: req.session.user,
-      error:
-        "Error al actualizar los datos: " +
-        (error.response?.data?.message || error.message),
-    });
+
+    req.session.flash = {
+      type: "error",
+      message: "Error al actualizar los datos.",
+    };
+
+    res.redirect("/user/profile");
+
+    // res.render("partials/editUserProfile", {
+    //   user: req.session.user,
+    //   error:
+    //     "Error al actualizar los datos: " +
+    //     (error.response?.data?.message || error.message),
+    // });
   }
 }
 

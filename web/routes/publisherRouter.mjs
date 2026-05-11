@@ -49,7 +49,7 @@ router.post(
   upload.single("publisher_logo"),
   protectMiddleware.requireFreshToken,
   (req, res, next) => {
-    req.viewToRender = "admin/add_publisher";
+    req.viewToRender = "admin/edit_publisher";
     req.entityName = "publisherData";
     next();
   },

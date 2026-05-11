@@ -10,6 +10,8 @@ async function protect(req, res, next) {
     return res.redirect("/login");
   }
 
+  console.log("Entramos en protect");
+
   try {
     const userId = req.session.user.id || req.session.user.user?.id;
 
@@ -30,10 +32,20 @@ async function protect(req, res, next) {
       // 3. SI NO ESTÁ EN CACHÉ, LLAMADA A LA API
       const api = getAuthenticatedClient(req.session.idToken);
 
+      // console.log("Previo a la llama renovar el token");
+
       // LÍNEA TEMPORAL PARA TEST: Descomentar para simular token expirado y comprobar si funciona la sesión de redis para regenerar el token
-      // throw {
-      //   response: { status: 401, data: { code: "auth/id-token-expired" } },
-      // };
+      if (!req.session.tokenRenovado) {
+        req.session.tokenRenovado = true; // Marcamos que ya hemos fallado una vez
+        console.log("Simulando primer fallo de token...");
+        throw {
+          response: { status: 401, data: { code: "auth/id-token-expired" } },
+        };
+      } else {
+        req.session.tokenRenovado = false;
+      }
+
+      console.log("Estado token renovado: ", req.session.tokenRenovado);
 
       const response = await api.get(`/users/me/${userId}`);
 
@@ -66,19 +78,36 @@ async function protect(req, res, next) {
       error.message?.includes("expired") ||
       error.response?.status === 401;
 
+    console.log("Error: ", error);
+    console.log("Es expirado?: ", isExpired);
+
     if (isExpired && req.session.user) {
-      console.warn(
-        "⏰ Token expirado pero sesión Redis activa. Recuperando datos de sesión.",
-      );
+      const returnTo = req.originalUrl;
+      console.log("⏰ Redirigiendo a: ", returnTo);
 
-      // En lugar de echarlo, recuperamos los datos que ya tenemos en la sesión de Redis
-      const fallbackUser = req.session.user.user || req.session.user;
-      res.locals.user = fallbackUser;
-      res.locals.isAdmin = fallbackUser?.role === "ADMIN";
-
-      // Dejamos que pase. Tu script de frontend renovará el token en segundos.
-      return next();
+      // Guardamos manualmente para asegurar que Redis tenga los datos antes de la redirección
+      req.session.save((err) => {
+        if (err) console.error("Error guardando sesión:", err);
+        return res.redirect(
+          `/refreshing?returnTo=${encodeURIComponent(returnTo)}`,
+        );
+      });
+      return; // Importante para detener la ejecución
     }
+
+    // if (isExpired && req.session.user) {
+    //   console.warn(
+    //     "⏰ Token expirado pero sesión Redis activa. Recuperando datos de sesión.",
+    //   );
+
+    //   // En lugar de echarlo, recuperamos los datos que ya tenemos en la sesión de Redis
+    //   const fallbackUser = req.session.user.user || req.session.user;
+    //   res.locals.user = fallbackUser;
+    //   res.locals.isAdmin = fallbackUser?.role === "ADMIN";
+
+    //   // Dejamos que pase. Tu script de frontend renovará el token en segundos.
+    //   return next();
+    // }
 
     // Si el error no es por expiración (ej: 500 de la API), intentamos degradación graciosa
     console.error("Error crítico en protect:", error.message);
@@ -134,7 +163,6 @@ async function requireFreshToken(req, res, next) {
   console.log("Token en body: ", req.body);
 
   if (!token) {
-
     console.log("Token requerido en requireFreshToken");
 
     // Si es una petición de formulario, redirige con error

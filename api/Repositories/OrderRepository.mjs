@@ -5,7 +5,12 @@ import BookRepository from "./BookRepository.mjs";
 import emailService from "../services/emailService.mjs";
 import Stripe from "stripe";
 
-async function createOrder({ user_id, items, shipping_address, status = "PENDIENTE" }) {
+async function createOrder({
+  user_id,
+  items,
+  shipping_address,
+  status = "PENDIENTE",
+}) {
   const client = await pool.connect(); // Aquí SÍ usamos client para la transacción
 
   try {
@@ -332,13 +337,15 @@ async function confirmStripeSession(session_id) {
         status: "PAGADO",
       });
 
-      emailService.sendOrderConfirmationEmail(
-        user_email,
-        user_name,
-        shipping_address,
-        newOrder.items,
-        session.amount_total / 100,
-      );
+      // emailService.sendOrderConfirmationEmail(
+      //   user_email,
+      //   user_name,
+      //   shipping_address,
+      //   newOrder.items,
+      //   session.amount_total / 100,
+      // ).catch((err) => {
+      //   console.error("Error enviando email de confirmación de pedido:", err.message);
+      // });
       return newOrder; // Ahora sí, el pedido existe y está pagado
     } catch (error) {
       console.log(
@@ -365,7 +372,7 @@ async function confirmStripeSession(session_id) {
 
 //       // 1. Aquí haces el INSERT (Antes no existía el pedido)
 //       const orderResult = await client.query(
-//         `INSERT INTO orders (user_id, shipping_address, status, total) 
+//         `INSERT INTO orders (user_id, shipping_address, status, total)
 //        VALUES ($1, $2, 'PAGADO', $3) RETURNING *`,
 //         [user_id, shipping_address, session.amount_total / 100],
 //       );

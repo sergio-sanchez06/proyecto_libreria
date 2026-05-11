@@ -21,6 +21,11 @@ router.post(
   "/edit/:id",
   protectMiddleware.protect,
   protectMiddleware.requireFreshToken,
+  (req, res, next) => {
+    req.viewToRender = "partials/editUserProfile";
+    req.entityName = "user";
+    next();
+  },
   validateSchema(userSchema),
   UserController.updateProfile,
 );

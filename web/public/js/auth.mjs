@@ -10,7 +10,7 @@ import {
   signInWithPopup,
   TwitterAuthProvider,
   updatePassword,
-} from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 import axios from "https://cdn.jsdelivr.net/npm/axios@1.6.7/+esm";
 import { auth } from "./firebaseConfig.mjs";

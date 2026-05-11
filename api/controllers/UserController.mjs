@@ -24,11 +24,15 @@ async function adminCreateUser(req, res) {
       optional_address,
     });
 
-    try {
-      await emailService.sendWelcomeEmail(newUser.email, newUser.name);
-    } catch (mailError) {
-      console.error("Error enviando email (admin):", mailError.message);
-    }
+    // try {
+    //   await emailService.sendWelcomeEmail(newUser.email, newUser.name);
+    // } catch (mailError) {
+    //   console.error("Error enviando email (admin):", mailError.message);
+    // }
+
+    emailService.sendWelcomeEmail(newUser.email, newUser.name).catch((err) => {
+      console.error("Error enviando email (admin):", err.message);
+    });
 
     res.status(201).json({
       message: "Usuario creado con éxito",
@@ -83,12 +87,19 @@ async function registerUser(req, res) {
       });
 
     // 3. Enviar correo de notificación (Opcional: No crítico)
-    try {
-      await emailService.sendWelcomeEmail(newUser.email, newUser.name);
-    } catch (mailError) {
-      console.error("Error enviando email de bienvenida:", mailError.message);
-      // No lanzamos el error para que el cliente reciba el 201 OK de la reactivación
-    }
+
+    emailService
+      .sendWelcomeEmail(newUser.email, newUser.name)
+      .catch((err) =>
+        console.error("Error enviando email de bienvenida:", err.message),
+      );
+
+    // try {
+    //   await emailService.sendWelcomeEmail(newUser.email, newUser.name);
+    // } catch (mailError) {
+    //   console.error("Error enviando email de bienvenida:", mailError.message);
+    //   // No lanzamos el error para que el cliente reciba el 201 OK de la reactivación
+    // }
 
     res.status(201).json({
       message: "Usuario creado con éxito",
@@ -263,15 +274,20 @@ async function deleteUser(req, res) {
       }
 
       // 3. Enviar correo de notificación
-      try {
-        await emailService.sendDeletedAccountEmail(user.email, user.name);
-      } catch (mailError) {
-        console.error(
-          "Error enviando email de eliminación:",
-          mailError.message,
-        );
-        // No lanzamos el error para que el cliente reciba el 200 OK de la eliminación
-      }
+
+      emailService.sendDeletedAccountEmail(user.email, user.name).catch((err) => {
+        console.error("Error enviando email de eliminación:", err.message);
+      });
+
+      // try {
+      //   await emailService.sendDeletedAccountEmail(user.email, user.name);
+      // } catch (mailError) {
+      //   console.error(
+      //     "Error enviando email de eliminación:",
+      //     mailError.message,
+      //   );
+      //   // No lanzamos el error para que el cliente reciba el 200 OK de la eliminación
+      // }
     } else {
       // 1. Desactivar en base de datos (is_active = false)
       firebaseUid = await UserRepository.disableUser(userId);
@@ -283,15 +299,20 @@ async function deleteUser(req, res) {
       }
 
       // 3. Enviar correo de notificación
-      try {
-        await emailService.sendDisableAccountEmail(user.email, user.name);
-      } catch (mailError) {
-        console.error(
-          "Error enviando email de desactivación:",
-          mailError.message,
-        );
-        // No lanzamos el error para que el cliente reciba el 200 OK de la desactivación
-      }
+
+      emailService.sendDisableAccountEmail(user.email, user.name).catch((err) => {
+        console.error("Error enviando email de desactivación:", err.message);
+      });
+
+      // try {
+      //   await emailService.sendDisableAccountEmail(user.email, user.name);
+      // } catch (mailError) {
+      //   console.error(
+      //     "Error enviando email de desactivación:",
+      //     mailError.message,
+      //   );
+      //   // No lanzamos el error para que el cliente reciba el 200 OK de la desactivación
+      // }
     }
 
     // 2. Borrar de SQL
@@ -348,12 +369,19 @@ async function reactivateUser(req, res) {
     await authService.updateUserStatus(user.firebase_uid, true);
 
     // 3. Enviar correo de notificación (Opcional: No crítico)
-    try {
-      await emailService.sendReactivationEmail(user.email, user.name);
-    } catch (mailError) {
-      console.error("Error enviando email de reactivación:", mailError.message);
-      // No lanzamos el error para que el cliente reciba el 200 OK de la reactivación
-    }
+
+    emailService
+      .sendReactivationEmail(user.email, user.name)
+      .catch((err) => {
+        console.error("Error enviando email de reactivación:", err.message);
+      });
+
+    // try {
+    //   await emailService.sendReactivationEmail(user.email, user.name);
+    // } catch (mailError) {
+    //   console.error("Error enviando email de reactivación:", mailError.message);
+    //   // No lanzamos el error para que el cliente reciba el 200 OK de la reactivación
+    // }
 
     res.status(200).json({
       message:

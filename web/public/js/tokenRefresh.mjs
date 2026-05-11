@@ -1,7 +1,7 @@
 // tokenRefresh.mjs
 // Incluir en todas las páginas que requieran acciones críticas
 import { auth } from "./firebaseConfig.mjs";
-import { onIdTokenChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+import { onIdTokenChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 onIdTokenChanged(auth, async (user) => {
   if (!user) return; // No hay sesión Firebase activa, nada que sincronizar

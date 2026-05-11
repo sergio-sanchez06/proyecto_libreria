@@ -5,7 +5,8 @@
     "authors": "Autors",
     "publishers": "Editorials",
     "genres": "Gèneres",
-    "admin": "Administració"
+    "admin": "Administració",
+    "cart": "El teu carret"
   },
   "auth": {
     "login": "Iniciar Sessió",
@@ -69,7 +70,9 @@
     "no_stock": "Sense estoc",
     "filters": "Filtrar per",
     "all_genres": "Tots els gèneres",
-    "search_placeholder": "Nom del llibre"
+    "search_placeholder": "Nom del llibre",
+    "view_filters": "Mostrar Filtres",
+    "hide_filters": "Ocultar Filtres"
   },
   "index": {
     "welcome_msg": "Descobreix els millors llibres i autors del moment",
@@ -175,7 +178,9 @@
     "mode_soft_description": "En desactivar el teu compte temporalment, les teves dades personals i preferències seran guardades i podràs sol·licitar la reactivació del teu compte en el futur.",
     "confirm_soft": "Confirmar i Desactivar",
     "confirm_hard": "Confirmar i Esborrar Permanentment",
-    "delete_intro": "Quina acció vols realitzar amb el teu compte?"
+    "delete_intro": "Quina acció voleu realitzar amb el vostre compte?",
+    "change_pass": "Canviar la seva contrasenya",
+    "delete_title": "Què voleu fer amb el vostre compte?"
   },
   "cart": {
     "title": "El teu carret",

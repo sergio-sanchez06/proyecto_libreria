@@ -19,8 +19,8 @@ const apiClient = axios.create({
 
 apiClient.interceptors.request.use((config) => {
   config.headers["X-Internal-Token"] =
-    process.env.SESSION_SECRET ||
     process.env.INTERNAL_API_TOKEN ||
+    process.env.SESSION_SECRET ||
     "bookly-internal";
   return config;
 });
@@ -40,8 +40,8 @@ export function getAuthenticatedClient(idToken) {
 
   instance.interceptors.request.use((config) => {
     config.headers["X-Internal-Token"] =
-      process.env.SESSION_SECRET ||
       process.env.INTERNAL_API_TOKEN ||
+      process.env.SESSION_SECRET ||
       "bookly-internal";
     return config;
   });

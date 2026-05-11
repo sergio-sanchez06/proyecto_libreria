@@ -1,0 +1,216 @@
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .refresh-card {
+        border: none;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+        padding: 3rem;
+        max-width: 480px;
+        width: 90%;
+        text-align: center;
+    }
+
+    .refresh-icon {
+        font-size: 3rem;
+        color: var(--brand-teal, #0d5c63);
+        margin-bottom: 1.5rem;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.6;
+            transform: scale(0.95);
+        }
+    }
+
+    .refresh-title {
+        color: #2d3748;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .progress-bar-custom {
+        height: 4px;
+        border-radius: 2px;
+        background: #e2e8f0;
+        margin: 1.5rem 0;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--brand-teal, #0d5c63), #2c3e50);
+        border-radius: 2px;
+        animation: progress 8s linear forwards;
+    }
+
+    @keyframes progress {
+        from {
+            width: 0%;
+        }
+
+        to {
+            width: 100%;
+        }
+    }
+
+    .status-text {
+        font-size: 0.875rem;
+        color: #718096;
+    }
+
+    .timeout-msg {
+        display: none;
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: #fff3cd;
+        border-radius: 12px;
+        font-size: 0.875rem;
+        color: #856404;
+    }
+</style>
+
+<head>
+
+    <title>
+        Actualizando token...
+    </title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-icons.min.css">
+    <!-- Preconnect y preload de Google Fonts para romper la cadena de red crítica -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
+    </noscript>
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+
+    <link rel="stylesheet" href="/css/main.min.css">
+    <link rel="stylesheet" href="/css/layout.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css">
+
+    <% if (typeof extraCSS !=='undefined' ) { %>
+        <link rel="stylesheet" href="/css/views/<%= extraCSS %>.css">
+        <% } %>
+
+</head>
+
+<main>
+    <div class="refresh-card">
+        <div class="refresh-icon">
+            <i class="bi bi-arrow-repeat"></i>
+        </div>
+
+        <h2 class="refresh-title">Actualizando tu sesión</h2>
+        <p class="text-muted mb-0">
+            Tu sesión ha expirado y estamos renovándola automáticamente.<br>
+            Serás redirigido en unos segundos.
+        </p>
+
+        <div class="progress-bar-custom">
+            <div class="progress-fill"></div>
+        </div>
+
+        <p class="status-text" id="statusText">Esperando renovación del token...</p>
+
+        <div class="timeout-msg" id="timeoutMsg">
+            La renovación está tardando más de lo esperado.
+            <a href="/login" style="color: #856404; font-weight: 600;">Inicia sesión de nuevo</a>
+        </div>
+    </div>
+</main>
+
+<%- include('../layout/footer') %>
+
+    <script type="module">
+        import { auth } from "/js/firebaseConfig.mjs";
+        import { onIdTokenChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const returnTo = "<%= returnTo %>";
+        const statusText = document.getElementById("statusText");
+        let redirected = false;
+        let checkAttempts = 0;
+
+        console.log("DEBUG CLIENTE: Ruta de destino cargada:", returnTo);
+
+        const unsubscribe = onIdTokenChanged(auth, async (user) => {
+            if (redirected) return;
+
+            if (!user) {
+                checkAttempts++;
+                console.log(`Intento ${checkAttempts}: Firebase aún no detecta usuario...`);
+
+                // Si después de 5 segundos (aprox 10 disparos del observer) no hay usuario, 
+                // asumimos que no está logueado de verdad.
+                if (checkAttempts > 10) {
+                    console.log("No se detectó usuario tras varios intentos. Al login.");
+                    redirected = true;
+                    window.location.href = "/login";
+                }
+                return;
+            }
+
+            // Si llegamos aquí, es que 'user' ya existe
+            try {
+                console.log("✅ Usuario detectado. Iniciando sincronización.");
+                statusText.textContent = "Sincronizando sesión con el servidor...";
+
+                const freshToken = await user.getIdToken(true);
+
+                const response = await fetch("/auth/refresh-token", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ idToken: freshToken }),
+                });
+
+                if (response.ok) {
+                    redirected = true;
+                    sessionStorage.setItem("last_synced_token", freshToken);
+                    statusText.textContent = "✅ ¡Sesión renovada! Redirigiendo...";
+
+                    setTimeout(() => {
+                        window.location.href = returnTo || "/";
+                    }, 800);
+                } else {
+                    const data = await response.json().catch(() => ({}));
+                    if (data.forceLogout) {
+                        window.location.href = "/login?error=expired";
+                    }
+                }
+            } catch (err) {
+                console.error("Error en proceso de renovación:", err);
+                statusText.textContent = "Hubo un error al renovar. Reintentando...";
+            }
+        });
+    </script>
