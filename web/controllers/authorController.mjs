@@ -1,5 +1,6 @@
 // web/controllers/authorController.mjs
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
+import { uploadToCloudinary } from "../services/cloudinaryService.mjs";
 
 import redisController from "./RedisController.mjs";
 
@@ -138,8 +139,30 @@ async function createAuthor(req, res) {
 
   redisClient = await redisController.returnRedisClient();
 
+  // if (req.file) {
+  //   authorData.photo_url = `/uploads/authors/${req.file.filename}`;
+  // }
+
   if (req.file) {
-    authorData.photo_url = `/uploads/authors/${req.file.filename}`;
+    try {
+      authorData.photo_url = await uploadToCloudinary(
+        req.file.buffer,
+        "autores",
+      );
+    } catch (uploadError) {
+      console.error("Error subiendo foto a Cloudinary:", uploadError.message);
+      req.session.formData = req.body;
+      req.session.flash = {
+        type: "error",
+        message: "No se pudo subir la imagen. Inténtalo de nuevo.",
+      };
+      return res.redirect("/authors/create");
+    }
+  } else {
+    authorData.photo_url =
+      process.env.DEFAULT_AUTHOR_PHOTO_URL ||
+      "https://res.cloudinary.com/dbcvk9qem/image/upload/default_author_oavjvl" ||
+      null;
   }
 
   try {
@@ -200,8 +223,25 @@ async function updateAuthor(req, res) {
 
   redisClient = await redisController.returnRedisClient();
 
+  // if (req.file) {
+  //   updateData.photo_url = `/uploads/authors/${req.file.filename}`;
+  // }
+
   if (req.file) {
-    updateData.photo_url = `/uploads/authors/${req.file.filename}`;
+    try {
+      updateData.photo_url = await uploadToCloudinary(
+        req.file.buffer,
+        "autores",
+      );
+    } catch (uploadError) {
+      console.error("Error subiendo foto a Cloudinary:", uploadError.message);
+      req.session.formData = req.body;
+      req.session.flash = {
+        type: "error",
+        message: "No se pudo subir la imagen. Inténtalo de nuevo.",
+      };
+      return res.redirect(`/authors/author/edit/${id}`);
+    }
   }
 
   console.log(updateData);

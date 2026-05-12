@@ -26,7 +26,8 @@ async function getItemsByOrderId(orderId, connection = null) {
       `SELECT 
         oi.*, 
         b.id AS book_id,
-        b.title AS book_title 
+        b.title AS book_title,
+        b.cover_url as cover_url 
       FROM order_items oi 
       JOIN books b ON oi.book_id = b.id 
       WHERE oi.order_id = $1`,
@@ -37,6 +38,7 @@ async function getItemsByOrderId(orderId, connection = null) {
       const bookObj = {
         id: row.book_id,
         title: row.book_title,
+        cover_url: row.cover_url,
       };
 
       return new OrderItem({

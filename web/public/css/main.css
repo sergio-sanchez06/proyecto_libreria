@@ -1,10 +1,10 @@
 /* --- 1. CONFIGURACIÓN GENERAL --- */
 :root {
-  --brand-teal: #1e40af; 
-  --brand-teal-hover: #1e3a8a; 
-  --brand-gold: #d4af37; 
+  --brand-teal: #1e40af;
+  --brand-teal-hover: #1e3a8a;
+  --brand-gold: #d4af37;
   --brand-blue: #1d4ed8;
-  --bg-cream: #fcfaf7; 
+  --bg-cream: #fcfaf7;
 
   --text-dark: #1a2a2c;
   --text-muted: #718096;
@@ -12,9 +12,9 @@
   --shadow-hover: 0 12px 30px rgba(0, 0, 0, 0.1);
 
   /* Backgrounds */
-  --bg-main: url('/images/backgrounds/waves.png');
-  --bg-user: url('/images/backgrounds/geometric.png');
-  --bg-admin: url('/images/backgrounds/user_waves.png');
+  --bg-main: url("https://res.cloudinary.com/dbcvk9qem/image/upload/v1778585879/waves_zfgf09.jpg");
+  --bg-user: url("https://res.cloudinary.com/dbcvk9qem/image/upload/v1778585877/geometric_byn2ik.jpg");
+  --bg-admin: url("https://res.cloudinary.com/dbcvk9qem/image/upload/v1778585877/user_waves_bnzzyj.jpg");
 
   /* Re-ligar variables de layout.css si no se cargan en orden */
   --fs-xs: clamp(0.7rem, 0.6rem + 0.5vw, 0.85rem);
@@ -43,10 +43,10 @@
 
 body {
   background-color: var(--bg-cream);
-  font-family: 'Inter', "Segoe UI", system-ui, sans-serif;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
   color: var(--text-dark);
   line-height: 1.6;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 /* --- 2. HEADER Y TÍTULOS --- */
@@ -65,15 +65,15 @@ body {
   color: var(--brand-teal);
   text-transform: uppercase;
   letter-spacing: 1.2px;
-  border-left: 6px solid var(--brand-gold); 
+  border-left: 6px solid var(--brand-gold);
   padding-left: 15px;
-  font-size: var(--fs-xl); 
+  font-size: var(--fs-xl);
 }
 
 /* --- 3. TARJETAS DE LIBROS  --- */
 .book-card {
   transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
-  border: 1px solid rgba(0,0,0,0.05) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
   background: #fff;
   overflow: hidden;
   border-radius: 16px;
@@ -90,12 +90,12 @@ body {
 
 .book-card img {
   width: 100%;
-  aspect-ratio: 2 / 3; 
-  object-fit: contain; 
+  aspect-ratio: 2 / 3;
+  object-fit: contain;
   background: #fff;
-  padding: 20px; 
+  padding: 20px;
   transition: transform 0.6s ease;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .book-card:hover img {
@@ -134,52 +134,58 @@ body {
 }
 
 /* --- 5. COMPONENTES DE INTERFAZ E OVERRIDES DE BOOTSTRAP --- */
-.btn-primary, .btn-success {
+.btn-primary,
+.btn-success {
   background-color: var(--brand-teal) !important;
   border: none !important;
   color: white !important;
-  border-radius: 12px !important; 
+  border-radius: 12px !important;
   font-weight: 700 !important;
   padding: 12px 28px !important;
   font-size: 0.9rem;
   transition: all 0.3s ease;
 }
 
-.btn-primary:hover, .btn-success:hover {
+.btn-primary:hover,
+.btn-success:hover {
   background-color: var(--brand-teal-hover) !important;
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(30, 64, 175, 0.2);
 }
 
-.btn-outline-success, .btn-outline-primary {
+.btn-outline-success,
+.btn-outline-primary {
   color: var(--brand-teal) !important;
   border-color: var(--brand-teal) !important;
   border-radius: 12px !important;
   font-weight: 600 !important;
 }
 
-.btn-outline-success:hover, .btn-outline-primary:hover {
+.btn-outline-success:hover,
+.btn-outline-primary:hover {
   background-color: var(--brand-teal) !important;
   color: white !important;
 }
 
-
-.text-success, .text-primary {
+.text-success,
+.text-primary {
   color: var(--brand-teal) !important;
 }
 
-.badge-primary, .bg-primary {
+.badge-primary,
+.bg-primary {
   background-color: var(--brand-teal) !important;
 }
 
-.badge-success, .bg-success {
+.badge-success,
+.bg-success {
   background-color: var(--brand-teal) !important;
 }
 
-.border-primary, .border-success {
+.border-primary,
+.border-success {
   border-color: var(--brand-teal) !important;
 }
-
 
 .bg-success {
   background-color: var(--brand-teal) !important;
@@ -189,7 +195,7 @@ body {
   background-color: var(--brand-blue) !important;
   border: none !important;
   color: white !important;
-  border-radius: 12px !important; 
+  border-radius: 12px !important;
   padding: 8px 16px !important;
   transition: background 0.3s;
 }
@@ -224,7 +230,7 @@ body {
   margin-bottom: 12px;
   border-radius: 8px !important;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .list-group-item-custom:hover {
@@ -267,7 +273,7 @@ a {
   .section-title {
     margin-bottom: 1.5rem;
   }
-  
+
   .book-card img {
     padding: 5px;
   }
@@ -310,4 +316,4 @@ a {
 
 .scrollable-filter-container::-webkit-scrollbar-thumb:hover {
   background: #bbb;
-}
+}

@@ -1,6 +1,7 @@
 // web/controllers/bookController.mjs
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 import redisController from "./RedisController.mjs";
+import { uploadToCloudinary } from "../services/cloudinaryService.mjs";
 
 import { getBookFormData } from "../utils/bookFormData.mjs";
 
@@ -26,10 +27,19 @@ async function getAllBooks(req, res) {
     const mostBought = sort.includes("mostBought");
     const leastBought = sort.includes("leastBought");
 
-
     const [booksResponse, genresResponse, authorsResponse] = await Promise.all([
       apiClient.get(`/books`, {
-        params: { page, q, maxPrice, genre, author, mostRated, leastRated, mostBought, leastBought },
+        params: {
+          page,
+          q,
+          maxPrice,
+          genre,
+          author,
+          mostRated,
+          leastRated,
+          mostBought,
+          leastBought,
+        },
       }),
       apiClient.get("/genres"), //Ruta paginada
       apiClient.get("/authors"),
@@ -49,7 +59,9 @@ async function getAllBooks(req, res) {
     if (error.response) {
       console.error("API Error Response:", error.response.data);
     }
-    res.status(500).render("errors/500", { message: "Error al cargar el catálogo" });
+    res
+      .status(500)
+      .render("errors/500", { message: "Error al cargar el catálogo" });
   }
 }
 
@@ -84,10 +96,18 @@ async function showAllBooks(req, res) {
     if (!genres || !authors) {
       console.log("Fetching genres and authors from API...");
       const [genresResponse, authorsResponse] = await Promise.all([
-        apiClient.get("/genres/all").catch(e => { console.error("Genres API Error:", e.message); throw e; }),
-        apiClient.get("/authors", {
-          params: { onlyWithBooks: true },
-        }).catch(e => { console.error("Authors API Error:", e.message); throw e; }),
+        apiClient.get("/genres/all").catch((e) => {
+          console.error("Genres API Error:", e.message);
+          throw e;
+        }),
+        apiClient
+          .get("/authors", {
+            params: { onlyWithBooks: true },
+          })
+          .catch((e) => {
+            console.error("Authors API Error:", e.message);
+            throw e;
+          }),
       ]);
       console.log("Genres Response Status:", genresResponse.status);
       console.log("Authors Response Status:", authorsResponse.status);
@@ -108,7 +128,17 @@ async function showAllBooks(req, res) {
     }
 
     const booksResponse = await apiClient.get(`/books`, {
-      params: { page, q, maxPrice, genre, author, mostRated, leastRated, mostBought, leastBought },
+      params: {
+        page,
+        q,
+        maxPrice,
+        genre,
+        author,
+        mostRated,
+        leastRated,
+        mostBought,
+        leastBought,
+      },
     });
 
     res.render("partials/booksTable", {
@@ -122,11 +152,17 @@ async function showAllBooks(req, res) {
       user: req.session.user || null,
     });
   } catch (error) {
-    console.error("Error al obtener libros en partial: ", error.message, error.stack);
+    console.error(
+      "Error al obtener libros en partial: ",
+      error.message,
+      error.stack,
+    );
     if (error.response) {
       console.error("API Error Response:", error.response.data);
     }
-    res.status(500).render("errors/500", { message: "Error al cargar el catálogo" });
+    res
+      .status(500)
+      .render("errors/500", { message: "Error al cargar el catálogo" });
   }
 }
 
@@ -219,8 +255,32 @@ async function getCreateBook(req, res) {
 async function createBook(req, res) {
   const bookData = { ...req.body };
 
+  // if (req.file) {
+  //   bookData.cover_url = `/uploads/covers/${req.file.filename}`;
+  // }else{
+  //   bookData.cover_url = "/uploads/covers/cover_default.jpg";
+  // }
+
   if (req.file) {
-    bookData.cover_url = `/uploads/covers/${req.file.filename}`;
+    try {
+      bookData.cover_url = await uploadToCloudinary(req.file.buffer, "libros");
+    } catch (uploadError) {
+      console.error(
+        "Error subiendo portada a Cloudinary:",
+        uploadError.message,
+      );
+      req.session.formData = req.body;
+      req.session.flash = {
+        type: "error",
+        message: "No se pudo subir la imagen. Inténtalo de nuevo.",
+      };
+      return res.redirect("/admin/books/create");
+    }
+  } else {
+    bookData.cover_url =
+      process.env.DEFAULT_COVER_URL ||
+      "https://res.cloudinary.com/dbcvk9qem/image/upload/cover_default_j8qirw" ||
+      null;
   }
 
   try {
@@ -388,8 +448,27 @@ async function updateBook(req, res) {
   );
 
   // Manejo de la imagen (esto sigue siendo responsabilidad del controller)
+  // if (req.file) {
+  //   updateData.cover_url = `/uploads/covers/${req.file.filename}`;
+  // }
+
   if (req.file) {
-    updateData.cover_url = `/uploads/covers/${req.file.filename}`;
+    try {
+      finalPayload.cover_url = await uploadToCloudinary(
+        req.file.buffer,
+        "libros",
+      );
+    } catch (uploadError) {
+      console.error(
+        "Error subiendo portada a Cloudinary:",
+        uploadError.message,
+      );
+      req.session.flash = {
+        type: "error",
+        message: "No se pudo subir la imagen. Inténtalo de nuevo.",
+      };
+      return res.redirect(`/admin/books/update/${id}`);
+    }
   }
 
   try {

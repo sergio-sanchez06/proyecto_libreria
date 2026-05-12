@@ -124,6 +124,8 @@ async function confirmStripeSession(req, res) {
   try {
     const order = await OrderRepository.confirmStripeSession(session_id);
 
+    console.log("Items para el email:", JSON.stringify(order.items[0], null, 2));
+
     if (order) {
       // Respondemos JSON de éxito para que la WEB borre la cookie
 

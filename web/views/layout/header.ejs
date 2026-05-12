@@ -251,7 +251,7 @@
                         // onIdTokenChanged ya se dispara cuando Firebase lo renueva internamente,
                         // pero true garantiza que siempre enviamos un token válido y fresco.
 
-                        const newToken = await firebaseUser.getIdToken(true);
+                        const newToken = await firebaseUser.getIdToken(false);
 
                         // Evita reenviar el mismo token en navegaciones dentro de la misma pestaña
                         // sessionStorage se limpia al cerrar la pestaña — comportamiento correcto

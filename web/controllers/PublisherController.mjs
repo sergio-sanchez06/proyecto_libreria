@@ -1,6 +1,7 @@
 // web/controllers/PublisherController.mjs
 import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 import redisController from "../controllers/RedisController.mjs";
+import { uploadToCloudinary } from "../services/cloudinaryService.mjs";
 
 let redisClient = null;
 
@@ -143,8 +144,30 @@ async function getPublisherCreateForm(req, res) {
 
 async function createPublisher(req, res) {
   const publisherData = req.body;
+  // if (req.file) {
+  //   publisherData.image_url = `/uploads/publishers/${req.file.filename}`;
+  // }
+
   if (req.file) {
-    publisherData.image_url = `/uploads/publishers/${req.file.filename}`;
+    try {
+      publisherData.image_url = await uploadToCloudinary(
+        req.file.buffer,
+        "editoriales",
+      );
+    } catch (uploadError) {
+      console.error("Error subiendo foto a Cloudinary:", uploadError.message);
+      req.session.formData = req.body;
+      req.session.flash = {
+        type: "error",
+        message: "No se pudo subir la imagen. Inténtalo de nuevo.",
+      };
+      return res.redirect("/publisher/create");
+    }
+  } else {
+    publisherData.image_url =
+      process.env.DEFAULT_PUBLISHER_IMAGE_URL ||
+      "https://res.cloudinary.com/dbcvk9qem/image/upload/default_editorial_u8y2x7" ||
+      null;
   }
 
   try {
@@ -196,8 +219,25 @@ async function updatePublisher(req, res) {
   const publisherId = req.params.id;
   const updateData = req.body;
 
+  // if (req.file) {
+  //   updateData.logo_url = `/uploads/publishers/${req.file.filename}`;
+  // }
+
   if (req.file) {
-    updateData.logo_url = `/uploads/publishers/${req.file.filename}`;
+    try {
+      updateData.logo_url = await uploadToCloudinary(
+        req.file.buffer,
+        "editoriales",
+      );
+    } catch (uploadError) {
+      console.error("Error subiendo foto a Cloudinary:", uploadError.message);
+      req.session.formData = req.body;
+      req.session.flash = {
+        type: "error",
+        message: "No se pudo subir la imagen. Inténtalo de nuevo.",
+      };
+      return res.redirect(`/publisher/edit/${publisherId}`);
+    }
   }
 
   try {

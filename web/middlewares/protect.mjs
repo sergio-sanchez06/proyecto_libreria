@@ -35,15 +35,15 @@ async function protect(req, res, next) {
       // console.log("Previo a la llama renovar el token");
 
       // LÍNEA TEMPORAL PARA TEST: Descomentar para simular token expirado y comprobar si funciona la sesión de redis para regenerar el token
-      if (!req.session.tokenRenovado) {
-        req.session.tokenRenovado = true; // Marcamos que ya hemos fallado una vez
-        console.log("Simulando primer fallo de token...");
-        throw {
-          response: { status: 401, data: { code: "auth/id-token-expired" } },
-        };
-      } else {
-        req.session.tokenRenovado = false;
-      }
+      // if (!req.session.tokenRenovado) {
+      //   req.session.tokenRenovado = true; // Marcamos que ya hemos fallado una vez
+      //   console.log("Simulando primer fallo de token...");
+      //   throw {
+      //     response: { status: 401, data: { code: "auth/id-token-expired" } },
+      //   };
+      // } else {
+      //   req.session.tokenRenovado = false;
+      // }
 
       console.log("Estado token renovado: ", req.session.tokenRenovado);
 

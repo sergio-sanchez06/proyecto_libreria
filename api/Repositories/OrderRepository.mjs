@@ -78,6 +78,7 @@ async function createOrder({
           title: bookInfo.title, // <--- Esto es lo que necesita el email
           quantity: item.quantity,
           price: item.currentPrice,
+          cover_url: bookInfo.cover_url
         };
       }),
     };
@@ -277,6 +278,7 @@ async function payment(items, user, shipping_address) {
       ...item,
       currentPrice: book.price,
       title: book.title,
+      cover_url: book.cover_url,
     });
   }
   const arrayStripeObjects = [];
@@ -298,6 +300,7 @@ async function payment(items, user, shipping_address) {
     book_id: item.book_id,
     quantity: item.quantity,
     price_at_time: item.currentPrice, // Guardamos el precio validado aquí
+    cover_url: item.cover_url,
   }));
 
   // 1. Crear sesión de Stripe
@@ -337,6 +340,8 @@ async function confirmStripeSession(session_id) {
         status: "PAGADO",
       });
 
+      console.log("Lo que metemos en el nuevo pedido : ",newOrder)
+
       // emailService.sendOrderConfirmationEmail(
       //   user_email,
       //   user_name,
@@ -346,7 +351,7 @@ async function confirmStripeSession(session_id) {
       // ).catch((err) => {
       //   console.error("Error enviando email de confirmación de pedido:", err.message);
       // });
-      return newOrder; // Ahora sí, el pedido existe y está pagado
+      return { ...newOrder, user_email, user_name, shipping_address }; // Ahora sí, el pedido existe y está pagado
     } catch (error) {
       console.log(
         "Confirmar Sesión stripe repo (dentro del try/catch) error",

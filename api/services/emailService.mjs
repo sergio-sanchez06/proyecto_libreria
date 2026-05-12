@@ -2,7 +2,18 @@ import nodemailer from "nodemailer";
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3001";
 const SENDER_NAME = "Bookly S.L.";
-const SENDER_EMAIL = process.env.EMAIL_USER;
+const SENDER_EMAIL = process.env.EMAIL_USER || "izanferlaf@gmail.com";
+
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     type: "OAuth2",
+//     user: "izanferlaf@gmail.com",
+//     clientId: process.env.CLIENT_ID,
+//     clientSecret: process.env.CLIENT_SECRET,
+//     refreshToken: process.env.REFRESH_TOKEN,
+//   },
+// });
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -105,48 +116,75 @@ const emailService = {
 
     // 2. Generamos el HTML de los items
     const itemsHtml = items
-      .map(
-        (item) => `
-      <tr>
-        <td><strong>${item.title}</strong></td>
-        <td style="text-align: center;">x${item.quantity}</td>
-        <td style="text-align: right;">${(item.price * item.quantity).toFixed(2)}€</td>
-      </tr>
-    `,
-      )
+      .map((item) => {
+        // Optimizamos la imagen para que sea un poco más grande (80px ancho)
+        const optimizedCover = item.cover_url.includes("cloudinary.com")
+          ? item.cover_url.replace(
+              "/upload/",
+              "/upload/w_160,h_240,c_fill,q_auto,f_auto/",
+            )
+          : item.cover_url;
+
+        return `
+        <tr>
+          <td style="padding: 15px; border-bottom: 1px solid #eee; width: 80px; vertical-align: top;">
+            <img src="${optimizedCover}" 
+                 alt="${item.title}" 
+                 style="width: 80px; height: auto; border-radius: 4px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); display: block;">
+          </td>
+          <td style="padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle;">
+            <strong style="font-size: 16px; color: #333; display: block; margin-bottom: 4px;">${item.title}</strong>
+            <span style="font-size: 13px; color: #666;">Precio: ${parseFloat(item.price).toFixed(2)}€</span>
+          </td>
+          <td style="text-align: center; padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 14px;">
+            <strong>x${item.quantity}</strong>
+          </td>
+          <td style="text-align: right; padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 15px; font-weight: bold; color: #007bff;">
+            ${(item.price * item.quantity).toFixed(2)}€
+          </td>
+        </tr>
+      `;
+      })
       .join("");
 
     const content = `
-      <h2 style="color: #28a745; margin-top: 0;">¡Pedido Confirmado! ✅</h2>
-      <p>Hola ${userName}, gracias por confiar en nosotros. Hemos recibido tu pedido y nos hemos puesto manos a la obra.</p>
-      
-      <div style="background: #f1f8f3; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745;">
-        <strong style="color: #28a745;">Dirección de envío:</strong><br>
-        <span style="font-size: 14px;">${address}</span>
-      </div>
+    <h2 style="color: #28a745; margin-top: 0;">¡Pedido Confirmado! ✅</h2>
+    <p>Hola <strong>${userName}</strong>, gracias por confiar en nosotros. Hemos recibido tu pedido y nos hemos puesto manos a la obra.</p>
+    
+    <div style="background: #f1f8f3; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745; margin-bottom: 25px;">
+      <strong style="color: #28a745; font-size: 14px; text-transform: uppercase;">Dirección de envío:</strong><br>
+      <span style="font-size: 15px; color: #444;">${address}</span>
+    </div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th style="text-align: left;">Producto</th>
-            <th style="text-align: center;">Cant.</th>
-            <th style="text-align: right;">Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>${itemsHtml}</tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2" style="text-align: right; padding-top: 20px; font-weight: bold;">Total Pagado:</td>
-            <td style="text-align: right; padding-top: 20px; font-weight: bold; font-size: 18px; color: #007bff;">${displayTotal}€</td>
-          </tr>
-        </tfoot>
-      </table>
-    `;
+    <table class="table" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="text-align: left; padding-bottom: 10px; border-bottom: 2px solid #eee;" colspan="2">Libro</th>
+          <th style="text-align: center; padding-bottom: 10px; border-bottom: 2px solid #eee;">Cant.</th>
+          <th style="text-align: right; padding-bottom: 10px; border-bottom: 2px solid #eee;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>${itemsHtml}</tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3" style="text-align: right; padding-top: 25px; font-weight: bold; font-size: 16px;">Total Pagado:</td>
+          <td style="text-align: right; padding-top: 25px; font-weight: bold; font-size: 22px; color: #007bff;">${displayTotal}€</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; text-align: center;">
+        <p style="font-size: 13px; color: #999;">Si tienes alguna duda sobre tu compra, responde a este correo o contacta con soporte.</p>
+    </div>
+  `;
 
     return await this._send(
       toEmail,
       "Confirmación de tu pedido 📚",
-      this._template(content, "Detalles de tu compra en Bookly."),
+      this._template(
+        content,
+        `¡Hola ${userName}! Tu pedido en Bookly ha sido confirmado.`,
+      ),
     );
   },
 

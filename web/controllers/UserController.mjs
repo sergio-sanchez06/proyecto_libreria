@@ -106,6 +106,8 @@ async function getPurchaseHistory(req, res) {
       }
     }
 
+    console.log(orders[0].items);
+
     res.render("partials/purchaseHistory", {
       title: "Mis compras",
       user: req.session.user,

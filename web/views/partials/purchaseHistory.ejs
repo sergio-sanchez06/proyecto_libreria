@@ -131,10 +131,10 @@
                                             <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-light last-child-no-border">
                                                 <div class="d-flex align-items-center gap-3">
                                                     <div class="item-thumbnail rounded shadow-sm overflow-hidden" style="width: 45px; height: 65px; flex-shrink: 0; background: #eee;">
-                                                        <img src="<%= item.book_cover || '/covers/cover_default.jpg' %>" alt="" class="w-100 h-100 object-fit-cover">
+                                                        <img src="<%= item.book.cover_url || '/uploads/covers/cover_default.jpg' %>" alt="" class="w-100 h-100 object-fit-cover">
                                                     </div>
                                                     <div>
-                                                        <div class="fw-bold text-dark small mb-0"><%= item.book_title %></div>
+                                                        <div class="fw-bold text-dark small mb-0"><%= item.book.title %></div>
                                                         <div class="text-muted" style="font-size: 0.75rem;">Cantidad: <%= item.quantity %> • <span class="fw-bold text-teal"><%= Number(item.price_at_time || item.price).toFixed(2) %>€</span></div>
                                                     </div>
                                                 </div>
