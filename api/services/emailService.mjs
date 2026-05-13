@@ -593,7 +593,70 @@ const emailService = {
   },
 
   async sendOrderCancellationEmail(toEmail, userName, items, refunded) {
-    const content = `<h2 style="color: #c0392b;">Pedido Cancelado ❌</h2><p>Hola ${userName}, el pedido ha sido cancelado.</p>`;
+    const itemRows = items
+      .map((item) => {
+        const title = item.book?.title || "Libro";
+        const cover_url = item.book?.cover_url || null;
+        const price = Number(item.price_at_time || 0);
+
+        const optimizedCover = cover_url?.includes("cloudinary.com")
+          ? cover_url.replace(
+              "/upload/",
+              "/upload/w_160,h_240,c_fill,q_auto,f_auto/",
+            )
+          : cover_url || "URL_DE_TU_PLACEHOLDER";
+
+        return `
+      <tr>
+        <td style="padding:15px;border-bottom:1px solid #eee;width:80px;vertical-align:top;">
+          <img src="${optimizedCover}" alt="${title}"
+               style="width:80px;height:auto;border-radius:4px;box-shadow:0 4px 8px rgba(0,0,0,0.1);display:block;">
+        </td>
+        <td style="padding:15px;border-bottom:1px solid #eee;vertical-align:middle;">
+          <strong style="font-size:16px;color:#333;display:block;margin-bottom:4px;">${title}</strong>
+          <span style="font-size:13px;color:#666;">Precio: ${price.toFixed(2)}€</span>
+        </td>
+        <td style="text-align:center;padding:15px;border-bottom:1px solid #eee;vertical-align:middle;font-size:14px;">
+          x${item.quantity}
+        </td>
+        <td style="text-align:right;padding:15px;border-bottom:1px solid #eee;vertical-align:middle;font-size:15px;font-weight:bold;color:#dc3545;">
+          ${(price * item.quantity).toFixed(2)}€
+        </td>
+      </tr>`;
+      })
+      .join("");
+
+    const refundNote = refunded
+      ? `
+        <div style="color: #2d6a4f; background: #d8f3dc; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #b7e4c7;">
+          <strong>ℹ️ Información de Reembolso:</strong><br>
+          <span style="font-size: 14px;">El importe se procesará en <strong>5-10 días hábiles</strong> en tu método de pago original.</span>
+        </div>
+      `
+      : "";
+
+    const content = `
+      <h2 style="color: #c0392b; margin-top: 0;">Pedido Cancelado ❌</h2>
+      <p>Hola <strong>${userName}</strong>,</p>
+      <p>Te confirmamos que tu pedido ha sido cancelado correctamente. Lamentamos que no hayas podido completar tu compra en esta ocasión.</p>
+
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+        <thead>
+          <tr>
+            <th style="text-align: left; padding-bottom: 10px; border-bottom: 2px solid #eee;" colspan="2">Producto</th>
+            <th style="text-align: center; padding-bottom: 10px; border-bottom: 2px solid #eee;">Cant.</th>
+            <th style="text-align: right; padding-bottom: 10px; border-bottom: 2px solid #eee;">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>${itemRows}</tbody>
+      </table>
+
+      ${refundNote}
+
+      <p style="color: #718096; font-size: 13px; text-align: center; margin-top: 30px;">
+        Si no solicitaste esta cancelación o crees que hay un error, por favor ponte en contacto con nosotros lo antes posible.
+      </p>
+    `;
     return await this._send(
       toEmail,
       "Confirmación de cancelación ❌",
