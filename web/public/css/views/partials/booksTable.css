@@ -20,7 +20,7 @@ body::before {
     margin-bottom: 2rem;
     letter-spacing: -0.5px;
     text-transform: uppercase;
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
 }
 
 .section-title::after {
@@ -165,4 +165,54 @@ body::before {
 .form-check-input:checked {
     background-color: var(--brand-teal);
     border-color: var(--brand-teal);
+}
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 991.98px) {
+    .filter-sidebar {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        background: white !important;
+        border: 1px solid rgba(30, 64, 175, 0.1);
+    }
+    
+    .book-img-container {
+        height: 160px; /* Reducir altura en móvil */
+        padding: 10px;
+    }
+    
+    .section-title::after {
+        width: 60px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .card-title {
+        font-size: 0.85rem !important;
+        min-height: 2.4rem !important;
+    }
+    
+    .card-body p {
+        font-size: 1.1rem !important;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 0.2rem !important;
+        font-size: 0.7rem !important;
+    }
+    
+    .form-control-sm {
+        width: 50px !important;
+        padding: 0.25rem !important;
+    }
+    
+    .pagination .page-link {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.8rem;
+        margin: 0 2px;
+    }
 }

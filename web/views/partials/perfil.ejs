@@ -208,6 +208,31 @@
         .btn-check:checked+.btn-outline-danger {
             border-color: #dc3545 !important;
             background-color: #fff5f5 !important;
+            color: #dc3545 !important;
+        }
+
+        .custom-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        /* Corregir que el texto no se ponga blanco al pasar el cursor */
+        .btn-outline-danger.custom-card:hover,
+        .btn-outline-danger.custom-card:active,
+        .btn-outline-secondary.custom-card:hover,
+        .btn-outline-secondary.custom-card:active {
+            color: inherit !important;
+            background-color: white !important;
+        }
+
+        .btn-check:checked+.btn-outline-danger.custom-card:hover {
+            background-color: #fff5f5 !important;
+            color: #dc3545 !important;
+        }
+
+        .btn-check:checked+.btn-outline-secondary.custom-card:hover {
+            background-color: #f0fdfa !important;
+            color: var(--brand-teal) !important;
         }
 
         .text-teal {

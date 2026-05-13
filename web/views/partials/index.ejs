@@ -33,7 +33,7 @@
                 <%= t('index.most_sold_books') %>
             </h2>
 
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-4 mt-2">
+            <div class="row row-cols-2 row-cols-sm-2 row-cols-md-5 g-3 g-md-4 mt-2">
                 <% booksMostSold.forEach((book, index)=> {
                     let medalClass = 'medal-other';
                     if (index === 0) medalClass = 'medal-1';
@@ -136,8 +136,8 @@
                                                                 <i
                                                                     class="bi <%= book.stock <=0 ? 'bi-x-circle' : 'bi-bag-plus-fill' %> me-1"></i>
                                                                 <span class="d-none d-sm-inline">
-                                                                    <%= book.stock <=0 ? t('es:book.out_of_stock') :
-                                                                        t('es:book.add_to_cart') %>
+                                                                    <%= book.stock <=0 ? t('book.out_of_stock') :
+                                                                        t('book.add_to_cart') %>
                                                                 </span>
                                                                 <span class="d-inline d-sm-none">
                                                                     <%= book.stock <=0 ? 'X' : '+' %>

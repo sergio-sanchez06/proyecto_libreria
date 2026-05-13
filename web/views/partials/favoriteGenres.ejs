@@ -20,36 +20,35 @@
             </ol>
         </nav>
 
-        <!-- ── Hero ────────────── -->
-        <div class="rec-hero p-4 p-md-5 mb-5 d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <div class="d-flex align-items-center gap-4 mb-4 mb-md-0">
-                <div class="rec-icon-container">
-                    <i class="bi bi-heart-fill"></i>
+        <!-- ── New Integrated Genres Hero ── -->
+        <div class="genres-hero p-4 p-lg-5 mb-5 rounded-5 shadow-lg border-0 position-relative overflow-hidden text-white">
+            <div class="hero-overlay"></div>
+            <div class="row align-items-center position-relative z-1">
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="hero-icon-box bg-white rounded-4 shadow-sm d-flex align-items-center justify-content-center overflow-hidden" style="width: 70px; height: 70px; flex-shrink: 0; border: 1px solid rgba(212, 175, 55, 0.2);">
+                            <i class="bi bi-heart-fill text-gold" style="font-size: 2.2rem;"></i>
+                        </div>
+                        <div>
+                            <p class="text-uppercase fw-bold m-0 opacity-75" style="letter-spacing:1px; font-size:.85rem;">
+                                <%= t('favorites.personalization_label') %>
+                            </p>
+                            <h1 class="display-5 fw-bold mb-0"><%= t('favorites.hero_title') %></h1>
+                        </div>
+                    </div>
+                    <p class="opacity-75 mb-0 fw-medium"><%= t('favorites.hero_subtitle') %></p>
                 </div>
-                <div>
-                    <p class="text-uppercase fw-bold m-0"
-                        style="color:var(--brand-gold); letter-spacing:1px; font-size:.85rem;">
-                        <%= t('favorites.personalization_label') %>
-                    </p>
-                    <h1 class="display-5 fw-bold m-0" style="color:var(--brand-teal); letter-spacing:-1px;">
-                        <%= t('favorites.hero_title') %>
-                    </h1>
-                    <p class="text-muted mb-0 mt-1" style="font-size:.9rem;">
-                        <%= t('favorites.hero_subtitle') %>
-                    </p>
+                
+                <div class="col-lg-5">
+                    <div class="d-flex flex-column gap-3">
+                        <a href="/user/recommendations" class="btn btn-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2 transition-all">
+                            <i class="bi bi-stars text-teal"></i> <%= t('favorites.view_recommendations_btn') %>
+                        </a>
+                        <a href="/user/profile" class="btn bg-glass-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2 transition-all" style="color: var(--brand-teal);">
+                            <i class="bi bi-person-circle"></i> <%= t('favorites.profile_btn') %>
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="d-flex gap-2 flex-wrap">
-                <a href="/user/recommendations"
-                    class="btn btn-outline-dark rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center gap-2">
-                    <i class="bi bi-stars"></i>
-                    <%= t('favorites.view_recommendations_btn') %>
-                </a>
-                <a href="/user/profile"
-                    class="btn btn-outline-dark rounded-pill px-4 py-2 fw-medium shadow-sm d-flex align-items-center gap-2">
-                    <i class="bi bi-arrow-left"></i>
-                    <%= t('favorites.profile_btn') %>
-                </a>
             </div>
         </div>
 

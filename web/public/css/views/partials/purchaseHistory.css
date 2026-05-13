@@ -10,9 +10,10 @@ body::before {
 }
 
 .orders-hero {
-    background: linear-gradient(135deg, var(--brand-teal) 0%, #1e293b 100%);
+    background: linear-gradient(135deg, #1e293b 0%, var(--brand-teal) 100%);
     position: relative;
     z-index: 1;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .hero-overlay {
@@ -24,13 +25,30 @@ body::before {
 }
 
 .bg-glass-white {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+    color: var(--brand-teal);
+}
+
+.bg-glass-white:hover {
+    background: rgba(255, 255, 255, 1);
+    color: var(--brand-teal) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
 }
 
 .bg-teal-soft {
     background: rgba(20, 184, 166, 0.1);
+}
+
+.text-teal {
+    color: var(--brand-teal) !important;
+}
+
+.text-gold {
+    color: var(--brand-gold) !important;
 }
 
 .order-card {
@@ -65,6 +83,7 @@ body::before {
 
 .btn-white:hover {
     background: #f8fafc;
+    color: var(--brand-teal) !important;
     transform: translateY(-2px);
 }
 
@@ -90,4 +109,71 @@ body::before {
 .order-items-compact::-webkit-scrollbar-thumb {
     background: #e2e8f0;
     border-radius: 10px;
+}
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 991.98px) {
+    .orders-hero {
+        padding: 2rem 1.5rem !important;
+        border-radius: 2rem !important;
+    }
+    
+    .hero-icon-box {
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 1.8rem !important;
+    }
+    
+    .display-5 {
+        font-size: 2rem;
+    }
+    
+    .col-lg-4.border-end {
+        border-end: none !important;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .stats-pills {
+        flex-wrap: wrap;
+        gap: 0.75rem !important;
+    }
+    
+    .stat-pill {
+        flex: 1 1 calc(50% - 0.75rem);
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+    
+    .card-header .text-end {
+        text-align: left !important;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .container {
+        padding-top: 1.5rem !important;
+    }
+    
+    .stat-pill {
+        flex: 1 1 100%;
+    }
+    
+    .order-card {
+        border-radius: 1.5rem !important;
+    }
+    
+    .item-thumbnail {
+        width: 40px !important;
+        height: 55px !important;
+    }
 }

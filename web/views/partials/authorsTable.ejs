@@ -20,9 +20,17 @@
         </p>
     </div>
 
+        <!-- Botón para filtros en móvil -->
+        <div class="col-12 d-lg-none mb-3">
+            <button class="btn btn-outline-primary w-100 py-3 rounded-4 fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#filterSidebar">
+                <i class="bi bi-funnel-fill me-2 text-warning"></i>
+                <%= t('catalog.view_filters') || 'Mostrar Filtros' %>
+            </button>
+        </div>
+
     <div class="row">
         <!-- Sidebar de Filtros -->
-        <aside class="col-lg-3 mb-4">
+        <aside class="col-lg-3 mb-4 collapse d-lg-block" id="filterSidebar">
             <div class="filter-sidebar p-4">
                 <h5 class="mb-4 d-flex align-items-center border-bottom pb-3 fw-bold" style="color: var(--brand-teal);">
                     <i class="bi bi-funnel-fill me-2 text-warning"></i> Filtros

@@ -120,3 +120,48 @@ body::before {
 .book-card:hover .book-img-container img {
     transform: scale(1.05);
 }
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 991.98px) {
+    .publisher-hero-card {
+        padding: 2.5rem 1.5rem !important;
+    }
+    
+    .logo-box {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .display-4 {
+        font-size: clamp(2rem, 8vw, 3rem) !important;
+        text-align: center;
+    }
+    
+    .breadcrumb {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .spec-card {
+        padding: 1rem;
+    }
+    
+    .spec-value {
+        font-size: 1rem;
+    }
+    
+    .book-img-container {
+        height: 180px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .publisher-hero-card {
+        margin-bottom: 2rem !important;
+    }
+    
+    .card-body h6 {
+        font-size: 0.85rem !important;
+    }
+}

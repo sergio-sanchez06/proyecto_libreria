@@ -99,41 +99,112 @@
 
         <!-- ── Estanterías (Carruseles) ───────────────── -->
 
+        <!-- ── Estanterías (Carruseles Bootstrap) ───────────────── -->
+
         <% if (hasFavorites && combined.length > 0) { %>
             <div class="mb-5">
-                <h3 class="shelf-title">
+                <h2 class="section-title text-start section-title-left">
+                    <i class="bi bi-stars text-warning me-2"></i>
                     <%= t('recommendations.tab_special') %> <span class="text-muted fs-6 ms-2 fw-normal"><%= combined.length %> títulos</span>
-                </h3>
-                <div class="shelf-container">
-                    <% combined.forEach(function(book) { %>
-                        <%- include('../partials/rec_book_card', { book, showScore: true, badgeText: null }) %>
-                    <% }) %>
+                </h2>
+                <div id="carouselSpecial" class="carousel slide px-4 px-md-5" data-bs-ride="carousel">
+                    <div class="carousel-inner py-3">
+                        <% const booksPerSlide = 4; for (let i = 0; i < combined.length; i += booksPerSlide) { 
+                            const group = combined.slice(i, i + booksPerSlide); 
+                            const isActive = i === 0 ? "active" : ""; %>
+                            <div class="carousel-item <%= isActive %>">
+                                <div class="row justify-content-center">
+                                    <% group.forEach(book => { %>
+                                        <div class="col-6 col-md-3 mb-4">
+                                            <%- include('../partials/rec_book_card', { book, showScore: true, badgeText: null }) %>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                    <% if (combined.length > booksPerSlide) { %>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselSpecial" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon shadow" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselSpecial" data-bs-slide="next">
+                            <span class="carousel-control-next-icon shadow" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    <% } %>
                 </div>
             </div>
         <% } %>
 
         <% if (mostSold.length > 0) { %>
             <div class="mb-5">
-                <h3 class="shelf-title">
+                <h2 class="section-title text-start section-title-left">
+                    <i class="bi bi-activity text-danger me-2"></i>
                     <%= t('recommendations.tab_trending') %> <span class="text-muted fs-6 ms-2 fw-normal"><%= mostSold.length %> títulos</span>
-                </h3>
-                <div class="shelf-container">
-                    <% mostSold.forEach(function(book) { %>
-                        <%- include('../partials/rec_book_card', { book, showScore: false, badgeText: null }) %>
-                    <% }) %>
+                </h2>
+                <div id="carouselTrending" class="carousel slide px-4 px-md-5" data-bs-ride="carousel">
+                    <div class="carousel-inner py-3">
+                        <% const booksPerSlide = 4; for (let i = 0; i < mostSold.length; i += booksPerSlide) { 
+                            const group = mostSold.slice(i, i + booksPerSlide); 
+                            const isActive = i === 0 ? "active" : ""; %>
+                            <div class="carousel-item <%= isActive %>">
+                                <div class="row justify-content-center">
+                                    <% group.forEach(book => { %>
+                                        <div class="col-6 col-md-3 mb-4">
+                                            <%- include('../partials/rec_book_card', { book, showScore: false, badgeText: null }) %>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                    <% if (mostSold.length > booksPerSlide) { %>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselTrending" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon shadow" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselTrending" data-bs-slide="next">
+                            <span class="carousel-control-next-icon shadow" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    <% } %>
                 </div>
             </div>
         <% } %>
 
         <% if (bestRated.length > 0) { %>
             <div class="mb-5">
-                <h3 class="shelf-title">
+                <h2 class="section-title text-start section-title-left">
+                    <i class="bi bi-trophy text-warning me-2"></i>
                     <%= t('recommendations.tab_best_rated') %> <span class="text-muted fs-6 ms-2 fw-normal"><%= bestRated.length %> títulos</span>
-                </h3>
-                <div class="shelf-container">
-                    <% bestRated.forEach(function(book) { %>
-                        <%- include('../partials/rec_book_card', { book, showScore: false, badgeText: null }) %>
-                    <% }) %>
+                </h2>
+                <div id="carouselBestRated" class="carousel slide px-4 px-md-5" data-bs-ride="carousel">
+                    <div class="carousel-inner py-3">
+                        <% const booksPerSlide = 4; for (let i = 0; i < bestRated.length; i += booksPerSlide) { 
+                            const group = bestRated.slice(i, i + booksPerSlide); 
+                            const isActive = i === 0 ? "active" : ""; %>
+                            <div class="carousel-item <%= isActive %>">
+                                <div class="row justify-content-center">
+                                    <% group.forEach(book => { %>
+                                        <div class="col-6 col-md-3 mb-4">
+                                            <%- include('../partials/rec_book_card', { book, showScore: false, badgeText: null }) %>
+                                        </div>
+                                    <% }) %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                    <% if (bestRated.length > booksPerSlide) { %>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselBestRated" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon shadow" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselBestRated" data-bs-slide="next">
+                            <span class="carousel-control-next-icon shadow" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    <% } %>
                 </div>
             </div>
         <% } %>
@@ -141,5 +212,6 @@
     <% } %>
 
 </div>
+
 
 <%- include('../layout/footer') %>

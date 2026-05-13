@@ -40,9 +40,9 @@ body::before {
 
 .hero-title {
     font-weight: 800;
-    font-size: 2.5rem;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
     letter-spacing: -1px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     color: white;
 }
 
@@ -80,7 +80,7 @@ body::before {
     margin-bottom: 2rem;
     letter-spacing: -0.5px;
     text-transform: uppercase;
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
 }
 
 .section-title::after {
@@ -292,4 +292,95 @@ body::before {
     padding: 0.5rem 1rem;
     border-radius: 30px;
     font-size: 0.85rem;
+}
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 991.98px) {
+    .hero-banner {
+        padding: 3rem 1.5rem;
+        border-radius: 20px;
+    }
+    
+    .section-title-left::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .section-title-left {
+        text-align: center !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .hero-banner {
+        padding: 2.5rem 1rem;
+    }
+    
+    .hero-genres {
+        gap: 0.5rem !important;
+    }
+    
+    .hero-genres .badge {
+        font-size: 0.75rem !important;
+        padding: 0.4rem 0.8rem !important;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        display: none; 
+    }
+    
+    .ranking-item {
+        padding: 1rem;
+    }
+    
+    .ranking-name {
+        font-size: 0.9rem;
+    }
+    
+    .ranking-badge {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.75rem;
+    }
+    
+    .medal {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+        top: -5px;
+        left: -5px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .btn-sm {
+        padding: 0.4rem !important;
+        font-size: 0.7rem !important;
+    }
+    
+    .hero-title {
+        line-height: 1.2;
+    }
+    
+    .book-card-name {
+        font-size: 0.85rem !important;
+    }
+    
+    .author-card-name {
+        font-size: 0.9rem !important;
+    }
+    
+    .author-avatar {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .publisher-logo-container {
+        width: 80px;
+        height: 80px;
+        padding: 10px;
+    }
 }

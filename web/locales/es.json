@@ -39,7 +39,8 @@
     "edit_book": "Editar libro",
     "delete_book": "Eliminar libro",
     "confirm_delete": "¿Estás seguro de que deseas eliminar este libro?",
-    "title": "Título"
+    "title": "Título",
+    "out_of_stock": "Agotado"
   },
   "admin": {
     "edit": "Editar Libro",
@@ -194,8 +195,9 @@
     "btn_loading": "Cargando autenticación...",
     "btn_checkout": "Finalizar compra"
   },
-  "orders": {
+  "purchase_history": {
     "title": "Historial de Pedidos",
+    "hero_subtitle": "Historial completo de tus adquisiciones",
     "order_no": "PEDIDO",
     "date_label": "Realizado el",
     "shipping_details": "Detalles del envío",
@@ -213,7 +215,14 @@
     "status_shipped": "Enviado",
     "status_delivered": "Entregado",
     "status_cancelled": "Cancelado",
-    "shipping_address": "Dirección de envío"
+    "shipping_address": "Dirección de envío",
+    "total_orders": "Pedidos Totales",
+    "total_investment": "Inversión en Lectura",
+    "shipping_to": "Envío a:",
+    "payment_status": "Estado del Pago:",
+    "payment_verified": "Pago Verificado",
+    "items_in_order": "Libros en este pedido",
+    "qty": "Cantidad"
   },
   "adminOrders": {
     "title": "Gestión de Pedidos",

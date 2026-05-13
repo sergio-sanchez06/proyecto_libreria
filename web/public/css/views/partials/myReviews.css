@@ -181,3 +181,79 @@ body::before {
     background-color: var(--brand-teal);
     border-color: var(--brand-teal);
 }
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 991.98px) {
+    .reviews-hero {
+        padding: 2.5rem 1.5rem !important;
+        border-radius: 2rem !important;
+    }
+    
+    .hero-icon-box {
+        width: 60px !important;
+        height: 60px !important;
+        font-size: 1.8rem !important;
+    }
+    
+    .display-5 {
+        font-size: clamp(2rem, 8vw, 3rem) !important;
+    }
+    
+    .reviewer-rank-container {
+        margin-top: 1.5rem !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .col-md-3.bg-light-soft {
+        padding: 2rem !important;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .book-cover-wrapper img {
+        max-height: 150px !important;
+    }
+    
+    .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .card-body h4 {
+        font-size: 1.25rem !important;
+    }
+    
+    .review-comment-box {
+        padding: 1rem !important;
+    }
+    
+    .review-comment-box p {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .container {
+        padding-top: 1.5rem !important;
+    }
+    
+    .hero-stat-card .fs-1 {
+        font-size: 1.5rem !important;
+    }
+    
+    .review-modern-card {
+        border-radius: 1.5rem !important;
+    }
+    
+    .card-body .d-flex.justify-content-between {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+    
+    .card-body .text-end {
+        text-align: left !important;
+    }
+    
+    .card-body .d-flex.gap-2 {
+        flex-wrap: wrap;
+    }
+}

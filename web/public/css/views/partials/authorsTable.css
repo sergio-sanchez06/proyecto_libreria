@@ -20,7 +20,7 @@ body::before {
     margin-bottom: 2rem;
     letter-spacing: -0.5px;
     text-transform: uppercase;
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
 }
 
 .section-title::after {
@@ -161,4 +161,45 @@ body::before {
 .form-check-input:checked {
     background-color: var(--brand-teal);
     border-color: var(--brand-teal);
+}
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 991.98px) {
+    .filter-sidebar {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        background: white !important;
+        border: 1px solid rgba(30, 64, 175, 0.1);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .card-header-bg {
+        height: 60px;
+    }
+    
+    .author-img-container {
+        width: 90px;
+        height: 90px;
+        margin-top: -30px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .container {
+        padding-top: 2rem !important;
+    }
+    
+    .card-body {
+        padding: 1rem 1rem 2rem !important;
+    }
+    
+    .card-body h5 {
+        font-size: 1rem !important;
+    }
+    
+    .pagination .page-link {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.8rem;
+        margin: 0 2px;
+    }
 }

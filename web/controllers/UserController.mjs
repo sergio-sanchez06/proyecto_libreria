@@ -582,12 +582,14 @@ async function getRecommendationsPage(req, res) {
     const api = getAuthenticatedClient(cleanToken);
     const userId = req.session.user.id;
 
-    const [mostSoldRes, bestRatedRes, combinedRes, favoritesRes] =
+    const [mostSoldRes, bestRatedRes, combinedRes, favoritesRes, allBookAuthorsRes, allAuthorsRes] =
       await Promise.allSettled([
         api.get(`/books/recommendations/mostSold/${userId}`),
         api.get(`/books/recommendations/bestRated/${userId}`),
         api.get(`/books/recommendations/combined/${userId}`),
         api.get(`/users/favorites/${userId}`),
+        api.get("/bookAuthor"),
+        api.get("/authors"),
       ]);
 
     const favoriteGenres =
@@ -636,13 +638,18 @@ async function getRecommendationsPage(req, res) {
       (b) => !combinedIds.has(b.id) && !mostSoldIds.has(b.id),
     );
 
+    const bookAuthors = allBookAuthorsRes.status === "fulfilled" ? allBookAuthorsRes.value.data : [];
+    const authors = allAuthorsRes.status === "fulfilled" ? allAuthorsRes.value.data : [];
+
     res.render("partials/recommendations", {
       user: req.session.user,
       mostSold,
       bestRated,
       combined,
       favoriteGenres,
-      hasFavorites, // ← nuevo flag para la vista
+      hasFavorites, 
+      bookAuthors,
+      authors,
       error: null,
     });
   } catch (error) {

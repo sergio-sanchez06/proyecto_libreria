@@ -23,7 +23,7 @@ body::before {
     margin-bottom: 2rem;
     letter-spacing: -0.5px;
     text-transform: uppercase;
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
 }
 
 .section-title::after {
@@ -109,4 +109,62 @@ body::before {
     background: rgba(255, 255, 255, 0.8) !important;
     border-radius: 12px;
     overflow: hidden;
+}
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 991.98px) {
+    .col-lg-4.sticky-top {
+        position: relative !important;
+        top: 0 !important;
+    }
+    
+    .summary-card {
+        margin-top: 2rem;
+        padding: 2rem !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .card-body {
+        padding: 1.25rem !important;
+    }
+    
+    .card-title {
+        font-size: 1rem !important;
+    }
+    
+    .cart-book-img {
+        padding: 5px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .container {
+        padding-top: 2rem !important;
+    }
+    
+    .section-title {
+        margin-bottom: 2rem !important;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .card-title {
+        font-size: 0.9rem !important;
+        pe-2 !important;
+    }
+    
+    .qty-controls .btn {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    .fs-5, .fs-3 {
+        font-size: 1.1rem !important;
+    }
+    
+    .address-select-item label {
+        padding: 1rem !important;
+    }
 }

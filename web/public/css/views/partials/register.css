@@ -94,3 +94,40 @@ main {
 textarea.form-control {
     min-height: 80px;
 }
+.auth-card-body {
+    padding: 2.5rem;
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 575.98px) {
+    main {
+        padding-top: 1.5rem;
+    }
+    
+    .card-header {
+        padding: 1.5rem 1rem 0.5rem !important;
+    }
+    
+    .card-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .auth-card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .form-control {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+    
+    .btn-lg {
+        padding: 12px !important;
+        font-size: 1rem !important;
+    }
+    
+    .btn-outline-dark, .btn-outline-info {
+        padding: 12px !important;
+        font-size: 0.9rem;
+    }
+}

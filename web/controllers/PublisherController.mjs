@@ -73,7 +73,7 @@ async function getPublishers(req, res, next) {
 async function showAllPublishers(req, res, next) {
   try {
     const page = req.query.page || 1;
-    const limit = 4;
+    const limit = 8;
 
     const response = await apiClient.get(
       `/publishers?page=${page}&limit=${limit}`,

@@ -622,7 +622,7 @@ async function getMostSoldByFavoriteGenres(userId) {
   const client = await pool.connect();
   try {
     const result = await client.query(
-      `SELECT b.id, b.title, b.cover_url, b.price, 
+      `SELECT b.id, b.title, b.cover_url, b.price, b.stock,
               SUM(oi.quantity) AS total_sold,
               COUNT(DISTINCT ufg.genre_id) AS match_count -- Cuenta coincidencias
        FROM books b
@@ -636,7 +636,7 @@ async function getMostSoldByFavoriteGenres(userId) {
            JOIN orders o ON oi2.order_id = o.id
            WHERE o.user_id = $1 AND o.status != 'CANCELADO'
          )
-       GROUP BY b.id, b.title, b.cover_url, b.price
+       GROUP BY b.id, b.title, b.cover_url, b.price, b.stock
        ORDER BY match_count DESC, total_sold DESC -- Prioriza coincidencias
        LIMIT 6`,
       [userId],
@@ -661,7 +661,7 @@ async function getBestRatedByFavoriteGenres(userId) {
   const client = await pool.connect();
   try {
     const result = await client.query(
-      `SELECT b.id, b.title, b.cover_url, b.price, 
+      `SELECT b.id, b.title, b.cover_url, b.price, b.stock,
               ROUND(AVG(r.rating), 2) AS avg_rating, 
               COUNT(DISTINCT r.id) AS review_count,
               COUNT(DISTINCT ufg.genre_id) AS match_count
@@ -676,7 +676,7 @@ async function getBestRatedByFavoriteGenres(userId) {
            JOIN orders o ON oi.order_id = o.id
            WHERE o.user_id = $1 AND o.status != 'CANCELADO'
          )
-       GROUP BY b.id, b.title, b.cover_url, b.price
+       GROUP BY b.id, b.title, b.cover_url, b.price, b.stock
        HAVING COUNT(r.id) >= 1
        ORDER BY match_count DESC, avg_rating DESC, review_count DESC
        LIMIT 6`,

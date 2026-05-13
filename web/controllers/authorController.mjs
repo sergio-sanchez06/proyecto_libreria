@@ -38,7 +38,7 @@ async function getAuthors(req, res) {
 
     const page = req.query.page || 1;
     const country = req.query.country || null;
-    const limit = 4;
+    const limit = 6;
 
     // 1. Obtener países de Redis
     const cachedCountries = await redisClient.get("AllCountries");
@@ -319,7 +319,7 @@ async function getManageAuthors(req, res) {
     const leastRated = sort.includes("leastRated");
     const mostBought = sort.includes("mostBought");
     const leastBought = sort.includes("leastBought");
-    const limit = 4;
+    const limit = 6;
 
     // 2. Intentar sacar países de caché
     const cachedCountries = await redisClient.get("AllCountries");

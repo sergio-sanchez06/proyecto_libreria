@@ -138,3 +138,27 @@ hr {
 .toggle-password-btn:hover {
     color: #2c3e50;
 }
+.auth-card-body {
+    padding: 3rem;
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 575.98px) {
+    main {
+        padding-top: 1.5rem;
+    }
+    
+    .auth-card-body {
+        padding: 2rem 1.5rem !important;
+    }
+    
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .btn-primary, .btn-outline-dark, .btn-outline-info {
+        padding: 14px !important;
+        font-size: 0.9rem;
+    }
+}

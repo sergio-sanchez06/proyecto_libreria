@@ -25,8 +25,8 @@
 
     <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
 
-    <link rel="stylesheet" href="/css/main.min.css">
-    <link rel="stylesheet" href="/css/layout.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/layout.css">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.2.3/css/flag-icons.min.css">
 
@@ -44,7 +44,7 @@
                 <div class="logo-container">
                     <a href="/" class="brand-container d-flex align-items-center">
                         <div class="header-logo-outer">
-                            <img src="/images/logo.png" alt="BOOKLY logo" class="header-logo-inner-img" width="49"
+                            <img src="https://res.cloudinary.com/dbcvk9qem/image/upload/v1778585863/logo_by6o07.png" alt="BOOKLY logo" class="header-logo-inner-img" width="49"
                                 height="27" loading="eager">
                         </div>
                         <span class="brand-text ms-3">BOOKLY</span>
@@ -58,23 +58,28 @@
                 <div class="collapsible-menu" id="collapsibleMenu">
                     <nav class="main-nav">
                         <a href="/">
-                            <%= t('nav.home') %>
+                            <span><%= t('nav.home') %></span>
+                            <i class="bi bi-house-door d-lg-none"></i>
                         </a>
                         <a href="/books/showAllBooks">
-                            <%= t('nav.catalog') %>
+                            <span><%= t('nav.catalog') %></span>
+                            <i class="bi bi-book d-lg-none"></i>
                         </a>
                         <a href="/authors/showAllAuthors">
-                            <%= t('nav.authors') %>
+                            <span><%= t('nav.authors') %></span>
+                            <i class="bi bi-person-badge d-lg-none"></i>
                         </a>
                         <a href="/publisher/showAllPublishers">
-                            <%= t('nav.publishers') %>
+                            <span><%= t('nav.publishers') %></span>
+                            <i class="bi bi-building d-lg-none"></i>
                         </a>
                         <a href="/genres">
-                            <%= t('nav.genres') %>
+                            <span><%= t('nav.genres') %></span>
+                            <i class="bi bi-tags d-lg-none"></i>
                         </a>
                         <a href="/cart/view" class="position-relative">
-                            <%= t('cart.title') %>
-                                <i class="bi bi-cart3"></i>
+                            <span><%= t('cart.title') %></span>
+                            <i class="bi bi-cart3"></i>
                         </a>
                     </nav>
 

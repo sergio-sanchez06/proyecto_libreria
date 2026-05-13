@@ -1,5 +1,5 @@
 <%- include('../layout/header', { 
-    title: t('orders.title'), 
+    title: t('purchase_history.title'), 
     bodyClass: 'bg-user-vistas',
     extraCSS: 'partials/purchaseHistory'
 }) %>
@@ -9,11 +9,11 @@
             <ol class="breadcrumb" style="font-weight:500;">
                 <li class="breadcrumb-item">
                     <a href="/user/profile" class="text-decoration-none text-muted">
-                        Perfil
+                    <%= t('profile.title') %>
                     </a>
                 </li>
                 <li class="breadcrumb-item active" style="color:var(--brand-teal);">
-                    <%= t('orders.title') %>
+                    <%= t('purchase_history.title') %>
                 </li>
             </ol>
         </nav>
@@ -24,25 +24,26 @@
             <div class="row align-items-center position-relative z-1">
                 <div class="col-lg-7 mb-4 mb-lg-0">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="hero-icon-box bg-white text-teal rounded-4 shadow-sm d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 2.2rem; flex-shrink: 0;">
-                            <i class="bi bi-box-seam-fill"></i>
+                        <div class="hero-icon-box bg-white rounded-4 shadow-sm d-flex align-items-center justify-content-center overflow-hidden" style="width: 70px; height: 70px; flex-shrink: 0; position: relative;">
+                            <div class="bg-teal position-absolute w-100 h-100 opacity-10"></div>
+                            <i class="bi bi-box-seam-fill text-teal position-relative z-1" style="font-size: 2.2rem;"></i>
                         </div>
                         <div>
-                            <h1 class="display-5 fw-bold mb-0">Mis Pedidos</h1>
-                            <p class="opacity-75 mb-0">Gestiona tus compras y envíos</p>
+                            <h1 class="display-5 fw-bold mb-0"><%= t('purchase_history.title') %></h1>
+                            <p class="opacity-75 mb-0 fw-medium"><%= t('purchase_history.hero_subtitle') %></p>
                         </div>
                     </div>
                     
                     <div class="stats-pills d-flex gap-3 mt-4">
                         <div class="stat-pill px-4 py-2 rounded-pill bg-glass-white text-dark shadow-sm text-center">
-                            <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">Pedidos Totales</span>
+                            <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;"><%= t('purchase_history.total_orders') %></span>
                             <span class="fw-bold fs-4 d-block" style="line-height: 1;"><%= orders.length %></span>
                         </div>
                         <% 
                             let totalSpent = orders.reduce((acc, o) => acc + Number(o.total), 0).toFixed(2);
                         %>
                         <div class="stat-pill px-4 py-2 rounded-pill bg-glass-white text-dark shadow-sm text-center">
-                            <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">Inversión en Lectura</span>
+                            <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;"><%= t('purchase_history.total_investment') %></span>
                             <span class="fw-bold fs-4 d-block" style="line-height: 1;"><%= totalSpent %>€</span>
                         </div>
                     </div>
@@ -58,8 +59,8 @@
                                 <div class="small fw-600">Todas tus compras están protegidas por nuestro sistema de garantía.</div>
                             </div>
                         </div>
-                        <a href="/user/profile" class="btn btn-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2">
-                            <i class="bi bi-arrow-left"></i> Volver al Perfil
+                        <a href="/user/profile" class="btn btn-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2 transition-all">
+                            <i class="bi bi-person-circle text-teal"></i> Volver al Perfil
                         </a>
                     </div>
                 </div>
@@ -68,15 +69,15 @@
 
         <% if (orders && orders.length> 0) { %>
             <% orders.forEach(order=> { %>
-                <div class="card shadow-sm border-0 order-card">
+                <div class="card shadow-sm border-0 order-card mb-4">
                     <div
-                        class="card-header bg-white d-flex justify-content-between align-items-center py-3 border-bottom-0">
+                        class="card-header bg-white d-flex justify-content-between align-items-center py-3 border-bottom border-light">
                         <div>
                             <span class="text-muted small fw-bold text-uppercase">
-                                <%= t('orders.order_no') %> #<%= order.id %>
+                                <%= t('purchase_history.order_no') %> #<%= order.id %>
                             </span>
-                            <h5 class="mb-0 fw-bold">
-                                <%= t('orders.date_label') %>:
+                            <h5 class="mb-0 fw-bold text-dark">
+                                <%= t('purchase_history.date_label') %>:
                                     <%= new Date(order.created_at).toLocaleDateString(currentLanguage==='eu' ? 'eu-ES' :
                                         currentLanguage==='ca' ? 'ca-ES' : currentLanguage==='gl' ? 'gl-ES' : 'es-ES' )
                                         %>
@@ -96,35 +97,36 @@
                                     (order.status==='PROCESANDO' || order.status==='ENVIADO' ) { %>
                                     style="background-color: var(--brand-teal);"
                                     <% } %> >
-                                        <%= t('orders.' + statusKey) %>
+                                        <%= t('purchase_history.' + statusKey) %>
                                 </span>
                                 <p class="h5 mb-0 fw-bold" style="color: var(--brand-teal);">
                                     <%= Number(order.total).toFixed(2) %>€
                                 </p>
                         </div>
+                    </div> <!-- CIERRE DEL CARD-HEADER -->
                     <div class="card-body p-0">
                         <div class="row g-0">
                             <!-- Left Side: Order Meta & Shipping -->
                             <div class="col-lg-4 border-end bg-light-soft p-4">
-                                <div class="mb-4">
-                                    <h6 class="fw-bold mb-2 text-uppercase small text-muted" style="letter-spacing: 1px;">Envío a:</h6>
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold mb-2 small text-muted" style="letter-spacing: 0.5px;"><%= t('purchase_history.shipping_to') %></h6>
                                     <div class="d-flex align-items-start gap-2">
                                         <i class="bi bi-geo-alt text-teal"></i>
                                         <p class="mb-0 small fw-bold text-dark"><%= order.shipping_address || 'Dirección no especificada' %></p>
                                     </div>
                                 </div>
-                                <div class="mb-0">
-                                    <h6 class="fw-bold mb-2 text-uppercase small text-muted" style="letter-spacing: 1px;">Estado del Pago:</h6>
+                                    <div class="mb-0">
+                                        <h6 class="fw-bold mb-2 small text-muted" style="letter-spacing: 0.5px;"><%= t('purchase_history.payment_status') %></h6>
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="bi bi-check-circle-fill text-success small"></i>
-                                        <span class="small fw-bold text-dark">Confirmado</span>
+                                        <span class="small fw-bold text-dark"><%= t('purchase_history.payment_verified') %></span>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Right Side: Items List -->
                             <div class="col-lg-8 p-4">
-                                <h6 class="fw-bold mb-3 text-uppercase small text-muted" style="letter-spacing: 1px;">Libros en este pedido</h6>
+                                <h6 class="fw-bold mb-3 small text-muted" style="letter-spacing: 0.5px;"><%= t('purchase_history.items_in_order') %></h6>
                                 <% if (order.items && order.items.length > 0) { %>
                                     <div class="order-items-compact">
                                         <% order.items.forEach(item => { %>
@@ -135,7 +137,7 @@
                                                     </div>
                                                     <div>
                                                         <div class="fw-bold text-dark small mb-0"><%= item.book.title %></div>
-                                                        <div class="text-muted" style="font-size: 0.75rem;">Cantidad: <%= item.quantity %> • <span class="fw-bold text-teal"><%= Number(item.price_at_time || item.price).toFixed(2) %>€</span></div>
+                                                        <div class="text-muted" style="font-size: 0.75rem;"><%= t('purchase_history.qty') %>: <%= item.quantity %> • <span class="fw-bold text-teal"><%= Number(item.price_at_time || item.price).toFixed(2) %>€</span></div>
                                                     </div>
                                                 </div>
                                                 <div class="fw-bold text-dark small text-end">
@@ -155,12 +157,12 @@
                             <i class="bi bi-cart-x mb-3 d-block"
                                 style="font-size: 5rem; color: var(--brand-gold); opacity: 0.5;"></i>
                             <h4 class="fw-bold" style="color: var(--brand-teal);">
-                                <%= t('orders.empty_msg') %>
+                                <%= t('purchase_history.empty_msg') %>
                             </h4>
                             <a href="/books/showAllBooks" class="btn mt-3 rounded-pill px-4 text-white fw-bold"
                                 style="background-color: var(--brand-teal);">
                                 <i class="bi bi-shop me-2"></i>
-                                <%= t('orders.btn_shop') %>
+                                <%= t('purchase_history.btn_shop') %>
                             </a>
                         </div>
                         <% } %>
