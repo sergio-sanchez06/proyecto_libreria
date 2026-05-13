@@ -122,6 +122,18 @@
                                         <span class="small fw-bold text-dark"><%= t('purchase_history.payment_verified') %></span>
                                     </div>
                                 </div>
+
+                                <% if (order.status === 'PENDIENTE' || order.status === 'PAGADO') { %>
+                                    <div class="mt-4 pt-3 border-top">
+                                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold w-100" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#cancelOrderModal"
+                                                data-order-id="<%= order.id %>"
+                                                data-order-status="<%= order.status %>">
+                                            <i class="bi bi-x-circle me-1"></i> <%= t('purchase_history.cancel_order_btn') %>
+                                        </button>
+                                    </div>
+                                <% } %>
                             </div>
 
                             <!-- Right Side: Items List -->
@@ -167,5 +179,57 @@
                         </div>
                         <% } %>
     </div>
+
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark" id="cancelModalLabel">
+                        <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
+                        <%= t('purchase_history.cancel_modal_title') %>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <p class="mb-0 text-muted" id="cancelModalBodyText">
+                        <%= t('purchase_history.cancel_modal_body').replace('{{id}}', '<span id="displayOrderId" class="fw-bold text-dark"></span>') %>
+                    </p>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <form id="cancelOrderForm" method="POST" data-requires-token>
+                        <input type="hidden" name="orderId" id="inputOrderId">
+                        <input type="hidden" name="orderStatus" id="inputOrderStatus">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
+                            <%= t('purchase_history.cancel_confirm_btn') %>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cancelModal = document.getElementById('cancelOrderModal');
+            if (cancelModal) {
+                cancelModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const orderId = button.getAttribute('data-order-id');
+                    const orderStatus = button.getAttribute('data-order-status');
+                    
+                    const form = document.getElementById('cancelOrderForm');
+                    const inputId = document.getElementById('inputOrderId');
+                    const inputStatus = document.getElementById('inputOrderStatus');
+                    const displayId = document.getElementById('displayOrderId');
+                    
+                    form.action = `/user/cancel/order/${orderId}`;
+                    inputId.value = orderId;
+                    inputStatus.value = orderStatus;
+                    displayId.textContent = orderId;
+                });
+            }
+        });
+    </script>
 
     <%- include('../layout/footer') %>

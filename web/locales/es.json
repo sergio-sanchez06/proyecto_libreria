@@ -222,7 +222,11 @@
     "payment_status": "Estado del Pago:",
     "payment_verified": "Pago Verificado",
     "items_in_order": "Libros en este pedido",
-    "qty": "Cantidad"
+    "qty": "Cantidad",
+    "cancel_order_btn": "Cancelar Pedido",
+    "cancel_modal_title": "¿Cancelar pedido?",
+    "cancel_modal_body": "¿Estás seguro de que deseas cancelar el pedido #{{id}}? Esta acción no se puede deshacer.",
+    "cancel_confirm_btn": "Sí, cancelar pedido"
   },
   "adminOrders": {
     "title": "Gestión de Pedidos",
