@@ -582,15 +582,21 @@ async function getRecommendationsPage(req, res) {
     const api = getAuthenticatedClient(cleanToken);
     const userId = req.session.user.id;
 
-    const [mostSoldRes, bestRatedRes, combinedRes, favoritesRes, allBookAuthorsRes, allAuthorsRes] =
-      await Promise.allSettled([
-        api.get(`/books/recommendations/mostSold/${userId}`),
-        api.get(`/books/recommendations/bestRated/${userId}`),
-        api.get(`/books/recommendations/combined/${userId}`),
-        api.get(`/users/favorites/${userId}`),
-        api.get("/bookAuthor"),
-        api.get("/authors"),
-      ]);
+    const [
+      mostSoldRes,
+      bestRatedRes,
+      combinedRes,
+      favoritesRes,
+      allBookAuthorsRes,
+      allAuthorsRes,
+    ] = await Promise.allSettled([
+      api.get(`/books/recommendations/mostSold/${userId}`),
+      api.get(`/books/recommendations/bestRated/${userId}`),
+      api.get(`/books/recommendations/combined/${userId}`),
+      api.get(`/users/favorites/${userId}`),
+      api.get("/bookAuthor"),
+      api.get("/authors"),
+    ]);
 
     const favoriteGenres =
       favoritesRes.status === "fulfilled" ? favoritesRes.value.data : [];
@@ -638,8 +644,12 @@ async function getRecommendationsPage(req, res) {
       (b) => !combinedIds.has(b.id) && !mostSoldIds.has(b.id),
     );
 
-    const bookAuthors = allBookAuthorsRes.status === "fulfilled" ? allBookAuthorsRes.value.data : [];
-    const authors = allAuthorsRes.status === "fulfilled" ? allAuthorsRes.value.data : [];
+    const bookAuthors =
+      allBookAuthorsRes.status === "fulfilled"
+        ? allBookAuthorsRes.value.data
+        : [];
+    const authors =
+      allAuthorsRes.status === "fulfilled" ? allAuthorsRes.value.data : [];
 
     res.render("partials/recommendations", {
       user: req.session.user,
@@ -647,7 +657,7 @@ async function getRecommendationsPage(req, res) {
       bestRated,
       combined,
       favoriteGenres,
-      hasFavorites, 
+      hasFavorites,
       bookAuthors,
       authors,
       error: null,
@@ -769,7 +779,7 @@ async function cancelOrder(req, res) {
       return res.redirect("/user/myOrders");
     }
 
-    const { data } = await api.patch(`/orders/user/cancel/${orderId}`);
+    const { data } = await api.post(`/orders/user/cancel/${orderId}`);
 
     req.session.flash = {
       type: "success",
@@ -796,6 +806,76 @@ async function cancelOrder(req, res) {
   }
 }
 
+async function userRequestReturn(req, res) {
+  try {
+    const { id } = req.params; // ID del pedido desde la URL
+
+    const api = getAuthenticatedClient(req.session.idToken);
+
+    const { returnOrderId, returnOrderStatus } = req.body;
+
+    console.log("Lo que llega en el body: ", returnOrderId);
+    console.log("Estado actual del pedido: ", returnOrderStatus);
+
+    //Validar que el pedido sea del propio usuario que lo quiere devolver
+    const { data: order } = await api.get(`/orders/${req.params.id}`);
+
+    console.log(order);
+
+    if (!order) {
+      req.session.flash = {
+        type: "error",
+        message: "No se pudo encontrar el pedido.",
+      };
+      return res.redirect("/user/myOrders");
+    }
+
+    if (String(order.id) !== String(returnOrderId)) {
+      req.session.flash = {
+        type: "error",
+        message: "El pedido no coincide con el id de pedido enviado.",
+      };
+      return res.redirect("/user/myOrders");
+    }
+
+    if (String(order.user_id) !== String(req.session.user.id)) {
+      req.session.flash = {
+        type: "error",
+        message: "No tienes permiso para solicitar la devolución de este pedido.",
+      };
+      return res.redirect("/user/myOrders");
+    }
+
+    if (!["ENTREGADO"].includes(returnOrderStatus?.toUpperCase())) {
+      req.session.flash = {
+        type: "error",
+        message:
+          "El estado del pedido no permite su devolución. Contacta con soporte.",
+      };
+      return res.redirect("/user/myOrders");
+    }
+    
+    // Llamamos al endpoint de la API que creamos antes
+    const { data } = await api.post(`/orders/user/request-return/${id}`);
+
+    req.session.flash = {
+      type: "success",
+      message: data.message || "Solicitud de devolución enviada correctamente.",
+    };
+    
+    // Redirigimos al perfil del usuario o a sus pedidos
+    res.redirect("/user/myOrders"); 
+  } catch (error) {
+    console.error("Error al solicitar devolución:", error);
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.error || "No se pudo tramitar la solicitud.",
+    };
+    res.redirect("/profile/orders");
+  }
+}
+
+
 export default {
   getProfile,
   getPurchaseHistory,
@@ -809,4 +889,5 @@ export default {
   getFavoritesPage,
   getRecommendationsPage,
   cancelOrder,
+  userRequestReturn,
 };

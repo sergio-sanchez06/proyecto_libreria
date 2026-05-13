@@ -537,6 +537,15 @@ async function cancelOrder(req, res) {
       return res.redirect("/admin/orders");
     }
 
+    const nocancelable = ["ENVIADO", "ENTREGADO", "CANCELADO"];
+    if (nocancelable.includes(status?.toUpperCase())) {
+      req.session.flash = {
+        type: "error",
+        message: "El estado del pedido no permite su cancelación.",
+      };
+      return res.redirect("/admin/orders");
+    }
+
     const api = getAuthenticatedClient(req.session.idToken);
     // const response = await api.patch(`/orders/cancel/${orderId}`);
     // const order = response.data;
@@ -546,7 +555,7 @@ async function cancelOrder(req, res) {
     // };
     // res.redirect("/admin/orders");
 
-    const { data } = await api.patch(`/orders/admin/cancel/${orderId}`);
+    const { data } = await api.post(`/orders/admin/cancel/${orderId}`);
 
     req.session.flash = {
       type: "success",
@@ -557,8 +566,7 @@ async function cancelOrder(req, res) {
     console.error("Error al eliminar pedido:", error);
     req.session.flash = {
       type: "error",
-      message:
-        error.response?.data?.error || "No se pudo eliminar el pedido.",
+      message: error.response?.data?.error || "No se pudo eliminar el pedido.",
     };
     res.redirect("/admin/orders");
   }
@@ -749,6 +757,64 @@ async function restoreGenre(req, res) {
   }
 }
 
+async function adminConfirmReturn(req, res) {
+  try {
+    const { id } = req.params;
+    const { orderId } = req.body;
+
+    // Validación de seguridad similar a la que ya tienes
+    if (String(orderId) !== String(id)) {
+      req.session.flash = { type: "error", message: "Error de seguridad." };
+      return res.redirect("/admin/orders");
+    }
+
+    const api = getAuthenticatedClient(req.session.idToken);
+
+    // Llamada a la API para ejecutar reembolso y stock
+    const { data } = await api.post(`/orders/admin/confirm-return/${orderId}`);
+
+    req.session.flash = {
+      type: "success",
+      message: data.message || "Devolución confirmada y reembolso emitido.",
+    };
+    res.redirect("/admin/orders");
+  } catch (error) {
+    console.error("Error al confirmar devolución:", error);
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.error || "Error al procesar el reembolso.",
+    };
+    res.redirect("/admin/orders");
+  }
+}
+
+// 2. FORZAR (El admin decide devolverlo aunque el usuario no haya hecho nada)
+async function adminForceReturn(req, res) {
+  try {
+    const { id } = req.params;
+
+    const api = getAuthenticatedClient(req.session.idToken);
+
+    // Llamada al endpoint de "fuerza bruta" para admins
+    const { data } = await api.post(`/orders/admin/force-return/${id}`);
+
+    req.session.flash = {
+      type: "success",
+      message: data.message || "Devolución forzada por el administrador correctamente.",
+    };
+
+    res.redirect("/admin/orders");
+  } catch (error) {
+    console.error("Error al forzar devolución:", error);
+    req.session.flash = {
+      type: "error",
+      message:
+        error.response?.data?.error || "No se pudo forzar la devolución.",
+    };
+    res.redirect("/admin/orders");
+  }
+}
+
 export default {
   getManageBooks,
   getForm,
@@ -771,4 +837,6 @@ export default {
   createGenre,
   deleteGenre,
   restoreGenre,
+  adminConfirmReturn,
+  adminForceReturn,
 };

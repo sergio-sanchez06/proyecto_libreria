@@ -1,15 +1,12 @@
-<%- include('../layout/header', { 
-    title: t('purchase_history.title'), 
-    bodyClass: 'bg-user-vistas',
-    extraCSS: 'partials/purchaseHistory'
-}) %>
+<%- include('../layout/header', { title: t('purchase_history.title'), bodyClass: 'bg-user-vistas' ,
+    extraCSS: 'partials/purchaseHistory' }) %>
 
     <div class="container my-5 orders-container">
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb" style="font-weight:500;">
                 <li class="breadcrumb-item">
                     <a href="/user/profile" class="text-decoration-none text-muted">
-                    <%= t('profile.title') %>
+                        <%= t('profile.title') %>
                     </a>
                 </li>
                 <li class="breadcrumb-item active" style="color:var(--brand-teal);">
@@ -19,36 +16,51 @@
         </nav>
 
         <!-- ── New Integrated Orders Hero ── -->
-        <div class="orders-hero p-4 p-lg-5 mb-5 rounded-5 shadow-lg border-0 position-relative overflow-hidden text-white">
+        <div
+            class="orders-hero p-4 p-lg-5 mb-5 rounded-5 shadow-lg border-0 position-relative overflow-hidden text-white">
             <div class="hero-overlay"></div>
             <div class="row align-items-center position-relative z-1">
                 <div class="col-lg-7 mb-4 mb-lg-0">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="hero-icon-box bg-white rounded-4 shadow-sm d-flex align-items-center justify-content-center overflow-hidden" style="width: 70px; height: 70px; flex-shrink: 0; position: relative;">
+                        <div class="hero-icon-box bg-white rounded-4 shadow-sm d-flex align-items-center justify-content-center overflow-hidden"
+                            style="width: 70px; height: 70px; flex-shrink: 0; position: relative;">
                             <div class="bg-teal position-absolute w-100 h-100 opacity-10"></div>
-                            <i class="bi bi-box-seam-fill text-teal position-relative z-1" style="font-size: 2.2rem;"></i>
+                            <i class="bi bi-box-seam-fill text-teal position-relative z-1"
+                                style="font-size: 2.2rem;"></i>
                         </div>
                         <div>
-                            <h1 class="display-5 fw-bold mb-0"><%= t('purchase_history.title') %></h1>
-                            <p class="opacity-75 mb-0 fw-medium"><%= t('purchase_history.hero_subtitle') %></p>
+                            <h1 class="display-5 fw-bold mb-0">
+                                <%= t('purchase_history.title') %>
+                            </h1>
+                            <p class="opacity-75 mb-0 fw-medium">
+                                <%= t('purchase_history.hero_subtitle') %>
+                            </p>
                         </div>
                     </div>
-                    
+
                     <div class="stats-pills d-flex gap-3 mt-4">
                         <div class="stat-pill px-4 py-2 rounded-pill bg-glass-white text-dark shadow-sm text-center">
-                            <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;"><%= t('purchase_history.total_orders') %></span>
-                            <span class="fw-bold fs-4 d-block" style="line-height: 1;"><%= orders.length %></span>
+                            <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">
+                                <%= t('purchase_history.total_orders') %>
+                            </span>
+                            <span class="fw-bold fs-4 d-block" style="line-height: 1;">
+                                <%= orders.length %>
+                            </span>
                         </div>
-                        <% 
-                            let totalSpent = orders.reduce((acc, o) => acc + Number(o.total), 0).toFixed(2);
-                        %>
-                        <div class="stat-pill px-4 py-2 rounded-pill bg-glass-white text-dark shadow-sm text-center">
-                            <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;"><%= t('purchase_history.total_investment') %></span>
-                            <span class="fw-bold fs-4 d-block" style="line-height: 1;"><%= totalSpent %>€</span>
-                        </div>
+                        <% let totalSpent=orders.reduce((acc, o)=> acc + Number(o.total), 0).toFixed(2);
+                            %>
+                            <div
+                                class="stat-pill px-4 py-2 rounded-pill bg-glass-white text-dark shadow-sm text-center">
+                                <span class="small text-muted fw-bold text-uppercase" style="font-size: 0.65rem;">
+                                    <%= t('purchase_history.total_investment') %>
+                                </span>
+                                <span class="fw-bold fs-4 d-block" style="line-height: 1;">
+                                    <%= totalSpent %>€
+                                </span>
+                            </div>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-5">
                     <div class="d-flex flex-column gap-3">
                         <div class="p-3 rounded-4 bg-glass-white text-dark border shadow-sm">
@@ -56,10 +68,12 @@
                                 <div class="bg-teal-soft p-2 rounded-circle">
                                     <i class="bi bi-shield-check text-teal"></i>
                                 </div>
-                                <div class="small fw-600">Todas tus compras están protegidas por nuestro sistema de garantía.</div>
+                                <div class="small fw-600">Todas tus compras están protegidas por nuestro sistema de
+                                    garantía.</div>
                             </div>
                         </div>
-                        <a href="/user/profile" class="btn btn-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2 transition-all">
+                        <a href="/user/profile"
+                            class="btn btn-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2 transition-all">
                             <i class="bi bi-person-circle text-teal"></i> Volver al Perfil
                         </a>
                     </div>
@@ -92,6 +106,10 @@
                                 statusKey='status_shipped' ; badgeClass='text-white' ; break; case 'ENTREGADO' :
                                 statusKey='status_delivered' ; badgeClass='bg-success text-white' ; break;
                                 case 'CANCELADO' : statusKey='status_cancelled' ; badgeClass='bg-danger text-white' ;
+                                break; case 'DEVOLUCION_PENDIENTE' : statusKey='status_devolution_pending' ;
+                                badgeClass='bg-warning text-dark' ; break; case 'DEVOLUCION_RECHAZADA' :
+                                statusKey='status_devolution_rejected' ; badgeClass='bg-danger text-white' ; break;
+                                case 'DEVUELTO' : statusKey='status_returned' ; badgeClass='bg-success text-white' ;
                                 break; } %>
                                 <span class="badge rounded-pill status-badge mb-1 px-3 <%= badgeClass %>" <% if
                                     (order.status==='PROCESANDO' || order.status==='ENVIADO' ) { %>
@@ -108,57 +126,93 @@
                         <div class="row g-0">
                             <!-- Left Side: Order Meta & Shipping -->
                             <div class="col-lg-4 border-end bg-light-soft p-4">
-                                    <div class="mb-4">
-                                        <h6 class="fw-bold mb-2 small text-muted" style="letter-spacing: 0.5px;"><%= t('purchase_history.shipping_to') %></h6>
+                                <div class="mb-4">
+                                    <h6 class="fw-bold mb-2 small text-muted" style="letter-spacing: 0.5px;">
+                                        <%= t('purchase_history.shipping_to') %>
+                                    </h6>
                                     <div class="d-flex align-items-start gap-2">
                                         <i class="bi bi-geo-alt text-teal"></i>
-                                        <p class="mb-0 small fw-bold text-dark"><%= order.shipping_address || 'Dirección no especificada' %></p>
+                                        <p class="mb-0 small fw-bold text-dark">
+                                            <%= order.shipping_address || 'Dirección no especificada' %>
+                                        </p>
                                     </div>
                                 </div>
-                                    <div class="mb-0">
-                                        <h6 class="fw-bold mb-2 small text-muted" style="letter-spacing: 0.5px;"><%= t('purchase_history.payment_status') %></h6>
+                                <div class="mb-0">
+                                    <h6 class="fw-bold mb-2 small text-muted" style="letter-spacing: 0.5px;">
+                                        <%= t('purchase_history.payment_status') %>
+                                    </h6>
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="bi bi-check-circle-fill text-success small"></i>
-                                        <span class="small fw-bold text-dark"><%= t('purchase_history.payment_verified') %></span>
+                                        <span class="small fw-bold text-dark">
+                                            <%= t('purchase_history.payment_verified') %>
+                                        </span>
                                     </div>
                                 </div>
 
-                                <% if (order.status === 'PENDIENTE' || order.status === 'PAGADO') { %>
-                                    <div class="mt-4 pt-3 border-top">
-                                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold w-100" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#cancelOrderModal"
-                                                data-order-id="<%= order.id %>"
-                                                data-order-status="<%= order.status %>">
-                                            <i class="bi bi-x-circle me-1"></i> <%= t('purchase_history.cancel_order_btn') %>
+                                <div class="mt-4 pt-3 border-top">
+                                    <% if (order.status==='PENDIENTE' || order.status==='PAGADO' ) { %>
+                                        <button class="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold w-100"
+                                            data-bs-toggle="modal" data-bs-target="#cancelOrderModal"
+                                            data-order-id="<%= order.id %>" data-order-status="<%= order.status %>">
+                                            <i class="bi bi-x-circle me-1"></i>
+                                            <%= t('purchase_history.cancel_order_btn') %>
                                         </button>
-                                    </div>
-                                <% } %>
+                                        <% } else if (order.status==='ENTREGADO' ) { %>
+                                            <button
+                                                class="btn btn-outline-warning btn-sm rounded-pill px-3 fw-bold w-100"
+                                                data-bs-toggle="modal" data-bs-target="#returnOrderModal"
+                                                data-order-id="<%= order.id %>"
+                                                data-order-status="<%= order.status %>"></i>
+                                                <%= t('purchase_history.return_order_btn') || 'Solicitar Devolución' %>
+                                            </button>
+                                            <% } else if (order.status==='DEVOLUCION_PENDIENTE' ) { %>
+                                                <div class="alert alert-info py-2 px-3 rounded-pill mb-0 text-center"
+                                                    style="font-size: 0.75rem;">
+                                                    <i class="bi bi-clock-history me-1"></i>
+                                                    <%= t('purchase_history.return_pending') || 'Devolución en proceso'
+                                                        %>
+                                                </div>
+                                                <% } %>
+                                </div>
                             </div>
 
                             <!-- Right Side: Items List -->
                             <div class="col-lg-8 p-4">
-                                <h6 class="fw-bold mb-3 small text-muted" style="letter-spacing: 0.5px;"><%= t('purchase_history.items_in_order') %></h6>
-                                <% if (order.items && order.items.length > 0) { %>
+                                <h6 class="fw-bold mb-3 small text-muted" style="letter-spacing: 0.5px;">
+                                    <%= t('purchase_history.items_in_order') %>
+                                </h6>
+                                <% if (order.items && order.items.length> 0) { %>
                                     <div class="order-items-compact">
-                                        <% order.items.forEach(item => { %>
-                                            <div class="d-flex align-items-center justify-content-between py-2 border-bottom border-light last-child-no-border">
+                                        <% order.items.forEach(item=> { %>
+                                            <div
+                                                class="d-flex align-items-center justify-content-between py-2 border-bottom border-light last-child-no-border">
                                                 <div class="d-flex align-items-center gap-3">
-                                                    <div class="item-thumbnail rounded shadow-sm overflow-hidden" style="width: 45px; height: 65px; flex-shrink: 0; background: #eee;">
-                                                        <img src="<%= item.book.cover_url || '/uploads/covers/cover_default.jpg' %>" alt="" class="w-100 h-100 object-fit-cover">
+                                                    <div class="item-thumbnail rounded shadow-sm overflow-hidden"
+                                                        style="width: 45px; height: 65px; flex-shrink: 0; background: #eee;">
+                                                        <img src="<%= item.book.cover_url || '/uploads/covers/cover_default.jpg' %>"
+                                                            alt="" class="w-100 h-100 object-fit-cover">
                                                     </div>
                                                     <div>
-                                                        <div class="fw-bold text-dark small mb-0"><%= item.book.title %></div>
-                                                        <div class="text-muted" style="font-size: 0.75rem;"><%= t('purchase_history.qty') %>: <%= item.quantity %> • <span class="fw-bold text-teal"><%= Number(item.price_at_time || item.price).toFixed(2) %>€</span></div>
+                                                        <div class="fw-bold text-dark small mb-0">
+                                                            <%= item.book.title %>
+                                                        </div>
+                                                        <div class="text-muted" style="font-size: 0.75rem;">
+                                                            <%= t('purchase_history.qty') %>: <%= item.quantity %> •
+                                                                    <span class="fw-bold text-teal">
+                                                                        <%= Number(item.price_at_time ||
+                                                                            item.price).toFixed(2) %>€
+                                                                    </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="fw-bold text-dark small text-end">
-                                                    <%= (Number(item.price_at_time || item.price) * item.quantity).toFixed(2) %>€
+                                                    <%= (Number(item.price_at_time || item.price) *
+                                                        item.quantity).toFixed(2) %>€
                                                 </div>
                                             </div>
-                                        <% }) %>
+                                            <% }) %>
                                     </div>
-                                <% } %>
+                                    <% } %>
                             </div>
                         </div>
                     </div>
@@ -192,14 +246,16 @@
                 </div>
                 <div class="modal-body py-4">
                     <p class="mb-0 text-muted" id="cancelModalBodyText">
-                        <%= t('purchase_history.cancel_modal_body').replace('{{id}}', '<span id="displayOrderId" class="fw-bold text-dark"></span>') %>
+                        <%= t('purchase_history.cancel_modal_body').replace('{{id}}', '<span id="displayOrderId" class="fw-bold text-dark"></span>'
+                            ) %>
                     </p>
                 </div>
                 <div class="modal-footer border-0 pt-0">
                     <form id="cancelOrderForm" method="POST" data-requires-token>
                         <input type="hidden" name="orderId" id="inputOrderId">
                         <input type="hidden" name="orderStatus" id="inputOrderStatus">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
                             <%= t('purchase_history.cancel_confirm_btn') %>
                         </button>
@@ -209,24 +265,83 @@
         </div>
     </div>
 
+    <div class="modal fade" id="returnOrderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dark">
+                        <i class="bi bi-box-arrow-in-left text-warning me-2"></i>
+                        <%= t('purchase_history.return_modal_title') || 'Solicitar Devolución' %>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <p class="mb-3 text-muted">
+                        ¿Deseas solicitar la devolución del pedido #<span id="displayReturnOrderId"
+                            class="fw-bold text-dark"></span>?
+                    </p>
+                    <div class="p-3 bg-light rounded-3 small text-muted">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <%= t('purchase_history.return_info')
+                            || 'Una vez enviada la solicitud, el administrador revisará tu caso y se te enviarán las instrucciones de envío por email.'
+                            %>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <form id="returnOrderForm" method="POST" data-requires-token>
+                        <input type="hidden" name="returnOrderId" id="inputReturnOrderId">
+                        <input type="hidden" name="returnOrderStatus" id="inputReturnOrderStatus">
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm">
+                            <%= t('purchase_history.return_confirm_btn') || 'Confirmar Solicitud' %>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const cancelModal = document.getElementById('cancelOrderModal');
             if (cancelModal) {
-                cancelModal.addEventListener('show.bs.modal', function(event) {
+                cancelModal.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
                     const orderId = button.getAttribute('data-order-id');
                     const orderStatus = button.getAttribute('data-order-status');
-                    
+
                     const form = document.getElementById('cancelOrderForm');
                     const inputId = document.getElementById('inputOrderId');
                     const inputStatus = document.getElementById('inputOrderStatus');
                     const displayId = document.getElementById('displayOrderId');
-                    
+
                     form.action = `/user/cancel/order/${orderId}`;
                     inputId.value = orderId;
                     inputStatus.value = orderStatus;
                     displayId.textContent = orderId;
+                });
+            }
+
+            // --- LÓGICA MODAL DEVOLVER (Simétrica a Cancelar) ---
+            const returnModal = document.getElementById('returnOrderModal');
+            if (returnModal) {
+                returnModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const orderId = button.getAttribute('data-order-id');
+                    const orderStatus = button.getAttribute('data-order-status');
+
+                    const form = document.getElementById('returnOrderForm');
+                    const inputReturnId = document.getElementById('inputReturnOrderId');
+                    const inputReturnStatus = document.getElementById('inputReturnOrderStatus');
+                    const displayReturnId = document.getElementById('displayReturnOrderId');
+
+                    // Asegúrate de que esta ruta coincida con tu controlador de la web
+                    form.action = `/user/request-return/order/${orderId}`;
+
+                    inputReturnId.value = orderId;
+                    inputReturnStatus.value = orderStatus;
+                    displayReturnId.textContent = orderId;
                 });
             }
         });

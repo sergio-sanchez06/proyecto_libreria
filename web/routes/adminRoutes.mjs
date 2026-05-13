@@ -171,6 +171,22 @@ router.post(
   AdminController.cancelOrder,
 );
 
+router.post(
+  "/orders/force-return/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  protectMiddleware.requireFreshToken,
+  AdminController.adminForceReturn,
+);
+
+router.post(
+  "/orders/confirm-return/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  protectMiddleware.requireFreshToken,
+  AdminController.adminConfirmReturn,
+);
+
 router.get(
   "/reviews",
   protectMiddleware.protect,

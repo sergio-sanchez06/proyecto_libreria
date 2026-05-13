@@ -113,7 +113,7 @@ async function userCancelOrder(req, res) {
     if (String(order.user_id) !== String(req.user.id)) {
       return res.status(403).json({ error: "No autorizado." });
     }
-    if (!["PENDIENTE", "PAGADO"].includes(order.status)) {
+    if (!["PENDIENTE", "PAGADO"].includes(order.status.toUpperCase())) {
       return res.status(409).json({
         error: `No puedes cancelar un pedido en estado ${order.status}.`,
       });
@@ -210,6 +210,121 @@ async function confirmStripeSession(req, res) {
   }
 }
 
+async function adminConfirmReturn(req, res) {
+  try {
+    const { id } = req.params;
+    const order = await OrderRepository.getOrderById(id);
+
+    if (!order) {
+      return res.status(404).json({ error: "Pedido no encontrado." });
+    }
+
+    // VALIDACIÓN CLAVE: Solo si el usuario pasó por el estado 'DEVOLUCION_PENDIENTE'
+    if (order.status !== "DEVOLUCION_PENDIENTE") {
+      return res.status(400).json({
+        error:
+          "No se puede confirmar. El usuario no ha solicitado la devolución formalmente.",
+      });
+    }
+
+    // Ejecutamos la lógica común del repositorio
+    const result = await OrderRepository.confirmReturn(id);
+
+    return res.status(200).json({
+      message: "Devolución procesada: stock actualizado y reembolso emitido.",
+      data: result,
+    });
+  } catch (error) {
+    res.status(error.message.includes("no encontrado") ? 404 : 400).json({
+      error: error.message,
+    });
+  }
+}
+
+async function userRequestReturn(req, res) {
+  try {
+    const { id } = req.params;
+    const order = await OrderRepository.getOrderById(id);
+
+    // 1. Validaciones de seguridad
+    if (!order) {
+      return res.status(404).json({ error: "Pedido no encontrado." });
+    }
+
+    // 2. Verificar que el pedido le pertenece
+    if (String(order.id) !== String(req.params.id)) {
+      return res
+        .status(403)
+        .json({ error: "No tienes permiso para gestionar este pedido." });
+    }
+
+    // 3. Validar el estado: Solo se puede devolver si ya ha sido ENTREGADO
+    if (order.status !== "ENTREGADO") {
+      return res.status(400).json({
+        error: `No puedes solicitar la devolución de un pedido en estado ${order.status}.`,
+      });
+    }
+
+    // 4. Actualizar el estado a 'DEVOLUCION_PENDIENTE'
+    await OrderRepository.updateOrder({
+      id: id,
+      status: "DEVOLUCION_PENDIENTE",
+    });
+
+    // 5. Enviar email informativo al usuario
+    // Creamos este método en el emailService para dar instrucciones de envío
+    emailService
+      .sendReturnRequestEmail(order.user_email, order.user_name, id)
+      .catch((err) => console.error("Error enviando email de solicitud:", err));
+
+    res.status(200).json({
+      message:
+        "Solicitud de devolución registrada. Pendiente de recepción de los artículos.",
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Error al procesar la solicitud de devolución." });
+  }
+}
+
+async function adminForceReturn(req, res) {
+  try {
+    const { id } = req.params;
+    const order = await OrderRepository.getOrderById(id);
+
+    if (!order) {
+      return res.status(404).json({ error: "Pedido no encontrado." });
+    }
+
+    // VALIDACIÓN FLEXIBLE: El admin puede forzar desde cualquier estado que implique pago
+    const allowedStatuses = [
+      "PAGADO",
+      "PROCESANDO",
+      "ENVIADO",
+      "ENTREGADO",
+      "DEVOLUCION_PENDIENTE",
+    ];
+    if (!allowedStatuses.includes(order.status)) {
+      return res.status(400).json({
+        error: `No se puede forzar la devolución en un pedido con estado ${order.status}.`,
+      });
+    }
+
+    // Llamamos al MISMO método del repositorio
+    const result = await OrderRepository.confirmReturn(id);
+
+    return res.status(200).json({
+      message: "El administrador ha forzado la devolución correctamente.",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error en adminForceReturn:", error);
+    return res.status(500).json({ error: error.message });
+  }
+}
+
 export default {
   createOrder,
   getOrderById,
@@ -220,4 +335,7 @@ export default {
   getAllOrders,
   paymentAndEmail,
   confirmStripeSession,
+  userRequestReturn,
+  adminConfirmReturn,
+  adminForceReturn,
 };

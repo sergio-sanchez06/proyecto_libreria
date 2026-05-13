@@ -106,18 +106,64 @@ async function getOrdersByUser(userId) {
 }
 
 async function updateOrder(order) {
-  const result = await pool.query(
-    `UPDATE orders 
-     SET user_id = COALESCE($1, user_id),
-         total = COALESCE($2, total),
-         status = COALESCE($3, status),
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const result = await client.query(
+      `UPDATE orders 
+     SET status = COALESCE($1, status),
          updated_at = NOW()
-     WHERE id = $4 
+     WHERE id = $2 
      RETURNING *`,
-    [order.user_id, order.total, order.status, order.id],
-  );
-  return result.rows[0] ? new Order(result.rows[0]) : null;
+      [order.status, order.id],
+    );
+
+    await client.query("COMMIT");
+
+    // return result.rows[0] ? new Order(result.rows[0]) : null;
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
+// async function updateOrder(order) {
+
+//   try{
+
+//     const client = await pool.connect();
+
+//     await client.query("BEGIN");
+
+//     const result = await client.query(
+//     `UPDATE orders
+//      SET status = COALESCE($1, status),
+//          updated_at = NOW()
+//      WHERE id = $2
+//      RETURNING *`,
+//     [order.status, order.id],
+//   );
+//   return result.rows[0] ? new Order(result.rows[0]) : null;
+
+//   }catch(error){
+
+//   }
+
+//   const result = await pool.query(
+//     `UPDATE orders
+//      SET user_id = COALESCE($1, user_id),
+//          total = COALESCE($2, total),
+//          status = COALESCE($3, status),
+//          updated_at = NOW()
+//      WHERE id = $4
+//      RETURNING *`,
+//     [order.user_id, order.total, order.status, order.id],
+//   );
+//   return result.rows[0] ? new Order(result.rows[0]) : null;
+// }
 
 async function deleteOrder(id) {
   const client = await pool.connect();
@@ -469,6 +515,67 @@ async function confirmStripeSession(session_id) {
 //   return null;
 // }
 
+async function confirmReturn(id) {
+  const client = await pool.connect();
+  let stripePaymentIntent = null;
+  let items = [];
+  let user_email, user_name;
+
+  try {
+    await client.query("BEGIN");
+
+    // 1. Bloqueamos y obtenemos info del pedido
+    const { rows } = await client.query(
+      `SELECT o.status, o.stripe_payment_intent, u.email, u.name 
+       FROM orders o 
+       JOIN users u ON o.user_id = u.id 
+       WHERE o.id = $1 FOR UPDATE`,
+      [id],
+    );
+
+    if (!rows[0]) throw new Error("Pedido no encontrado");
+    if (rows[0].status !== "DEVOLUCION_PENDIENTE") {
+      throw new Error("El pedido no está en espera de devolución");
+    }
+
+    stripePaymentIntent = rows[0].stripe_payment_intent;
+    user_email = rows[0].email;
+    user_name = rows[0].name;
+
+    // 2. Recuperamos los items y restauramos stock
+    items = await OrderItemsRepository.getItemsByOrderId(id, client);
+    for (const item of items) {
+      await BookRepository.restoreStock(item.book_id, item.quantity, client);
+    }
+
+    // 3. Cambiamos el estado a 'DEVUELTO' (más preciso que 'CANCELADO' para el TFG)
+    await client.query(
+      "UPDATE orders SET status = 'DEVUELTO', updated_at = NOW() WHERE id = $1",
+      [id],
+    );
+
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+
+  // 4. Reembolso en Stripe (fuera de la transacción SQL)
+  if (stripePaymentIntent) {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    try {
+      await stripe.refunds.create({ payment_intent: stripePaymentIntent });
+    } catch (err) {
+      console.error("Error en reembolso Stripe:", err.message);
+      // En TFG, con el log basta, o podrías marcar un flag de 'reembolso_pendiente'
+    }
+  }
+
+  return { items, user_email, user_name };
+}
+
 export default {
   createOrder,
   getOrderById,
@@ -479,4 +586,5 @@ export default {
   cancelOrder,
   payment,
   confirmStripeSession,
+  confirmReturn,
 };
