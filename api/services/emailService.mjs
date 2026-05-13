@@ -225,6 +225,35 @@ const emailService = {
     );
   },
 
+  async sendDeletedAccountEmail(toEmail, userName) {
+    const content = `
+      <h2 style="color: #dc3545; margin-top: 0;">Cuenta Eliminada Definitivamente 🗑️</h2>
+      <p>Hola <strong>${userName}</strong>,</p>
+      <p>Te confirmamos que tu cuenta en <strong>Bookly</strong> ha sido eliminada de nuestra base de datos, tal como se solicitó.</p>
+      
+      <div style="background: #fff5f5; padding: 20px; border-radius: 8px; border-left: 4px solid #dc3545; margin: 20px 0;">
+        <p style="margin: 0; color: #666; font-size: 14px;">
+          <strong>Nota importante:</strong> Esta acción es irreversible. Se han borrado tus datos personales, historial de pedidos y preferencias de nuestra plataforma activa.
+        </p>
+      </div>
+
+      <p>Lamentamos verte partir, pero esperamos que hayas disfrutado de tus lecturas con nosotros. Si en el futuro decides volver, estaremos encantados de recibirte de nuevo.</p>
+      
+      <div style="text-align: center; margin-top: 25px;">
+        <a href="${FRONTEND_URL}" class="btn" style="background: #333;">Visitar Bookly</a>
+      </div>
+    `;
+
+    return await this._send(
+      toEmail,
+      "Confirmación de cuenta eliminada 🗑️",
+      this._template(
+        content,
+        "Tu cuenta de Bookly ha sido borrada correctamente.",
+      ),
+    );
+  },
+
   async sendOrderCancellationEmail(toEmail, userName, items, refunded) {
     const itemRows = items
       .map((item) => {
