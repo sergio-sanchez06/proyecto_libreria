@@ -530,15 +530,27 @@ async function cancelOrder(req, res) {
     // 2. Validación de consistencia (Seguridad)
     if (String(orderId) !== String(urlId)) {
       console.error("Divergencia de IDs detectada en UpdateStatus");
-      return res.redirect("/admin/orders?error=invalid_id");
+      req.session.flash = {
+        type: "error",
+        message: "Error de seguridad al cancelar el pedido.",
+      };
+      return res.redirect("/admin/orders");
     }
 
     const api = getAuthenticatedClient(req.session.idToken);
-    const response = await api.patch(`/orders/cancel/${orderId}`);
-    const order = response.data;
+    // const response = await api.patch(`/orders/cancel/${orderId}`);
+    // const order = response.data;
+    // req.session.flash = {
+    //   type: "success",
+    //   message: order.message,
+    // };
+    // res.redirect("/admin/orders");
+
+    const { data } = await api.patch(`/orders/admin/cancel/${orderId}`);
+
     req.session.flash = {
       type: "success",
-      message: order.message,
+      message: data.message || "Pedido cancelado correctamente.",
     };
     res.redirect("/admin/orders");
   } catch (error) {
@@ -546,7 +558,7 @@ async function cancelOrder(req, res) {
     req.session.flash = {
       type: "error",
       message:
-        error.response?.data?.message || "No se pudo eliminar el pedido.",
+        error.response?.data?.error || "No se pudo eliminar el pedido.",
     };
     res.redirect("/admin/orders");
   }

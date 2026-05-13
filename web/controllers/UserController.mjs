@@ -125,7 +125,7 @@ async function getPurchaseHistory(req, res) {
         user: req.session.user,
         orders: [],
         successMessage: null,
-        error: null
+        error: null,
       });
     }
 
@@ -735,6 +735,60 @@ async function getRecommendationsPage(req, res) {
 //   }
 // }
 
+async function cancelOrder(req, res) {
+  try {
+    const api = getAuthenticatedClient(req.session.idToken);
+
+    const urlId = req.params.id;
+    const { orderId, orderStatus } = req.body;
+
+    //Validar que el pedido sea del propio usuario que lo quiere cancelar
+    const { data: order } = await api.get(`/orders/${req.params.id}`);
+    if (String(order.user_id) !== String(req.session.user.id)) {
+      req.session.flash = {
+        type: "error",
+        message: "No tienes permiso para cancelar este pedido.",
+      };
+      return res.redirect("/user/myOrders");
+    }
+
+    // 3. Validación de negocio ( estado )
+    if (!["PENDIENTE", "PAGADO"].includes(orderStatus?.toUpperCase())) {
+      req.session.flash = {
+        type: "error",
+        message:
+          "El estado del pedido no permite su cancelación. Contacta con soporte.",
+      };
+      return res.redirect("/user/myOrders");
+    }
+
+    const { data } = await api.patch(`/orders/user/cancel/${orderId}`);
+
+    req.session.flash = {
+      type: "success",
+      message:
+        data.message ||
+        "Pedido cancelado. El reembolso llegará en 5-10 días hábiles.",
+    };
+    res.redirect("/user/myOrders");
+
+    // const response = await api.patch(`/orders/user/cancel/${orderId}`);
+    // const order = response.data;
+    // req.session.flash = {
+    //   type: "success",
+    //   message: order.message,
+    // };
+    // res.redirect("/user/myOrders");
+  } catch (error) {
+    console.error("Error al eliminar pedido:", error);
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.error || "No se pudo eliminar el pedido.",
+    };
+    res.redirect("/user/myOrders");
+  }
+}
+
 export default {
   getProfile,
   getPurchaseHistory,
@@ -747,4 +801,5 @@ export default {
   saveFavoriteGenres,
   getFavoritesPage,
   getRecommendationsPage,
+  cancelOrder,
 };

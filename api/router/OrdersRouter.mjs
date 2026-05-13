@@ -56,7 +56,13 @@ router.put(
 // );
 
 router.patch(
-  "/cancel/:id",
+  "/user/cancel/:id",
+  AuthMiddleware.authenticate,
+  OrderController.userCancelOrder,
+);
+
+router.patch(
+  "/admin/cancel/:id",
   AuthMiddleware.authenticate,
   AuthMiddleware.requireAdmin,
   OrderController.cancelOrder,

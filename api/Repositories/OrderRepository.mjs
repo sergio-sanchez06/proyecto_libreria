@@ -10,6 +10,7 @@ async function createOrder({
   items,
   shipping_address,
   status = "PENDIENTE",
+  stripe_payment_intent = null,
 }) {
   const client = await pool.connect(); // Aquí SÍ usamos client para la transacción
 
@@ -48,8 +49,8 @@ async function createOrder({
     }
 
     const orderResult = await client.query(
-      "INSERT INTO orders (user_id, total, status, shipping_address) VALUES ($1, $2, $3, $4) RETURNING *",
-      [user_id, total, status, shipping_address],
+      "INSERT INTO orders (user_id, total, status, shipping_address, stripe_payment_intent) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+      [user_id, total, status, shipping_address, stripe_payment_intent],
     );
     const order = new Order(orderResult.rows[0]);
 
@@ -78,7 +79,7 @@ async function createOrder({
           title: bookInfo.title, // <--- Esto es lo que necesita el email
           quantity: item.quantity,
           price: item.currentPrice,
-          cover_url: bookInfo.cover_url
+          cover_url: bookInfo.cover_url,
         };
       }),
     };
@@ -151,21 +152,41 @@ async function getAllOrders() {
 async function cancelOrder(id) {
   const client = await pool.connect();
 
+  let stripePaymentIntent = null;
+
+  let items = [];
+
+  let user_email = null;
+  let user_name = null;
+
   try {
     await client.query("BEGIN");
 
     const { rows } = await client.query(
-      "SELECT status FROM orders WHERE id = $1 FOR UPDATE",
+      `SELECT o.status, o.stripe_payment_intent, u.email AS user_email, u.name AS user_name
+   FROM orders o
+   JOIN users u ON o.user_id = u.id
+   WHERE o.id = $1 FOR UPDATE`,
       [id],
     );
 
     if (!rows[0]) throw new Error("Pedido no encontrado");
     if (rows[0].status === "CANCELADO")
       throw new Error("El pedido ya fue cancelado previamente");
+    if (["ENVIADO", "ENTREGADO"].includes(rows[0].status))
+      throw new Error(
+        `No se puede cancelar un pedido en estado ${rows[0].status}`,
+      );
+
+    stripePaymentIntent = rows[0].stripe_payment_intent;
+    user_email = rows[0].user_email;
+    user_name = rows[0].user_name;
 
     //Obtenemos los libros de los pedidos, pasando la conexión actual
     // para que todo se haga en la misma transacción
-    const items = await OrderItemsRepository.getItemsByOrderId(id, client);
+    items = await OrderItemsRepository.getItemsByOrderId(id, client);
+
+    console.log("Items asociados al pedido: ", items);
 
     for (const item of items) {
       await BookRepository.restoreStock(item.book_id, item.quantity, client);
@@ -184,6 +205,28 @@ async function cancelOrder(id) {
   } finally {
     client.release();
   }
+
+  // Reembolso fuera de la transacción SQL — si Stripe falla, el pedido
+  // ya está cancelado y el stock restaurado. Se puede reintentar desde
+  // el dashboard de Stripe con el payment_intent_id guardado en la DB.
+  if (stripePaymentIntent) {
+    console.log("Reembolsando pedido", stripePaymentIntent);
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+    try {
+      await stripe.refunds.create({
+        payment_intent: stripePaymentIntent,
+        reason: "requested_by_customer",
+      });
+    } catch (stripeError) {
+      // No relanzamos — la cancelación fue exitosa, solo el reembolso falló
+      console.error(
+        "Reembolso Stripe fallido — reembolsar manualmente:",
+        stripeError.message,
+      );
+    }
+  }
+
+  return { items, refunded: !!stripePaymentIntent, user_email, user_name };
 }
 
 // async function payment(items, user, shipping_address) {
@@ -338,9 +381,10 @@ async function confirmStripeSession(session_id) {
         items: parsedItems,
         shipping_address: shipping_address,
         status: "PAGADO",
+        stripe_payment_intent: session.payment_intent,
       });
 
-      console.log("Lo que metemos en el nuevo pedido : ",newOrder)
+      console.log("Lo que metemos en el nuevo pedido : ", newOrder);
 
       // emailService.sendOrderConfirmationEmail(
       //   user_email,

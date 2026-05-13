@@ -76,18 +76,74 @@ async function updateOrder(req, res) {
 
 async function cancelOrder(req, res) {
   try {
-    const order = await OrderRepository.cancelOrder(req.params.id);
-    res
-      .status(200)
-      .json({ message: "Pedido cancelado correctamente", order: order });
+    const { items, refunded, user_email, user_name } =
+      await OrderRepository.cancelOrder(req.params.id);
+
+    emailService
+      .sendOrderCancellationEmail(user_email, user_name, items, refunded)
+      .catch((err) =>
+        console.error("Error enviando email de cancelación:", err),
+      );
+
+    res.status(200).json({
+      message: refunded
+        ? "Pedido cancelado y reembolso procesado"
+        : "Pedido cancelado correctamente",
+    });
   } catch (error) {
     console.error(error);
-    const status = error.message.includes("no encontrado")
+    const msg = error.message;
+    const status = msg.includes("no encontrado")
       ? 404
-      : error.message.includes("ya fue cancelado")
+      : msg.includes("ya fue cancelado")
         ? 409
-        : 500;
-    res.status(status).json({ error: error.message });
+        : msg.includes("No se puede cancelar")
+          ? 409
+          : 500;
+    res.status(status).json({ error: msg });
+  }
+}
+async function userCancelOrder(req, res) {
+  try {
+    const order = await OrderRepository.getOrderById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ error: "Pedido no encontrado." });
+    }
+    if (String(order.user_id) !== String(req.user.id)) {
+      return res.status(403).json({ error: "No autorizado." });
+    }
+    if (!["PENDIENTE", "PAGADO"].includes(order.status)) {
+      return res.status(409).json({
+        error: `No puedes cancelar un pedido en estado ${order.status}.`,
+      });
+    }
+
+    const { items, refunded, user_email, user_name } =
+      await OrderRepository.cancelOrder(req.params.id);
+
+    emailService
+      .sendOrderCancellationEmail(user_email, user_name, items, refunded)
+      .catch((err) =>
+        console.error("Error enviando email de cancelación:", err),
+      );
+
+    res.status(200).json({
+      message: refunded
+        ? "Pedido cancelado y reembolso procesado"
+        : "Pedido cancelado correctamente",
+    });
+  } catch (error) {
+    console.error(error);
+    const msg = error.message;
+    const status = msg.includes("no encontrado")
+      ? 404
+      : msg.includes("ya fue cancelado")
+        ? 409
+        : msg.includes("No se puede cancelar")
+          ? 409
+          : 500;
+    res.status(status).json({ error: msg });
   }
 }
 
@@ -124,7 +180,10 @@ async function confirmStripeSession(req, res) {
   try {
     const order = await OrderRepository.confirmStripeSession(session_id);
 
-    console.log("Items para el email:", JSON.stringify(order.items[0], null, 2));
+    console.log(
+      "Items para el email:",
+      JSON.stringify(order.items[0], null, 2),
+    );
 
     if (order) {
       // Respondemos JSON de éxito para que la WEB borre la cookie
@@ -156,6 +215,7 @@ export default {
   getOrderById,
   getOrdersByUser,
   updateOrder,
+  userCancelOrder,
   cancelOrder,
   getAllOrders,
   paymentAndEmail,
