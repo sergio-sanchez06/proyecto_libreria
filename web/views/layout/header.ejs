@@ -44,8 +44,8 @@
                 <div class="logo-container">
                     <a href="/" class="brand-container d-flex align-items-center">
                         <div class="header-logo-outer">
-                            <img src="https://res.cloudinary.com/dbcvk9qem/image/upload/v1778585863/logo_by6o07.png" alt="BOOKLY logo" class="header-logo-inner-img" width="49"
-                                height="27" loading="eager">
+                            <img src="https://res.cloudinary.com/dbcvk9qem/image/upload/v1778585863/logo_by6o07.png"
+                                alt="BOOKLY logo" class="header-logo-inner-img" width="49" height="27" loading="eager">
                         </div>
                         <span class="brand-text ms-3">BOOKLY</span>
                     </a>
@@ -58,27 +58,39 @@
                 <div class="collapsible-menu" id="collapsibleMenu">
                     <nav class="main-nav">
                         <a href="/">
-                            <span><%= t('nav.home') %></span>
+                            <span>
+                                <%= t('nav.home') %>
+                            </span>
                             <i class="bi bi-house-door d-lg-none"></i>
                         </a>
                         <a href="/books/showAllBooks">
-                            <span><%= t('nav.catalog') %></span>
+                            <span>
+                                <%= t('nav.catalog') %>
+                            </span>
                             <i class="bi bi-book d-lg-none"></i>
                         </a>
                         <a href="/authors/showAllAuthors">
-                            <span><%= t('nav.authors') %></span>
+                            <span>
+                                <%= t('nav.authors') %>
+                            </span>
                             <i class="bi bi-person-badge d-lg-none"></i>
                         </a>
                         <a href="/publisher/showAllPublishers">
-                            <span><%= t('nav.publishers') %></span>
+                            <span>
+                                <%= t('nav.publishers') %>
+                            </span>
                             <i class="bi bi-building d-lg-none"></i>
                         </a>
                         <a href="/genres">
-                            <span><%= t('nav.genres') %></span>
+                            <span>
+                                <%= t('nav.genres') %>
+                            </span>
                             <i class="bi bi-tags d-lg-none"></i>
                         </a>
                         <a href="/cart/view" class="position-relative">
-                            <span><%= t('cart.title') %></span>
+                            <span>
+                                <%= t('cart.title') %>
+                            </span>
                             <i class="bi bi-cart3"></i>
                         </a>
                     </nav>
@@ -154,12 +166,16 @@
 
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                                 <% const langs=[ { id: 'es' , class: 'fi-es' }, { id: 'ca' , class: 'fi-es-ct' }, {
-                                    id: 'gl' , class: 'fi-es-ga' }, { id: 'eu' , class: 'fi-es-pv' } ]; %>
+                                    id: 'gl' , class: 'fi-es-ga' }, { id: 'eu' , class: 'fi-es-pv' } ]; const
+                                    safeCurrentUrl=(typeof currentUrl !=='undefined' && currentUrl) ? currentUrl : '/' ;
+                                    %>
+
+
 
                                     <% langs.forEach(lang=> { %>
                                         <li>
                                             <a class="dropdown-item d-flex align-items-center gap-2 <%= i18n.language.startsWith(lang.id) ? 'active' : '' %>"
-                                                href="/language?lng=<%= lang.id %>&returnTo=<%= encodeURIComponent(currentUrl) %>">
+                                                href="/language?lng=<%= lang.id %>&returnTo=<%= encodeURIComponent(safeCurrentUrl) %>">
                                                 <span class="fi <%= lang.class %>"
                                                     style="width: 20px; height: 15px; border-radius: 2px;"></span>
                                                 <%= t('languages.' + lang.id) %>

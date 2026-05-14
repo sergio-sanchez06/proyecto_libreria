@@ -165,7 +165,7 @@ function filterIA(req, res, next) {
     );
     return res.status(403).render("errors/403", {
       title: "403 - Prohibido",
-      currentURL: req.originalUrl,
+      currentUrl: req.originalUrl,
       user: req.session?.user || null,
       message: "El acceso automatizado a la librería está restringido.",
     });
@@ -178,7 +178,7 @@ function filterIA(req, res, next) {
     console.warn(`[SECURITY ALERT] IA Bloqueada: ${ua.source} | IP: ${req.ip}`);
     return res.status(403).render("errors/403", {
       title: "403 - Prohibido",
-      currentURL: req.originalUrl,
+      currentUrl: req.originalUrl,
       user: req.session?.user || null,
       message: "El acceso automatizado a la librería está restringido.",
     });
