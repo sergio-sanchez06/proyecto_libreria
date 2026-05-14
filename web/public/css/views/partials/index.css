@@ -293,6 +293,33 @@ body::before {
     border-radius: 30px;
     font-size: 0.85rem;
 }
+/* --- PREMIUM PUBLISHER CARDS --- */
+.publisher-premium-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.publisher-premium-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 10px 25px rgba(30, 64, 175, 0.1) !important;
+    border-color: var(--brand-teal) !important;
+}
+
+.publisher-premium-card .transition-icon {
+    transition: all 0.3s ease;
+}
+
+.publisher-premium-card:hover .transition-icon {
+    opacity: 1 !important;
+    transform: translateX(5px);
+}
+
+.publisher-logo-wrapper img {
+    mix-blend-mode: multiply;
+}
+
 /* --- RESPONSIVE ADJUSTMENTS --- */
 @media (max-width: 991.98px) {
     .hero-banner {

@@ -317,3 +317,56 @@ a {
 .scrollable-filter-container::-webkit-scrollbar-thumb:hover {
   background: #bbb;
 }
+/* --- 7. PAGINACIÓN GLOBAL (Estilo Catálogo) --- */
+.pagination {
+    margin-top: 2rem;
+    gap: 5px;
+}
+
+.pagination .page-link {
+    border: none !important;
+    border-radius: 12px !important;
+    margin: 0 2px;
+    color: var(--brand-teal) !important;
+    font-weight: 600;
+    padding: 0.6rem 1.1rem;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--brand-teal) !important;
+    color: white !important;
+    box-shadow: 0 8px 15px rgba(30, 64, 175, 0.25);
+    transform: translateY(-2px);
+}
+
+.pagination .page-item:not(.active):not(.disabled) .page-link:hover {
+    background: white !important;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    color: var(--brand-teal-hover) !important;
+}
+
+.pagination .page-item.disabled .page-link {
+    background: rgba(0, 0, 0, 0.03) !important;
+    color: #cbd5e1 !important;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 576px) {
+    .pagination .page-link {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+        min-width: 36px;
+        height: 36px;
+        border-radius: 10px !important;
+    }
+}

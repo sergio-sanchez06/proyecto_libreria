@@ -1,4 +1,4 @@
-﻿<%- include('../layout/header', {
+<%- include('../layout/header', {
     title: t('editBook.page_title') || 'Editar Libro',
     bodyClass: 'bg-admin-vistas',
     extraCSS: 'admin/edit_book'
@@ -6,6 +6,12 @@
 
 <main class="py-5">
     <div class="container admin-form-container">
+        <div class="mb-4">
+            <a href="/admin/books/list" class="btn-back-form">
+                <i class="bi bi-arrow-left me-2"></i>
+                <%= t('admin.btn_return_books') || 'Volver al Catálogo' %>
+            </a>
+        </div>
         <div class="brand-card">
             <div class="brand-card-header text-center">
                 <h2 class="mb-0 fw-bold d-flex flex-column align-items-center gap-2">

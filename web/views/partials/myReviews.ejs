@@ -37,15 +37,16 @@
                             <% 
                                 let rank = "Principiante";
                                 let nextRank = "Lector Activo";
-                                let progress = (reviews.length / 5) * 100;
-                                let needed = 5 - reviews.length;
+                                let totalRev = typeof allReviews !== 'undefined' ? allReviews.length : (typeof totalReviews !== 'undefined' ? totalReviews : reviews.length);
+                                let progress = (totalRev / 5) * 100;
+                                let needed = 5 - totalRev;
 
-                                if (reviews.length >= 5 && reviews.length < 10) {
+                                if (totalRev >= 5 && totalRev < 10) {
                                     rank = "Lector Activo";
                                     nextRank = "Crítico Experto";
-                                    progress = ((reviews.length - 5) / 5) * 100;
-                                    needed = 10 - reviews.length;
-                                } else if (reviews.length >= 10) {
+                                    progress = ((totalRev - 5) / 5) * 100;
+                                    needed = 10 - totalRev;
+                                } else if (totalRev >= 10) {
                                     rank = "Crítico Experto";
                                     nextRank = "Maestro Bibliófilo";
                                     progress = 100;
@@ -73,16 +74,17 @@
                         <div class="row g-3">
                             <div class="col-6">
                                 <div class="hero-stat-card p-3 rounded-4 bg-glass-white text-dark text-center h-100 border shadow-sm">
-                                    <div class="fs-1 fw-bold text-teal"><%= reviews.length %></div>
+                                    <div class="fs-1 fw-bold text-teal"><%= totalRev %></div>
                                     <div class="small text-muted fw-bold text-uppercase" style="letter-spacing: 1px;">Reseñas</div>
                                 </div>
                             </div>
                             <div class="col-6">
                                 <% 
                                     let avgRating = 0;
-                                    if (reviews.length > 0) {
-                                        const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
-                                        avgRating = (sum / reviews.length).toFixed(1);
+                                    let sourceArray = typeof allReviews !== 'undefined' ? allReviews : reviews;
+                                    if (sourceArray && sourceArray.length > 0) {
+                                        const sum = sourceArray.reduce((acc, r) => acc + r.rating, 0);
+                                        avgRating = (sum / sourceArray.length).toFixed(1);
                                     }
                                 %>
                                 <div class="hero-stat-card p-3 rounded-4 bg-glass-white text-dark text-center h-100 border shadow-sm">
@@ -188,6 +190,37 @@
                                 </div>
                                 <% }) %>
                         </div>
+                        
+                        <!-- ── Paginación Unificada ───────────────────────────── -->
+                        <% if (totalPages > 1) { %>
+                            <nav class="mt-5 d-flex align-items-center justify-content-between flex-wrap gap-3" aria-label="Paginación de reseñas">
+                                <span class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;">
+                                    Página <strong><%= currentPage %></strong> de <strong><%= totalPages %></strong>
+                                    &nbsp;·&nbsp; <strong><%= totalReviews %></strong> reseñas en total
+                                </span>
+                                <ul class="pagination pagination-sm mb-0">
+                                    <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                                        <a class="page-link" href="/user/myReviews?page=<%= currentPage - 1 %>">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    <% for (let p = 1; p <= totalPages; p++) { %>
+                                        <% if (totalPages <= 7 || p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1) { %>
+                                            <li class="page-item <%= currentPage == p ? 'active' : '' %>">
+                                                <a class="page-link" href="/user/myReviews?page=<%= p %>"><%= p %></a>
+                                            </li>
+                                        <% } else if (p === 2 || p === totalPages - 1) { %>
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        <% } %>
+                                    <% } %>
+                                    <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                                        <a class="page-link" href="/user/myReviews?page=<%= currentPage + 1 %>">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        <% } %>
                         <% } else { %>
                             <div class="text-center py-5 bg-white rounded-5 shadow-sm border border-dashed my-5 p-5">
                                 <div class="empty-reviews-icon mb-4">

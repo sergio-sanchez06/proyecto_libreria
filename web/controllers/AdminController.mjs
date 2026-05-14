@@ -576,10 +576,32 @@ async function getManageReviews(req, res) {
   try {
     const api = getAuthenticatedClient(req.session.idToken);
     const response = await api.get("/review/all");
-    const reviews = response.data;
-    console.log(reviews);
+    const allReviews = response.data;
+
+    // ── Estadísticas ───────────────────────────────────
+    const totalReviews = allReviews.length;
+    const avgRating = totalReviews > 0 
+      ? (allReviews.reduce((acc, r) => acc + parseInt(r.rating), 0) / totalReviews).toFixed(1)
+      : 0;
+
+    // ── Paginación ──────────────────────────────────────
+    const PAGE_SIZE = 10;
+    const currentPage = Math.max(1, parseInt(req.query.page) || 1);
+    const totalPages = Math.ceil(totalReviews / PAGE_SIZE);
+    
+    const pageReviews = allReviews.slice(
+      (currentPage - 1) * PAGE_SIZE,
+      currentPage * PAGE_SIZE
+    );
+
     res.render("admin/reviewsTable", {
-      reviews: reviews,
+      reviews: pageReviews,
+      stats: {
+        total: totalReviews,
+        average: avgRating
+      },
+      currentPage,
+      totalPages,
       message: req.query.msg || null,
     });
   } catch (error) {

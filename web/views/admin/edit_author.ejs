@@ -1,4 +1,4 @@
-﻿<%- include('../layout/header', {
+<%- include('../layout/header', {
     title: t('editAuthor.page_title') || 'Editar Autor',
     bodyClass: 'bg-admin-vistas',
     extraCSS: 'admin/edit_author'
@@ -6,6 +6,11 @@
 
 <main class="py-5">
     <div class="container admin-form-container">
+        <div class="mb-4">
+            <a href="/authors/manage/list" class="btn-back-form">
+                <i class="bi bi-arrow-left me-2"></i> Volver a Autores
+            </a>
+        </div>
         <div class="brand-card">
             <div class="brand-card-header text-center">
                 <h2 class="mb-0 fw-bold d-flex flex-column align-items-center gap-2">

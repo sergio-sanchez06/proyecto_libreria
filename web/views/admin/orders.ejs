@@ -1,4 +1,4 @@
-﻿<%- include('../layout/header', { bodyClass: 'bg-admin-vistas' , extraCSS: 'admin/orders' }) %>
+<%- include('../layout/header', { bodyClass: 'bg-admin-vistas' , extraCSS: 'admin/orders' }) %>
     <div class="container-fluid py-4 px-4">
         <% const currentLang=(typeof lang !=='undefined' && lang) ? lang : 'es' ; const localeMap={ 'eu' :'eu-ES', 'ca'
             :'ca-ES', 'gl' :'gl-ES', 'es' :'es-ES' }; const userLocale=localeMap[currentLang] || 'es-ES' ; const
@@ -10,8 +10,8 @@
             const processing=globalStats.processing; const revenue=globalStats.revenue; %>
 
             <!-- ── Hero ─────────────────────────────────────── -->
-            <div class="orders-hero mb-4">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="admin-hero mb-4">
+                <div class="admin-hero-content d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div>
                         <h2 class="fw-800 mb-1" style="font-size:var(--fs-xl); font-weight:800;">
                             <i class="bi bi-bag-check-fill me-2"></i>
@@ -25,8 +25,8 @@
                             <%= t('adminOrders.total_count', { count: totalOrders }) %>
                         </p>
                     </div>
-                    <a href="/admin/dashboard" class="btn btn-sm btn-light fw-600 rounded-pill px-4">
-                        <i class="bi bi-arrow-left me-1"></i> Dashboard
+                    <a href="/admin/dashboard" class="btn-back-admin">
+                        <i class="bi bi-arrow-left me-2"></i>Dashboard
                     </a>
                 </div>
             </div>

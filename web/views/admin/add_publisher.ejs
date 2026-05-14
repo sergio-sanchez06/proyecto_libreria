@@ -1,4 +1,4 @@
-﻿<%- include('../layout/header', { 
+<%- include('../layout/header', { 
     title: t('addPublisher.page_title') || 'Añadir Editorial',
     bodyClass: 'bg-admin-vistas',
     extraCSS: 'admin/add_publisher'
@@ -8,10 +8,9 @@
         <div class="container admin-form-container">
 
             <div class="mb-4">
-                <a href="/admin/dashboard"
-                    class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold shadow-sm bg-white">
+                <a href="/publisher/manage/list" class="btn-back-form">
                     <i class="bi bi-arrow-left me-2"></i>
-                    <%= t('admin.btn_return') || 'Volver al Dashboard' %>
+                    Volver a Editoriales
                 </a>
             </div>
 

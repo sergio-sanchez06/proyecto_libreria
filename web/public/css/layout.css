@@ -492,3 +492,88 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
 }
+
+/* =========================================
+   ADMIN UTILITIES
+   ========================================= */
+
+.btn-back-admin {
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+    border-radius: 50rem !important;
+    padding: 0.5rem 1.5rem !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-back-admin:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translateX(-5px) !important;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-back-admin i {
+    transition: transform 0.3s ease;
+}
+
+.btn-back-admin:hover i {
+    transform: translateX(-3px);
+}
+
+/* ── Admin Hero Section ────────────────────────── */
+.admin-hero {
+    background: linear-gradient(135deg, var(--brand-teal) 0%, #0a4d4d 100%);
+    border-radius: 20px;
+    padding: 2.5rem 3rem;
+    color: white;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(10, 77, 77, 0.15);
+}
+
+.admin-hero::after {
+    font-family: 'Bootstrap-icons';
+    position: absolute;
+    right: -20px; top: -30px;
+    font-size: 10rem;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.admin-hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.btn-back-form {
+    background: white !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    border-radius: 50rem !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-decoration: none !important;
+}
+
+.btn-back-form:hover {
+    background: #f8fafc !important;
+    border-color: var(--brand-teal) !important;
+    color: var(--brand-teal) !important;
+    transform: translateX(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+

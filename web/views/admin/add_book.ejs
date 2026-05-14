@@ -1,4 +1,4 @@
-﻿<%- include('../layout/header', { 
+<%- include('../layout/header', { 
     title: t('addBook.page_title') || 'Añadir Nuevo Libro', 
     bodyClass: 'bg-admin-vistas',
     extraCSS: 'admin/add_book'
@@ -8,10 +8,9 @@
         <div class="container admin-form-container">
 
             <div class="mb-4">
-                <a href="/admin/dashboard"
-                    class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold shadow-sm bg-white">
+                <a href="/admin/books/list" class="btn-back-form">
                     <i class="bi bi-arrow-left me-2"></i>
-                    <%= t('admin.btn_return') || 'Volver al Dashboard' %>
+                    <%= t('admin.btn_return_books') || 'Volver al Catálogo' %>
                 </a>
             </div>
 

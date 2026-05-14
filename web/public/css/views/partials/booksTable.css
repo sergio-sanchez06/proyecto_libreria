@@ -124,21 +124,7 @@ body::before {
     color: white;
 }
 
-.pagination .page-link {
-    border: none;
-    border-radius: 10px;
-    margin: 0 4px;
-    color: var(--brand-teal);
-    font-weight: 600;
-    padding: 0.5rem 1rem;
-    transition: all 0.2s ease;
-}
 
-.pagination .page-item.active .page-link {
-    background: var(--brand-teal);
-    color: white;
-    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.2);
-}
 
 .scrollable-filter-container {
     max-height: 200px;
@@ -210,9 +196,5 @@ body::before {
         padding: 0.25rem !important;
     }
     
-    .pagination .page-link {
-        padding: 0.4rem 0.7rem;
-        font-size: 0.8rem;
-        margin: 0 2px;
-    }
+
 }

@@ -256,32 +256,4 @@ body::before {
     padding: .875rem 1.25rem;
 }
 
-/* ── Pagination ─────────────────────────────────── */
-.pagination .page-link {
-    border: none;
-    border-radius: 10px;
-    margin: 0 3px;
-    color: var(--brand-teal);
-    font-weight: 600;
-    font-size: 0.85rem;
-    padding: 0.45rem 0.9rem;
-    transition: all 0.2s ease;
-    background: white;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.pagination .page-link:hover {
-    background: var(--brand-teal);
-    color: white;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.2);
-}
-.pagination .page-item.active .page-link {
-    background: var(--brand-teal);
-    color: white;
-    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.25);
-}
-.pagination .page-item.disabled .page-link {
-    color: #cbd5e1;
-    box-shadow: none;
-    cursor: not-allowed;
-}
+

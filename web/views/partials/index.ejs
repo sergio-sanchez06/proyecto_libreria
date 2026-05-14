@@ -254,43 +254,44 @@
             </h2>
 
             <div class="row mt-4 justify-content-center g-4">
-                <% if (publishers && publishers.length> 0) { %>
-                    <% publishers.slice(0, 4).forEach(publisher=> { %>
-                        <div class="col-6 col-md-3">
-                            <div class="card text-center h-100 p-4 border-0"
-                                style="background: rgba(255,255,255,0.7); backdrop-filter: blur(5px);">
-                                <a href="/publisher/<%= publisher.id %>"
-                                    class="text-decoration-none text-dark d-flex flex-column h-100">
-                                    <div class="publisher-logo-container mb-3">
-                                        <img src="<%= publisher.image_url || '/images/default-publisher.jpg' %>"
-                                            alt="<%= publisher.name %>">
+                <% if (publishersMostSold && publishersMostSold.length > 0) { %>
+                    <% publishersMostSold.slice(0, 6).forEach((pub, index) => { 
+                        const logo = pub.image_url || '/images/default-publisher.jpg';
+                    %>
+                        <div class="col-md-4 col-sm-6">
+                            <a href="/publisher/<%= pub.id %>" class="text-decoration-none">
+                                <div class="publisher-premium-card h-100 p-3 p-md-4 rounded-4 border shadow-sm position-relative overflow-hidden d-flex align-items-center gap-3">
+                                    <!-- Medalla de Ranking -->
+                                    <div class="publisher-premium-rank position-absolute top-0 start-0 text-dark fw-bold rounded-end-pill px-2 py-1 small shadow-sm z-1" style="background: var(--brand-gold); font-size: 0.75rem;">
+                                        #<%= index + 1 %>
                                     </div>
-                                    <h6 class="fw-bold mt-auto mb-0">
-                                        <%= publisher.name %>
-                                    </h6>
-                                </a>
-                            </div>
+                                    <!-- Logo -->
+                                    <div class="publisher-logo-wrapper flex-shrink-0 bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm border" style="width: 70px; height: 70px; padding: 10px;">
+                                        <img src="<%= logo %>" alt="<%= pub.name %>" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                    </div>
+                                    <!-- Info -->
+                                    <div class="flex-grow-1 text-truncate">
+                                        <h6 class="fw-bold text-dark mb-1 text-truncate" style="font-size: 1.05rem;"><%= pub.name %></h6>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge rounded-pill px-2 py-1 small fw-medium" style="background: rgba(10, 77, 77, 0.08); color: var(--brand-teal); border: 1px solid rgba(10, 77, 77, 0.1);">
+                                                <i class="bi bi-graph-up-arrow me-1"></i> <%= pub.totalSold %> ventas
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <!-- Icono Hover -->
+                                    <div class="ms-auto transition-icon" style="color: var(--brand-teal); opacity: 0.2;">
+                                        <i class="bi bi-arrow-right-circle-fill fs-3"></i>
+                                    </div>
+                                </div>
+                            </a>
                         </div>
-                        <% }) %>
-                            <% } %>
-            </div>
-
-            <!-- Ranking Editoriales -->
-            <div class="row mt-4 justify-content-center opacity-75">
-                <div class="col-12 text-center text-muted small fw-medium mb-3">
-                    <%= t('index.sales', { count: 'MÁS VENDIDAS' }) || 'MÁS VENDIDAS' %>
-                </div>
-                <% publishersMostSold.forEach(pub=> { %>
-                    <div class="col-auto mb-2">
-                        <a href="/publisher/<%= pub.id %>"
-                            class="badge bg-light text-dark border px-3 py-2 rounded-pill text-decoration-none">
-                            <%= pub.name %>
-                                <span class="ms-2 text-success fw-bold">
-                                    <%= pub.totalSold %> <i class="bi bi-graph-up-arrow"></i>
-                                </span>
-                        </a>
-                    </div>
                     <% }) %>
+                <% } else { %>
+                    <p class="text-center text-muted fw-medium py-5">
+                        <i class="bi bi-building-slash fs-1 d-block mb-3 opacity-25"></i>
+                        No hay editoriales destacadas en este momento.
+                    </p>
+                <% } %>
             </div>
         </section>
     </div>

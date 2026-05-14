@@ -41,6 +41,7 @@ async function getPublishers(req, res, next) {
       await redisClient.set("AllPublishers", JSON.stringify(publishers), {
         EX: 3600,
       });
+      res.locals.publishers = publishers;
     }
 
     next();
