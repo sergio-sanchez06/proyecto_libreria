@@ -88,6 +88,13 @@ router.post(
   OrderController.adminForceReturn,
 );
 
+router.post(
+  "/admin/reject-return/:id",
+  AuthMiddleware.authenticate,
+  AuthMiddleware.requireAdmin,
+  OrderController.adminRejectReturn,
+);
+
 router.post("/payment", OrderController.paymentAndEmail);
 
 

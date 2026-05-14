@@ -108,8 +108,28 @@ async function getOrdersByUser(userId) {
 async function updateOrder(order) {
   const client = await pool.connect();
 
+  let user_email = null;
+  let user_name = null;
+
+  let items = []
+
   try {
     await client.query("BEGIN");
+
+    const { rows } = await client.query(
+      `SELECT o.status, o.stripe_payment_intent, u.email, u.name 
+       FROM orders o 
+       JOIN users u ON o.user_id = u.id 
+       WHERE o.id = $1 FOR UPDATE`,
+      [order.id],
+    );
+
+    if (!rows[0]) throw new Error("Pedido no encontrado");
+
+    user_email = rows[0].email;
+    user_name = rows[0].name;
+
+    items = await OrderItemsRepository.getItemsByOrderId(order.id, client);
 
     const result = await client.query(
       `UPDATE orders 
@@ -122,9 +142,18 @@ async function updateOrder(order) {
 
     await client.query("COMMIT");
 
+    return {
+      user_email,
+      user_name,
+      items
+    };
+
     // return result.rows[0] ? new Order(result.rows[0]) : null;
   } catch (error) {
     await client.query("ROLLBACK");
+
+    console.log("Error update order: ", error)
+
     throw error;
   } finally {
     client.release();
@@ -515,7 +544,7 @@ async function confirmStripeSession(session_id) {
 //   return null;
 // }
 
-async function confirmReturn(id) {
+async function confirmReturn(id, forceReturn = false) {
   const client = await pool.connect();
   let stripePaymentIntent = null;
   let items = [];
@@ -534,8 +563,17 @@ async function confirmReturn(id) {
     );
 
     if (!rows[0]) throw new Error("Pedido no encontrado");
-    if (rows[0].status !== "DEVOLUCION_PENDIENTE") {
-      throw new Error("El pedido no está en espera de devolución");
+
+    const allowedStatuses = forceReturn
+      ? ["PAGADO", "PROCESANDO", "ENVIADO", "ENTREGADO", "DEVOLUCION_PENDIENTE"]
+      : ["DEVOLUCION_PENDIENTE"];
+
+    if (!allowedStatuses.includes(rows[0].status)) {
+      throw new Error(
+        forceReturn
+          ? `No se puede forzar devolución en estado ${rows[0].status}`
+          : "El pedido no está en espera de devolución",
+      );
     }
 
     stripePaymentIntent = rows[0].stripe_payment_intent;
@@ -576,6 +614,53 @@ async function confirmReturn(id) {
   return { items, user_email, user_name };
 }
 
+async function rejectReturn(id) {
+  const client = await pool.connect();
+  let items = [];
+  let user_email, user_name;
+
+  try {
+    await client.query("BEGIN");
+
+    // 1. Bloqueamos y obtenemos info del pedido
+    const { rows } = await client.query(
+      `SELECT o.status, o.stripe_payment_intent, u.email, u.name 
+       FROM orders o 
+       JOIN users u ON o.user_id = u.id 
+       WHERE o.id = $1 FOR UPDATE`,
+      [id],
+    );
+
+    if (!rows[0]) throw new Error("Pedido no encontrado");
+
+    if (rows[0].status !== "DEVOLUCION_PENDIENTE") {
+      throw new Error(
+        `No se puede rechazar la devolución en estado ${rows[0].status}`,
+      );
+    }
+
+    items = await OrderItemsRepository.getItemsByOrderId(id, client);
+
+    user_email = rows[0].email;
+    user_name = rows[0].name;
+
+    // 3. Cambiamos el estado a 'DEVUELTO' (más preciso que 'CANCELADO' para el TFG)
+    await client.query(
+      "UPDATE orders SET status = 'DEVOLUCION_RECHAZADA', updated_at = NOW() WHERE id = $1",
+      [id],
+    );
+
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+
+  return { user_email, user_name, items };
+}
+
 export default {
   createOrder,
   getOrderById,
@@ -587,4 +672,5 @@ export default {
   payment,
   confirmStripeSession,
   confirmReturn,
+  rejectReturn,
 };

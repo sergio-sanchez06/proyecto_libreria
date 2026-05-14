@@ -525,7 +525,7 @@ async function updateOrderStatus(req, res) {
 async function cancelOrder(req, res) {
   try {
     const urlId = req.params.id;
-    const { orderId } = req.body;
+    const { orderId, status } = req.body;
 
     // 2. Validación de consistencia (Seguridad)
     if (String(orderId) !== String(urlId)) {
@@ -788,10 +788,49 @@ async function adminConfirmReturn(req, res) {
   }
 }
 
+async function adminRejectReturn(req, res) {
+  try {
+    const { id } = req.params;
+    const { orderId } = req.body;
+
+    // Validación de seguridad similar a la que ya tienes
+    if (String(orderId) !== String(id)) {
+      req.session.flash = { type: "error", message: "Error de seguridad." };
+      return res.redirect("/admin/orders");
+    }
+
+    const api = getAuthenticatedClient(req.session.idToken);
+
+    // Llamada a la API para ejecutar reembolso y stock
+    const { data } = await api.post(`/orders/admin/reject-return/${orderId}`);
+
+    req.session.flash = {
+      type: "success",
+      message: data.message || "Devolución rechazada.",
+    };
+    res.redirect("/admin/orders");
+  } catch (error) {
+    console.error("Error al rechazar devolución:", error);
+    req.session.flash = {
+      type: "error",
+      message: error.response?.data?.error || "Error al procesar el rechazo.",
+    };
+    res.redirect("/admin/orders");
+  }
+}
+
 // 2. FORZAR (El admin decide devolverlo aunque el usuario no haya hecho nada)
 async function adminForceReturn(req, res) {
   try {
     const { id } = req.params;
+
+    const { orderId } = req.body;
+
+    if (String(orderId) !== String(id)) {
+      // ← fix 4: validación de consistencia
+      req.session.flash = { type: "error", message: "Error de seguridad." };
+      return res.redirect("/admin/orders");
+    }
 
     const api = getAuthenticatedClient(req.session.idToken);
 
@@ -800,7 +839,9 @@ async function adminForceReturn(req, res) {
 
     req.session.flash = {
       type: "success",
-      message: data.message || "Devolución forzada por el administrador correctamente.",
+      message:
+        data.message ||
+        "Devolución forzada por el administrador correctamente.",
     };
 
     res.redirect("/admin/orders");
@@ -839,4 +880,5 @@ export default {
   restoreGenre,
   adminConfirmReturn,
   adminForceReturn,
+  adminRejectReturn,
 };

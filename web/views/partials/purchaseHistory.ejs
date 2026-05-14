@@ -106,9 +106,9 @@
                                 statusKey='status_shipped' ; badgeClass='text-white' ; break; case 'ENTREGADO' :
                                 statusKey='status_delivered' ; badgeClass='bg-success text-white' ; break;
                                 case 'CANCELADO' : statusKey='status_cancelled' ; badgeClass='bg-danger text-white' ;
-                                break; case 'DEVOLUCION_PENDIENTE' : statusKey='status_devolution_pending' ;
+                                break; case 'DEVOLUCION_PENDIENTE' : statusKey='status_return_pending' ;
                                 badgeClass='bg-warning text-dark' ; break; case 'DEVOLUCION_RECHAZADA' :
-                                statusKey='status_devolution_rejected' ; badgeClass='bg-danger text-white' ; break;
+                                statusKey='status_return_rejected' ; badgeClass='bg-danger text-white' ; break;
                                 case 'DEVUELTO' : statusKey='status_returned' ; badgeClass='bg-success text-white' ;
                                 break; } %>
                                 <span class="badge rounded-pill status-badge mb-1 px-3 <%= badgeClass %>" <% if
@@ -246,8 +246,8 @@
                 </div>
                 <div class="modal-body py-4">
                     <p class="mb-0 text-muted" id="cancelModalBodyText">
-                        <%= t('purchase_history.cancel_modal_body').replace('{{id}}', '<span id="displayOrderId" class="fw-bold text-dark"></span>'
-                            ) %>
+                        <%- t('purchase_history.cancel_modal_body').replace('{{id}}', '<span id="displayOrderId" class="fw-bold text-dark"></span>' )
+                            %>
                     </p>
                 </div>
                 <div class="modal-footer border-0 pt-0">
@@ -277,8 +277,8 @@
                 </div>
                 <div class="modal-body py-4">
                     <p class="mb-3 text-muted">
-                        ¿Deseas solicitar la devolución del pedido #<span id="displayReturnOrderId"
-                            class="fw-bold text-dark"></span>?
+                        <%- t('purchase_history.return_modal_body').replace('{{id}}', '<span id="displayReturnOrderId" class="fw-bold text-dark"></span>' )
+                            %>
                     </p>
                     <div class="p-3 bg-light rounded-3 small text-muted">
                         <i class="bi bi-info-circle me-2"></i>

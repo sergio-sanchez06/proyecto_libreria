@@ -187,6 +187,14 @@ router.post(
   AdminController.adminConfirmReturn,
 );
 
+router.post(
+  "/orders/reject-return/:id",
+  protectMiddleware.protect,
+  protectMiddleware.requireAdmin,
+  protectMiddleware.requireFreshToken,
+  AdminController.adminRejectReturn,
+);
+
 router.get(
   "/reviews",
   protectMiddleware.protect,

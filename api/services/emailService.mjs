@@ -425,6 +425,41 @@ const emailService = {
    * Layout Base para todos los correos
    * @private
    */
+
+  _generateItemRows(items) {
+    return items
+      .map((item) => {
+        const title = item.book?.title || item.book_title || "Libro";
+        const cover_url = item.book?.cover_url || item.cover_url || null;
+        const price = Number(item.price_at_time || 0);
+
+        const optimizedCover = cover_url?.includes("cloudinary.com")
+          ? cover_url.replace(
+              "/upload/",
+              "/upload/w_160,h_240,c_fill,q_auto,f_auto/",
+            )
+          : cover_url || "https://via.placeholder.com/160x240?text=No+Image";
+
+        return `
+      <tr>
+        <td style="padding:15px; border-bottom:1px solid #eee; width:80px; vertical-align:top;">
+          <img src="${optimizedCover}" alt="${title}" style="width:80px; height:auto; border-radius:4px; box-shadow:0 4px 8px rgba(0,0,0,0.1); display:block;">
+        </td>
+        <td style="padding:15px; border-bottom:1px solid #eee; vertical-align:middle;">
+          <strong style="font-size:16px; color:#333; display:block; margin-bottom:4px;">${title}</strong>
+          <span style="font-size:13px; color:#666;">Precio: ${price.toFixed(2)}€</span>
+        </td>
+        <td style="text-align:center; padding:15px; border-bottom:1px solid #eee; vertical-align:middle; font-size:14px;">
+          x${item.quantity}
+        </td>
+        <td style="text-align:right; padding:15px; border-bottom:1px solid #eee; vertical-align:middle; font-size:15px; font-weight:bold; color:#333;">
+          ${(price * item.quantity).toFixed(2)}€
+        </td>
+      </tr>`;
+      })
+      .join("");
+  },
+
   _template(content, preheader = "") {
     return `
       <!DOCTYPE html>
@@ -583,11 +618,137 @@ const emailService = {
     );
   },
 
-  async sendReturnCompletedEmail(toEmail, userName, items) {
-    const content = `<h2 style="color: #28a745;">¡Devolución Completada! ✅</h2><p>Hola ${userName}, reembolso procesado.</p>`;
+  async sendRequestReturnEmail(toEmail, userName, orderId, items) {
+    const itemRows = this._generateItemRows(items);
+
+    const content = `
+    <h2 style="color: #f39c12; margin-top: 0;">Solicitud de Devolución Recibida 📦</h2>
+    <p>Hola <strong>${userName}</strong>,</p>
+    <p>Hemos recibido tu solicitud para devolver productos del pedido <strong>#${orderId}</strong>. Nuestro equipo revisará los detalles y te responderemos en breve.</p>
+
+    <h3 style="font-size: 16px; color: #333; margin-top: 25px;">Artículos que deseas devolver:</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+      <thead>
+        <tr>
+          <th style="text-align: left; padding-bottom: 10px; border-bottom: 2px solid #eee;" colspan="2">Producto</th>
+          <th style="text-align: center; padding-bottom: 10px; border-bottom: 2px solid #eee;">Cant.</th>
+          <th style="text-align: right; padding-bottom: 10px; border-bottom: 2px solid #eee;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>${itemRows}</tbody>
+    </table>
+
+    <div style="background-color: #fff9db; padding: 15px; border-radius: 8px; border: 1px solid #ffe066; text-align: center;">
+      <p style="margin: 0; color: #856404; font-size: 14px;">
+        <strong>Nota:</strong> No realices el envío todavía. Espera a que aprobemos la solicitud para recibir las instrucciones.
+      </p>
+    </div>
+  `;
+
+    return await this._send(
+      toEmail,
+      "Solicitud de devolución en proceso ⏳",
+      this._template(content),
+    );
+  },
+
+  async sendReturnCompletedEmail(toEmail, userName, orderId, items) {
+    const itemRows = items
+      .map((item) => {
+        const title = item.book?.title || "Libro";
+        const cover_url = item.book?.cover_url || null;
+        const price = Number(item.price_at_time || 0);
+
+        const optimizedCover = cover_url?.includes("cloudinary.com")
+          ? cover_url.replace(
+              "/upload/",
+              "/upload/w_160,h_240,c_fill,q_auto,f_auto/",
+            )
+          : cover_url || "https://via.placeholder.com/160x240?text=No+Cover";
+
+        return `
+      <tr>
+        <td style="padding:15px;border-bottom:1px solid #eee;width:80px;vertical-align:top;">
+          <img src="${optimizedCover}" alt="${title}"
+               style="width:80px;height:auto;border-radius:4px;box-shadow:0 4px 8px rgba(0,0,0,0.1);display:block;">
+        </td>
+        <td style="padding:15px;border-bottom:1px solid #eee;vertical-align:middle;">
+          <strong style="font-size:16px;color:#333;display:block;margin-bottom:4px;">${title}</strong>
+          <span style="font-size:13px;color:#666;">Precio unitario: ${price.toFixed(2)}€</span>
+        </td>
+        <td style="text-align:center;padding:15px;border-bottom:1px solid #eee;vertical-align:middle;font-size:14px;">
+          x${item.quantity}
+        </td>
+        <td style="text-align:right;padding:15px;border-bottom:1px solid #eee;vertical-align:middle;font-size:15px;font-weight:bold;color:#28a745;">
+          ${(price * item.quantity).toFixed(2)}€
+        </td>
+      </tr>`;
+      })
+      .join("");
+
+    const totalRefunded = items
+      .reduce((acc, item) => acc + item.price_at_time * item.quantity, 0)
+      .toFixed(2);
+
+    const content = `
+    <h2 style="color: #28a745; margin-top: 0;">¡Devolución Completada! ✅</h2>
+    <p>Hola <strong>${userName}</strong>,</p>
+    <p>Te informamos que hemos recibido y procesado correctamente los artículos de tu pedido ${orderId} para su correcta devolución. El reembolso se ha emitido con éxito.</p>
+
+    <div style="background-color: #f8fdf9; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0;">
+      <p style="margin: 0; color: #1e4620; font-weight: bold;">
+        Total reembolsado: ${totalRefunded}€
+      </p>
+      <p style="margin: 5px 0 0 0; font-size: 13px; color: #4a5568;">
+        El importe aparecerá en tu cuenta en un plazo de 5 a 10 días hábiles.
+      </p>
+    </div>
+
+    <h3 style="font-size: 16px; color: #333; margin-bottom: 10px;">Artículos devueltos:</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+      <thead>
+        <tr>
+          <th style="text-align: left; padding-bottom: 10px; border-bottom: 2px solid #eee;" colspan="2">Producto</th>
+          <th style="text-align: center; padding-bottom: 10px; border-bottom: 2px solid #eee;">Cant.</th>
+          <th style="text-align: right; padding-bottom: 10px; border-bottom: 2px solid #eee;">Total</th>
+        </tr>
+      </thead>
+      <tbody>${itemRows}</tbody>
+    </table>
+
+    <p style="color: #718096; font-size: 13px; text-align: center; margin-top: 30px;">
+      Gracias por confiar en nuestra librería. ¡Esperamos volver a verte pronto!
+    </p>
+  `;
+
     return await this._send(
       toEmail,
       "Devolución procesada correctamente ✨",
+      this._template(content),
+    );
+  },
+
+  async sendReturnRejectedEmail(toEmail, userName, orderId, items) {
+    const itemRows = this._generateItemRows(items);
+
+    const content = `
+    <h2 style="color: #dc3545; margin-top: 0;">Devolución Rechazada ❌</h2>
+    <p>Hola <strong>${userName}</strong>,</p>
+    <p>Te informamos que tu solicitud de devolución para el pedido <strong>#${orderId}</strong> ha sido <strong>rechazada</strong> tras ser revisada por el administrador.</p>
+
+    <h3 style="font-size: 16px; color: #333; margin-top: 25px;">Detalle de los artículos:</h3>
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+      <tbody>${itemRows}</tbody>
+    </table>
+
+    <p style="color: #718096; font-size: 14px;">
+      Si crees que esto es un error o necesitas más información sobre los motivos del rechazo, por favor responde a este correo o contacta con nuestro servicio de atención al cliente.
+    </p>
+  `;
+
+    return await this._send(
+      toEmail,
+      "Actualización sobre tu devolución ❌",
       this._template(content),
     );
   },
