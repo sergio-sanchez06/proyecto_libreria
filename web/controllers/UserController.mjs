@@ -475,6 +475,7 @@ async function getMyReviews(req, res) {
       currentPage,
       totalPages,
       totalReviews: allReviews.length,
+      currentUrl: req.originalUrl,
     });
   } catch (error) {
     console.error("Error en getMyReviews:", error.message);

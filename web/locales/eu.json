@@ -258,6 +258,9 @@
     "return_confirm_modal_title": "Itzulketan berretsi?",
     "return_confirm_modal_body": "Ziur al zaude #{{id}} eskaeraren itzulketan berretsi eta diru-itzulketan egin nahi duzula? Ekintza hau ezin da desegin.",
     "return_confirm_confirm_btn": "Bai, itzulketan berretsi",
+    "return_reject_modal_title": "Itzulketari uko egin?",
+    "return_reject_modal_body": "Ziur al zaude #{{id}} eskaeraren itzulketari uko egin nahi diozula? Ekintza hau ezin da desegin.",
+    "return_reject_confirm_btn": "Bai, uko egin itzulketari",
     "force_return_modal_title": "Itzulketan behartu?",
     "force_return_modal_body": "Ziur al zaude #{{id}} eskaeraren itzulketan behartu eta bezeroari dirua itzuli nahi diozula? Ekintza hau ezin da desegin.",
     "force_return_confirm_btn": "Bai, itzulketan behartu"

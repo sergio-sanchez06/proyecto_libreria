@@ -192,6 +192,7 @@
                         </div>
                         <input type="hidden" name="review_id" id="editReviewId">
                         <input type="hidden" name="book_id" id="book_id">
+                        <input type="hidden" name="returnTo" id="editReturnTo">
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
@@ -238,6 +239,7 @@
         const editRating = document.getElementById('editRating');
         const editComment = document.getElementById('editComment');
         const book_id_review = document.getElementById('book_id');
+        const editReturnTo = document.getElementById('editReturnTo');
 
         function openDeleteModal(id) {
             deleteForm.action = `/admin/review/delete/${id}`;
@@ -249,6 +251,7 @@
             editRating.value = rating;
             editComment.value = comment;
             book_id_review.value = book_id;
+            editReturnTo.value = "<%= currentUrl %>";
             bEditModal.show();
         }
     </script>

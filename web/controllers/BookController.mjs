@@ -203,6 +203,8 @@ async function getBookById(req, res) {
 
     console.log("Genres: ", genres);
 
+    console.log("Current URL: ", req.originalUrl);
+
     // console.log(authors);
 
     res.render("partials/libro_detalle", {
@@ -212,6 +214,7 @@ async function getBookById(req, res) {
       publisher,
       reviews,
       user: req.session.user || null,
+      currentUrl: req.originalUrl,
     });
   } catch (error) {
     res.status(404).render("errors/404", { message: "Libro no encontrado" });

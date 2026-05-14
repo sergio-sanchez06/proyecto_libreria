@@ -259,6 +259,9 @@
     "return_confirm_modal_title": "Confirmar devolució?",
     "return_confirm_modal_body": "Estàs segur que vols confirmar la devolució i emetre un reemborsament per la comanda #{{id}}? Aquesta acció no es pot desfer.",
     "return_confirm_confirm_btn": "Sí, confirmar devolució",
+    "return_reject_modal_title": "Rebutjar devolució?",
+    "return_reject_modal_body": "Estàs segur que vols rebutjar la devolució de la comanda #{{id}}? Aquesta acció no es pot desfer.",
+    "return_reject_confirm_btn": "Sí, rebutjar devolució",
     "force_return_modal_title": "Forçar devolució?",
     "force_return_modal_body": "Estàs segur que vols forçar la devolució i reemborsar al client per la comanda #{{id}}? Aquesta acció no es pot desfer.",
     "force_return_confirm_btn": "Sí, forçar devolució"

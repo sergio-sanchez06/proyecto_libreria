@@ -521,6 +521,7 @@ const emailService = {
     address,
     items,
     orderTotal,
+    orderId
   ) {
     const displayTotal = orderTotal
       ? parseFloat(orderTotal).toFixed(2)
@@ -558,17 +559,17 @@ const emailService = {
 
     const content = `
       <h2 style="color: #28a745; margin-top: 0;">¡Pedido Confirmado! ✅</h2>
-      <p>Hola <strong>${userName}</strong>, hemos recibido tu pedido.</p>
+      <p>Hola <strong>${userName}</strong>, hemos recibido tu pedido <strong>#${orderId}</strong>.</p>
       <div style="background: #f1f8f3; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745; margin-bottom: 25px;">
         <strong style="color: #28a745; font-size: 14px;">DIRECCIÓN DE ENVÍO:</strong><br>
         <span>${address}</span>
       </div>
-      <table class="table">
+      <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
         <thead>
           <tr>
-            <th colspan="2">Libro</th>
-            <th style="text-align: center;">Cant.</th>
-            <th style="text-align: right;">Subtotal</th>
+            <th style="text-align: left; padding-bottom: 10px; border-bottom: 2px solid #eee;" colspan="2">Libro</th>
+            <th style="text-align: center; padding-bottom: 10px; border-bottom: 2px solid #eee;">Cant.</th>
+            <th style="text-align: right; padding-bottom: 10px; border-bottom: 2px solid #eee;">Subtotal</th>
           </tr>
         </thead>
         <tbody>${itemsHtml}</tbody>
@@ -693,7 +694,7 @@ const emailService = {
     const content = `
     <h2 style="color: #28a745; margin-top: 0;">¡Devolución Completada! ✅</h2>
     <p>Hola <strong>${userName}</strong>,</p>
-    <p>Te informamos que hemos recibido y procesado correctamente los artículos de tu pedido ${orderId} para su correcta devolución. El reembolso se ha emitido con éxito.</p>
+    <p>Te informamos que hemos recibido y procesado correctamente los artículos de tu pedido <strong>#${orderId}</strong> para su correcta devolución. El reembolso se ha emitido con éxito.</p>
 
     <div style="background-color: #f8fdf9; border-left: 4px solid #28a745; padding: 15px; margin: 20px 0;">
       <p style="margin: 0; color: #1e4620; font-weight: bold;">
@@ -753,7 +754,7 @@ const emailService = {
     );
   },
 
-  async sendOrderCancellationEmail(toEmail, userName, items, refunded) {
+  async sendOrderCancellationEmail(toEmail, userName, orderId, items, refunded) {
     const itemRows = items
       .map((item) => {
         const title = item.book?.title || "Libro";
@@ -799,7 +800,7 @@ const emailService = {
     const content = `
       <h2 style="color: #c0392b; margin-top: 0;">Pedido Cancelado ❌</h2>
       <p>Hola <strong>${userName}</strong>,</p>
-      <p>Te confirmamos que tu pedido ha sido cancelado correctamente. Lamentamos que no hayas podido completar tu compra en esta ocasión.</p>
+      <p>Te confirmamos que tu pedido <strong>#${orderId}</strong> ha sido cancelado correctamente. Lamentamos que no hayas podido completar tu compra en esta ocasión.</p>
 
       <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
         <thead>

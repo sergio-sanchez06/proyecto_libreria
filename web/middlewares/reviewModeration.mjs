@@ -154,9 +154,27 @@ async function checkToxicity(req, res, next) {
       `🚫 [LOCAL] blacklist=${tieneBlacklist} patron=${tienePatronCritico} ` +
         `salud=${tieneAtaqueSalud} | "${comment}" → "${textoLimpio}"`,
     );
-    return res.status(400).json({
-      error: "Tu comentario contiene palabras o comportamientos prohibidos.",
-    });
+
+    req.session.flash = {
+      type: "error",
+      message: "Tu comentario contiene palabras o comportamientos prohibidos.",
+    };
+
+    // return res.status(400).json({
+    //   error: "Tu comentario contiene palabras o comportamientos prohibidos.",
+    // });
+
+    console.log("--- DEBUG START ---");
+    console.log("Cuerpo completo:", JSON.stringify(req.body, null, 2));
+    console.log("--- DEBUG END ---");
+
+    console.log("URL desde el middleware: ", req.body);
+
+    const urlDestino = req.body.returnTo || req.get("Referer") || "/";
+
+    console.log("Vuelvo a: ", req.body.returnTo);
+
+    return res.redirect(urlDestino);
   }
 
   next();

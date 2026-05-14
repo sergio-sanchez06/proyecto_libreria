@@ -376,14 +376,15 @@
                 <div class="modal-body p-4 text-center">
 
                     <p class="small fw-light text-muted">
-                        <%= t('adminOrders.cancel_modal_body') %>
+                        <%- t('adminOrders.cancel_modal_body').replace('{{id}}', '<span id="cancelOrderDisplayOrderId" class="fw-bold text-dark"></span>'
+                            ) %>
                     </p>
 
-                    <!-- <p class="mb-1">
+                    <p class="mb-1">
                         ¿Cancelar el pedido <strong id="cancelOrderId"></strong> de
                         <strong id="cancelOrderEmail"></strong>?
                     </p>
-                    <p class="text-muted small mb-0">
+                    <!-- <p class="text-muted small mb-0">
                         El stock de los libros se restituirá automáticamente.
                         Esta acción no se puede deshacer.
                     </p> -->
@@ -416,7 +417,8 @@
                 <div class="modal-body p-4 text-center">
 
                     <p class="small fw-light text-muted">
-                        <%= t('adminOrders.return_modal_body') %>
+                        <%- t('adminOrders.return_confirm_modal_body').replace('{{id}}', '<span id="confirmReturnDisplayOrderId" class="fw-bold text-dark"></span>'
+                            ) %>
                     </p>
 
                     <!-- <p class="mb-1">¿Aprobar la devolución del pedido <strong class="target-order-id"></strong>?</p>
@@ -449,7 +451,8 @@
                 <div class="modal-body p-4 text-center">
 
                     <p class="small fw-light text-muted">
-                        <%= t('adminOrders.force_return_modal_body') %>
+                        <%- t('adminOrders.force_return_modal_body').replace('{{id}}', '<span id="forceReturnDisplayOrderId" class="fw-bold text-dark"></span>'
+                            ) %>
                     </p>
 
                     <!-- <p class="mb-1">¿Estás seguro de forzar la devolución del pedido <strong
@@ -477,13 +480,15 @@
             <div class="modal-content shadow-lg border-0">
                 <div class="modal-header bg-secondary border-0">
                     <h5 class="modal-title fw-bold text-white">
-                        <i class="bi bi-x-circle me-2"></i>Rechazar devolución
+                        <i class="bi bi-x-circle me-2"></i>
+                        <%= t('adminOrders.return_reject_modal_title') %>
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-4 text-center">
                     <p class="small fw-light text-muted">
-                        <%= t('adminOrders.reject_return_modal_body') %>
+                        <%- t('adminOrders.return_reject_modal_body').replace('{{id}}', '<span id="rejectReturnDisplayOrderId" class="fw-bold text-dark"></span>'
+                            ) %>
                     </p>
                 </div>
                 <div class="modal-footer border-0 justify-content-center pb-4">
@@ -493,7 +498,7 @@
                     <form id="rejectReturnForm" method="POST" data-requires-token>
                         <input type="hidden" name="orderId" class="target-order-input">
                         <button type="submit" class="btn btn-secondary rounded-pill px-4 ms-2 fw-bold">
-                            <%= t('adminOrders.reject_return_confirm_btn') %>
+                            <%= t('adminOrders.return_reject_confirm_btn') %>
                         </button>
                     </form>
                 </div>
@@ -650,7 +655,7 @@
                             const orderEmail = button.getAttribute('data-order-email');
 
                             // Actualizar el contenido del modal
-                            document.getElementById('cancelOrderId').textContent = '#' + orderId;
+                            document.getElementById('cancelOrderDisplayOrderId').textContent = '#' + orderId;
                             document.getElementById('cancelOrderEmail').textContent = orderEmail;
                             document.getElementById('cancelOrderFormId').value = orderId;
 
@@ -668,6 +673,7 @@
                             const orderId = btn.getAttribute('data-order-id');
                             document.getElementById('confirmReturnForm').action = '/admin/orders/confirm-return/' + orderId;
                             document.querySelector('#confirmReturnForm .target-order-input').value = orderId;
+                            document.getElementById('confirmReturnDisplayOrderId').textContent = orderId;
                         });
                     }
 
@@ -679,6 +685,7 @@
                             const orderId = btn.getAttribute('data-order-id');
                             document.getElementById('forceReturnForm').action = '/admin/orders/force-return/' + orderId;
                             document.querySelector('#forceReturnForm .target-order-input').value = orderId;
+                            document.getElementById('forceReturnDisplayOrderId').textContent = orderId;
                         });
                     }
 
@@ -690,6 +697,7 @@
                             const orderId = btn.getAttribute('data-order-id');
                             document.getElementById('rejectReturnForm').action = '/admin/orders/reject-return/' + orderId;
                             document.querySelector('#rejectReturnForm .target-order-input').value = orderId;
+                            document.getElementById('rejectReturnDisplayOrderId').textContent = orderId;
                         });
                     }
 

@@ -79,11 +79,31 @@ async function updateOrder(req, res) {
 
 async function cancelOrder(req, res) {
   try {
+    const order = await OrderRepository.getOrderById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ error: "Pedido no encontrado." });
+    }
+
     const { items, refunded, user_email, user_name } =
       await OrderRepository.cancelOrder(req.params.id);
 
+    console.log(`Administrador cancelando pedido ${order.id}`, {
+      user_email,
+      user_name,
+      order,
+      items,
+      refunded,
+    });
+
     emailService
-      .sendOrderCancellationEmail(user_email, user_name, items, refunded)
+      .sendOrderCancellationEmail(
+        user_email,
+        user_name,
+        order.id,
+        items,
+        refunded,
+      )
       .catch((err) =>
         console.error("Error enviando email de cancelación:", err),
       );
@@ -126,7 +146,13 @@ async function userCancelOrder(req, res) {
       await OrderRepository.cancelOrder(req.params.id);
 
     emailService
-      .sendOrderCancellationEmail(user_email, user_name, items, refunded)
+      .sendOrderCancellationEmail(
+        user_email,
+        user_name,
+        order.id,
+        items,
+        refunded,
+      )
       .catch((err) =>
         console.error("Error enviando email de cancelación:", err),
       );
@@ -198,6 +224,7 @@ async function confirmStripeSession(req, res) {
           order.shipping_address,
           order.items,
           order.total,
+          order.id
         )
         .catch((err) =>
           console.error("Error enviando email de pedido:", err.message),
@@ -231,17 +258,15 @@ async function adminConfirmReturn(req, res) {
     }
 
     // Ejecutamos la lógica común del repositorio
-    const { items, user_email, user_name } = await OrderRepository.confirmReturn(id);
+    const { items, user_email, user_name } =
+      await OrderRepository.confirmReturn(id);
 
-    emailService.sendReturnCompletedEmail(
-      user_email,
-      user_name,
-      order.id,
-      items,
-    ).catch((err) =>
-      console.error("Error enviando email de devolución:", err.message),
-    );
-    
+    emailService
+      .sendReturnCompletedEmail(user_email, user_name, order.id, items)
+      .catch((err) =>
+        console.error("Error enviando email de devolución:", err.message),
+      );
+
     return res.status(200).json({
       message: "Devolución procesada: stock actualizado y reembolso emitido.",
     });
@@ -324,12 +349,18 @@ async function adminForceReturn(req, res) {
     }
 
     // Llamamos al MISMO método del repositorio
-    const {items, user_email, user_name } = await OrderRepository.confirmReturn(id, true);
+    const { items, user_email, user_name } =
+      await OrderRepository.confirmReturn(id, true);
 
     // Enviamos email al usuario indicando que la devolución ha sido forzada
     emailService
       .sendReturnCompletedEmail(user_email, user_name, items)
-      .catch((err) => console.error("Error enviando email de confirmación de devolución:", err));
+      .catch((err) =>
+        console.error(
+          "Error enviando email de confirmación de devolución:",
+          err,
+        ),
+      );
 
     return res.status(200).json({
       message: "El administrador ha forzado la devolución correctamente.",
@@ -357,7 +388,8 @@ async function adminRejectReturn(req, res) {
     }
 
     // Cancelamos el proceso: revertimos el estado y NO devolvemos dinero
-    const {user_name, user_email, items } = await OrderRepository.rejectReturn(id); 
+    const { user_name, user_email, items } =
+      await OrderRepository.rejectReturn(id);
 
     // Enviamos email al usuario indicando que la devolución ha sido rechazada
     emailService

@@ -249,6 +249,7 @@
                 </div>
                 <form id="editReviewForm" method="POST">
                     <input type="hidden" name="book_id" id="editBookId">
+                    <input type="hidden" name="returnTo" id="editReturnTo">
 
                     <div class="modal-body p-4">
                         <div class="mb-3">
@@ -331,6 +332,7 @@
                     document.getElementById('editRating').value = rating;
                     document.getElementById('editComment').value = comment;
                     document.getElementById('editBookId').value = bookId;
+                    document.getElementById('editReturnTo').value = "<%= currentUrl %>";
 
                     // Mostramos el modal
                     bEditModal.show();

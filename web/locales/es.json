@@ -280,6 +280,9 @@
     "return_confirm_modal_title": "¿Confirmar devolución?",
     "return_confirm_modal_body": "¿Estás seguro de que deseas confirmar la devolución y emitir un reembolso por el pedido #{{id}}? Esta acción no se puede deshacer.",
     "return_confirm_confirm_btn": "Sí, confirmar devolución",
+    "return_reject_modal_title": "¿Rechazar devolución?",
+    "return_reject_modal_body": "¿Estás seguro de que deseas rechazar la devolución del pedido #{{id}}? Esta acción no se puede deshacer.",
+    "return_reject_confirm_btn": "Sí, rechazar devolución",
     "force_return_modal_title": "¿Forzar devolución?",
     "force_return_modal_body": "¿Estás seguro de que deseas forzar la devolución y reembolsar al cliente por el pedido #{{id}}? Esta acción no se puede deshacer.",
     "force_return_confirm_btn": "Sí, forzar devolución"

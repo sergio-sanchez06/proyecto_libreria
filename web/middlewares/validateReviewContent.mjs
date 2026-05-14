@@ -43,6 +43,8 @@ const reviewSchema = z.object({
     })
     .int({ message: "El ID del libro debe ser un número entero." })
     .positive({ message: "El ID del libro no es válido." }),
+
+  returnTo: z.string().optional(),
 });
 
 export function validateReview(req, res, next) {
