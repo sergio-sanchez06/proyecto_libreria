@@ -244,7 +244,6 @@ async function adminConfirmReturn(req, res) {
     
     return res.status(200).json({
       message: "Devolución procesada: stock actualizado y reembolso emitido.",
-      data: result,
     });
   } catch (error) {
     res.status(error.message.includes("no encontrado") ? 404 : 400).json({
