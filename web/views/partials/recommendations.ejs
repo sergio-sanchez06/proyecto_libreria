@@ -88,7 +88,7 @@
                         </p>
                         <div class="d-flex gap-3 align-items-center">
                             <a href="/books/book/<%= topBook.id %>" class="btn btn-spotlight">
-                                <i class="bi bi-play-fill me-1"></i> Ver detalles
+                                <i class="bi bi-play-fill me-1"></i> <%= t('recommendations.see_details') %>
                             </a>
                             <span class="text-white fs-4 fw-bold ms-3"><%= parseFloat(topBook.price || 0).toFixed(2) %>€</span>
                         </div>

@@ -68,13 +68,14 @@
                                 <div class="bg-teal-soft p-2 rounded-circle">
                                     <i class="bi bi-shield-check text-teal"></i>
                                 </div>
-                                <div class="small fw-600">Todas tus compras están protegidas por nuestro sistema de
-                                    garantía.</div>
+                                <div class="small fw-600">
+                                    <%= t('purchase_history.protected_purchases') %>
+                                </div>
                             </div>
                         </div>
                         <a href="/user/profile"
                             class="btn btn-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2 transition-all">
-                            <i class="bi bi-person-circle text-teal"></i> Volver al Perfil
+                            <i class="bi bi-person-circle text-teal"></i> <%= t('purchase_history.profile_btn') %>
                         </a>
                     </div>
                 </div>

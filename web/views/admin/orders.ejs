@@ -194,19 +194,17 @@
 
                                             <!-- Acciones -->
                                             <td>
-                                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                                <% const
+                                                    isFinished=['CANCELADO','DEVUELTO','DEVOLUCION_RECHAZADA'].includes(order.status);
+                                                    const isReturnPending=order.status==='DEVOLUCION_PENDIENTE' ; const
+                                                    isDelivered=order.status==='ENTREGADO' ; const
+                                                    showSelector=!isFinished && !isReturnPending && !isDelivered; const
+                                                    btnCls='btn btn-sm rounded-pill px-3 fw-600' ; %>
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 
-                                                    <!-- ── NUEVO: select deshabilitado si está cancelado ── -->
-                                                    <% if (isCancelled) { %>
-                                                        <span
-                                                            class="status-select d-flex align-items-center gap-1 text-muted"
-                                                            style="font-size:.78rem; padding:5px 10px; background:#f1f5f9;
-                                                            border-radius:8px; cursor:not-allowed;"
-                                                            title="No se puede cambiar el estado de un pedido cancelado">
-                                                            <i class="bi bi-lock-fill" style="font-size:.7rem;"></i>
-                                                            Cancelado
-                                                        </span>
-                                                        <% } else { %>
+                                                        <!-- Selector: PENDIENTE → PAGADO → PROCESANDO → ENVIADO -->
+                                                        <% if (showSelector) { %>
                                                             <form action="/admin/orders/updateStatus/<%= order.id %>"
                                                                 method="POST" data-requires-token class="d-flex">
                                                                 <input type="hidden" name="orderId"
@@ -230,81 +228,89 @@
                                                                         ? 'selected' :'' %>><%=
                                                                             t('adminOrders.status_shipped') %>
                                                                     </option>
-                                                                    <option value="ENTREGADO"
-                                                                        <%=order.status==='ENTREGADO' ? 'selected' :''
-                                                                        %>><%= t('adminOrders.status_delivered') %>
-                                                                    </option>
                                                                 </select>
                                                             </form>
                                                             <% } %>
 
-                                                                <!-- Ver detalle -->
-                                                                <button class="btn-view-order" data-bs-toggle="modal"
-                                                                    data-bs-target="#modalOrder<%= order.id %>">
-                                                                    <i class="bi bi-eye-fill me-1"></i>
-                                                                    <%= t('adminOrders.btn_view') %>
-                                                                </button>
-
-                                                                <% if (order.status==='DEVOLUCION_PENDIENTE' ) { %>
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-warning rounded-pill px-3"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#modalConfirmReturn"
-                                                                        data-order-id="<%= order.id %>"
-                                                                        data-order-email="<%= order.user_email %>">
-                                                                        <i
-                                                                            class="bi bi-arrow-return-left me-1"></i>Confirmar
-                                                                        devolución
-                                                                    </button>
-                                                                    <button type="button"
-                                                                        class="btn btn-sm btn-secondary rounded-pill px-3"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#modalRejectReturn"
-                                                                        data-order-id="<%= order.id %>"
-                                                                        data-order-email="<%= order.user_email %>">
-                                                                        <i class="bi bi-x-lg me-1"></i>Rechazar
-                                                                        devolución
-                                                                    </button>
+                                                                <!-- Marcar entregado: solo desde ENVIADO -->
+                                                                <% if (order.status==='ENVIADO' ) { %>
+                                                                    <form
+                                                                        action="/admin/orders/updateStatus/<%= order.id %>"
+                                                                        method="POST" data-requires-token>
+                                                                        <input type="hidden" name="orderId"
+                                                                            value="<%= order.id %>">
+                                                                        <input type="hidden" name="status"
+                                                                            value="ENTREGADO">
+                                                                        <button type="submit"
+                                                                            class="<%= btnCls %> btn-success">
+                                                                            <i
+                                                                                class="bi bi-check-circle me-1"></i>Entregado
+                                                                        </button>
+                                                                    </form>
                                                                     <% } %>
 
-                                                                        <% if
-                                                                            (['PAGADO','PROCESANDO','ENVIADO','ENTREGADO','DEVOLUCION_PENDIENTE'].includes(order.status))
-                                                                            { %>
+                                                                        <!-- Ver detalle: siempre visible -->
+                                                                        <button class="btn-view-order"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#modalOrder<%= order.id %>">
+                                                                            <i class="bi bi-eye-fill me-1"></i>
+                                                                            <%= t('adminOrders.btn_view') %>
+                                                                        </button>
+
+                                                                        <!-- Confirmar / Rechazar: solo DEVOLUCION_PENDIENTE -->
+                                                                        <% if (isReturnPending) { %>
                                                                             <button type="button"
-                                                                                class="btn btn-sm btn-danger rounded-pill px-3"
+                                                                                class="<%= btnCls %> btn-warning"
                                                                                 data-bs-toggle="modal"
-                                                                                data-bs-target="#modalForceReturn"
+                                                                                data-bs-target="#modalConfirmReturn"
                                                                                 data-order-id="<%= order.id %>"
                                                                                 data-order-email="<%= order.user_email %>">
                                                                                 <i
-                                                                                    class="bi bi-exclamation-triangle me-1"></i>Forzar
+                                                                                    class="bi bi-arrow-return-left me-1"></i>Confirmar
+                                                                                devolución
+                                                                            </button>
+                                                                            <button type="button"
+                                                                                class="<%= btnCls %> btn-secondary"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#modalRejectReturn"
+                                                                                data-order-id="<%= order.id %>"
+                                                                                data-order-email="<%= order.user_email %>">
+                                                                                <i class="bi bi-x-lg me-1"></i>Rechazar
                                                                                 devolución
                                                                             </button>
                                                                             <% } %>
 
-                                                                                <!-- ── NUEVO: cancelar → modal de confirmación (solo si no está cancelado) ── -->
-                                                                                <% if (isCancelled) { %>
-                                                                                    <button class="btn-delete-order"
-                                                                                        disabled
-                                                                                        title="Este pedido ya está cancelado"
-                                                                                        style="opacity:.35; cursor:not-allowed;">
+                                                                                <!-- Forzar devolución: ENTREGADO únicamente -->
+                                                                                <% if (isDelivered) { %>
+                                                                                    <button type="button"
+                                                                                        class="<%= btnCls %> btn-danger"
+                                                                                        data-bs-toggle="modal"
+                                                                                        data-bs-target="#modalForceReturn"
+                                                                                        data-order-id="<%= order.id %>"
+                                                                                        data-order-email="<%= order.user_email %>">
                                                                                         <i
-                                                                                            class="bi bi-x-circle-fill"></i>
+                                                                                            class="bi bi-exclamation-triangle me-1"></i>Forzar
+                                                                                        devolución
                                                                                     </button>
-                                                                                    <% } else { %>
-                                                                                        <button type="button"
-                                                                                            class="btn-delete-order"
-                                                                                            title="Cancelar pedido"
-                                                                                            data-bs-toggle="modal"
-                                                                                            data-bs-target="#modalCancelOrder"
-                                                                                            data-order-id="<%= order.id %>"
-                                                                                            data-order-email="<%= order.user_email %>">
-                                                                                            <i
-                                                                                                class="bi bi-x-circle-fill"></i>
-                                                                                        </button>
-                                                                                        <% } %>
+                                                                                    <% } %>
 
-                                                </div>
+                                                                                        <!-- Cancelar: solo pedidos activos no finalizados ni entregados ni en devolución -->
+                                                                                        <% if (!isFinished &&
+                                                                                            !isDelivered &&
+                                                                                            !isReturnPending) { %>
+                                                                                            <button type="button"
+                                                                                                class="<%= btnCls %> btn-outline-danger"
+                                                                                                title="Cancelar pedido"
+                                                                                                data-bs-toggle="modal"
+                                                                                                data-bs-target="#modalCancelOrder"
+                                                                                                data-order-id="<%= order.id %>"
+                                                                                                data-order-email="<%= order.user_email %>">
+                                                                                                <i
+                                                                                                    class="bi bi-x-circle me-1"></i>Cancelar
+                                                                                            </button>
+                                                                                            <% } %>
+
+                                                    </div>
                                             </td>
                                         </tr>
                                         <% }) %>
@@ -704,4 +710,4 @@
                 });
             </script>
 
-            <%- include('../layout/footer') %>
+            <%- include('../layout/footer') %>s

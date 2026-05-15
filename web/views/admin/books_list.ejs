@@ -1,4 +1,4 @@
-<%- include('../layout/header', { bodyClass: 'bg-admin-vistas', extraCSS: 'admin/books_list' }) %>
+<%- include('../layout/header', { bodyClass: 'bg-admin-vistas' , extraCSS: 'admin/books_list' }) %>
 
     <div class="container py-5">
         <div class="admin-hero mb-5">
@@ -16,7 +16,8 @@
                         </p>
                     </div>
                 </div>
-                <a href="/admin/books/create" class="btn btn-glass-white text-white rounded-pill px-4 py-2 fw-bold shadow-sm transition-all"
+                <a href="/admin/books/create"
+                    class="btn btn-glass-white text-white rounded-pill px-4 py-2 fw-bold shadow-sm transition-all"
                     style="text-decoration: none; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.3);">
                     <i class="bi bi-plus-lg me-2"></i>Añadir Libro
                 </a>
@@ -135,12 +136,15 @@
                                         </span>
                                         <% } %>
 
-                                            <div class="book-img-container p-3" style="position: relative; height: 220px; display: flex; align-items: center; justify-content: center; background: #f8fafc;">
+                                            <div class="book-img-container p-3"
+                                                style="position: relative; height: 220px; display: flex; align-items: center; justify-content: center; background: #f8fafc;">
                                                 <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
-                                                    class="mh-100 mw-100 shadow-sm" style="object-fit: contain; border-radius: 4px;"
+                                                    class="mh-100 mw-100 shadow-sm"
+                                                    style="object-fit: contain; border-radius: 4px;"
                                                     alt="<%= book.title %>"
                                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                <div class="book-placeholder" style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #f1f5f9; color: #94a3b8;">
+                                                <div class="book-placeholder"
+                                                    style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; background: #f1f5f9; color: #94a3b8;">
                                                     <i class="bi bi-book-half" style="font-size: 3rem;"></i>
                                                 </div>
                                             </div>
@@ -175,14 +179,14 @@
                                                                     </a>
                                                                 </div>
                                                                 <div class="col-6">
-                                                                    <form action="/admin/books/delete/<%= book.id %>"
-                                                                        method="POST" data-requires-token>
-                                                                        <button type="submit"
-                                                                            class="btn btn-danger btn-sm w-100 py-2 shadow-sm"
-                                                                            onclick="return confirm('¿Mover este libro a la papelera?')">
-                                                                            <i class="bi bi-trash me-1"></i> Borrar
-                                                                        </button>
-                                                                    </form>
+                                                                    <button type="button"
+                                                                        class="btn btn-danger btn-sm w-100 py-2 shadow-sm"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#modalDeleteBook"
+                                                                        data-action="/admin/books/delete/<%= book.id %>"
+                                                                        data-name="<%= book.title %>">
+                                                                        <i class="bi bi-trash me-1"></i> Borrar
+                                                                    </button>
                                                                 </div>
                                                             </div>
                                                             <% } else { %>
@@ -217,45 +221,81 @@
                                         <p class="mt-3 fs-5 text-muted">No se encontraron libros en esta sección.</p>
                                     </div>
                                     <% } %>
-                <!-- Paginación -->
-                <% if (typeof totalPages !== 'undefined' && totalPages > 1) { 
-                    const getPageUrl = (p) => {
-                        const params = new URLSearchParams(query);
-                        params.set('page', p);
-                        return '?' + params.toString();
-                    };
-                %>
-                <div class="mt-5 mb-5 d-flex justify-content-center w-100">
-                    <nav aria-label="Navegación de libros">
-                        <ul class="pagination pagination-sm mb-0">
-                            <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
-                                <a class="page-link shadow-sm" href="<%= getPageUrl(parseInt(currentPage) - 1) %>">
-                                    <i class="bi bi-chevron-left"></i>
-                                </a>
-                            </li>
-                            
-                            <% 
-                            let start = Math.max(1, currentPage - 2);
-                            let end = Math.min(totalPages, start + 4);
-                            if (end - start < 4) start = Math.max(1, end - 4);
-                            
-                            for(let i = start; i <= end; i++) { %>
-                                <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                                    <a class="page-link shadow-sm" href="<%= getPageUrl(i) %>"><%= i %></a>
-                                </li>
-                            <% } %>
-                            
-                            <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
-                                <a class="page-link shadow-sm" href="<%= getPageUrl(parseInt(currentPage) + 1) %>">
-                                    <i class="bi bi-chevron-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-                <% } %>
+                                        <!-- Paginación -->
+                                        <% if (typeof totalPages !=='undefined' && totalPages> 1) {
+                                            const getPageUrl = (p) => {
+                                            const params = new URLSearchParams(query);
+                                            params.set('page', p);
+                                            return '?' + params.toString();
+                                            };
+                                            %>
+                                            <div class="mt-5 mb-5 d-flex justify-content-center w-100">
+                                                <nav aria-label="Navegación de libros">
+                                                    <ul class="pagination pagination-sm mb-0">
+                                                        <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                                                            <a class="page-link shadow-sm"
+                                                                href="<%= getPageUrl(parseInt(currentPage) - 1) %>">
+                                                                <i class="bi bi-chevron-left"></i>
+                                                            </a>
+                                                        </li>
+
+                                                        <% let start=Math.max(1, currentPage - 2); let
+                                                            end=Math.min(totalPages, start + 4); if (end - start < 4)
+                                                            start=Math.max(1, end - 4); for(let i=start; i <=end; i++) {
+                                                            %>
+                                                            <li
+                                                                class="page-item <%= currentPage == i ? 'active' : '' %>">
+                                                                <a class="page-link shadow-sm"
+                                                                    href="<%= getPageUrl(i) %>">
+                                                                    <%= i %>
+                                                                </a>
+                                                            </li>
+                                                            <% } %>
+
+                                                                <li
+                                                                    class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                                                                    <a class="page-link shadow-sm"
+                                                                        href="<%= getPageUrl(parseInt(currentPage) + 1) %>">
+                                                                        <i class="bi bi-chevron-right"></i>
+                                                                    </a>
+                                                                </li>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                            <% } %>
             </main>
         </div>
     </div>
+
+    <div class="modal fade" id="modalDeleteBook" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header border-0" style="background-color:#dc3545;">
+                    <h5 class="modal-title fw-bold text-white">
+                        <i class="bi bi-archive me-2"></i>Archivar libro
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <p class="mb-1">¿Archivar <strong id="deleteBookName"></strong>?</p>
+                    <p class="text-muted small mb-0">El libro dejará de ser visible en el catálogo.</p>
+                </div>
+                <div class="modal-footer border-0 justify-content-center pb-4">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="deleteBookForm" method="POST" data-requires-token style="display:inline;">
+                        <button type="submit" class="btn btn-danger ms-2">Archivar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('modalDeleteBook').addEventListener('show.bs.modal', function (e) {
+            const btn = e.relatedTarget;
+            document.getElementById('deleteBookName').textContent = btn.dataset.name;
+            document.getElementById('deleteBookForm').action = btn.dataset.action;
+        });
+    </script>
 
     <%- include('../layout/footer') %>

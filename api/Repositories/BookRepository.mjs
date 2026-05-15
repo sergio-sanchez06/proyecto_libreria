@@ -290,7 +290,7 @@ async function getBookByFeatures(features) {
 
 async function getBooksCarrusel(ids = null) {
   try {
-    let query = "SELECT * FROM books";
+    let query = "SELECT * FROM books where deleted_at is null";
     let params = [];
 
     if (ids) {
@@ -301,7 +301,7 @@ async function getBooksCarrusel(ids = null) {
 
       if (idArray.length > 0) {
         const placeholders = idArray.map((_, i) => `$${i + 1}`).join(",");
-        query += ` WHERE id IN (${placeholders})`;
+        query += ` AND id IN (${placeholders})`;
         params = idArray;
       }
     }
@@ -433,7 +433,7 @@ async function getBooksByIds(bookIds, externalClient = null, lock = false) {
   const client = externalClient || (await pool.connect());
 
   try {
-    let query = "SELECT * FROM books WHERE id = ANY($1)";
+    let query = "SELECT * FROM books WHERE id = ANY($1) and deleted_at is null";
 
     if (lock) {
       // Bloquear porque usa MVCC (Multi Version Concurrency Control como oracle)
@@ -458,6 +458,7 @@ async function getBooksMostSold() {
     const result = await client.query(
       `select b.*, sum(oi.quantity) as total_sold 
       from books b join order_items oi on b.id = oi.book_id 
+      where b.deleted_at is null and b.stock > 0
       group by b.id 
       order by total_sold desc
       LIMIT 5;`,
@@ -478,12 +479,12 @@ async function getBooksBestRated() {
   const client = await pool.connect();
   try {
     const result = await client.query(
-      `SELECT b.id, b.title, b.cover_url, b.price,
+      `SELECT b.*,
             ROUND(AVG(r.rating), 2) AS avg_rating,
             COUNT(r.id)             AS review_count
      FROM books b
      JOIN reviews r ON b.id = r.book_id AND r.deleted_at IS NULL
-     WHERE b.deleted_at IS NULL
+     WHERE b.deleted_at IS NULL and b.stock > 0
      GROUP BY b.id
      HAVING COUNT(r.id) >= 1
      ORDER BY avg_rating DESC, review_count DESC

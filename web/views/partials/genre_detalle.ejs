@@ -89,7 +89,7 @@
                         <i class="bi bi-pencil-square"></i><%= t('genre_results.edit_genre') %>
                     </a>
                     <% const confirmMsg=t('admin.confirm'); %>
-                    <form action="/genres/delete/<%= genreData.id %>" method="post" class="m-0">
+                    <form action="/genres/delete/<%= genreData.id %>" method="post" class="m-0" data-requires-token>
                         <input type="hidden" name="id" value="<%= genreData.id %>">
                         <button type="submit" class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2" onclick="return confirm('<%= confirmMsg %>')">
                             <i class="bi bi-trash3"></i><%= t('genre_results.delete_genre') %>

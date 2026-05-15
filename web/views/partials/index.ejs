@@ -131,6 +131,8 @@
                                                         <form action="/cart/add" method="POST" class="w-100 m-0">
                                                             <input type="hidden" name="book_id" value="<%= book.id %>">
                                                             <input type="hidden" name="quantity" value="1">
+                                                            <input type="hidden" name="title" value="<%= book.title %>">
+                                                            <input type="hidden" name="cover_url" value="<%= book.cover_url %>">
                                                             <button type="submit" class="btn btn-success btn-sm w-100"
                                                                 <%=book.stock <=0 ? 'disabled' : '' %>>
                                                                 <i

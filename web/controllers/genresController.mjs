@@ -193,7 +193,7 @@ async function deleteGenre(req, res) {
       type: "success",
       message: "Género eliminado satisfactoriamente.",
     };
-    res.redirect("/admin/genres");
+    res.redirect("/admin/genres/list");
   } catch (error) {
     req.session.flash = {
       type: "error",

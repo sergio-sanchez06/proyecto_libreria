@@ -28,27 +28,27 @@
                                 <i class="bi bi-journal-check"></i>
                             </div>
                             <div>
-                                <h1 class="display-5 fw-bold mb-0">Mi Diario Literario</h1>
+                                <h1 class="display-5 fw-bold mb-0"><%= t('review.reviews_page_title') %></h1>
                                 <p class="opacity-75 mb-0"><%= user.name %> • <%= user.email %></p>
                             </div>
                         </div>
                         
                         <div class="reviewer-rank-container mt-4 p-3 rounded-4 bg-glass-white text-dark">
                             <% 
-                                let rank = "Principiante";
-                                let nextRank = "Lector Activo";
+                                let rank = t('reviewer_rank.rank_beginner');
+                                let nextRank = t('reviewer_rank.rank_active');
                                 let totalRev = typeof allReviews !== 'undefined' ? allReviews.length : (typeof totalReviews !== 'undefined' ? totalReviews : reviews.length);
                                 let progress = (totalRev / 5) * 100;
                                 let needed = 5 - totalRev;
 
                                 if (totalRev >= 5 && totalRev < 10) {
-                                    rank = "Lector Activo";
-                                    nextRank = "Crítico Experto";
+                                    rank = t('reviewer_rank.rank_active');
+                                    nextRank = t('reviewer_rank.rank_expert');
                                     progress = ((totalRev - 5) / 5) * 100;
                                     needed = 10 - totalRev;
                                 } else if (totalRev >= 10) {
-                                    rank = "Crítico Experto";
-                                    nextRank = "Maestro Bibliófilo";
+                                    rank = t('reviewer_rank.rank_expert');
+                                    nextRank = t('reviewer_rank.rank_master');
                                     progress = 100;
                                     needed = 0;
                                 }
@@ -57,9 +57,9 @@
                                 <span class="badge rounded-pill bg-teal text-white px-3 fw-bold"><%= rank %></span>
                                 <span class="small fw-bold text-muted">
                                     <% if (needed > 0) { %> 
-                                        ¡Solo <%= needed %> reseñas para <%= nextRank %>! 
+                                        <%= t('reviewer_rank.progress_needed', { needed, nextRank }) %>
                                     <% } else { %>
-                                        ¡Eres un <%= rank %>!
+                                        <%= t('reviewer_rank.progress_max', { rank }) %>
                                     <% } %>
                                 </span>
                             </div>
@@ -94,7 +94,7 @@
                             </div>
                             <div class="col-12 mt-3">
                                 <a href="/user/profile" class="btn btn-white rounded-pill px-4 py-2 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2">
-                                    <i class="bi bi-arrow-left"></i> Volver al Perfil
+                                    <i class="bi bi-arrow-left"></i> <%= t('review.back_to_profile') %>
                                 </a>
                             </div>
                         </div>
@@ -106,10 +106,10 @@
                 <div class="col-lg-12">
                     <div class="d-flex justify-content-between align-items-end mb-4">
                         <h3 class="fw-bold mb-0">
-                            Tu Historial Literario
+                            <%= t('review.review_page_history') %>
                         </h3>
                         <div class="text-muted small">
-                            Ordenado por fecha más reciente
+                            <%= t('review.review_page_order') %>
                         </div>
                     </div>
 
@@ -170,13 +170,13 @@
                                                             data-rating="<%= review.rating %>"
                                                             data-comment="<%= review.comment %>">
                                                             <i class="bi bi-pencil-square me-1"></i>
-                                                            Editar
+                                                            <%= t('review.edit') %>
                                                         </button>
                                                         <button type="button"
                                                             class="btn btn-danger-soft btn-sm rounded-pill px-3 fw-600"
                                                             onclick="openDeleteModal('<%= review.id %>', '<%= review.book_id %>')">
                                                             <i class="bi bi-trash3 me-1"></i>
-                                                            Eliminar
+                                                            <%= t('review.delete') %>
                                                         </button>
                                                     </div>
                                                     <a href="/books/book/<%= review.book_id %>"
@@ -195,8 +195,8 @@
                         <% if (totalPages > 1) { %>
                             <nav class="mt-5 d-flex align-items-center justify-content-between flex-wrap gap-3" aria-label="Paginación de reseñas">
                                 <span class="text-muted small fw-bold text-uppercase" style="letter-spacing: 0.5px;">
-                                    Página <strong><%= currentPage %></strong> de <strong><%= totalPages %></strong>
-                                    &nbsp;·&nbsp; <strong><%= totalReviews %></strong> reseñas en total
+                                    <%= t('review.page') %> <strong><%= currentPage %></strong> de <strong><%= totalPages %></strong>
+                                    &nbsp;·&nbsp; <strong><%= totalReviews %></strong> <%= t('review.total_reviews') %>
                                 </span>
                                 <ul class="pagination pagination-sm mb-0">
                                     <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
@@ -226,12 +226,12 @@
                                 <div class="empty-reviews-icon mb-4">
                                     <i class="bi bi-journal-richtext text-muted opacity-25" style="font-size: 5rem;"></i>
                                 </div>
-                                <h4 class="fw-bold text-dark">Tu diario literario está vacío</h4>
+                                <h4 class="fw-bold text-dark"><%= t('review.empty_reviews_title') %></h4>
                                 <p class="text-muted mx-auto mb-4" style="max-width: 400px;">
-                                    ¡Comparte tus impresiones sobre los libros que has leído y ayuda a otros lectores a encontrar su próxima aventura!
+                                    <%= t('review.empty_reviews_description') %>
                                 </p>
                                 <a href="/books" class="btn btn-teal rounded-pill px-5 py-3 fw-bold shadow-sm">
-                                    Explorar Libros para Reseñar
+                                    <%= t('review.explore_books') %>
                                 </a>
                             </div>
                             <% } %>

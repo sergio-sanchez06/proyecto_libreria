@@ -176,6 +176,8 @@
 
                                                 <form action="/cart/add" method="POST" class="d-flex gap-2">
                                                     <input type="hidden" name="book_id" value="<%= book.id %>">
+                                                    <input type="hidden" name="title" value="<%= book.title %>">
+                                                    <input type="hidden" name="cover_url" value="<%= book.cover_url %>">
                                                     <input type="number" name="quantity" value="1" min="1"
                                                         class="form-control form-control-sm text-center shadow-sm"
                                                         style="width: 60px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">

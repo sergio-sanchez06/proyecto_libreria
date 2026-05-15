@@ -1,8 +1,5 @@
-<%- include('../layout/header', { 
-    title: t('nav.cart'),
-    bodyClass: 'bg-main-vistas',
-    extraCSS: 'partials/cartView'
-}) %>
+<%- include('../layout/header', { title: t('nav.cart'), bodyClass: 'bg-main-vistas' , extraCSS: 'partials/cartView' })
+    %>
 
     <main class="container py-5">
         <h1 class="section-title mb-5">
@@ -28,7 +25,8 @@
                         <h3 class="fw-bold mb-3 text-dark">
                             <%= t('cart.empty_msg') || 'Tu carrito está vacío' %>
                         </h3>
-                        <p class="text-muted mb-4">¡Aún no has añadido ningún libro a tu carrito!</p>
+                        <p class="text-muted mb-4">
+                            <%= t('cart.empty_description') || '¡Aún no has añadido ningún libro a tu carrito!' %></p>
                         <a href="/books/showAllBooks" class="btn btn-primary px-5 rounded-pill py-3 h5 mb-0">
                             <i class="bi bi-book me-2"></i>
                             <%= t('cart.back_to_shop') || 'Explorar el catálogo' %>
@@ -55,10 +53,18 @@
                                                                 <h5 class="card-title fw-bold text-dark pe-3 mb-0">
                                                                     <%= item.book.title %>
                                                                 </h5>
-                                                                <span class="fs-5 fw-bold"
-                                                                    style="color: var(--brand-teal);">
-                                                                    <%= Number(item.book.price).toFixed(2) %>€
-                                                                </span>
+                                                                <% if (item.book.unavailable) { %>
+                                                                    <span class="badge bg-danger rounded-pill mt-1"
+                                                                        style="font-size:.75rem;">
+                                                                        <i
+                                                                            class="bi bi-exclamation-triangle-fill me-1"></i>No
+                                                                        disponible
+                                                                    </span>
+                                                                    <% } %>
+                                                                        <span class="fs-5 fw-bold"
+                                                                            style="color: var(--brand-teal);">
+                                                                            <%= Number(item.book.price).toFixed(2) %>€
+                                                                        </span>
                                                             </div>
 
                                                             <div class="d-flex align-items-center mt-3 mb-3">
@@ -85,9 +91,10 @@
                                                                         <input type="hidden" name="quantity" value="1">
                                                                         <button type="submit"
                                                                             class="btn btn-sm px-3 fw-bold text-primary border-0"
-                                                                            <%=item.quantity>= item.book.stock ?
-                                                                            'disabled' : '' %>><i
-                                                                                class="bi bi-plus"></i></button>
+                                                                            <%=(item.quantity>= item.book.stock ||
+                                                                            item.book.unavailable) ? 'disabled' : '' %>>
+                                                                            <i class="bi bi-plus"></i>
+                                                                        </button>
                                                                     </form>
                                                                 </div>
                                                             </div>
@@ -127,35 +134,34 @@
                                 <div class="summary-card p-4 p-xl-5 rounded-4">
                                     <h4 class="fw-bold mb-4 d-flex align-items-center pb-3 border-bottom"
                                         style="color: var(--brand-teal);">
-                                        <i class="bi bi-receipt me-2 text-warning"></i> Resumen
+                                        <i class="bi bi-receipt me-2 text-warning"></i> <%= t('cart.resume') %>
                                     </h4>
 
                                     <div class="d-flex justify-content-between mb-3 text-muted">
-                                        <span>Productos (<%= cart.reduce((acc, item)=> acc + item.quantity, 0)
-                                                %>)</span>
+                                        <span><%= t('cart.products') %> (<%= cart.reduce((acc, item)=> acc + item.quantity,
+                                                0) %>)</span>
                                         <span>
                                             <%= total %>€
                                         </span>
                                     </div>
 
                                     <div class="d-flex justify-content-between mb-4 text-muted">
-                                        <span>Envío</span>
-                                        <span class="text-success fw-bold">¡Gratis!</span>
+                                        <span><%= t('cart.shipping') %></span>
+                                        <span class="text-success fw-bold"><%= t('cart.free') %>!</span>
                                     </div>
 
                                     <div class="mb-4 pt-3 border-top">
                                         <% if (!user) { %>
                                             <div class="p-3 rounded-4 border border-info bg-info bg-opacity-10 mb-2">
                                                 <p class="small mb-3 text-dark"><i
-                                                        class="bi bi-info-circle-fill me-1"></i> Identifícate para
-                                                    completar el pedido.</p>
+                                                        class="bi bi-info-circle-fill me-1"></i> <%= t('cart.login_required') %>
+                                                </p>
                                                 <a href="/login?returnTo=/cart/view"
-                                                    class="btn btn-primary btn-sm w-100 rounded-pill">Iniciar Sesión</a>
+                                                    class="btn btn-primary btn-sm w-100 rounded-pill"><%= t('cart.btn_login') %></a>
                                             </div>
                                             <% } else { %>
                                                 <label
-                                                    class="fw-bold small text-uppercase text-muted mb-3 d-block">Enviar
-                                                    a:</label>
+                                                    class="fw-bold small text-uppercase text-muted mb-3 d-block"><%= t('cart.shipping_to') %></label>
                                                 <% if (addresses && addresses.length> 0) { %>
                                                     <div class="d-flex flex-column gap-2">
                                                         <% addresses.forEach((addr, i)=> { %>
@@ -184,9 +190,9 @@
                                                     </div>
                                                     <% } else { %>
                                                         <div class="alert alert-warning small rounded-4 py-2">
-                                                            <i class="bi bi-geo-alt"></i> Sin dirección. <a
+                                                            <i class="bi bi-geo-alt"></i><%= t('cart.no_addresses') %>. <a
                                                                 href="/user/editUserProfile"
-                                                                class="fw-bold text-dark">Añadir</a>
+                                                                class="fw-bold text-dark"><%= t('cart.add_address') %></a>
                                                         </div>
                                                         <% } %>
                                                             <% } %>
@@ -203,45 +209,63 @@
                                         </div>
                                     </div>
 
-                                    <form action="/cart/checkout" method="POST" id="checkout-form">
-                                        <input type="hidden" name="shipping_address" id="final-shipping-address">
-                                        <input type="hidden" name="firebase_token" id="firebase-token">
+                                    <% if (hasUnavailable) { %>
+                                        <div class="alert alert-warning rounded-4 small border-0 py-2 mb-3"
+                                            style="background:#fef3c7; color:#92400e;">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                            <%= t('cart.no_available_purchase') %>
+                                        </div>
+                                        <% } %>
 
-                                        <button type="submit" id="checkout-btn"
-                                            class="btn btn-success btn-lg w-100 shadow-sm rounded-pill d-flex justify-content-center align-items-center gap-2"
-                                            disabled>
-                                            <div class="spinner-border spinner-border-sm" role="status"
-                                                id="checkout-spinner"></div>
-                                            <span id="checkout-text">
-                                                <%= t('cart.btn_loading') %>
-                                            </span>
-                                        </button>
-                                    </form>
+                                            <form action="/cart/checkout" method="POST" id="checkout-form">
+                                                <input type="hidden" name="shipping_address"
+                                                    id="final-shipping-address">
+                                                <input type="hidden" name="firebase_token" id="firebase-token">
+
+                                                <button type="submit" id="checkout-btn"
+                                                    class="btn btn-success btn-lg w-100 shadow-sm rounded-pill d-flex justify-content-center align-items-center gap-2"
+                                                    disabled>
+                                                    <div class="spinner-border spinner-border-sm" role="status"
+                                                        id="checkout-spinner"></div>
+                                                    <span id="checkout-text">
+                                                        <%= t('cart.btn_loading') %>
+                                                    </span>
+                                                </button>
+                                            </form>
                                 </div>
                             </div>
                         </div>
 
-                        <script type="module">
-                            import { initCheckout } from '/js/auth.mjs';
 
-                            document.addEventListener('DOMContentLoaded', () => {
-                                // Inicializar lógica de Firebase y Checkout
-                                initCheckout();
 
-                                // Lógica para capturar la dirección seleccionada
-                                const hiddenAddressInput = document.getElementById('final-shipping-address');
-                                const radios = document.querySelectorAll('input[name="shipping_address_radio"]');
+                        <% if(user){ %>
 
-                                const updateHiddenAddress = () => {
-                                    const checked = document.querySelector('input[name="shipping_address_radio"]:checked');
-                                    if (checked) hiddenAddressInput.value = checked.value;
-                                };
+                            <script type="module">
+                                import { initCheckout } from '/js/auth.mjs';
 
-                                radios.forEach(r => r.addEventListener('change', updateHiddenAddress));
-                                updateHiddenAddress(); // Ejecución inicial
-                            });
-                        </script>
-                        <% } %>
+                                const hasItemsUnavailables = <%= hasUnavailable ? 'true' : 'false' %>;
+
+                                document.addEventListener('DOMContentLoaded', () => {
+                                    // Inicializar lógica de Firebase y Checkout
+
+                                        if (!hasItemsUnavailables) {
+                                            initCheckout();
+                                        }
+
+                                        // Lógica para capturar la dirección seleccionada
+                                        const hiddenAddressInput = document.getElementById('final-shipping-address');
+                                        const radios = document.querySelectorAll('input[name="shipping_address_radio"]');
+
+                                        const updateHiddenAddress = () => {
+                                            const checked = document.querySelector('input[name="shipping_address_radio"]:checked');
+                                            if (checked) hiddenAddressInput.value = checked.value;
+                                        };
+
+                                        radios.forEach(r => r.addEventListener('change', updateHiddenAddress));
+                                        updateHiddenAddress(); // Ejecución inicial
+                                    });
+                                </script>
+                                <% } } %>
     </main>
 
     <%- include('../layout/footer') %>

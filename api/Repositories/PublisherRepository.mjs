@@ -29,7 +29,7 @@ async function createPublisher(publisher) {
 async function getPublisherById(id, client = pool) {
   try {
     const result = await client.query(
-      "SELECT * FROM publishers WHERE id = $1 AND deleted_at IS NULL",
+      "SELECT * FROM publishers WHERE id = $1",
       [id],
     );
 

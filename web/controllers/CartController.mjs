@@ -2,7 +2,7 @@ import apiClient, { getAuthenticatedClient } from "../utils/apiClient.mjs";
 
 // --- AÑADIR AL CARRITO --- (Sin cambios, es correcto)
 async function addToCart(req, res) {
-  const { book_id, quantity = 1 } = req.body;
+  const { book_id, quantity = 1, title, cover_url } = req.body;
   let cart = req.signedCookies.cart || [];
   const parsedBookId = parseInt(book_id);
   const parsedQuantity = parseInt(quantity);
@@ -12,9 +12,16 @@ async function addToCart(req, res) {
   const itemIndex = cart.findIndex((item) => item.book_id === parsedBookId);
   if (itemIndex > -1) {
     cart[itemIndex].quantity += parsedQuantity;
+    if (title) cart[itemIndex].title = title;
+    if (cover_url) cart[itemIndex].cover_url = cover_url;
     if (cart[itemIndex].quantity <= 0) cart.splice(itemIndex, 1);
   } else if (parsedQuantity > 0) {
-    cart.push({ book_id: parsedBookId, quantity: parsedQuantity });
+    cart.push({
+      book_id: parsedBookId,
+      quantity: parsedQuantity,
+      title,
+      cover_url,
+    });
   }
 
   res.cookie("cart", cart, {
@@ -61,11 +68,14 @@ async function viewCart(req, res) {
         // Buscamos el libro en el mapa. Si no existe (ej: borrado de la DB),
         // usamos un objeto por defecto para que EJS no de error.
         const bookData = booksMap[Number(item.book_id)] || {
-          title: "Libro no encontrado",
+          title: item.title || "Libro no disponible",
+          cover_url: item.cover_url || null,
           price: 0,
-          cover_url: "/images/default-cover.jpg",
           stock: 0,
+          unavailable: true,
         };
+
+        if (bookData.stock === 0) bookData.unavailable = true;
 
         // Sumamos al total solo si el libro existe y tiene precio
         total += Number(bookData.price) * item.quantity;
@@ -112,6 +122,8 @@ async function viewCart(req, res) {
     }
   }
 
+  const hasUnavailable = cart.some((item) => item.book?.unavailable);
+
   // 5. Renderizamos la vista con los datos procesados
   res.render("partials/cartView", {
     cart,
@@ -122,6 +134,7 @@ async function viewCart(req, res) {
       cart.length > 0 && total === 0
         ? "Algunos productos no están disponibles"
         : null,
+    hasUnavailable,
   });
 }
 
@@ -136,10 +149,14 @@ async function checkout(req, res) {
   if (!firebaseToken) return res.redirect("/login");
 
   if (!shipping_address) {
-    // En lugar de un 400 seco, es mejor devolver al usuario al carrito con un mensaje
-    return res
-      .status(400)
-      .send("Por favor, selecciona una dirección de envío.");
+    // Devolver al usuario al carrito con un mensaje
+
+    req.session.flash = {
+      type: "error",
+      message: "Por favor, selecciona una dirección de envío.",
+    };
+
+    return res.redirect("/cart/view");
   }
 
   if (cart.length === 0) return res.redirect("/cart/view");

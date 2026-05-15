@@ -83,6 +83,24 @@ async function getPurchaseHistory(req, res) {
             path: "/",
           });
 
+          // Borramos la cache con los datos más vendidos porque se actualizó la tabla orders
+
+          let redisClient = await redisController.returnRedisClient();
+
+          try {
+            const keys = [
+              "BooksMostSold",
+              "AuthorsMostSold",
+              "PublishersMostSold",
+              "GenresMostSold",
+            ];
+            await Promise.all(
+              keys.map((key) => redisClient.del(key)),
+            );
+          } catch (err) {
+            console.log(err)
+          }
+
           // 3. REDIRECCIÓN DE LIMPIEZA: Evita que el usuario refresque y se repita el proceso[cite: 3]
           return res.redirect("/user/myOrders?confirmed=true");
         }
@@ -110,7 +128,9 @@ async function getPurchaseHistory(req, res) {
       }
     }
 
-    console.log(`[Paginación] Enviando a vista: ${orders.length} pedidos de un total de ${allOrders.length}. Página ${currentPage}/${totalPages}`);
+    console.log(
+      `[Paginación] Enviando a vista: ${orders.length} pedidos de un total de ${allOrders.length}. Página ${currentPage}/${totalPages}`,
+    );
 
     res.render("partials/purchaseHistory", {
       title: "Mis compras",
@@ -465,7 +485,9 @@ async function getMyReviews(req, res) {
       currentPage * PAGE_SIZE,
     );
 
-    console.log(`[Paginación] Enviando a vista: ${reviews.length} reseñas de un total de ${allReviews.length}. Página ${currentPage}/${totalPages}`);
+    console.log(
+      `[Paginación] Enviando a vista: ${reviews.length} reseñas de un total de ${allReviews.length}. Página ${currentPage}/${totalPages}`,
+    );
 
     res.render("partials/myReviews", {
       title: "Mis reseñas",
@@ -658,6 +680,10 @@ async function getRecommendationsPage(req, res) {
           ? globalBestRatedRes.value.data
           : [];
       combined = []; // No hay combinado sin favoritos
+
+      console.log("MostSold Raw: ", mostSoldRaw);
+      console.log("BestRated Raw: ", bestRatedRaw);
+      console.log("Combined: ", combined);
     }
 
     // ── Deduplicación ────────────────────────────────────────────────────────
@@ -872,7 +898,8 @@ async function userRequestReturn(req, res) {
     if (String(order.user_id) !== String(req.session.user.id)) {
       req.session.flash = {
         type: "error",
-        message: "No tienes permiso para solicitar la devolución de este pedido.",
+        message:
+          "No tienes permiso para solicitar la devolución de este pedido.",
       };
       return res.redirect("/user/myOrders");
     }
@@ -885,7 +912,7 @@ async function userRequestReturn(req, res) {
       };
       return res.redirect("/user/myOrders");
     }
-    
+
     // Llamamos al endpoint de la API que creamos antes
     const { data } = await api.post(`/orders/user/request-return/${id}`);
 
@@ -893,19 +920,19 @@ async function userRequestReturn(req, res) {
       type: "success",
       message: data.message || "Solicitud de devolución enviada correctamente.",
     };
-    
+
     // Redirigimos al perfil del usuario o a sus pedidos
-    res.redirect("/user/myOrders"); 
+    res.redirect("/user/myOrders");
   } catch (error) {
     console.error("Error al solicitar devolución:", error);
     req.session.flash = {
       type: "error",
-      message: error.response?.data?.error || "No se pudo tramitar la solicitud.",
+      message:
+        error.response?.data?.error || "No se pudo tramitar la solicitud.",
     };
     res.redirect("/profile/orders");
   }
 }
-
 
 export default {
   getProfile,

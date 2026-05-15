@@ -182,7 +182,7 @@
                             <%= t('publisher_detail.edit') %>
                         </a>
                         <% const confirmMsgPub=t('admin.confirm').replace(/'/g, "\\'" ); %>
-                            <form action="/publisher/delete/<%= publisher.id %>" method="POST" class="m-0">
+                            <form action="/publisher/delete/<%= publisher.id %>" method="POST" class="m-0" data-requires-token>
                                 <button type="submit"
                                     class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2"
                                     onclick="return confirm('<%= confirmMsgPub %>')">
