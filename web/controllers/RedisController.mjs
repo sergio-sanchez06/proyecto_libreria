@@ -9,12 +9,10 @@ async function startRedis() {
     //   url: "redis://localhost:6379",
     // });
     redisServer = redis.createClient({
-      url:
-        process.env.REDIS_URL ||
-        "redis://localhost:6379",
-        // "rediss://default:gQAAAAAAAYHAAAIncDI0YTk0MzhjNzhmNWU0MTFjYTM2MDIxZjdmNGVlNWZkMXAyOTg3NTI@known-trout-98752.upstash.io:6379",
+      url: process.env.REDIS_URL ||
+        "rediss://default:gQAAAAAAAYHAAAIncDI0YTk0MzhjNzhmNWU0MTFjYTM2MDIxZjdmNGVlNWZkMXAyOTg3NTI@known-trout-98752.upstash.io:6379",
       socket: {
-        tls: false,
+        tls: true,
         rejectUnauthorized: false,
       },
     });
