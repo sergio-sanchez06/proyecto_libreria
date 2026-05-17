@@ -5,8 +5,8 @@
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb" style="font-weight: 500;">
                 <li class="breadcrumb-item"><a href="/publisher/showAllPublishers"
-                        class="text-decoration-none text-muted">Editoriales</a></li>
-                <li class="breadcrumb-item active" style="color: var(--brand-teal);">Perfil Editorial</li>
+                        class="text-decoration-none text-muted"><%= t('catalog.breadcrumb') %></a></li>
+                <li class="breadcrumb-item active" style="color: var(--brand-teal);"><%= publisher.name %></li>
             </ol>
         </nav>
 
@@ -15,8 +15,8 @@
                 <div class="col-md-3 col-xl-2 mb-4 mb-md-0 d-flex justify-content-center">
                     <div class="logo-box shadow-sm">
                         <% if (publisher.image_url) { %>
-                            <img src="<%= publisher.image_url %>" alt="Logo de <%= publisher.name %>" class="img-fluid p-3"
-                                style="max-height: 100px; object-fit: contain;">
+                            <img src="<%= publisher.image_url %>" alt="Logo de <%= publisher.name %>"
+                                class="img-fluid p-3" style="max-height: 100px; object-fit: contain;">
                             <% } else { %>
                                 <i class="bi bi-building text-muted display-3 opacity-50"></i>
                                 <% } %>
@@ -28,7 +28,7 @@
                     </h1>
                     <p class="fs-5 fw-medium mb-0" style="color: #64748b;">
                         <i class="bi bi-geo-alt-fill me-1 opacity-75 text-warning"></i>
-                        <%= publisher.country || 'Sede Internacional' %>
+                        <%= publisher.country %>
                     </p>
                 </div>
                 <div class="col-md-4 text-center text-md-end mt-4 mt-md-0">
@@ -56,7 +56,7 @@
                         style="max-height: 120px; overflow: hidden; position: relative; transition: max-height 0.6s ease;">
                         <p id="publisher-desc" class="fs-5 text-secondary description-content"
                             style="line-height: 1.8; text-align: justify;">
-                            <%= publisher.descripcion || 'No hay descripción disponible...' %>
+                            <%= publisher.descripcion || t('book.no_desc') %>
                         </p>
                         <div class="read-more-overlay"
                             style="position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; background: linear-gradient(transparent, white); pointer-events: none;">
@@ -73,18 +73,16 @@
                 <div class="row g-3">
                     <div class="col-12">
                         <div class="spec-card">
-                            <span class="spec-label"><i class="bi bi-house-door-fill me-1"></i>Sede Central</span>
+                            <span class="spec-label"><i class="bi bi-house-door-fill me-1"></i><%= t('publisher_detail.country') %></span>
                             <span class="spec-value text-dark">
-                                <%= publisher.country || 'No especificada' %>
+                                <%= publisher.country || t('publisher_detail.country_not_specified') %>
                             </span>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="spec-card">
-                            <span class="spec-label"><i class="bi bi-journal-bookmark-fill me-1"></i>Catálogo
-                                Activo</span>
-                            <span class="spec-value text-dark">
-                                <%= books.length %> Títulos publicados
+                            <span class="spec-label"><i class="bi bi-journal-bookmark-fill me-1"></i>
+                                <%= t('publisher_detail.books_count', { count: books.length }) %>
                             </span>
                         </div>
                     </div>
@@ -141,7 +139,7 @@
                                             style="width: 60px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">
                                         <button type="submit" class="btn btn-sm flex-grow-1 shadow-sm px-0 text-dark"
                                             style="background-color: var(--brand-gold); font-weight: 700; border-radius: 8px; border: none;">
-                                            <i class="bi bi-cart-plus-fill me-1"></i> Añadir
+                                            <i class="bi bi-cart-plus-fill me-1"></i>  <%= t('book.add_to_cart') %>
                                         </button>
                                     </form>
                                 </div>
@@ -154,7 +152,7 @@
                     <% if(books.length===0) { %>
                         <div class="col-12 text-center py-5">
                             <i class="bi bi-journals text-muted display-4 mb-3 d-block opacity-50"></i>
-                            <h5 class="fw-bold text-muted">Esta editorial aún no tiene libros en venta.</h5>
+                            <h5 class="fw-bold text-muted"><%= t('publisher_detail.no_books') %></h5>
                         </div>
                         <% } %>
         </div>
@@ -169,10 +167,10 @@
                 <div
                     class="d-flex flex-column flex-md-row align-items-center justify-content-between position-relative z-index-1">
                     <div class="text-white mb-4 mb-md-0 text-center text-md-start">
-                        <h5 class="fw-bold m-0 fs-4"><i class="bi bi-gear-fill me-2 text-warning"></i>Administración
+                        <h5 class="fw-bold m-0 fs-4"><i class="bi bi-gear-fill me-2 text-warning"></i><%= t('admin.panel')
+                                %>
                         </h5>
-                        <p class="small text-white-50 m-0 mt-1">Este panel solo es visible porque eres administrador.
-                        </p>
+                        <p class="small text-white-50 m-0 mt-1"><%= t('admin.panel_body') %></p>
                     </div>
                     <div class="d-flex gap-3">
                         <a href="/publisher/edit/<%= publisher.id %>"
@@ -181,19 +179,58 @@
                             <i class="bi bi-pencil-square"></i>
                             <%= t('publisher_detail.edit') %>
                         </a>
-                        <% const confirmMsgPub=t('admin.confirm').replace(/'/g, "\\'" ); %>
-                            <form action="/publisher/delete/<%= publisher.id %>" method="POST" class="m-0" data-requires-token>
-                                <button type="submit"
-                                    class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2"
-                                    onclick="return confirm('<%= confirmMsgPub %>')">
-                                    <i class="bi bi-trash3"></i>
-                                    <%= t('publisher_detail.delete') %>
-                                </button>
-                            </form>
+                        <button type="button"
+                            class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2"
+                            data-bs-toggle="modal" data-bs-target="#modalDeletePublisher">
+                            <i class="bi bi-trash3"></i>
+                            <%= t('publisher_detail.delete') %>
+                        </button>
                     </div>
                 </div>
             </div>
             <% } %>
+
+                <% if (user && user.role==="ADMIN" ) { %>
+                    <div class="modal fade" id="modalDeletePublisher" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content border-0 shadow-lg rounded-4">
+                                <div class="modal-header border-0"
+                                    style="background: linear-gradient(135deg, #dc2626, #991b1b);">
+                                    <h5 class="modal-title fw-bold text-white">
+                                        <i class="bi bi-trash3-fill me-2"></i><%= t('admin.delete_publisher')%>
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white"
+                                        data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body p-4 text-center">
+                                    <div class="mb-3">
+                                        <i class="bi bi-exclamation-triangle-fill text-danger"
+                                            style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h6 class="fw-bold text-dark mb-2">
+                                        <%= t('admin.delete_publisher') %>: "<%= publisher.name %>"
+                                    </h6>
+                                    <p class="text-muted small mb-0">
+                                        <%= t('admin.delete_publisher_message') %>
+                                    </p>
+                                </div>
+                                <div class="modal-footer border-0 justify-content-center pb-4 gap-3">
+                                    <button type="button" class="btn btn-light rounded-pill px-4 fw-bold"
+                                        data-bs-dismiss="modal">
+                                        <i class="bi bi-x-lg me-1"></i><%= t('admin.cancel') %>
+                                    </button>
+                                    <form action="/publisher/delete/<%= publisher.id %>" method="POST"
+                                        data-requires-token class="m-0">
+                                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold">
+                                            <i class="bi bi-trash3 me-1"></i><%= t('admin.delete_publisher') %>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+
     </main>
 
     <script src="/js/viewsFunctions.mjs"></script>

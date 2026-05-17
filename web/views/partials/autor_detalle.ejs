@@ -1,138 +1,201 @@
-<%- include('../layout/header', { 
-    title: author.name + ' - ' + t('nav.authors'),
-    bodyClass: 'bg-main-vistas',
-    extraCSS: 'partials/autor_detalle'
-}) %>
+<%- include('../layout/header', { title: author.name + ' - ' + t('nav.authors'), bodyClass: 'bg-main-vistas' ,
+    extraCSS: 'partials/autor_detalle' }) %>
 
-<main class="container py-5">
-    <div class="row g-5">
-        <div class="col-lg-4 col-xl-3">
-            <div class="author-photo-wrapper">
-                <img src="<%= author.photo_url || '/images/default-author.jpg' %>" 
-                    alt="<%= author.name %>"
-                    onerror="this.src='/images/default-author.jpg'">
-            </div>
-        </div>
-
-        <div class="col-lg-8 col-xl-9">
-            <nav aria-label="breadcrumb" class="mb-4">
-                <ol class="breadcrumb" style="font-weight: 500;">
-                    <li class="breadcrumb-item"><a href="/authors/showAllAuthors" class="text-decoration-none text-muted">Autores</a></li>
-                    <li class="breadcrumb-item active" style="color: var(--brand-teal);">Perfil Oficial</li>
-                </ol>
-            </nav>
-
-            <h1 class="display-3 fw-bold mb-4" style="letter-spacing: -1px; color: var(--brand-teal);">
-                <%= author.name %>
-            </h1>
-
-            <div class="row g-3 mb-5">
-                <div class="col-sm-6">
-                    <div class="spec-card">
-                        <span class="spec-label"><i class="bi bi-geo-alt-fill me-1"></i> Nacionalidad</span>
-                        <span class="spec-value text-dark">
-                            <%= author.country || 'Desconocida' %>
-                        </span>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="spec-card">
-                        <span class="spec-label"><i class="bi bi-book-half me-1"></i> Obras Disponibles</span>
-                        <span class="spec-value text-dark">
-                            <%= books.length %> Libros
-                        </span>
-                    </div>
+    <main class="container py-5">
+        <div class="row g-5">
+            <div class="col-lg-4 col-xl-3">
+                <div class="author-photo-wrapper">
+                    <img src="<%= author.photo_url || '/images/default-author.jpg' %>" alt="<%= author.name %>"
+                        onerror="this.src='/images/default-author.jpg'">
                 </div>
             </div>
 
-            <div class="mb-5 bg-white p-4 p-md-5 rounded-4 shadow-sm border" style="border-color: rgba(0,0,0,0.05) !important;">
-                <h4 class="fw-bold mb-4" style="color: var(--brand-teal);"><i class="bi bi-person-lines-fill me-2"></i>Biografía</h4>
-                <p class="fs-5 text-secondary" style="line-height: 1.8; text-align: justify;">
-                    <%= author.biography || t('author_detail.no_biography') %>
-                </p>
-            </div>
+            <div class="col-lg-8 col-xl-9">
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb" style="font-weight: 500;">
+                        <li class="breadcrumb-item"><a href="/authors/showAllAuthors"
+                                class="text-decoration-none text-muted">Autores</a></li>
+                        <li class="breadcrumb-item active" style="color: var(--brand-teal);">Perfil Oficial</li>
+                    </ol>
+                </nav>
 
-            <hr class="my-5 border-0" style="height: 2px; background: linear-gradient(90deg, transparent, rgba(30,64,175,0.2), transparent);">
+                <h1 class="display-3 fw-bold mb-4" style="letter-spacing: -1px; color: var(--brand-teal);">
+                    <%= author.name %>
+                </h1>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="fw-bold m-0" style="color: var(--brand-teal);">
-                    Catálogo de Autor
-                </h3>
-                <span class="badge rounded-pill px-3 py-2 fs-6" style="background-color: var(--brand-gold); color: #1e3a8a;">
-                    <%= books.length %> Obras
-                </span>
-            </div>
+                <div class="row g-3 mb-5">
+                    <div class="col-sm-6">
+                        <div class="spec-card">
+                            <span class="spec-label"><i class="bi bi-geo-alt-fill me-1"></i> <%= t('author_detail.nationality') %></span>
+                            <span class="spec-value text-dark">
+                                <%= author.country || t('index.unknown_country') %>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="spec-card">
+                            <span class="spec-label"><i class="bi bi-book-half me-1"></i> <%= t('author_detail.books_published') %></span>
+                            <span class="spec-value text-dark">
+                                <%= books.length %> Libros
+                            </span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
-                <% books.forEach(book=> { %>
-                    <div class="col">
-                        <div class="card h-100 book-card p-2">
-                            <div class="book-img-container">
-                                <img src="<%= book.cover_url || '/images/default-cover.jpg' %>" class="mh-100 mw-100" style="object-fit: contain;" alt="<%= book.title %>">
-                            </div>
+                <div class="mb-5 bg-white p-4 p-md-5 rounded-4 shadow-sm border"
+                    style="border-color: rgba(0,0,0,0.05) !important;">
+                    <h4 class="fw-bold mb-4" style="color: var(--brand-teal);"><i
+                            class="bi bi-person-lines-fill me-2"></i> <%= t('author_detail.biography') %></h4>
+                    <p class="fs-5 text-secondary" style="line-height: 1.8; text-align: justify;">
+                        <%= author.biography || t('author_detail.no_biography') %>
+                    </p>
+                </div>
 
-                            <div class="card-body d-flex flex-column px-2 pb-2 pt-3 text-center">
-                                <h6 class="card-title fw-bold mb-2 text-dark" style="font-size: 0.95rem; min-height: 2.7rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;" title="<%= book.title %>">
-                                    <%= book.title %>
-                                </h6>
-                                <p class="mb-3" style="font-size: 1.25rem; font-weight: 800; color: var(--brand-teal);">
-                                    <%= book.price %>€
-                                </p>
-                                <div class="mt-auto">
-                                    <div class="d-flex flex-column gap-2">
-                                        <a href="/books/book/<%= book.id %>" class="btn btn-outline-dark btn-sm py-2 w-100 rounded-pill" style="border-radius: 12px !important; font-weight: 600; border-color: var(--brand-teal); color: var(--brand-teal);">
-                                            <i class="bi bi-eye ms-1"></i> Detalles
-                                        </a>
-                                        <form action="/cart/add" method="POST" class="d-flex gap-2">
-                                            <input type="hidden" name="book_id" value="<%= book.id %>">
-                                            <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm text-center shadow-sm" style="width: 60px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">
-                                            <button type="submit" class="btn btn-sm flex-grow-1 shadow-sm px-0 text-dark" style="background-color: var(--brand-gold); font-weight: 700; border-radius: 8px; border: none;">
-                                                <i class="bi bi-cart-plus-fill me-1"></i> Añadir
-                                            </button>
-                                        </form>
+                <hr class="my-5 border-0"
+                    style="height: 2px; background: linear-gradient(90deg, transparent, rgba(30,64,175,0.2), transparent);">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold m-0" style="color: var(--brand-teal);">
+                        <%= t('author_detail.books_by', {name: author.name}) %>
+                    </h3>
+                    <span class="badge rounded-pill px-3 py-2 fs-6"
+                        style="background-color: var(--brand-gold); color: #1e3a8a;">
+                        <%= books.length %> Obras
+                    </span>
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+                    <% books.forEach(book=> { %>
+                        <div class="col">
+                            <div class="card h-100 book-card p-2">
+                                <div class="book-img-container">
+                                    <img src="<%= book.cover_url || '/images/default-cover.jpg' %>"
+                                        class="mh-100 mw-100" style="object-fit: contain;" alt="<%= book.title %>">
+                                </div>
+
+                                <div class="card-body d-flex flex-column px-2 pb-2 pt-3 text-center">
+                                    <h6 class="card-title fw-bold mb-2 text-dark"
+                                        style="font-size: 0.95rem; min-height: 2.7rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;"
+                                        title="<%= book.title %>">
+                                        <%= book.title %>
+                                    </h6>
+                                    <p class="mb-3"
+                                        style="font-size: 1.25rem; font-weight: 800; color: var(--brand-teal);">
+                                        <%= book.price %>€
+                                    </p>
+                                    <div class="mt-auto">
+                                        <div class="d-flex flex-column gap-2">
+                                            <a href="/books/book/<%= book.id %>"
+                                                class="btn btn-outline-dark btn-sm py-2 w-100 rounded-pill"
+                                                style="border-radius: 12px !important; font-weight: 600; border-color: var(--brand-teal); color: var(--brand-teal);">
+                                                <i class="bi bi-eye ms-1"></i> <%= t('author_detail.view_details') %>
+                                            </a>
+                                            <form action="/cart/add" method="POST" class="d-flex gap-2">
+                                                <input type="hidden" name="book_id" value="<%= book.id %>">
+                                                <input type="number" name="quantity" value="1" min="1"
+                                                    class="form-control form-control-sm text-center shadow-sm"
+                                                    style="width: 60px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">
+                                                <button type="submit"
+                                                    class="btn btn-sm flex-grow-1 shadow-sm px-0 text-dark"
+                                                    style="background-color: var(--brand-gold); font-weight: 700; border-radius: 8px; border: none;">
+                                                    <i class="bi bi-cart-plus-fill me-1"></i> <%= t('catalog.add_to_cart') %>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                <% }) %>
-                <% if(books.length === 0) { %>
-                    <div class="col-12 text-center py-5">
-                        <i class="bi bi-journal-x text-muted display-4 mb-3 d-block opacity-50"></i>
-                        <h5 class="fw-bold text-muted">Aún no hay obras</h5>
-                        <p class="text-muted small">Pronto añadiremos el catálogo de este autor.</p>
-                    </div>
-                <% } %>
-            </div>
-
-            <!-- ADMIN PANEL -->
-            <% if(user && user.role==="ADMIN" ) { %>
-                <div class="mt-5 p-4 rounded-4 shadow-lg position-relative overflow-hidden"
-                    style="background: linear-gradient(135deg, var(--brand-teal), #1e3a8a); border-top: 6px solid var(--brand-gold);">
-                    <div class="position-absolute top-0 end-0 opacity-10" style="transform: translate(20%, -20%);">
-                        <i class="bi bi-shield-check" style="font-size: 15rem;"></i>
-                    </div>
-                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between position-relative z-index-1">
-                        <div class="text-white mb-4 mb-md-0 text-center text-md-start">
-                            <h5 class="fw-bold m-0 fs-4"><i class="bi bi-gear-fill me-2 text-warning"></i>Administración</h5>
-                            <p class="small text-white-50 m-0 mt-1">Este panel solo es visible porque eres administrador.</p>
-                        </div>
-                        <div class="d-flex gap-3">
-                            <a href="/authors/author/edit/<%= author.id %>" class="btn bg-white rounded-pill px-4 py-2 shadow-sm d-flex align-items-center gap-2" style="color: var(--brand-teal); font-weight: 700;">
-                                <i class="bi bi-pencil-square"></i>Editar
-                            </a>
-                            <% const confirmMsg=t('admin.confirm').replace(/'/g, "\\'" ); %>
-                            <form action="/authors/author/delete/<%= author.id %>" method="POST" class="m-0" data-requires-token>
-                                <button type="submit" class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2" onclick="return confirm('<%= confirmMsg %>')">
-                                    <i class="bi bi-trash3"></i>Borrar
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                        <% }) %>
+                            <% if(books.length===0) { %>
+                                <div class="col-12 text-center py-5">
+                                    <i class="bi bi-journal-x text-muted display-4 mb-3 d-block opacity-50"></i>
+                                    <h5 class="fw-bold text-muted"><%= t('author_detail.no_books_title') %></h5>
+                                    <p class="text-muted small"><%= t('author_detail.no_books_desc') %></p>
+                                </div>
+                                <% } %>
                 </div>
-            <% } %>
 
+                <!-- ADMIN PANEL -->
+                <% if(user && user.role==="ADMIN" ) { %>
+                    <div class="mt-5 p-4 rounded-4 shadow-lg position-relative overflow-hidden"
+                        style="background: linear-gradient(135deg, var(--brand-teal), #1e3a8a); border-top: 6px solid var(--brand-gold);">
+                        <div class="position-absolute top-0 end-0 opacity-10" style="transform: translate(20%, -20%);">
+                            <i class="bi bi-shield-check" style="font-size: 15rem;"></i>
+                        </div>
+                        <div
+                            class="d-flex flex-column flex-md-row align-items-center justify-content-between position-relative z-index-1">
+                            <div class="text-white mb-4 mb-md-0 text-center text-md-start">
+                                <h5 class="fw-bold m-0 fs-4"><i
+                                        class="bi bi-gear-fill me-2 text-warning"></i><%= t('admin.panel') %>
+                                </h5>
+                                <p class="small text-white-50 m-0 mt-1">
+                                    <%= t('admin.panel_body') %>
+                                </p>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <a href="/authors/author/edit/<%= author.id %>"
+                                    class="btn bg-white rounded-pill px-4 py-2 shadow-sm d-flex align-items-center gap-2"
+                                    style="color: var(--brand-teal); font-weight: 700;">
+                                    <i class="bi bi-pencil-square"></i>
+                                    <%= t('admin.edit_author') %>
+                                </a>
+                                <button type="button"
+                                    class="btn btn-outline-light rounded-pill px-4 py-2 fw-bold d-flex align-items-center gap-2"
+                                    data-bs-toggle="modal" data-bs-target="#modalDeleteAuthor">
+                                    <i class="bi bi-trash3"></i>
+                                    <%= t('admin.delete_author') %>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+
+                        <% if (user && user.role==="ADMIN" ) { %>
+                            <div class="modal fade" id="modalDeleteAuthor" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content border-0 shadow-lg rounded-4">
+                                        <div class="modal-header border-0"
+                                            style="background: linear-gradient(135deg, #dc2626, #991b1b);">
+                                            <h5 class="modal-title fw-bold text-white">
+                                                <i class="bi bi-trash3-fill me-2"></i>
+                                                <%= t('admin.delete_author') %>
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body p-4 text-center">
+                                            <div class="mb-3">
+                                                <i class="bi bi-exclamation-triangle-fill text-danger"
+                                                    style="font-size: 3rem;"></i>
+                                            </div>
+                                            <h6 class="fw-bold text-dark mb-2">
+                                                <%= t('admin.delete_author') || "Eliminar autor" %> "<%= author.name %>"?
+                                            </h6>
+                                            <p class="text-muted small mb-0">
+                                                <%= t('admin.delete_author_message') || "¿Estás seguro de que deseas eliminar este autor?" %>
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer border-0 justify-content-center pb-4 gap-3">
+                                            <button type="button" class="btn btn-light rounded-pill px-4 fw-bold"
+                                                data-bs-dismiss="modal">
+                                                <i class="bi bi-x-lg me-1"></i>
+                                                <%= t('admin.cancel') %>
+                                            </button>
+                                            <form action="/authors/author/delete/<%= author.id %>" method="POST"
+                                                data-requires-token class="m-0">
+                                                <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold">
+                                                    <i class="bi bi-trash3 me-1"></i>
+                                                    <%= t('admin.delete_author') %>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
+            </div>
         </div>
-    </div>
-</main>
-<%- include('../layout/footer') %>
+    </main>
+    <%- include('../layout/footer') %>

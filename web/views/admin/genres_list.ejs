@@ -1,4 +1,4 @@
-<%- include('../layout/header', { bodyClass: 'bg-admin-vistas' , extraCSS: 'partials/genres' }) %>
+﻿<%- include('../layout/header', { bodyClass: 'bg-admin-vistas' , extraCSS: 'partials/genres' }) %>
 
     <div class="container py-5">
         <div class="admin-hero mb-5">
@@ -12,13 +12,13 @@
                             <%= t('genres.admin_title', { defaultValue: 'Gestión de Géneros' }) %>
                         </h2>
                         <p class="text-white opacity-75 mb-0" style="font-size: var(--fs-sm);">
-                            Modifica y organiza las categorías de la librería
+                            <%= t('admin.genre_subtitle') %>
                         </p>
                     </div>
                 </div>
                 <a href="/admin/genres/create" class="btn btn-glass-white text-white rounded-pill px-4 py-2 fw-bold shadow-sm transition-all"
                     style="text-decoration: none; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.3);">
-                    <i class="bi bi-plus-lg me-2"></i>Añadir Nuevo Género
+                    <i class="bi bi-plus-lg me-2"></i><%= t('admin.add_genre') %>
                 </a>
             </div>
         </div>
@@ -33,9 +33,9 @@
 
                                 <div class="mb-2">
                                     <% if (isDeleted) { %>
-                                        <span class="badge rounded-pill bg-danger">Eliminado</span>
+                                        <span class="badge rounded-pill bg-danger"><%= t('admin.deleted') %></span>
                                         <% } else { %>
-                                            <span class="badge rounded-pill bg-success">Activo</span>
+                                            <span class="badge rounded-pill bg-success"><%= t('admin.active') %></span>
                                             <% } %>
                                 </div>
 
@@ -52,20 +52,20 @@
                                         <button type="button" class="btn btn-success btn-sm w-100 rounded-pill py-2 shadow-sm"
                                             data-bs-toggle="modal" data-bs-target="#restoreModal"
                                             data-bs-id="<%= genre.id %>" data-bs-name="<%= genre.name %>">
-                                            <i class="bi bi-arrow-counterclockwise me-1"></i> Restaurar
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i> <%= t('admin.restore') %>
                                         </button>
                                         <% } else { %>
                                             <a href="/genres/<%= genre.name %>"
                                                 class="btn btn-primary btn-sm w-100 rounded-pill mb-2 py-2 shadow-sm"
                                                 style="background-color: var(--brand-teal); border: none;">
-                                                <i class="bi bi-compass me-1"></i> Explorar
+                                                <i class="bi bi-compass me-1"></i> <%= t('genres.explore') %>
                                             </a>
 
                                             <button type="button"
                                                 class="btn btn-danger btn-sm w-100 rounded-pill py-2 shadow-sm"
                                                 data-bs-toggle="modal" data-bs-target="#deleteModal"
                                                 data-bs-id="<%= genre.id %>" data-bs-name="<%= genre.name %>">
-                                                <i class="bi bi-trash me-1"></i> Eliminar
+                                                <i class="bi bi-trash me-1"></i> <%= t('admin.delete_genre') %>
                                             </button>
                                             <% } %>
                                 </div>
@@ -80,18 +80,17 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Confirmar eliminación</h5>
+                    <h5 class="modal-title"><%= t('admin.delete_genre') %></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form id="deleteGenreForm" action="" method="POST" data-requires-token>
                     <div class="modal-body text-center">
-                        <p>¿Estás seguro de que deseas eliminar el género <strong id="deleteGenreName"></strong>?</p>
-                        <p class="small text-muted">Esta acción realizará un borrado lógico.</p>
+                        <p> <%= t('admin.delete_genre_message') %> <strong id="deleteGenreName"></strong>?</p>
                         <input type="hidden" name="id" id="deleteGenreId">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger">Confirmar Borrado</button>
+                        <button type="submit" class="btn btn-danger"><%= t('admin.delete_genre') %></button>
                     </div>
                 </form>
             </div>
@@ -102,18 +101,18 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-success">
                 <div class="modal-header text-white bg-success">
-                    <h5 class="modal-title">Restaurar Género</h5>
+                    <h5 class="modal-title"><%= t('admin.restore_genre') %></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                         aria-label="Close"></button>
                 </div>
                 <form id="restoreGenreForm" action="" method="POST" data-requires-token>
                     <div class="modal-body text-center">
-                        <p>Vas a reactivar el género <strong id="restoreGenreName"></strong>.</p>
+                        <p> <%= t('admin.restore_body') %> <strong id="restoreGenreName"></strong>?</p>
                         <input type="hidden" name="id" id="restoreGenreId">
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success text-white">Restaurar ahora</button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal"><%= t('admin.cancel') %></button>
+                        <button type="submit" class="btn btn-success text-white"><%= t('admin.restore') %></button>
                     </div>
                 </form>
             </div>

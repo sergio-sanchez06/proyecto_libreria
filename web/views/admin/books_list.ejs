@@ -19,7 +19,7 @@
                 <a href="/admin/books/create"
                     class="btn btn-glass-white text-white rounded-pill px-4 py-2 fw-bold shadow-sm transition-all"
                     style="text-decoration: none; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.3);">
-                    <i class="bi bi-plus-lg me-2"></i>Añadir Libro
+                    <i class="bi bi-plus-lg me-2"></i> <%= t('admin.add_book') %>
                 </a>
             </div>
         </div>
@@ -132,7 +132,7 @@
 
                                     <% if (book.deleted_at) { %>
                                         <span class="position-absolute top-0 end-0 badge rounded-pill bg-secondary m-2">
-                                            <i class="bi bi-archive"></i> Archivado
+                                            <i class="bi bi-archive"></i> <%= t('book.archived') %>
                                         </span>
                                         <% } %>
 
@@ -168,14 +168,14 @@
                                                         <% if (!book.deleted_at) { %>
                                                             <a href="/books/book/<%= book.id %>"
                                                                 class="btn btn-outline-dark btn-sm">
-                                                                <i class="bi bi-eye"></i> Ver Ficha
+                                                                <i class="bi bi-eye"></i> <%= t('book.details_title') %>
                                                             </a>
 
                                                             <div class="row g-2">
                                                                 <div class="col-6">
                                                                     <a href="/admin/books/update/<%= book.id %>"
                                                                         class="btn btn-primary btn-sm w-100 py-2 shadow-sm">
-                                                                        <i class="bi bi-pencil-square me-1"></i> Editar
+                                                                        <i class="bi bi-pencil-square me-1"></i> <%= t('admin.edit_book') %>
                                                                     </a>
                                                                 </div>
                                                                 <div class="col-6">
@@ -185,7 +185,7 @@
                                                                         data-bs-target="#modalDeleteBook"
                                                                         data-action="/admin/books/delete/<%= book.id %>"
                                                                         data-name="<%= book.title %>">
-                                                                        <i class="bi bi-trash me-1"></i> Borrar
+                                                                        <i class="bi bi-trash me-1"></i> <%= t('admin.delete_book') %>
                                                                     </button>
                                                                 </div>
                                                             </div>

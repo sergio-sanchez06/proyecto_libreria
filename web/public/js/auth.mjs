@@ -166,7 +166,7 @@ export function initCheckout() {
     if (checkoutBtn) {
       checkoutBtn.disabled = false;
       if (checkoutSpinner) checkoutSpinner.classList.add("d-none");
-      if (checkoutText) checkoutText.textContent = "Confirmar y Pagar";
+      if (checkoutText) checkoutText.textContent = checkoutText.getAttribute('data-text-confirm');
     }
 
     // ESCUCHAMOS EL CLIC FINAL
