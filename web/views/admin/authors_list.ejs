@@ -31,7 +31,7 @@
                 <aside class="col-lg-3 mb-4">
                     <div class="filter-sidebar p-4 shadow-sm bg-light rounded-3">
                         <h5 class="mb-4 d-flex align-items-center border-bottom pb-2">
-                            <i class="bi bi-sliders me-2"></i> Filtros
+                            <i class="bi bi-sliders me-2"></i> <%= t('authors.filters') || 'Filtrar por' %>
                         </h5>
 
                         <form action="/authors/manage/list" method="GET">
@@ -42,7 +42,7 @@
                                         <input class="form-check-input" type="radio" name="country" id="country_all"
                                             value="" <%=!selectedCountry ? 'checked' : '' %>>
                                         <label class="form-check-label" for="country_all">
-                                            Todos los países
+                                            <%= t('authors.all_countries') || 'Todos los países' %>
                                         </label>
                                     </div>
                                     <% if (countriesList && countriesList.length> 0) { %>
@@ -72,8 +72,8 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-sm fw-bold">Aplicar</button>
-                                <a href="/authors/manage/list" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+                                <button type="submit" class="btn btn-primary btn-sm fw-bold"><%= t('common.apply') || 'Aplicar' %></button>
+                                <a href="/authors/manage/list" class="btn btn-outline-secondary btn-sm"><%= t('catalog.clear') || 'Limpiar' %></a>
                             </div>
                         </form>
                     </div>

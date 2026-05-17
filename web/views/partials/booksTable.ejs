@@ -34,7 +34,7 @@
 
                     <div class="mb-4">
                         <label class="form-label small fw-bold text-uppercase text-muted">
-                            Ordenar por
+                            <%= t('catalog.sort_by') || 'Ordenar por' %>
                         </label>
 
                         <% const selectedSort = Array.isArray(query.sort) 
@@ -44,39 +44,39 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="sort" value="mostRated"
                                 <%= selectedSort.includes('mostRated') ? 'checked' : '' %>>
-                            <label class="form-check-label">Mejor valorados</label>
+                            <label class="form-check-label"><%= t('catalog.sort_most_rated') || 'Mejor valorados' %></label>
                         </div>
 
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="sort" value="leastRated"
                                 <%= selectedSort.includes('leastRated') ? 'checked' : '' %>>
-                            <label class="form-check-label">Peor valorados</label>
+                            <label class="form-check-label"><%= t('catalog.sort_least_rated') || 'Peor valorados' %></label>
                         </div>
 
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="sort" value="mostBought"
                                 <%= selectedSort.includes('mostBought') ? 'checked' : '' %>>
-                            <label class="form-check-label">Más vendidos</label>
+                            <label class="form-check-label"><%= t('catalog.sort_most_bought') || 'Más vendidos' %></label>
                         </div>
 
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="sort" value="leastBought"
                                 <%= selectedSort.includes('leastBought') ? 'checked' : '' %>>
-                            <label class="form-check-label">Menos vendidos</label>
+                            <label class="form-check-label"><%= t('catalog.sort_least_bought') || 'Menos vendidos' %></label>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label small fw-bold text-uppercase text-muted">Nombre del libro</label>
+                        <label class="form-label small fw-bold text-uppercase text-muted"><%= t('catalog.search_by_name') || 'Nombre del libro' %></label>
                         <div class="input-group input-group-sm shadow-sm rounded-3 overflow-hidden">
                             <span class="input-group-text bg-white border-0"><i class="bi bi-search text-muted"></i></span>
-                            <input type="text" name="q" class="form-control border-0 py-2" placeholder="Buscar..."
+                            <input type="text" name="q" class="form-control border-0 py-2" placeholder="<%= t('common.search_placeholder') || 'Buscar...' %>"
                                 value="<%= query.q || '' %>">
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label small fw-bold text-uppercase text-muted">Categoría</label>
+                        <label class="form-label small fw-bold text-uppercase text-muted"><%= t('catalog.category') || 'Categoría' %></label>
                         <div class="scrollable-filter-container p-2 bg-white rounded-3 shadow-sm">
                             <div class="form-check mb-2">
                                 <input class="form-check-input shadow-sm" type="radio" name="genre" id="genre_all" value=""
@@ -101,13 +101,13 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label small fw-bold text-uppercase text-muted">Autor</label>
+                        <label class="form-label small fw-bold text-uppercase text-muted"><%= t('book.author') || 'Autor' %></label>
                         <div class="scrollable-filter-container p-2 bg-white rounded-3 shadow-sm">
                             <div class="form-check mb-2">
                                 <input class="form-check-input shadow-sm" type="radio" name="author" id="author_all" value=""
                                     <%=!query.author ? 'checked' : '' %>>
                                 <label class="form-check-label text-dark fw-medium" for="author_all">
-                                    Todos los autores
+                                    <%= t('catalog.all_authors') || 'Todos los autores' %>
                                 </label>
                             </div>
                             <% if (typeof authors !=='undefined' && authors) { %>
@@ -127,7 +127,7 @@
 
                     <div class="mb-4">
                         <label class="form-label small fw-bold text-uppercase text-muted mb-3 d-flex justify-content-between">
-                            <span>Precio máx:</span> 
+                            <span><%= t('catalog.max_price') || 'Precio máx:' %></span> 
                             <span class="badge bg-primary text-white rounded-pill px-3"><span id="priceVal"><%= query.maxPrice || 100 %></span>€</span>
                         </label>
                         <input type="range" name="maxPrice" class="form-range" min="0" max="150" step="5"
@@ -136,8 +136,8 @@
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary btn-sm py-2 px-3 shadow-sm rounded-pill"><i class="bi bi-funnel-fill me-1"></i> Aplicar Filtros</button>
-                        <a href="/books/showAllBooks" class="btn btn-outline-dark btn-sm py-2 rounded-pill"><i class="bi bi-eraser-fill me-1"></i> Limpiar</a>
+                        <button type="submit" class="btn btn-primary btn-sm py-2 px-3 shadow-sm rounded-pill"><i class="bi bi-funnel-fill me-1"></i> <%= t('catalog.apply_filters') || 'Aplicar Filtros' %></button>
+                        <a href="/books/showAllBooks" class="btn btn-outline-dark btn-sm py-2 rounded-pill"><i class="bi bi-eraser-fill me-1"></i> <%= t('catalog.clear') || 'Limpiar' %></a>
                     </div>
                 </form>
             </div>
@@ -171,7 +171,7 @@
                                             <div class="d-flex flex-column gap-2">
                                                 <a href="/books/book/<%= book.id %>"
                                                     class="btn btn-outline-dark btn-sm py-2 w-100">
-                                                    <i class="bi bi-eye"></i> Detalles
+                                                    <i class="bi bi-eye"></i> <%= t('catalog.btn_details', 'Detalles') %>
                                                 </a>
 
                                                 <form action="/cart/add" method="POST" class="d-flex gap-2">
@@ -183,7 +183,7 @@
                                                         style="width: 60px; border-radius: 8px; border: 1px solid rgba(0,0,0,0.1);">
                                                     <button type="submit"
                                                         class="btn btn-success btn-sm flex-grow-1 shadow-sm px-0">
-                                                        <i class="bi bi-cart-plus-fill me-1"></i> <span class="d-none d-sm-inline">Añadir</span><span class="d-inline d-sm-none">+</span>
+                                                        <i class="bi bi-cart-plus-fill me-1"></i> <span class="d-none d-sm-inline"><%= t('catalog.btn_add', 'Añadir') %></span><span class="d-inline d-sm-none">+</span>
                                                     </button>
                                                 </form>
                                             </div>
@@ -198,9 +198,9 @@
                                             <div class="mx-auto bg-light rounded-circle d-flex align-items-center justify-content-center mb-4" style="width: 100px; height: 100px;">
                                                 <i class="bi bi-search display-4 text-muted opacity-50"></i>
                                             </div>
-                                            <h4 class="fw-bold mb-2 text-dark">No hay resultados</h4>
-                                            <p class="text-muted">Intenta cambiar los filtros o el término de búsqueda.</p>
-                                            <a href="/books/showAllBooks" class="btn btn-primary mt-3 px-4 rounded-pill">Quitar filtros</a>
+                                            <h4 class="fw-bold mb-2 text-dark"><%= t('catalog.no_results', 'No hay resultados') %></h4>
+                                            <p class="text-muted"><%= t('catalog.no_results_hint', 'Intenta cambiar los filtros o el término de búsqueda.') %></p>
+                                            <a href="/books/showAllBooks" class="btn btn-primary mt-3 px-4 rounded-pill"><%= t('catalog.remove_filters', 'Quitar filtros') %></a>
                                         </div>
                                         <% } %>
             </div>

@@ -34,16 +34,16 @@
 
                     <form action="/admin/books/list" method="GET">
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase text-muted">Nombre del libro</label>
+                            <label class="form-label small fw-bold text-uppercase text-muted"><%= t('catalog.search_by_name') || 'Nombre del libro' %></label>
                             <div class="input-group input-group-sm">
                                 <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
-                                <input type="text" name="q" class="form-control border-start-0" placeholder="Buscar..."
+                                <input type="text" name="q" class="form-control border-start-0" placeholder="<%= t('common.search_placeholder') || 'Buscar...' %>"
                                     value="<%= query.q || '' %>">
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase text-muted">Categoría</label>
+                            <label class="form-label small fw-bold text-uppercase text-muted"><%= t('catalog.category') || 'Categoría' %></label>
                             <div class="scrollable-filter-container">
                                 <div class="form-check small">
                                     <input class="form-check-input" type="radio" name="genre" id="genre_all" value=""
@@ -68,13 +68,13 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase text-muted">Autor</label>
+                            <label class="form-label small fw-bold text-uppercase text-muted"><%= t('book.author') || 'Autor' %></label>
                             <div class="scrollable-filter-container">
                                 <div class="form-check small">
                                     <input class="form-check-input" type="radio" name="author" id="author_all" value=""
                                         <%=!query.author ? 'checked' : '' %>>
                                     <label class="form-check-label" for="author_all">
-                                        Todos los autores
+                                        <%= t('catalog.all_authors') || 'Todos los autores' %>
                                     </label>
                                 </div>
                                 <% if (typeof authors !=='undefined' && authors) { %>
@@ -104,19 +104,18 @@
                         </div> -->
 
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-uppercase text-muted">Estado</label>
+                            <label class="form-label small fw-bold text-uppercase text-muted"><%= t('catalog.status') || 'Estado' %></label>
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" role="switch"
                                     id="flexSwitchCheckChecked" name="deleted" value="true" <%=query.deleted ? 'checked'
                                     : '' %>>
-                                <label class="form-check-label" for="flexSwitchCheckChecked">Mostrar solo libros
-                                    eliminados</label>
+                                <label class="form-check-label" for="flexSwitchCheckChecked"><%= t('catalog.show_only_deleted_books') || 'Mostrar solo libros eliminados' %></label>
                             </div>
                         </div>
 
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-sm fw-bold">Aplicar</button>
-                            <a href="/admin/books/list" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+                            <button type="submit" class="btn btn-primary btn-sm fw-bold"><%= t('common.apply') || 'Aplicar' %></button>
+                            <a href="/admin/books/list" class="btn btn-outline-secondary btn-sm"><%= t('catalog.clear') || 'Limpiar' %></a>
                         </div>
                     </form>
                 </div>

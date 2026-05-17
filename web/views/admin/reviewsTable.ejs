@@ -9,12 +9,12 @@
             <div class="admin-hero mb-4">
                 <div class="admin-hero-content row align-items-center">
                     <div class="col-md-8">
-                        <h1 class="display-5 fw-bold mb-2">Gestión de Reseñas</h1>
-                        <p class="lead opacity-75 mb-0">Modera y supervisa las opiniones de los lectores.</p>
+                        <h1 class="display-5 fw-bold mb-2"><%= t('admin_reviews.page_title', 'Gestión de Reseñas') %></h1>
+                        <p class="lead opacity-75 mb-0"><%= t('admin_reviews.subtitle', 'Modera y supervisa las opiniones de los lectores.') %></p>
                     </div>
                     <div class="col-md-4 text-md-end mt-3 mt-md-0">
                         <a href="/admin/dashboard" class="btn-back-admin">
-                            <i class="bi bi-arrow-left me-2"></i>Volver al Dashboard
+                            <i class="bi bi-arrow-left me-2"></i><%= t('admin_reviews.back_to_dashboard', 'Volver al Dashboard') %>
                         </a>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                             <i class="bi bi-chat-left-text"></i>
                         </div>
                         <div class="stat-value"><%= stats.total %></div>
-                        <div class="stat-label">Reseñas Totales</div>
+                        <div class="stat-label"><%= t('admin_reviews.total_reviews', 'Reseñas Totales') %></div>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -37,7 +37,7 @@
                             <i class="bi bi-star-fill"></i>
                         </div>
                         <div class="stat-value"><%= stats.average %></div>
-                        <div class="stat-label">Puntuación Media</div>
+                        <div class="stat-label"><%= t('admin_reviews.average_rating', 'Puntuación Media') %></div>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -45,8 +45,8 @@
                         <div class="stat-icon bg-success-subtle text-success">
                             <i class="bi bi-check-circle"></i>
                         </div>
-                        <div class="stat-value">Activo</div>
-                        <div class="stat-label">Estado del Sistema</div>
+                        <div class="stat-value"><%= t('admin_reviews.active_status', 'Activo') %></div>
+                        <div class="stat-label"><%= t('admin_reviews.system_status', 'Estado del Sistema') %></div>
                     </div>
                 </div>
             </div>
@@ -57,13 +57,13 @@
                     <table class="table table-hover align-middle mb-0">
                         <thead>
                             <tr>
-                                <th class="ps-4">ID</th>
-                                <th>Libro</th>
-                                <th>Usuario</th>
-                                <th>Puntuación</th>
-                                <th>Comentario</th>
-                                <th>Fecha</th>
-                                <th class="text-end pe-4">Acciones</th>
+                                <th class="ps-4"><%= t('admin_reviews.th_id', 'ID') %></th>
+                                <th><%= t('admin_reviews.th_book', 'Libro') %></th>
+                                <th><%= t('admin_reviews.th_user', 'Usuario') %></th>
+                                <th><%= t('admin_reviews.th_rating', 'Puntuación') %></th>
+                                <th><%= t('admin_reviews.th_comment', 'Comentario') %></th>
+                                <th><%= t('admin_reviews.th_date', 'Fecha') %></th>
+                                <th class="text-end pe-4"><%= t('admin_reviews.th_actions', 'Acciones') %></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -100,16 +100,16 @@
                                         </td>
                                         <td class="text-end pe-4">
                                             <div class="d-flex justify-content-end gap-2">
-                                                <a href="/books/book/<%= review.book_id %>" class="btn-action" title="Ver Libro">
+                                                <a href="/books/book/<%= review.book_id %>" class="btn-action" title="<%= t('admin_reviews.btn_view_book', 'Ver Libro') %>">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
                                                 <button type="button" class="btn-action" 
                                                         onclick="openEditModal('<%= review.id %>', '<%= review.rating %>', this.getAttribute('data-comment'), '<%= review.book_id %>')"
-                                                        data-comment="<%= review.comment %>" title="Editar">
+                                                        data-comment="<%= review.comment %>" title="<%= t('admin_reviews.btn_edit', 'Editar') %>">
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
                                                 <button type="button" class="btn-action btn-delete" 
-                                                        onclick="openDeleteModal('<%= review.id %>')" title="Eliminar">
+                                                        onclick="openDeleteModal('<%= review.id %>')" title="<%= t('admin_reviews.btn_delete', 'Eliminar') %>">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
@@ -122,7 +122,7 @@
                                         <div class="opacity-25 mb-3">
                                             <i class="bi bi-chat-square-dots" style="font-size: 4rem;"></i>
                                         </div>
-                                        <p class="text-muted h5">No se encontraron reseñas.</p>
+                                        <p class="text-muted h5"><%= t('admin_reviews.no_reviews', 'No se encontraron reseñas.') %></p>
                                     </td>
                                 </tr>
                             <% } %>
@@ -135,8 +135,8 @@
             <% if (totalPages > 1) { %>
                 <nav class="mt-5 d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <span class="text-muted small fw-bold text-uppercase">
-                        Página <strong><%= currentPage %></strong> de <strong><%= totalPages %></strong>
-                        &nbsp;·&nbsp; <strong><%= stats.total %></strong> reseñas
+                        <%= t('admin_reviews.page', 'Página') %> <strong><%= currentPage %></strong> <%= t('admin_reviews.of', 'de') %> <strong><%= totalPages %></strong>
+                        &nbsp;·&nbsp; <strong><%= stats.total %></strong> <%= t('admin_reviews.reviews_count', 'reseñas') %>
                     </span>
                     <ul class="pagination pagination-sm mb-0">
                         <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
@@ -171,23 +171,23 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content shadow-lg">
                 <div class="modal-header modal-header-primary text-white border-0">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i>Moderación de Reseña</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i><%= t('admin_reviews.modal_edit_title', 'Moderación de Reseña') %></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <form id="editReviewForm" method="POST">
                     <div class="modal-body p-4">
                         <div class="mb-4">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Puntuación</label>
+                            <label class="form-label fw-bold text-muted small text-uppercase"><%= t('admin_reviews.label_rating', 'Puntuación') %></label>
                             <select name="rating" id="editRating" class="form-select border-0 bg-light py-3">
-                                <option value="1">1 Estrella</option>
-                                <option value="2">2 Estrellas</option>
-                                <option value="3">3 Estrellas</option>
-                                <option value="4">4 Estrellas</option>
-                                <option value="5">5 Estrellas</option>
+                                <option value="1">1 <%= t('admin_reviews.star_singular', 'Estrella') %></option>
+                                <option value="2">2 <%= t('admin_reviews.star_plural', 'Estrellas') %></option>
+                                <option value="3">3 <%= t('admin_reviews.star_plural', 'Estrellas') %></option>
+                                <option value="4">4 <%= t('admin_reviews.star_plural', 'Estrellas') %></option>
+                                <option value="5">5 <%= t('admin_reviews.star_plural', 'Estrellas') %></option>
                             </select>
                         </div>
                         <div class="mb-2">
-                            <label class="form-label fw-bold text-muted small text-uppercase">Comentario</label>
+                            <label class="form-label fw-bold text-muted small text-uppercase"><%= t('admin_reviews.label_comment', 'Comentario') %></label>
                             <textarea name="comment" id="editComment" class="form-control border-0 bg-light" rows="4" required></textarea>
                         </div>
                         <input type="hidden" name="review_id" id="editReviewId">
@@ -195,8 +195,8 @@
                         <input type="hidden" name="returnTo" id="editReturnTo">
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm" style="background: var(--brand-teal); border: none;">Guardar Cambios</button>
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal"><%= t('admin_reviews.btn_cancel', 'Cancelar') %></button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 shadow-sm" style="background: var(--brand-teal); border: none;"><%= t('admin_reviews.btn_save', 'Guardar Cambios') %></button>
                     </div>
                 </form>
             </div>
@@ -208,20 +208,20 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header modal-header-danger text-white border-0">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i>Eliminar Reseña</h5>
+                    <h5 class="modal-title fw-bold"><i class="bi bi-exclamation-triangle-fill me-2"></i><%= t('admin_reviews.modal_delete_title', 'Eliminar Reseña') %></h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body p-5 text-center">
                     <div class="mb-4">
                         <i class="bi bi-trash3 text-danger" style="font-size: 4rem;"></i>
                     </div>
-                    <h4 class="fw-bold">¿Estás seguro?</h4>
-                    <p class="text-muted">Esta acción eliminará permanentemente la reseña y no se podrá recuperar.</p>
+                    <h4 class="fw-bold"><%= t('admin_reviews.modal_delete_confirm', '¿Estás seguro?') %></h4>
+                    <p class="text-muted"><%= t('admin_reviews.modal_delete_warning', 'Esta acción eliminará permanentemente la reseña y no se podrá recuperar.') %></p>
                 </div>
                 <div class="modal-footer border-0 justify-content-center pb-5 pt-0">
-                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal"><%= t('admin_reviews.btn_cancel', 'Cancelar') %></button>
                     <form id="deleteForm" method="POST">
-                        <button type="submit" class="btn btn-danger rounded-pill px-4 shadow-sm">Confirmar Eliminación</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 shadow-sm"><%= t('admin_reviews.btn_confirm_delete', 'Confirmar Eliminación') %></button>
                     </form>
                 </div>
             </div>

@@ -98,14 +98,14 @@
                             <a href="/user/favorites"
                                 class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white h-100">
                                 <i class="bi bi-heart-fill fs-1 d-block mb-2" style="color:#e11d48;"></i>
-                                <span class="fw-bold text-dark">Mis Géneros Favoritos</span>
+                                <span class="fw-bold text-dark"><%= t('profile.fav_genres', 'Mis Géneros Favoritos') %></span>
                             </a>
                         </div>
                         <div class="col-sm-6">
                             <a href="/user/recommendations"
                                 class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white h-100">
                                 <i class="bi bi-stars fs-1 d-block mb-2" style="color:var(--brand-teal);"></i>
-                                <span class="fw-bold text-dark">Recomendados para mí</span>
+                                <span class="fw-bold text-dark"><%= t('profile.recommendations', 'Recomendados para mí') %></span>
                             </a>
                         </div>
                         <% if (provider=="password" ) { %>
@@ -114,7 +114,7 @@
                                     class="btn d-block action-button p-4 border rounded shadow-sm text-center bg-white h-100">
                                     <i class="bi bi-shield-lock fs-1 d-block mb-2 text-primary"></i>
                                     <span class="fw-bold text-dark">
-                                        <%= 'Cambiar Contraseña' %>
+                                        <%= t('profile.change_password', 'Cambiar Contraseña') %>
                                     </span>
                                 </a>
                             </div>
@@ -182,7 +182,7 @@
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button type="button" class="btn btn-light rounded-pill px-4"
-                        data-bs-dismiss="modal">Cancelar</button>
+                        data-bs-dismiss="modal"><%= t('profile.cancel', 'Cancelar') %></button>
                     <button type="submit" form="deleteAccountForm" id="confirmDeleteBtn"
                         class="btn btn-danger rounded-pill px-4 fw-bold">
                         <%= t('profile.confirm_soft') || 'Confirmar y Desactivar' %>

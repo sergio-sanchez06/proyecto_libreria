@@ -1,4 +1,4 @@
-<%- include('../layout/header', { title: user.name + ' - ' + t('recommendations.page_title'), bodyClass: 'bg-user-vistas', extraCSS: 'partials/recommendations_v2' }) %>
+<%- include('../layout/header', { title: user.name + ' - ' + t('recommendations.page_title'), bodyClass: 'bg-user-vistas', extraCSS: 'partials/recommendations' }) %>
 
 <div class="container py-5">
 
@@ -15,6 +15,40 @@
             </li>
         </ol>
     </nav>
+
+    <!-- ── New Integrated Recommendations Hero ── -->
+    <div class="recommendations-hero p-4 p-lg-5 mb-5 rounded-5 shadow-lg border-0 position-relative overflow-hidden text-white" style="background: linear-gradient(135deg, #1e293b 0%, var(--brand-teal) 100%); border: 1px solid rgba(255, 255, 255, 0.1);">
+        <div class="hero-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://www.transparenttextures.com/patterns/cubes.png'); opacity: 0.1; z-index: 0;"></div>
+        <div class="row align-items-center position-relative z-1">
+            <div class="col-lg-7 mb-4 mb-lg-0">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="hero-icon-box bg-white rounded-4 shadow-sm d-flex align-items-center justify-content-center overflow-hidden" style="width: 70px; height: 70px; flex-shrink: 0; border: 1px solid rgba(212, 175, 55, 0.2);">
+                        <i class="bi bi-stars text-teal" style="font-size: 2.2rem; color: var(--brand-teal) !important;"></i>
+                    </div>
+                    <div>
+                        <p class="text-uppercase fw-bold m-0 opacity-75" style="letter-spacing:1px; font-size:.85rem;">
+                            <%= t('favorites.personalization_label') || 'Personalización' %>
+                        </p>
+                        <h1 class="display-5 fw-bold mb-0"><%= t('recommendations.page_title') || 'Recomendados para ti' %></h1>
+                    </div>
+                </div>
+                <p class="opacity-75 mb-0 fw-medium">
+                    <%= t('recommendations.hero_subtitle', 'Descubre lecturas seleccionadas a medida basándonos en tus géneros preferidos.') %>
+                </p>
+            </div>
+            
+            <div class="col-lg-5">
+                <div class="d-flex flex-column gap-3">
+                    <a href="/user/favorites" class="btn btn-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2 transition-all">
+                        <i class="bi bi-gear-fill text-teal"></i> <%= t('recommendations.my_genres_btn') || 'Mis Géneros' %>
+                    </a>
+                    <a href="/user/profile" class="btn bg-glass-white rounded-pill px-4 py-3 fw-bold shadow-sm w-100 border d-flex align-items-center justify-content-center gap-2 transition-all" style="color: var(--brand-teal);">
+                        <i class="bi bi-person-circle"></i> <%= t('favorites.profile_btn') %>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- ── Aviso sin favoritos ────────────────────── -->
     <% if (!hasFavorites) { %>
@@ -67,28 +101,28 @@
         %>
 
         <% if (topBook) { %>
-            <div class="spotlight-hero">
+            <div class="spotlight-hero p-4 p-md-5 mb-5 rounded-5 border-0 shadow-lg position-relative overflow-hidden text-white" style="min-height: auto;">
                 <img src="<%= topBook.cover_url %>" class="spotlight-backdrop" alt="backdrop">
                 <div class="spotlight-overlay"></div>
                 
-                <div class="spotlight-content p-4 p-md-5 d-flex flex-column flex-md-row align-items-center gap-4 gap-md-5">
-                    <div class="flex-shrink-0">
-                        <img src="<%= topBook.cover_url %>" class="spotlight-cover" alt="<%= topBook.title %>">
+                <div class="spotlight-content d-flex flex-column flex-md-row align-items-center gap-4 gap-md-5">
+                    <div class="flex-shrink-0 text-center">
+                        <img src="<%= topBook.cover_url %>" class="spotlight-cover" alt="<%= topBook.title %>" style="max-height: 220px; width: auto; object-fit: cover;">
                     </div>
-                    <div>
+                    <div style="flex-grow: 1;">
                         <div class="mb-2 d-flex align-items-center gap-2">
                             <span class="badge" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); font-size: 0.85rem;"><i class="bi bi-star-fill text-warning me-1"></i> <%= topBadge %></span>
                             <% if (topScore > 0) { %>
                                 <span class="fw-bold" style="color: var(--brand-gold);"><%= (topScore * 100).toFixed(0) %>% Match</span>
                             <% } %>
                         </div>
-                        <h2 class="spotlight-title"><%= topBook.title %></h2>
-                        <p class="spotlight-desc">
+                        <h3 class="fw-bold mb-2 text-white" style="font-size: 2rem; text-shadow: 0 2px 4px rgba(0,0,0,0.5);"><%= topBook.title %></h3>
+                        <p class="spotlight-desc small opacity-90 mb-3" style="max-width: 100%;">
                             <%= topBook.description || topBook.synopsis || "Explora esta recomendación destacada basada en lo que más te gusta. Una lectura imprescindible." %>
                         </p>
                         <div class="d-flex gap-3 align-items-center">
-                            <a href="/books/book/<%= topBook.id %>" class="btn btn-spotlight">
-                                <i class="bi bi-play-fill me-1"></i> <%= t('recommendations.see_details') %>
+                            <a href="/books/book/<%= topBook.id %>" class="btn btn-spotlight btn-sm px-4 py-2">
+                                <i class="bi bi-book-half me-1"></i> <%= t('recommendations.see_details') %>
                             </a>
                             <span class="text-white fs-4 fw-bold ms-3"><%= parseFloat(topBook.price || 0).toFixed(2) %>€</span>
                         </div>

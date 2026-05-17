@@ -33,14 +33,14 @@
         <aside class="col-lg-3 mb-4 collapse d-lg-block" id="filterSidebar">
             <div class="filter-sidebar p-4">
                 <h5 class="mb-4 d-flex align-items-center border-bottom pb-3 fw-bold" style="color: var(--brand-teal);">
-                    <i class="bi bi-funnel-fill me-2 text-warning"></i> Filtros
+                    <i class="bi bi-funnel-fill me-2 text-warning"></i> <%= t('authors.filters') || 'Filtrar por' %>
                 </h5>
 
                 <form action="/authors/showAllAuthors" method="GET">
                     
                     <div class="mb-4">
                         <label class="form-label small fw-bold text-uppercase text-muted">
-                            Ordenar autores
+                            <%= t('authors.sort_authors') || 'Ordenar autores' %>
                         </label>
 
                         <% const selectedSort = Array.isArray(searchQuery.sort)
@@ -50,36 +50,36 @@
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="sort" value="mostRated"
                                 <%= selectedSort.includes('mostRated') ? 'checked' : '' %>>
-                            <label class="form-check-label">Mejor valorados</label>
+                            <label class="form-check-label"><%= t('catalog.sort_most_rated') || 'Mejor valorados' %></label>
                         </div>
 
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="sort" value="leastRated"
                                 <%= selectedSort.includes('leastRated') ? 'checked' : '' %>>
-                            <label class="form-check-label">Peor valorados</label>
+                            <label class="form-check-label"><%= t('catalog.sort_least_rated') || 'Peor valorados' %></label>
                         </div>
 
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="sort" value="mostBought"
                                 <%= selectedSort.includes('mostBought') ? 'checked' : '' %>>
-                            <label class="form-check-label">Más vendidos</label>
+                            <label class="form-check-label"><%= t('catalog.sort_most_bought') || 'Más vendidos' %></label>
                         </div>
 
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="sort" value="leastBought"
                                 <%= selectedSort.includes('leastBought') ? 'checked' : '' %>>
-                            <label class="form-check-label">Menos vendidos</label>
+                            <label class="form-check-label"><%= t('catalog.sort_least_bought') || 'Menos vendidos' %></label>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label small fw-bold text-uppercase text-muted">País de origen</label>
+                        <label class="form-label small fw-bold text-uppercase text-muted"><%= t('authors.country_origin') || 'País de origen' %></label>
                         <div class="scrollable-filter-container p-2 bg-white rounded-3 shadow-sm">
                             <div class="form-check mb-2">
                                 <input class="form-check-input shadow-sm" type="radio" name="country" id="country_all"
                                     value="" <%=!selectedCountry ? 'checked' : '' %>>
                                 <label class="form-check-label text-dark fw-medium" for="country_all">
-                                    Todos los países
+                                    <%= t('authors.all_countries') || 'Todos los países' %>
                                 </label>
                             </div>
                             <% if (countriesList && countriesList.length> 0) { %>
@@ -98,8 +98,8 @@
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary btn-sm py-2 px-3 shadow-sm rounded-pill"><i class="bi bi-compass me-1"></i> Explorar</button>
-                        <a href="/authors/showAllAuthors" class="btn btn-outline-dark btn-sm py-2 rounded-pill"><i class="bi bi-eraser-fill me-1"></i> Limpiar</a>
+                        <button type="submit" class="btn btn-primary btn-sm py-2 px-3 shadow-sm rounded-pill"><i class="bi bi-compass me-1"></i> <%= t('authors.explore') || 'Explorar' %></button>
+                        <a href="/authors/showAllAuthors" class="btn btn-outline-dark btn-sm py-2 rounded-pill"><i class="bi bi-eraser-fill me-1"></i> <%= t('catalog.clear') || 'Limpiar' %></a>
                     </div>
                 </form>
             </div>

@@ -17,7 +17,13 @@
     "title": "Nuestros Escritores",
     "subtitle": "Bichea a los notas que hay detrás de las historias",
     "role": "Escritor/a",
-    "view_catalog": "Ver el muestrario"
+    "view_catalog": "Ver el muestrario",
+    "filters": "Bichear por...",
+    "sort_authors": "Ordenar escritors",
+    "country_origin": "De dónde es",
+    "all_countries": "Todos los sitios",
+    "explore": "Explorar",
+    "show_only_deleted_authors": "Mostrar nomás escritors borraus"
   },
   "book": {
     "details_title": "Lo que trae",
@@ -69,7 +75,25 @@
     "no_stock": "Se ha acabao",
     "filters": "Bichear por...",
     "all_genres": "Todos los palos",
-    "search_placeholder": "Nombre del libro"
+    "search_placeholder": "Nombre del libro",
+    "sort_by": "Ordenar por",
+    "sort_most_rated": "Millors ponderaus",
+    "sort_least_rated": "Peors ponderaus",
+    "sort_most_bought": "Más vendius",
+    "sort_least_bought": "Menos vendius",
+    "search_by_name": "Nombre del libro",
+    "category": "Categoría",
+    "all_authors": "Todos los sitios",
+    "max_price": "Precio máx:",
+    "apply_filters": "Bichear ya",
+    "clear": "Limpar",
+    "status": "Estau",
+    "show_only_deleted_books": "Mostrar nomás libros borraus",
+    "btn_details": "Detals",
+    "btn_add": "Anyadir",
+    "no_results": "No i hai resultaus",
+    "no_results_hint": "Preba a cambiar os filtros u o termino de busqueda.",
+    "remove_filters": "Quitar filtros"
   },
   "index": {
     "welcome_msg": "Los mejores libros, de verdad te lo digo, mírame a los ojos",
@@ -93,7 +117,9 @@
     "delete": "Eliminar",
     "edit": "Editar",
     "view": "Veyer",
-    "meta_description": "BOOKLY - A tuya librería online de confianza. Troba os millors libros, autors y editorials en un solo puesto."
+    "meta_description": "BOOKLY - A tuya librería online de confianza. Troba os millors libros, autors y editorials en un solo puesto.",
+    "search_placeholder": "Bichear...",
+    "apply": "Aplicar"
   },
   "genres": {
     "title": "Cheneros Literarios",

@@ -17,7 +17,13 @@
     "title": "Nuestros Escritores",
     "subtitle": "Bichea a los notas que hay detrás de tus historias favoritas",
     "role": "Escritor/a",
-    "view_catalog": "Echarle un ojo al catálogo"
+    "view_catalog": "Echarle un ojo al catálogo",
+    "filters": "Cribar por",
+    "sort_authors": "Ordenar autores",
+    "country_origin": "De dónde es",
+    "all_countries": "Todos los sitios",
+    "explore": "Explorar",
+    "show_only_deleted_authors": "Mostrar solo autores borraos"
   },
   "book": {
     "details_title": "Lo que trae",
@@ -69,7 +75,25 @@
     "no_stock": "Se ha acabado, pijo",
     "filters": "Cribar por",
     "all_genres": "Todos los palos",
-    "search_placeholder": "Nombre del libro"
+    "search_placeholder": "Nombre del libro",
+    "sort_by": "Ordenar por",
+    "sort_most_rated": "Los que mejor caen",
+    "sort_least_rated": "Los que peor caen",
+    "sort_most_bought": "Los que más se llevan",
+    "sort_least_bought": "Los que menos quiere la gente",
+    "search_by_name": "Nombre del libro",
+    "category": "Categoría",
+    "all_authors": "Toda la peñita",
+    "max_price": "Lo más caro:",
+    "apply_filters": "Cribar ya",
+    "clear": "Limpiar",
+    "status": "Estado",
+    "show_only_deleted_books": "Mostrar solo libros borraos",
+    "btn_details": "Detalles",
+    "btn_add": "Añadir",
+    "no_results": "No hay resultaos",
+    "no_results_hint": "Prueba a cambiar los filtros o el término de busqueda.",
+    "remove_filters": "Quitar filtros"
   },
   "index": {
     "welcome_msg": "Los mejores libros que hay, de verdad te lo digo",
@@ -93,7 +117,9 @@
     "delete": "Borrar",
     "edit": "Editar",
     "view": "Ver",
-    "meta_description": "BOOKLY - Tu librería online de confianza, pijo. Encuentra los mejores libros, autores y editoriales en un solo sitio."
+    "meta_description": "BOOKLY - Tu librería online de confianza, pijo. Encuentra los mejores libros, autores y editoriales en un solo sitio.",
+    "search_placeholder": "Bichear...",
+    "apply": "Aplicar"
   },
   "genres": {
     "title": "Palos Literarios",
