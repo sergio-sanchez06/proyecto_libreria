@@ -183,7 +183,7 @@
     "admin_title": "Generoen Kudeaketa",
     "description": "Ezagutu {{name}}(e)ko titulu onenak",
     "explore": "Katalogoa arakatu",
-    "category_desc": "Kategoria: {{name}}",
+    "category": "Kategoria",
     "no_books": "Gaur egun ez dugu izenbururik kategoria honetan.",
     "back": "← Itzuli",
     "books_available": "Liburu eskuragarriak"

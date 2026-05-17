@@ -184,7 +184,7 @@
     "admin_title": "Xestión de Xéneros",
     "description": "Descubre os mellores títulos de {{name}}",
     "explore": "Explorar catálogo",
-    "category_desc": "Categoría: {{name}}",
+    "category": "Categoría",
     "no_books": "Actualmente non dispoñemos de títulos nesta categoría.",
     "back": "Volver",
     "books_available": "Libros dispoñibles"

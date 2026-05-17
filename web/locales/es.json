@@ -186,7 +186,7 @@
     "admin_title": "Gestión de Géneros",
     "description": "Descubre los mejores títulos de {{name}}",
     "explore": "Explorar catálogo",
-    "category_desc": "Categoría: {{name}}",
+    "category": "Categoría",
     "no_books": "Actualmente no disponemos de títulos en esta categoría.",
     "back": "Volver",
     "books_available": "Libros disponibles"

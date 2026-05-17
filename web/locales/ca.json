@@ -184,7 +184,7 @@
     "admin_title": "Gestió de Gèneres",
     "description": "Descobreix els millors títols de {{name}}",
     "explore": "Explorar catàleg",
-    "category_desc": "Categoria: {{name}}",
+    "category": "Categoria",
     "no_books": "Actualment no disposem de títols en aquesta categoria.",
     "back": "Tornar",
     "books_available": "Llibres disponibles"
