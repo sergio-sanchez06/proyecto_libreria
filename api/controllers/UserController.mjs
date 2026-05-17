@@ -94,6 +94,8 @@ async function registerUser(req, res) {
         console.error("Error enviando email de bienvenida:", err.message),
       );
 
+      console.log("Usuario creado")
+
     // try {
     //   await emailService.sendWelcomeEmail(newUser.email, newUser.name);
     // } catch (mailError) {

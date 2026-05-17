@@ -449,6 +449,20 @@ async function dismissSelf(req, res) {
       res.clearCookie("connect.sid");
       res.redirect("/");
     });
+
+    const redisClient = await redisController.returnRedisClient();
+    try {
+      await Promise.all([
+        redisClient.del("AllUsers"),
+        redisClient.del("stats:users_count"),
+      ]);
+    } catch (error) {
+      console.error(
+        "Error al invalidar la caché de usuarios en dismissSelf:",
+        error,
+      );
+    }
+    
   } catch (error) {
     console.error(
       "Error en dismissSelf:",

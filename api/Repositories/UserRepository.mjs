@@ -109,6 +109,10 @@ async function upsertFromFirebase({
       userData.is_inserted ||
       userData.default_address === "Pendiente de completar";
 
+    console.log("User data: ", userData);
+    console.log("Is new user: ", isNewUser);
+    console.log("Registrado");
+
     return {
       user: new UserModel(userData),
       isNewUser: isNewUser,

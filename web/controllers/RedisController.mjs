@@ -11,9 +11,10 @@ async function startRedis() {
     redisServer = redis.createClient({
       url:
         process.env.REDIS_URL ||
-        "rediss://default:gQAAAAAAAYHAAAIncDI0YTk0MzhjNzhmNWU0MTFjYTM2MDIxZjdmNGVlNWZkMXAyOTg3NTI@known-trout-98752.upstash.io:6379",
+        "redis://localhost:6379",
+        // "rediss://default:gQAAAAAAAYHAAAIncDI0YTk0MzhjNzhmNWU0MTFjYTM2MDIxZjdmNGVlNWZkMXAyOTg3NTI@known-trout-98752.upstash.io:6379",
       socket: {
-        tls: true,
+        tls: false,
         rejectUnauthorized: false,
       },
     });

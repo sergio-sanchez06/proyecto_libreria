@@ -43,7 +43,9 @@
                                 <div class="stat-value" style="color:var(--brand-teal)">
                                     <%= total %>
                                 </div>
-                                <div class="stat-label"> <%= t('adminOrders.total') || 'Total' %> </div>
+                                <div class="stat-label">
+                                    <%= t('adminOrders.total') || 'Total' %>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -58,7 +60,9 @@
                                 <div class="stat-value" style="color:#854d0e;">
                                     <%= pending %>
                                 </div>
-                                <div class="stat-label"> <%= t('adminOrders.pending') || 'Pendientes' %></div>
+                                <div class="stat-label">
+                                    <%= t('adminOrders.pending') || 'Pendientes' %>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -73,7 +77,9 @@
                                 <div class="stat-value" style="color:#1e40af;">
                                     <%= processing %>
                                 </div>
-                                <div class="stat-label"> <%= t('adminOrders.shipped') || 'En camino' %></div>
+                                <div class="stat-label">
+                                    <%= t('adminOrders.shipped') || 'En camino' %>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -88,7 +94,9 @@
                                 <div class="stat-value" style="color:#92400e; font-size:var(--fs-xl);">
                                     <%= revenue %>€
                                 </div>
-                                <div class="stat-label"> <%= t('adminOrders.revenue') || 'Facturado' %></div>
+                                <div class="stat-label">
+                                    <%= t('adminOrders.revenue') || 'Facturado' %>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -243,8 +251,9 @@
                                                                             value="ENTREGADO">
                                                                         <button type="submit"
                                                                             class="<%= btnCls %> btn-success">
-                                                                            <i
-                                                                                class="bi bi-check-circle me-1"></i><%= t('adminOrders.btn_delivered') || 'Entregado' %>
+                                                                            <i class="bi bi-check-circle me-1"></i>
+                                                                            <%= t('adminOrders.btn_delivered')
+                                                                                || 'Entregado' %>
                                                                         </button>
                                                                     </form>
                                                                     <% } %>
@@ -266,7 +275,9 @@
                                                                                 data-order-id="<%= order.id %>"
                                                                                 data-order-email="<%= order.user_email %>">
                                                                                 <i
-                                                                                    class="bi bi-arrow-return-left me-1"></i><%= t('adminOrders.btn_confirm_return') || 'Confirmar devolución' %>
+                                                                                    class="bi bi-arrow-return-left me-1"></i>
+                                                                                <%= t('adminOrders.btn_confirm_return')
+                                                                                    || 'Confirmar devolución' %>
                                                                             </button>
                                                                             <button type="button"
                                                                                 class="<%= btnCls %> btn-secondary"
@@ -274,7 +285,9 @@
                                                                                 data-bs-target="#modalRejectReturn"
                                                                                 data-order-id="<%= order.id %>"
                                                                                 data-order-email="<%= order.user_email %>">
-                                                                                <i class="bi bi-x-lg me-1"></i><%= t('adminOrders.btn_reject_return') || 'Rechazar devolución' %>
+                                                                                <i class="bi bi-x-lg me-1"></i>
+                                                                                <%= t('adminOrders.btn_reject_return')
+                                                                                    || 'Rechazar devolución' %>
                                                                             </button>
                                                                             <% } %>
 
@@ -287,7 +300,9 @@
                                                                                         data-order-id="<%= order.id %>"
                                                                                         data-order-email="<%= order.user_email %>">
                                                                                         <i
-                                                                                            class="bi bi-exclamation-triangle me-1"></i><%= t('adminOrders.btn_force_return') || 'Forzar devolución' %>
+                                                                                            class="bi bi-exclamation-triangle me-1"></i>
+                                                                                        <%= t('adminOrders.btn_force_return')
+                                                                                            || 'Forzar devolución' %>
                                                                                     </button>
                                                                                     <% } %>
 
@@ -303,7 +318,9 @@
                                                                                                 data-order-id="<%= order.id %>"
                                                                                                 data-order-email="<%= order.user_email %>">
                                                                                                 <i
-                                                                                                    class="bi bi-x-circle me-1"></i><%= t('adminOrders.btn_cancel') || 'Cancelar' %>
+                                                                                                    class="bi bi-x-circle me-1"></i>
+                                                                                                <%= t('adminOrders.btn_cancel')
+                                                                                                    || 'Cancelar' %>
                                                                                             </button>
                                                                                             <% } %>
 
@@ -413,7 +430,7 @@
             <div class="modal-content shadow-lg border-0">
                 <div class="modal-header bg-warning border-0">
                     <h5 class="modal-title fw-bold text-dark"><i class="bi bi-arrow-return-left me-2"></i>
-                        <%= t('adminOrders.return_modal_title') %>
+                        <%= t('adminOrders.return_confirm_modal_title') %>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>

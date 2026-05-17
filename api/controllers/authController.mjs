@@ -9,6 +9,9 @@ export const register = async (req, res) => {
 
   try {
     const user = await AuthService.createUser(req.body);
+
+    console.log("Usuario registrado: ", user)
+
     res.status(201).json({ message: "Registro exitoso", user });
   } catch (error) {
     res.status(400).json({ message: error.message });

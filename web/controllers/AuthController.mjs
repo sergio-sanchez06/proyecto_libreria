@@ -1,6 +1,7 @@
 // web/controllers/AuthController.mjs
 // import axios from "axios";
 import apiClient from "../utils/apiClient.mjs";
+import redisController from "./RedisController.mjs";
 
 // const apiClient = axios.create({
 //   baseURL: "http://localhost:3000",
@@ -171,8 +172,26 @@ async function register(req, res) {
       optional_address,
     });
 
+    console.log("Usuario creado en register: ", response.data);
+
+    const redisClient = await redisController.returnRedisClient();
+    try {
+      await Promise.all([
+        redisClient.del("AllUsers"),
+        redisClient.del("stats:users_count"),
+      ]);
+    } catch (error) {
+      console.error(
+        "Error al invalidar la caché de usuarios en register:",
+        error,
+      );
+    }
+
     res.redirect("/login"); // Redirigimos al login para el inicio de sesión
   } catch (error) {
+
+    console.log("Error en register:", error);
+
     if (!error.response) {
       console.error("Error de conexión: La API no responde");
     } else {
