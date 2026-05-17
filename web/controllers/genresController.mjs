@@ -11,7 +11,7 @@ async function getGenres(req, res) {
   try {
     const response = await apiClient.get("/genres/all");
 
-    console.log("Generos: ", response.data);
+    // console.log("Generos: ", response.data);
 
     res.render("partials/genres", {
       genres: response.data,
@@ -179,8 +179,11 @@ async function updateGenre(req, res) {
 }
 
 async function deleteGenre(req, res) {
+
+  console.log("Entramos en deleteGenresBody: ", req.body, req.params.genreId);
+
   try {
-    const id = req.body.id;
+    const id = req.body.genreId || req.params.genreId;
     const cleanToken = req.session.idToken.replace("Bearer ", "").trim();
     const api = getAuthenticatedClient(cleanToken);
 

@@ -110,7 +110,7 @@ async function getBookGenresByGenre(genreName) {
        FROM public.book_genres bg
        INNER JOIN public.books b ON bg.book_id = b.id
        INNER JOIN public.genres g ON bg.genre_id = g.id
-       WHERE g.name ILIKE $1`,
+       WHERE g.name ILIKE $1 and b.deleted_at IS NULL`,
       [`${genreName}`],
     );
 
