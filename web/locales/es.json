@@ -42,7 +42,7 @@
     "add_to_cart": "Añadir al carrito",
     "view": "Ver",
     "no_synopsis": "Sinopsis no disponible",
-    "back": "← Volver al inicio",
+    "back": "Volver al inicio",
     "edit_book": "Editar libro",
     "delete_book": "Eliminar libro",
     "confirm_delete": "¿Estás seguro de que deseas eliminar este libro?",
@@ -63,6 +63,12 @@
   },
   "admin": {
     "pub_title": "Panel de Gestión de Editoriales",
+    "pub_del_body": "La editorial dejará de ser visible en el catálogo de manera pública.",
+    "pub_del_title": "¿Archivar la editorial?",
+    "author_del_body": "El autor dejará de ser visible en el catálogo de manera pública.",
+    "author_del_title": "¿Archivar el autor?",
+    "genre_del_body": "El género dejará de ser visible en el catálogo de manera pública.",
+    "genre_del_title": "¿Archivar el género?",
     "pub_subtitle": "Modifica y organiza las editoriales de la librería",
     "status": "Estado",
     "add_book": "Añadir libro",
@@ -182,7 +188,7 @@
     "explore": "Explorar catálogo",
     "category_desc": "Categoría: {{name}}",
     "no_books": "Actualmente no disponemos de títulos en esta categoría.",
-    "back": "← Volver",
+    "back": "Volver",
     "books_available": "Libros disponibles"
   },
   "publishers": {
@@ -209,7 +215,7 @@
     "view_book": "Ver detalles del libro",
     "edit": "Editar editorial",
     "delete": "Eliminar editorial",
-    "back": "← Volver al inicio"
+    "back": "Volver al inicio"
   },
   "genre_results": {
     "no_books": "No se encontraron libros con el género especificado",

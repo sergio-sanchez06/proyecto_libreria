@@ -42,7 +42,7 @@
     "add_to_cart": "Engadir ao carriño",
     "view": "Ver",
     "no_synopsis": "Sinopse non dispoñible",
-    "back": "← Volver ao inicio",
+    "back": "Volver ao inicio",
     "edit_book": "Editar libro",
     "delete_book": "Eliminar libro",
     "confirm_delete": "Estás seguro de que queres eliminar este libro?",
@@ -63,6 +63,12 @@
   },
   "admin": {
     "pub_title": "Panel de xestión de Editoriais",
+    "pub_del_body": "A editorial deixará de ser visible no catálogo de maneira pública.",
+    "pub_del_title": "Arquivar a editorial?",
+    "author_del_body": "O autor deixará de ser visible no catálogo de maneira pública.",
+    "author_del_title": "Arquivar o autor?",
+    "genre_del_body": "O xénero deixará de ser visible no catálogo de maneira pública.",
+    "genre_del_title": "Arquivar o xénero?",
     "status": "Estado",
     "add_book": "Engadir libro",
     "only_deleted": "Mostrar solo eliminados",
@@ -114,7 +120,7 @@
     "view_details": "Ver detalles",
     "edit_author": "Editar autor",
     "delete_author": "Eliminar autor",
-    "back": "← Volver ao inicio"
+    "back": "Volver ao inicio"
   },
   "catalog": {
     "title": "O noso Catálogo",
@@ -207,7 +213,7 @@
     "view_book": "Ver detalles do libro",
     "edit": "Editar editorial",
     "delete": "Eliminar editorial",
-    "back": "← Volver ao inicio"
+    "back": "Volver ao inicio"
   },
   "genre_results": {
     "no_books": "Non se atoparon libros co xénero especificado",

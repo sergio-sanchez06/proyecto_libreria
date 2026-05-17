@@ -42,7 +42,7 @@
     "add_to_cart": "Saskira gehitu",
     "view": "Ikusi",
     "no_synopsis": "Sinopsia ez dago eskuragarri",
-    "back": "← Itzuli hasierara",
+    "back": "Itzuli hasierara",
     "edit_book": "Liburua editatu",
     "delete_book": "Liburua ezabatu",
     "confirm_delete": "Ziur al zaude liburu hau ezabatu nahi duzula?",
@@ -63,6 +63,12 @@
   },
   "admin": {
     "status": "Estatua",
+    "pub_del_body": "Argitaletxea ez da katalogoan modu publikoan ikusgai egongo.",
+    "pub_del_title": "Argitaletxea artxibatu?",
+    "author_del_body": "Egilea ez da katalogoan modu publikoan ikusgai egongo.",
+    "author_del_title": "Egilea artxibatu?",
+    "genre_del_body": "Generoa ez da katalogoan modu publikoan ikusgai egongo.",
+    "genre_del_title": "Generoa artxibatu?",
     "pub_title": "Argitaletxeak Kudeatzeko Panela",
     "only_deleted": "Erakutsi ezabatutakoak bakarrik",
     "add_book": "Gehitu liburua",
@@ -114,7 +120,7 @@
     "view_details": "Xehetasunak ikusi",
     "edit_author": "Egilea editatu",
     "delete_author": "Egilea ezabatu",
-    "back": "← Itzuli hasierara"
+    "back": "Itzuli hasierara"
   },
   "catalog": {
     "title": "Gure Katalogoa",
@@ -206,7 +212,7 @@
     "view_book": "Liburuaren xehetasunak ikusi",
     "edit": "Argitaletxea editatu",
     "delete": "Argitaletxea ezabatu",
-    "back": "← Itzuli hasierara"
+    "back": "Itzuli hasierara"
   },
   "genre_results": {
     "no_books": "Ez da aurkitu zehaztutako generoko libururik",

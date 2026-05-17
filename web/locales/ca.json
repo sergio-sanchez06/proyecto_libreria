@@ -42,7 +42,7 @@
     "add_to_cart": "Afegir a la cistella",
     "view": "Veure",
     "no_synopsis": "Sinopsi no disponible",
-    "back": "← Tornar a l'inici",
+    "back": "Tornar a l'inici",
     "edit_book": "Editar llibre",
     "delete_book": "Eliminar llibre",
     "confirm_delete": "Estàs segur que vols eliminar aquest llibre?",
@@ -63,6 +63,12 @@
   },
   "admin": {
     "pub_title": "Panell de Gestió d'Editorials",
+    "pub_del_body": "L'editorial deixarà de ser visible al catàleg de manera pública.",
+    "pub_del_title": "Vols arxivar l'editorial?",
+    "author_del_body": "L'autor deixarà de ser visible al catàleg de manera pública.",
+    "author_del_title": "Vols arxivar l'autor?",
+    "genre_del_body": "El gènere deixarà de ser visible al catàleg de manera pública.",
+    "genre_del_title": "Vols arxivar el gènere?",
     "status": "estat",
     "only_deleted": "Mostra només esborrats",
     "add_book": "Afegir llibre",
@@ -114,7 +120,7 @@
     "view_details": "Veure detalls",
     "edit_author": "Editar autor",
     "delete_author": "Eliminar autor",
-    "back": "← Tornar a l'inici"
+    "back": "Tornar a l'inici"
   },
   "catalog": {
     "title": "El nostre Catàleg",
@@ -180,7 +186,7 @@
     "explore": "Explorar catàleg",
     "category_desc": "Categoria: {{name}}",
     "no_books": "Actualment no disposem de títols en aquesta categoria.",
-    "back": "← Tornar",
+    "back": "Tornar",
     "books_available": "Llibres disponibles"
   },
   "publishers": {
@@ -207,7 +213,7 @@
     "view_book": "Veure detalls del llibre",
     "edit": "Editar editorial",
     "delete": "Eliminar editorial",
-    "back": "← Tornar a l'inici"
+    "back": "Tornar a l'inici"
   },
   "genre_results": {
     "no_books": "No s'han trobat llibres amb el gènere especificat",
