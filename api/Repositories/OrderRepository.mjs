@@ -248,10 +248,12 @@ async function cancelOrder(id) {
     if (!rows[0]) throw new Error("Pedido no encontrado");
     if (rows[0].status === "CANCELADO")
       throw new Error("El pedido ya fue cancelado previamente");
-    if (["ENVIADO", "ENTREGADO"].includes(rows[0].status))
-      throw new Error(
-        `No se puede cancelar un pedido en estado ${rows[0].status}`,
-      );
+    // if (!admin && ["ENVIADO", "ENTREGADO"].includes(rows[0].status))
+    //   throw new Error(
+    //     `No se puede cancelar un pedido en estado ${rows[0].status}`,
+    //   );
+
+    
 
     stripePaymentIntent = rows[0].stripe_payment_intent;
     user_email = rows[0].user_email;

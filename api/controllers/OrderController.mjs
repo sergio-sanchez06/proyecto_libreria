@@ -86,7 +86,7 @@ async function cancelOrder(req, res) {
     }
 
     const { items, refunded, user_email, user_name } =
-      await OrderRepository.cancelOrder(req.params.id);
+      await OrderRepository.cancelOrder(req.params.id, true);
 
     console.log(`Administrador cancelando pedido ${order.id}`, {
       user_email,
